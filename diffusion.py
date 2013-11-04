@@ -2,15 +2,14 @@
 desc = """plot_Ka.py
     Plots amino acid analogue Ka of mean force
     Written by Karl Debiec on 12-10-17
-    Last updated 13-10-20"""
+    Last updated 13-11-03"""
 ########################################### MODULES, SETTINGS, AND DEFAULTS ############################################
 import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from   matplotlib.backends.backend_pdf import PdfPages
-sys.path += ["/share/home/ktd3/scripts"]
-from plot_toolkit import set_xaxis, set_yaxis, set_title
+from   plot_toolkit import set_xaxis, set_yaxis, set_title
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def plot_Ka_manuscript(data, keys, experiment = None, outfile = "Ka.pdf", **kwargs):
     title           = kwargs.get("title",           "")

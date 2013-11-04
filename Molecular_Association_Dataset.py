@@ -2,13 +2,12 @@
 desc = """Molecular_Association_Dataset.py
     Class for organizing HDF5 data from molecular association trajectories for plotting
     Written by Karl Debiec on 13-10-22
-    Last updated 13-11-31"""
+    Last updated 13-11-03"""
 ########################################### MODULES, SETTINGS, AND DEFAULTS ############################################
 import os, sys
 import numpy as np
-sys.path   += ["/share/home/ktd3/scripts/"]
-from plot_toolkit.Dataset import Dataset
-from plot_toolkit         import hsl_to_rgb
+from   plot_toolkit.Dataset import Dataset
+from   plot_toolkit         import hsl_to_rgb
 ####################################################### CLASSES ########################################################
 default_labels  = {"AMBER03":       "AMBER03",                      "AMBER99SBILDN": "AMBER99",
                    "AMBERIPOLQ":    "AMBER13$\\alpha$",             "AMBER13ALPHA":  "AMBER13$\\alpha$",
@@ -27,8 +26,7 @@ class Molecular_Association_Dataset(Dataset):
         self.wm         = kwargs.pop("wm",    infile.split("/")[-1].split(".")[0].split("_")[1])
         self.label      = kwargs.pop("label", default_labels[self.ff])
         self.color      = kwargs.pop("color", default_colors[self.ff])
-        Dataset.__init__(self, infiles = infiles, verbose = verbose, **kwargs)
-#        self.cutoffs    = {}
-#        for key in self.attrs:
-#            if "bound_cutoff" in self.attrs[key] and "unbound_cutoff" in self.attrs[key]:
-#                self.cutoffs[key]  = np.array([self.attrs[key]["bound_cutoff"], self.attrs[key]["unbound_cutoff"]])
+        if infiles.values()[0] != "": 
+            Dataset.__init__(self, infiles = infiles, verbose = verbose, **kwargs)
+
+

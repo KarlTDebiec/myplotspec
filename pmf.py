@@ -2,7 +2,7 @@
 desc = """pmf.py
     Plots potential of mean force
     Written by Karl Debiec on 12-10-22
-    Last updated 13-11-02"""
+    Last updated 13-11-03"""
 ########################################### MODULES, SETTINGS, AND DEFAULTS ############################################
 import os, re, sys
 from   collections import OrderedDict
@@ -11,7 +11,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from matplotlib.backends.backend_pdf import PdfPages
-sys.path += ["/share/home/ktd3/scripts"]
 from plot_toolkit import get_font, set_xaxis, set_yaxis, set_title, set_inset, set_bigxlabel, set_bigylabel
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def plot_pmf_multi(data, key, ytype, title = "", zero_min = None, bins = None, outfile = "pmf.pdf", **kwargs):
