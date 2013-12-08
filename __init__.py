@@ -4,7 +4,7 @@ desc = """__init__.py
     Written by Karl Debiec on 12-10-22
     Last updated 13-10-22"""
 ########################################### MODULES, SETTINGS, AND DEFAULTS ############################################
-import os, sys
+import os, sys, warnings
 import numpy as np
 import matplotlib.font_manager as fm
 ################################################## GENERAL FUNCTIONS ###################################################
@@ -39,10 +39,11 @@ def set_yaxis(ax, **kwargs): set_axis(ax.set_ylabel,ax.set_ybound,ax.axhline,ax.
 def set_axis(set_label, set_bound, axline, set_ticks, set_ticklabels, label = "", ticks = range(11),
              ticklabels = range(11), label_fp = "11b", tick_fp = "8r"):
     set_label(label, fontproperties = get_font(label_fp))
-    set_bound(ticks[0], ticks[-1])
-    axline(ticks[0],  linewidth = 2, color = "black")
-    axline(ticks[-1], linewidth = 2, color = "black")
-    set_ticks(ticks)
+    if ticks != []:
+        set_bound(float(ticks[0]), float(ticks[-1]))
+        axline(ticks[0],  linewidth = 2, color = "black")
+        axline(ticks[-1], linewidth = 2, color = "black")
+    set_ticks(np.array(ticks, np.float32))
     set_ticklabels(ticklabels, fontproperties = get_font(tick_fp))
 def set_title(figure, edge_distance = 0.5, fp = "16b", **kwargs):
     edges           = get_edges(figure)
@@ -62,10 +63,21 @@ def set_bigylabel(figure, side = "left", edge_distance = 0.3, fp = "11b", **kwar
     set_text(figure, fp = fp, rotation = "vertical", **kwargs)
 def set_inset(axes, xpos = 0.5, ypos = 0.9, fp = "11b", **kwargs):
     position        = axes.get_position()
-    kwargs["x"]     = position.xmin + xpos * position.width
-    kwargs["y"]     = position.ymin + ypos * position.height
+    kwargs["x"]     = kwargs.get("x", position.xmin + xpos * position.width)
+    kwargs["y"]     = kwargs.get("y", position.ymin + ypos * position.height)
     set_text(axes.get_figure(), fp = fp, **kwargs)
 def set_text(figure, fp = "24b", ha = "center", va = "center", **kwargs):
     figure.text(ha = ha, va = va, fontproperties = get_font(fp), **kwargs)
+def set_colorbar(cbar, ticks, label = "", label_fp = "11b", **kwargs):
+    zticks  = np.array(ticks, np.float)
+    zticks  = (zticks - zticks[0]) / (zticks[-1] - zticks[0])
+    cbar.ax.tick_params(bottom = "off", top = "off", left = "off", right = "off")
+    cbar.set_ticks(ticks)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        set_xaxis(cbar.ax, ticks = [0,1],  ticklabels = [])
+        set_yaxis(cbar.ax, ticks = zticks, ticklabels = ticks)
+    for y in zticks: cbar.ax.axhline(y = y, linewidth = 1.0, color = "black")
+    cbar.set_label(label, fontproperties = get_font(label_fp))
 
 

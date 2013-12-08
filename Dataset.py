@@ -2,11 +2,11 @@
 desc = """Dataset.py
     Class for organizing HDF5 data for plotting
     Written by Karl Debiec on 12-10-22
-    Last updated 13-11-01"""
+    Last updated 13-11-30"""
 ########################################### MODULES, SETTINGS, AND DEFAULTS ############################################
 import os, sys
 import numpy as np
-from hdf5_functions import HDF5_File
+from   MD_toolkit.HDF5_File import HDF5_File
 ####################################################### CLASSES ########################################################
 class Dataset:
     def __init__(self, infiles, verbose = True, **kwargs):
