@@ -131,8 +131,8 @@ def plot_pmf_single(data, key, outfile = "pmf.pdf", **kwargs):
         if hasattr(dataset, "cutoffs"):
             if not hasattr(dataset.cutoffs, "__iter__"): dataset.cutoffs = [dataset.cutoffs]
             print "    CUT is at {0:5.3f} A".format(dataset.cutoffs[0])
-        print "    CIP is at {0:5.3f} A with depth of {1:5.3f}".format(x[cip_index], y[cip_index])
-        print "    DSB is at {0:5.3f} A with depth of {1:5.3f}".format(x[dsb_index], y[dsb_index])
+        print "    CIP is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[cip_index]), float(y[cip_index]))
+        print "    DSB is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[dsb_index]), float(y[dsb_index]))
         axes.plot(x[cip_index], y[cip_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
         axes.plot(x[dsb_index], y[dsb_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
         handles    += axes.plot(x, y, lw = 2, color = dataset.color)
