@@ -4,9 +4,11 @@ desc = """__init__.py
     Written by Karl Debiec on 12-10-22
     Last updated 13-10-22"""
 ########################################### MODULES, SETTINGS, AND DEFAULTS ############################################
-import os, sys, warnings
+import os, sys, warnings, types
 import numpy as np
+import matplotlib as mpl
 import matplotlib.font_manager as fm
+from   matplotlib.backends.backend_pdf import PdfPages
 ################################################## GENERAL FUNCTIONS ###################################################
 def abs_listdir(directory):
    for dirpath, _, filenames in os.walk(directory):
@@ -81,5 +83,27 @@ def set_colorbar(cbar, ticks, label = "", label_fp = "11b", **kwargs):
         set_yaxis(cbar.ax, ticks = zticks, ticklabels = ticks)
     for y in zticks: cbar.ax.axhline(y = y, linewidth = 1.0, color = "black")
     cbar.set_label(label, fontproperties = get_font(label_fp))
-
-
+###################################################### DECORATORS ######################################################
+class Figure_Output(object):
+    def __init__(self, plot_function):
+        self.plot_function = plot_function
+    def __call__(self, outfile = "test.pdf", *args, **kwargs):
+        verbose = kwargs.get("verbose", "True")
+        figure  = self.plot_function(*args, **kwargs)
+        if isinstance(outfile, mpl.backends.backend_pdf.PdfPages):
+            figure.savefig(outfile, format = "pdf")
+            if verbose: print "Figure saved to'{0}'.".format(outfile)
+        elif isinstance(outfile, types.StringTypes):
+            if outfile.endswith("pdf"):
+                output_pdf  = PdfPages(outfile)
+                figure.savefig(output_pdf, format = "pdf")
+                output_pdf.close()
+                if verbose: print "Figure saved to'{0}'.".format(outfile)
+            else:
+                try:
+                    figure.savefig(outfile)
+                    if verbose: print "Figure saved to'{0}'.".format(outfile)
+                except:
+                    raise Exception("UNABLE TO OUTPUT TO FILE:" + outfile)
+        else:
+            raise Exception("TYPE OF OUTFILE NOT UNDERSTOOD:" + outfile)

@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 from matplotlib.backends.backend_pdf import PdfPages
 from plot_toolkit import get_font, set_xaxis, set_yaxis, set_title, set_inset, set_bigxlabel, set_bigylabel
+from plot_toolkit import Figure_Output
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def plot_pmf_multi(data, key, ytype, title = "", zero_min = None, bins = None, outfile = "pmf.pdf", **kwargs):
     insets  = {1: "SPC/E", 2: "TIP3P", 3: "TIPS3P", 4: "TIP4P/2005", 5: "TIP4P-Ew"}
@@ -77,7 +78,8 @@ def plot_pmf_multi(data, key, ytype, title = "", zero_min = None, bins = None, o
         output_pdf.close()
         print "plot saved to " + outfile
 
-def plot_pmf_single(data, key, outfile = "pmf.pdf", **kwargs):
+@Figure_Output
+def plot_pmf_single(data, key, **kwargs):
     ytype      = kwargs.get("ytype",      "pmf")
     zero_min   = kwargs.get("zero_min",   None)
     downsample = kwargs.get("downsample", 1)
@@ -102,7 +104,7 @@ def plot_pmf_single(data, key, outfile = "pmf.pdf", **kwargs):
         ylabel          = kwargs.get("ylabel", "Free Energy $(k_B T)$")
         ykey            = "free energy"
     title               = kwargs.get("title",  "")
-    bins                = kwargs.get("bins",   None)    # For WESTPA
+    bins                = kwargs.get("bins",   None)
     set_xaxis(axes,   label = xlabel, ticks = xticks, ticklabels = xticks)
     set_yaxis(axes,   label = ylabel, ticks = yticks, ticklabels = yticks)
     set_title(figure, s     = title)
@@ -125,20 +127,20 @@ def plot_pmf_single(data, key, outfile = "pmf.pdf", **kwargs):
         x           = np.mean(np.reshape(x, (x.size / downsample, downsample)), axis = 1)
         y           = np.mean(np.reshape(y, (y.size / downsample, downsample)), axis = 1)
 #        try:
-        cip_index   = np.where(y == np.nanmin(y))[0][0]
-        dsb_index   = cip_index + np.where(y[cip_index + 1:] - y[cip_index:-1] < 0)[0][0]
-        ssip_index  = 0
-        print dataset.ff, dataset.wm
-        if hasattr(dataset, "cutoffs"):
-            if not hasattr(dataset.cutoffs, "__iter__"): dataset.cutoffs = [dataset.cutoffs]
-            print "    CUT is at {0:5.3f} A".format(dataset.cutoffs[0])
-            cut_index = np.abs(x - dataset.cutoffs[0]).argmin()
-            from scipy.integrate import trapz
-            print "   ", trapz(x[cip_index:cut_index], y[cip_index:cut_index])
-        print "    CIP is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[cip_index]), float(y[cip_index]))
-        print "    DSB is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[dsb_index]), float(y[dsb_index]))
-        axes.plot(x[cip_index], y[cip_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
-        axes.plot(x[dsb_index], y[dsb_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
+#            cip_index   = np.where(y == np.nanmin(y))[0][0]
+#            dsb_index   = cip_index + np.where(y[cip_index + 1:] - y[cip_index:-1] < 0)[0][0]
+#            ssip_index  = 0
+#            print dataset.ff, dataset.wm
+#            if hasattr(dataset, "cutoffs"):
+#                if not hasattr(dataset.cutoffs, "__iter__"): dataset.cutoffs = [dataset.cutoffs]
+#                print "    CUT is at {0:5.3f} A".format(dataset.cutoffs[0])
+#                cut_index = np.abs(x - dataset.cutoffs[0]).argmin()
+#                from scipy.integrate import trapz
+#                print "   ", trapz(x[cip_index:cut_index], y[cip_index:cut_index])
+#            print "    CIP is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[cip_index]), float(y[cip_index]))
+#            print "    DSB is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[dsb_index]), float(y[dsb_index]))
+#            axes.plot(x[cip_index], y[cip_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
+#            axes.plot(x[dsb_index], y[dsb_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
 #        except:
 #            pass
         handles    += axes.plot(x, y, lw = 2, color = dataset.color)
@@ -157,73 +159,6 @@ def plot_pmf_single(data, key, outfile = "pmf.pdf", **kwargs):
     handler = mpl.legend_handler.HandlerLine2D(numpoints = 1)
     axes.legend(handles, labels, prop = get_font("8r"), loc = 4, handler_map = {mpl.lines.Line2D: handler})
 
-    # Save file
-    if isinstance(outfile, mpl.backends.backend_pdf.PdfPages):
-        figure.savefig(outfile, format = "pdf")
-    else:
-        output_pdf  = PdfPages(outfile)
-        figure.savefig(output_pdf, format = "pdf")
-        output_pdf.close()
-        print "plot saved to " + outfile
-"""
-d##ef plot_pmf_manuscript(data, key, ytype, title = "", zero_min = None, bins = None, outfile = "pmf.pdf", **kwargs):
-    handles = []
-    labels  = []
-
-    figure  = plt.figure(figsize = [3.0, 3.0])
-    axes    = figure.add_subplot(1, 1, 1, autoscale_on = False)
-    figure.subplots_adjust(left = 0.17, right = 0.95, bottom = 0.12, top = 0.95)
-
-    xticks              = kwargs.get("xticks", np.arange( 2, 9))
-    if   "comdist/"    in key: xlabel = kwargs.get("xlabel", "Center of Mass Distance ($\\AA$)")
-    elif "mindist/"    in key: xlabel = kwargs.get("xlabel", "Heavy Atom Minimum Distance ($\\AA$)")
-    elif "mindist_sb/" in key: xlabel = kwargs.get("xlabel", "Salt Bridge Minimum Distance ($\\AA$)")
-    if   ytype.lower() in ["pmf", "potential of mean force"]:
-        yticks          = kwargs.get("yticks", np.linspace(-3, 0.5, 8))
-        ylabel          = kwargs.get("ylabel", "Potential of Mean Force $(\\frac{kcal}{mol})$")
-        ykey            = "pmf"
-        axes.axhline(y  = 0, linewidth = 0.5, color = "black")
-    elif ytype.lower() in ["fe", "free energy"]:
-        yticks          = kwargs.get("yticks", np.linspace(-1, 5, 13))
-        ylabel          = kwargs.get("ylabel", "Free Energy $(k_B T)$")
-        ykey            = "free energy"
-    set_xaxis(axes,   label = xlabel, ticks = xticks, ticklabels = xticks, label_fp = "8b", tick_fp = "6r")
-    set_yaxis(axes,   label = ylabel, ticks = yticks, ticklabels = yticks, label_fp = "8b", tick_fp = "6r")
-    set_title(figure, s     = title)
-
-    for dataset in data:
-        x           = np.mean(np.column_stack((dataset.data[key]["lower bound"],
-                      dataset.data[key]["upper bound"])), axis=1)
-        y           = dataset.data[key][ykey]
-        if zero_min is not None:
-            min_i   = (np.abs(x - float(zero_min.split(":")[0]))).argmin()
-            max_i   = (np.abs(x - float(zero_min.split(":")[1]))).argmin()
-            y      -= y[np.where(y == np.nanmin(y[min_i:max_i]))[0][0]]
-        x           = x[x >= xticks[0]]
-        y           = y[-1 * x.size:]
-        x           = x[x <= xticks[-1]]
-        y           = y[:x.size]
-        handles    += axes.plot(x, y, lw = 1, color = dataset.color)
-        labels     += [dataset.label]
-        if bins is not None:
-            bin_x   = []
-            bin_y   = []
-            for bin in bins:
-                index   = (np.abs(x - bin)).argmin()
-                bin_x  += [x[index]]
-                bin_y  += [y[index]]
-            axes.plot(bin_x, bin_y, marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
-#        if "cutoffs" in dir(dataset) and key in dataset.cutoffs:
-#            for c in dataset.cutoffs[key]: axes.axvline(x = c, linewidth = 0.5, color = "black")
-    handler = mpl.legend_handler.HandlerLine2D(numpoints = 1)
-    axes.legend(handles, labels, prop = get_font("8r"), loc = 4, handler_map = {mpl.lines.Line2D: handler})
-
-    if isinstance(outfile, PdfPages):
-        figure.savefig(outfile, format = "pdf")
-    else:
-        output_pdf  = PdfPages(outfile)
-        figure.savefig(output_pdf, format = "pdf")
-        output_pdf.close()
-        print "plot saved to " + outfile
-"""
+    # Return results
+    return figure
 
