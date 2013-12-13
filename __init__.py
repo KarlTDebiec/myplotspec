@@ -45,6 +45,8 @@ def set_axis(set_label, set_bound, axline, set_ticks, set_ticklabels, label = ""
         axline(ticks[-1], linewidth = 2, color = "black")
     set_ticks(np.array(ticks, np.float32))
     set_ticklabels(ticklabels, fontproperties = get_font(tick_fp))
+def set_subtitle(axes, label, fp = "11b", **kwargs):
+    axes.set_title(label = label, fontproperties = get_font(fp), **kwargs)
 def set_title(figure, edge_distance = 0.5, fp = "16b", **kwargs):
     edges           = get_edges(figure)
     kwargs["x"]     = (np.min(edges["x"]) + np.max(edges["x"])) / 2.0
