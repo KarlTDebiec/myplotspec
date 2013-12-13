@@ -126,23 +126,23 @@ def plot_pmf_single(data, key, **kwargs):
         y           = y[:x.size]
         x           = np.mean(np.reshape(x, (x.size / downsample, downsample)), axis = 1)
         y           = np.mean(np.reshape(y, (y.size / downsample, downsample)), axis = 1)
-#        try:
-#            cip_index   = np.where(y == np.nanmin(y))[0][0]
-#            dsb_index   = cip_index + np.where(y[cip_index + 1:] - y[cip_index:-1] < 0)[0][0]
-#            ssip_index  = 0
-#            print dataset.ff, dataset.wm
-#            if hasattr(dataset, "cutoffs"):
-#                if not hasattr(dataset.cutoffs, "__iter__"): dataset.cutoffs = [dataset.cutoffs]
-#                print "    CUT is at {0:5.3f} A".format(dataset.cutoffs[0])
-#                cut_index = np.abs(x - dataset.cutoffs[0]).argmin()
-#                from scipy.integrate import trapz
-#                print "   ", trapz(x[cip_index:cut_index], y[cip_index:cut_index])
-#            print "    CIP is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[cip_index]), float(y[cip_index]))
-#            print "    DSB is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[dsb_index]), float(y[dsb_index]))
-#            axes.plot(x[cip_index], y[cip_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
-#            axes.plot(x[dsb_index], y[dsb_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
-#        except:
-#            pass
+        try:
+            cip_index   = np.where(y == np.nanmin(y))[0][0]
+            dsb_index   = cip_index + np.where(y[cip_index + 1:] - y[cip_index:-1] < 0)[0][0]
+            ssip_index  = 0
+            print dataset.ff, dataset.wm
+            if hasattr(dataset, "cutoffs"):
+                if not hasattr(dataset.cutoffs, "__iter__"): dataset.cutoffs = [dataset.cutoffs]
+                print "    CUT is at {0:5.3f} A".format(dataset.cutoffs[0])
+                cut_index = np.abs(x - dataset.cutoffs[0]).argmin()
+                from scipy.integrate import trapz
+                print "   ", trapz(x[cip_index:cut_index], y[cip_index:cut_index])
+            print "    CIP is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[cip_index]), float(y[cip_index]))
+            print "    DSB is at {0:5.3f} A with depth of {1:5.3f}".format(float(x[dsb_index]), float(y[dsb_index]))
+            axes.plot(x[cip_index], y[cip_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
+            axes.plot(x[dsb_index], y[dsb_index], marker="|", ls="none", mfc="black", mec="black", ms=10, mew=2)
+        except:
+            pass
         handles    += axes.plot(x, y, lw = 2, color = dataset.color)
         labels     += [dataset.label]
 #        if bins is not None:
