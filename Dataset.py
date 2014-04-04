@@ -29,6 +29,7 @@ class Dataset:
             with HDF5_File(infile) as hdf5_file:
                 for key in keys:
                     key     = hdf5_file._strip_path(key)
+                    if verbose and not key in hdf5_file: print "WARNING: COULD NOT LOAD '{0}' FROM '{1}'".format(key, infile)
                     try:    self.data[key]  = hdf5_file[key]
                     except: pass
                     try:    self.attrs[key] = hdf5_file.attrs(key)
