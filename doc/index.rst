@@ -8,25 +8,17 @@ Introduction
 
 Functions
 ---------
-.. toctree::
-    :maxdepth: 2
 
-    functions/axis_formatting
-    functions/text_formatting
-    functions/legend_formatting
+.. toctree::
+    :maxdepth: 4
+
+    functions/formatting
     functions/auxiliary
-
-Classes
--------
-.. toctree::
-    :maxdepth: 2
-
-    classes/Dataset
 
 Decorators
 ----------
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 4
 
     decorators/Figure_Output
 
