@@ -1,0 +1,6 @@
+Plot Toolkit is a set of python functions, classes, and decorators intended to simplify usage of the matplotlib package.
+Matplotlib provides an excellent framework for rapidly generating plots using python. However, applying strict
+formatting specifications to these plots requires writing a large amount of code that is difficult to read and difficult
+to remember. Plot Toolkit's purpose is to allow users to generate plots with strict formatting specifications using
+matplotlib, without writing large amounts of complex code.
+
