@@ -166,7 +166,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'plot_toolkitdoc'
+htmlhelp_basename = "plot_toolkitdoc"
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -179,14 +179,14 @@ latex_elements = {
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
-#'preamble': '',
+"preamble": "\setcounter{tocdepth}{4}",
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'plot_toolkit.tex', u'Plot Toolkit Documentation',
-   u'Karl Debiec', 'manual'),
+  ("index", "plot_toolkit.tex", "Plot Toolkit Documentation",
+   "Karl Debiec", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

@@ -4,7 +4,7 @@
 ####################################################### MODULES ########################################################
 import os, sys
 import numpy as np
-from   ...plot_toolkit.auxiliary import gen_font
+from   ..auxiliary import gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def set_legend(subplot, handles = None, labels = None, fp = "8r", loc = 1, **kwargs):
     """

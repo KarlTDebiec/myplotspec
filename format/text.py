@@ -4,7 +4,7 @@
 ####################################################### MODULES ########################################################
 import os, sys
 import numpy as np
-from   ...plot_toolkit.auxiliary import get_edges, gen_font
+from   ..auxiliary import get_edges, gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def set_title(figure, edge_distance = 0.5, fp = "16b", **kwargs):
     """

@@ -4,7 +4,7 @@
 ####################################################### MODULES ########################################################
 import os, sys, warnings
 import numpy as np
-from   ...plot_toolkit.auxiliary import get_edges, gen_font
+from   ..auxiliary import get_edges, gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def set_xaxis(subplot, **kwargs):
     """
