@@ -5,9 +5,8 @@
 import os, sys, types
 import numpy as np
 import matplotlib
-from   matplotlib.backends.backend_pdf import PdfPages
 ###################################################### DECORATORS ######################################################
-class Figure_Output(object):
+class Figure_Output:
     """
     Decorator class to help functions that generate plots save figures more easily
 
@@ -20,12 +19,12 @@ class Figure_Output(object):
         | If *outfile* is a string ending in '.pdf', saves figure as a pdf file using PdfPages
         | If *outfile* is a PdfPages object, appends figure to that object as a page
     """
-    def __init__(self, plot_function):
-        self.plot_function  = plot_function
-        self.__doc__        = plot_function.__doc__
+    def __init__(self, function):
+        self.function   = function
+        self.__doc__    = function.__doc__
     def __call__(self, outfile = "test.pdf", *args, **kwargs):
         verbose = kwargs.get("verbose", "True")
-        figure  = self.plot_function(*args, **kwargs)
+        figure  = self.function(*args, **kwargs)
         if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
             figure.savefig(outfile, format = "pdf")
             if verbose: print "Figure saved to'{0}'.".format(os.path.abspath(outfile._file.fh.name))
