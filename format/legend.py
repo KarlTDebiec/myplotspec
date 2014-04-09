@@ -1,11 +1,10 @@
 #!/usr/bin/python
 #   plot_toolkit.format.legend.py
-#   Written by Karl Debiec on 12-10-22
-#   Last updated by Karl Debiec 14-04-04
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-09
 ####################################################### MODULES ########################################################
 import os, sys
 import numpy as np
-from   plot_toolkit.auxiliary import gen_font
+from   ...plot_toolkit.auxiliary import gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def set_legend(subplot, handles = None, labels = None, fp = "8r", loc = 1, **kwargs):
     """

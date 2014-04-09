@@ -12,15 +12,14 @@ Functions
 .. toctree::
     :maxdepth: 4
 
-    functions/formatting
-    functions/auxiliary
+    functions
 
 Decorators
 ----------
 .. toctree::
     :maxdepth: 4
 
-    decorators/Figure_Output
+    decorators
 
 .. only:: html
 

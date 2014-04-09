@@ -1,10 +1,10 @@
 #!/usr/bin/python
 #   plot_toolkit.Figure_Output.py
-#   Written by Karl Debiec on 12-10-22
-#   Last updated by Karl Debiec 14-04-04
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-09
 ####################################################### MODULES ########################################################
 import os, sys, types
 import numpy as np
+import matplotlib
 from   matplotlib.backends.backend_pdf import PdfPages
 ###################################################### DECORATORS ######################################################
 class Figure_Output(object):
@@ -21,11 +21,12 @@ class Figure_Output(object):
         | If *outfile* is a PdfPages object, appends figure to that object as a page
     """
     def __init__(self, plot_function):
-        self.plot_function = plot_function
+        self.plot_function  = plot_function
+        self.__doc__        = plot_function.__doc__
     def __call__(self, outfile = "test.pdf", *args, **kwargs):
         verbose = kwargs.get("verbose", "True")
         figure  = self.plot_function(*args, **kwargs)
-        if isinstance(outfile, mpl.backends.backend_pdf.PdfPages):
+        if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
             figure.savefig(outfile, format = "pdf")
             if verbose: print "Figure saved to'{0}'.".format(os.path.abspath(outfile._file.fh.name))
         elif isinstance(outfile, types.StringTypes):

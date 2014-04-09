@@ -1,7 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.auxiliary.py
-#   Written by Karl Debiec on 12-10-22
-#   Last updated by Karl Debiec 14-04-04
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-09
 ####################################################### MODULES ########################################################
 import os, sys
 import numpy as np
@@ -29,8 +28,8 @@ def abs_listdir(directory, **kwargs):
 def hsl_to_rgb(h, s, l, **kwargs):
     """
     **Arguments:**
-        :*h*:   hue (0.0 - 1.0)
-        :*s*:   saturation (0.0 - 1.0)
+        :*h*:   hue          (0.0 - 1.0)
+        :*s*:   saturation   (0.0 - 1.0)
         :*l*:   luminescence (0.0 - 1.0)
 
     **Returns:**
@@ -49,6 +48,31 @@ def hsl_to_rgb(h, s, l, **kwargs):
     elif hp >= 3. and hp <  4.: return np.array([0., i,   c]) + m
     elif hp >= 4. and hp <  5.: return np.array([i,  0.,  c]) + m
     elif hp >= 5. and hp <= 6.: return np.array([c,  0.,  i]) + m
+
+def rgb_to_hsl(r, g, b):
+    """
+    **Arguments:**
+        :*r*:   red   (0.0 - 1.0)
+        :*g*:   green (0.0 - 1.0)
+        :*b*:   blue  (0.0 - 1.0)
+
+    **Returns:**
+        :*hsl*: Numpy array of equivalent hue, saturation, luminescence
+
+    .. todo::
+        - Should smoothly accept separate r, g, b variables or list or numpy array of length 3
+    """
+    x   = max(r, g, b)
+    n   = min(r, g, b)
+    c   = x - n
+    l   = 0.5 * (x + n)
+    if   c == 0.: h = 0.
+    elif x == r:  h = (((g - b) / c) % 6.) / 6.
+    elif x == g:  h = (((b - r) / c) + 2.) / 6.
+    elif x == b:  h = (((r - g) / c) + 4.) / 6.
+    if   c == 0:  s = 0.
+    else:         s = c / (1. - np.abs(2. * l - 1.))
+    return np.array([h, s, l])
 
 def pad_zero(ticks, **kwargs):
     """

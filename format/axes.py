@@ -1,11 +1,10 @@
 #!/usr/bin/python
 #   plot_toolkit.format.axes.py
-#   Written by Karl Debiec on 12-10-22
-#   Last updated by Karl Debiec 14-04-04
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-09
 ####################################################### MODULES ########################################################
 import os, sys, warnings
 import numpy as np
-from   plot_toolkit.auxiliary import gen_font
+from   ...plot_toolkit.auxiliary import get_edges, gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def set_xaxis(subplot, **kwargs):
     """
@@ -91,7 +90,7 @@ def _set_axes(set_label, set_bound, axline, set_ticks, set_ticklabels, ticks = r
         :*outline*:             Add dark outline to axis
 
     .. todo::
-        - Should draw outline using setax[h,v]line, should set the spline width directly
+        - Should not draw outline using setax[h,v]line, should set the spline width directly
         - Consider accepting font as either '##L' or <matplotlib.font_manager.FontProperties> object
         - Consider adding support for gridlines
     """
