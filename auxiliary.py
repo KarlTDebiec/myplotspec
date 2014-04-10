@@ -1,6 +1,12 @@
 #!/usr/bin/python
 #   plot_toolkit.auxiliary.py
 #   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-09
+"""
+Auxiliary functions used for various tasks
+
+..todo:
+    - Add function to identify subplots; accept subplot OrderedDict and print index in center of each plot
+"""
 ####################################################### MODULES ########################################################
 import os, sys
 import numpy as np
@@ -129,9 +135,10 @@ def gen_contour_levels(I, cutoff = 0.9875, include_negative = False, **kwargs):
         - Needs partner function to analyze amino acid sequence, estimate number of peaks, and choose appropriate cutoff
         - Double check overall; probably could be considerably improved
     """
+
     I_flat      = np.sort(I.flatten())
-    min_level   = I_flat[int(I_flat.size * cutoff)]
-    max_level   = I_flat[-1]
+    min_level   = kwargs.get("min_level", I_flat[int(I_flat.size * cutoff)])
+    max_level   = kwargs.get("max_level", I_flat[-1])
     exp_int     = (max_level ** (1.0 / 9.0)) / (min_level ** (1.0 / 9.0))
     p_levels    = np.array([min_level * exp_int ** a for a in range(0, 10, 1)][:-1], dtype = np.int)
     if include_negative:
@@ -146,25 +153,26 @@ def gen_contour_levels(I, cutoff = 0.9875, include_negative = False, **kwargs):
 
 def gen_cmap(color, **kwargs):
     """
-    Returns colormap that is *color* over all values; not really useful for heatmaps but useful for countours
+    Returns colormap that is *color* over all values 
+
+    Not useful for heatmaps; useful for countours
 
     **Arguments:**
         :*color*:   Tuple, list, or numpy array of red, green, and blue (0.0-1.0);
                     Alternatively, string of named matplotlib color
     **Returns:**
         :*cmap*:    <matplotlib.colors.LinearSegmentedColormap>
-
-    .. todo::
-        - Should accept matplotlib's 1-letter color codes
     """
     if isinstance(color, str):
-        if   color == "blue":       r, g, b = [0.00, 0.00, 1.00]
-        elif color == "red":        r, g, b = [1.00, 0.00, 0.00]
-        elif color == "green":      r, g, b = [0.00, 0.50, 0.00]
-        elif color == "cyan":       r, g, b = [0.00, 0.75, 0.75]
-        elif color == "magenta":    r, g, b = [0.75, 0.00, 0.75]
-        elif color == "yellow":     r, g, b = [0.75, 0.75, 0.00]
-        elif color == "black":      r, g, b = [0.00, 0.00, 0.00]
+        if   color in ["b", "blue"]:    r, g, b = [0.00, 0.00, 1.00]
+        elif color in ["r", "red"]:     r, g, b = [1.00, 0.00, 0.00]
+        elif color in ["g", "green"]:   r, g, b = [0.00, 0.50, 0.00]
+        elif color in ["c", "cyan"]:    r, g, b = [0.00, 0.75, 0.75]
+        elif color in ["m", "magenta"]: r, g, b = [0.75, 0.00, 0.75]
+        elif color in ["y", "yellow"]:  r, g, b = [0.75, 0.75, 0.00]
+        elif color in ["k", "black"]:   r, g, b = [0.00, 0.00, 0.00]
+        elif color in ["w", "white"]:   r, g, b = [1.00, 1.00, 1.00]
+        else:                           raise Exception("Unrecognized input to gen_cmap(): {0}".format(color))
     else: r, g, b = color
     cdict   = {"red": ((0, r, r), (1, r, r)), "green": ((0, g, g), (1, g, g)), "blue": ((0, b, b), (1, b, b))}
     return    cl.LinearSegmentedColormap("cmap", cdict, 256)

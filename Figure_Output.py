@@ -27,12 +27,12 @@ class Figure_Output:
         figure  = self.function(*args, **kwargs)
         if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
             figure.savefig(outfile, format = "pdf")
-            if verbose: print "Figure saved to'{0}'.".format(os.path.abspath(outfile._file.fh.name))
+            if verbose: print "Figure saved to '{0}'.".format(os.path.abspath(outfile._file.fh.name))
         elif isinstance(outfile, types.StringTypes):
             if outfile.endswith("pdf"):
                 outfile  = PdfPages(outfile)
                 figure.savefig(outfile, format = "pdf")
-                if verbose: print "Figure saved to'{0}'.".format(os.path.abspath(outfile._file.fh.name))
+                if verbose: print "Figure saved to '{0}'.".format(os.path.abspath(outfile._file.fh.name))
                 outfile.close()
             else:
                 try:
