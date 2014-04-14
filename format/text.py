@@ -1,10 +1,11 @@
 #!/usr/bin/python
 #   plot_toolkit.format.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-09
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-13
 ####################################################### MODULES ########################################################
+from __future__ import division, print_function
 import os, sys
 import numpy as np
-from   ..auxiliary import get_edges, gen_font
+from ..auxiliary import get_edges, gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def set_title(figure, edge_distance = 0.5, fp = "16b", **kwargs):
     """

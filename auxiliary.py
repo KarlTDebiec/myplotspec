@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.auxiliary.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-09
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-13
 """
 Auxiliary functions used for various tasks
 
@@ -8,9 +8,10 @@ Auxiliary functions used for various tasks
     - Add function to identify subplots; accept subplot OrderedDict and print index in center of each plot
 """
 ####################################################### MODULES ########################################################
+from __future__ import division, print_function
 import os, sys
 import numpy as np
-from   collections import OrderedDict
+from collections import OrderedDict
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import matplotlib.cm as cm
@@ -179,10 +180,10 @@ def gen_cmap(color, **kwargs):
 
 def gen_figure_subplots(**kwargs):
     """
-    Generates figure and subplots according to selected format.
+    Generates figure and subplots according to selected format
 
     **Arguments:**
-        :*format*:      String of form 'L##' in which 'L' is 'l' for landscape or 'p' for portrait and '##' is the
+        :*format*:      String of form 'L#' in which 'L' is 'l' for landscape or 'p' for portrait and '#' is the
                         number of subplots
         :*fig_w*:       Figure width
         :*fig_h*:       Figure height
@@ -198,7 +199,8 @@ def gen_figure_subplots(**kwargs):
         :*subplots*:    OrderedDict of <matplotlib.axes.AxesSubplot> (1-indexed)
 
     .. todo::
-        Is there still a point to this? It ended up fairly similar to matplotlib.figure.subplots_adjust().
+        - Is there still a point to this? It ended up fairly similar to matplotlib.figure.subplots_adjust().
+        - The default proportions are appropriate for NMR, but not necessarily in general; should this be relocated?
     """
     format = kwargs.get("format", "l1").lower()
     if   format == "l1":
