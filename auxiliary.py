@@ -88,6 +88,9 @@ def pad_zero(ticks, **kwargs):
 
     **Returns:**
         :*tick_labels*:     Tick labels, each with the same number of trailing zeros
+
+    .. todo:
+        - Accept explicit number of trailing zeros (is this necessary?)
     """
     n_zeros = 0
     for tick in ticks:

@@ -100,7 +100,6 @@ def set_inset(subplot, xpos = 0.5, ypos = 0.9, fp = "11b", **kwargs):
         :*ypos*:    Vertical   position of title in subplot reference frame; proportion (0.0-1.0)
         :*x*:       Horizontal position of inset in subplot reference frame; proportion (0.0-1.0); (overrides *xpos*)
         :*y*:       Vertical   position of inset in subplot reference frame; proportion (0.0-1.0); (overrides *ypos*)
-        - Several of these labeling functions can probably be merged analagously to set_[x,y]axis
 
     **Returns:**
         :*text*:                <matplotlib.text.Text>
