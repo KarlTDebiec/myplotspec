@@ -88,30 +88,27 @@ def set_bigylabel(figure, side = "left", edge_distance = 0.3, fp = "11b", **kwar
     kwargs["s"] = kwargs.pop("s", kwargs.get("text", kwargs.get("label")))
     return set_text(figure, fp = fp, rotation = "vertical", **kwargs)
 
-def set_inset(subplot, xpos = 0.5, ypos = 0.9, fp = "11b", **kwargs):
+def set_inset(subplot, xpos = 0.5, ypos = 0.5, fp = "11b", **kwargs):
     """
     Prints text as an inset to a subplot
 
     **Arguments:**
-        :*subplot*: matplotlib.axes.AxesSubplot on which to act
+        :*subplot*: <matplotlib.axes.AxesSubplot> on which to act
         :*text*:    Inset text ('s' and 'inset' also supported)
         :*fp*:      Inset text font in form of '##L'
-        :*xpos*:    Horizontal position of title in subplot reference frame; proportion (0.0-1.0)
-        :*ypos*:    Vertical   position of title in subplot reference frame; proportion (0.0-1.0)
-        :*x*:       Horizontal position of inset in subplot reference frame; proportion (0.0-1.0); (overrides *xpos*)
-        :*y*:       Vertical   position of inset in subplot reference frame; proportion (0.0-1.0); (overrides *ypos*)
+        :*xpos*:    Horizontal position of inset in subplot reference frame; proportion (0.0-1.0)
+        :*ypos*:    Vertical   position of inset in subplot reference frame; proportion (0.0-1.0)
+        :*x*:       Horizontal position of inset in subplot reference frame; absolute (overrides *xpos*)
+        :*y*:       Vertical   position of inset in subplot reference frame; absolute (overrides *ypos*)
         - Several of these labeling functions can probably be merged analagously to set_[x,y]axis
 
     **Returns:**
-        :*text*:                <matplotlib.text.Text>
-
-    .. todo:
-        - This is likely currently broken.
-        - Revise to draw text to subplot, not figure
+        :*text*:    <matplotlib.text.Text>
     """
-    position    = subplot.get_position()
-    kwargs["x"] = kwargs.get("x", position.xmin + xpos * position.width)
-    kwargs["y"] = kwargs.get("y", position.ymin + ypos * position.height)
+    xbound      = subplot.get_xbound()
+    ybound      = subplot.get_ybound()
+    kwargs["x"] = kwargs.get("x", xbound[0] + xpos * xbound[1])
+    kwargs["y"] = kwargs.get("y", ybound[0] + ypos * ybound[1])
     kwargs["s"] = kwargs.pop("s", kwargs.get("text", kwargs.get("inset")))
     return set_text(subplot, fp = fp, **kwargs)
 

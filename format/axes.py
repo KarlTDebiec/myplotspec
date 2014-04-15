@@ -7,7 +7,7 @@ import os, sys, warnings
 import numpy as np
 from ..auxiliary import get_edges, gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
-def set_xaxis(subplot, outline = True, **kwargs):
+def set_xaxis(subplot, outline = False, **kwargs):
     """
     Formats an X axis
 
@@ -29,7 +29,7 @@ def set_xaxis(subplot, outline = True, **kwargs):
         subplot.spines["top"].set_lw(2)
         subplot.spines["bottom"].set_lw(2)
 
-def set_yaxis(subplot, outline = True, **kwargs):
+def set_yaxis(subplot, outline = False, **kwargs):
     """
     Formats a Y axis
 
@@ -51,7 +51,7 @@ def set_yaxis(subplot, outline = True, **kwargs):
         subplot.spines["left"].set_lw(2)
         subplot.spines["right"].set_lw(2)
 
-def set_colorbar(cbar, ticks, ticklabels, label = "", label_fp = "12b", tick_fp = "8r", **kwargs):
+def set_colorbar(cbar, ticks, ticklabels, label = "", label_fp = "10b", tick_fp = "8r", **kwargs):
     """
     Formats a colorbar
 

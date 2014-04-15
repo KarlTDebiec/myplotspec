@@ -226,6 +226,16 @@ def gen_figure_subplots(**kwargs):
         sub_w, sub_h    = kwargs.get("sub_w",  2.950), kwargs.get("sub_h",  2.100)
         mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
         mar_w, mar_h    = kwargs.get("mar_w",  0.700), kwargs.get("mar_h",  0.500)
+    elif format == "p7":
+        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
+        sub_w, sub_h    = kwargs.get("sub_w",  6.600), kwargs.get("sub_h",  0.900)
+        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
+        mar_h           = kwargs.get("mar_h",  0.000)
+    elif format == "p10":
+        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
+        sub_w, sub_h    = kwargs.get("sub_w",  6.600), kwargs.get("sub_h",  0.900)
+        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
+        mar_h           = kwargs.get("mar_h",  0.000)
     figure  = plt.figure(figsize = [fig_w, fig_h])
     subplots = OrderedDict()
     if   format.endswith("1"):
@@ -235,7 +245,7 @@ def gen_figure_subplots(**kwargs):
                                    sub_w                            / fig_w,    # Width
                                    sub_h                            / fig_h])   # Height
     elif format.endswith("2"):
-        for i in [1,2]:     subplots[i] = figure.add_subplot(2, 2, i, autoscale_on = False)
+        for i in [1,2]:     subplots[i] = figure.add_subplot(1, 2, i, autoscale_on = False)
         subplots[1].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
                                   (fig_h - mar_t         - 1*sub_h) / fig_h,
                                    sub_w                            / fig_w,
@@ -262,6 +272,20 @@ def gen_figure_subplots(**kwargs):
                                   (fig_h - mar_t - mar_h - 2*sub_h) / fig_h,
                                    sub_w                            / fig_w,
                                    sub_h                            / fig_h])
+    elif format == "p7":
+        for i in [1,2,3,4,5,6,7]:
+            subplots[i] = figure.add_subplot(1, 7, i, autoscale_on = False)
+            subplots[i].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
+                                      (fig_h - mar_t         - i*sub_h) / fig_h,
+                                       sub_w                            / fig_w,
+                                       sub_h                            / fig_h])
+    elif format == "p10":
+        for i in [1,2,3,4,5,6,7,8,9,10]:
+            subplots[i] = figure.add_subplot(1, 10, i, autoscale_on = False)
+            subplots[i].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
+                                      (fig_h - mar_t         - i*sub_h) / fig_h,
+                                       sub_w                            / fig_w,
+                                       sub_h                            / fig_h])
     return figure, subplots
 
 
