@@ -219,14 +219,14 @@ def quick_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
     """
 
     # Parse arguments
-    sub_width  = kwargs.get("sub_width",  6.000)
-    sub_height = kwargs.get("sub_height", 2.000)
-    top        = kwargs.get("top",        0.200)
-    bottom     = kwargs.get("bottom",     0.400)
-    right      = kwargs.get("right",      0.200)
-    left       = kwargs.get("left",       0.400)
-    hspace     = kwargs.get("hspace",     0.200)
-    wspace     = kwargs.get("wspace",     0.200)
+    sub_width  = kwargs.get("sub_width",  6.00)
+    sub_height = kwargs.get("sub_height", 2.00)
+    top        = kwargs.get("top",        0.20)
+    bottom     = kwargs.get("bottom",     0.40)
+    right      = kwargs.get("right",      0.20)
+    left       = kwargs.get("left",       0.40)
+    hspace     = kwargs.get("hspace",     0.20)
+    wspace     = kwargs.get("wspace",     0.20)
     fig_width  = kwargs.get("fig_width",  left + (sub_width  * ncols) + (wspace * (ncols - 1)) + right)
     fig_height = kwargs.get("fig_height", top  + (sub_height * nrows) + (hspace * (nrows - 1)) + bottom)
 
@@ -238,137 +238,18 @@ def quick_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
                           wspace = wspace              / fig_width,
                           hspace = hspace              / fig_height)
 
-    # Generate, adjust, and return figure and subplots
+    # Generate figure and subplots
     figure, subplots = plt.subplots(nrows, ncols, squeeze = True, figsize = [fig_width, fig_height],
                        subplot_kw = dict(autoscale_on = False))
-    if nrows * ncols == 1:
+    if   nrows * ncols == 1:
         subplots     = [subplots]
+    elif min(nrows, ncols) > 1:
+        subplots     = [subplot for inner in subplots for subplot in inner]
     subplots         = OrderedDict([(i, subplot) for i, subplot in enumerate(subplots, 1)])
+
+    # Apply adjustments and return
     figure.subplots_adjust(**subplot_kwargs)
     if verbose:
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(fig_width, fig_height))
     return figure, subplots
-
-def gen_figure_subplots(**kwargs):
-    """
-    Generates figure and subplots according to selected format
-
-    **Arguments:**
-        :*format*:      String of form 'L#' in which 'L' is 'l' for landscape or 'p' for portrait and '#' is the
-                        number of subplots
-        :*fig_w*:       Figure width
-        :*fig_h*:       Figure height
-        :*sub_w*:       Subplot width
-        :*sub_h*:       Subplot height
-        :*mar_t*:       Top margin
-        :*mar_r*:       Right margin
-        :*mar_w*:       Horizontal margin between subplots
-        :*mar_h*:       Vertical margin between subplots
-
-    **Returns:**
-        :*figure*:      matplotlib.figure.Figure
-        :*subplots*:    OrderedDict of <matplotlib.axes.AxesSubplot> (1-indexed)
-
-    .. todo::
-        - Is there still a point to this? It ended up fairly similar to matplotlib.figure.subplots_adjust().
-        - The default proportions are appropriate for NMR, but not necessarily in general; should this be relocated?
-    """
-    format = kwargs.get("format", "l1").lower()
-    if   format == "l1":
-        fig_w, fig_h    = kwargs.get("fig_w", 10.000), kwargs.get("fig_h",  7.500)  # Figure dimensions
-        sub_w, sub_h    = kwargs.get("sub_w",  9.100), kwargs.get("sub_h",  6.500)  # Subplot dimensions
-        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)  # Outer margins
-    elif format == "l4":
-        fig_w, fig_h    = kwargs.get("fig_w", 10.000), kwargs.get("fig_h",  7.500)
-        sub_w, sub_h    = kwargs.get("sub_w",  4.200), kwargs.get("sub_h",  3.000)
-        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
-        mar_w, mar_h    = kwargs.get("mar_w",  0.700), kwargs.get("mar_h",  0.500)  # Subplot margins
-    elif format == "p1":
-        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
-        sub_w, sub_h    = kwargs.get("sub_w",  6.600), kwargs.get("sub_h",  4.700)
-        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
-    elif format == "p2":
-        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
-        sub_w, sub_h    = kwargs.get("sub_w",  6.000), kwargs.get("sub_h",  4.250)
-        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.500)
-        mar_h           = kwargs.get("mar_h",  0.500)
-    elif format == "p4":
-        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
-        sub_w, sub_h    = kwargs.get("sub_w",  2.950), kwargs.get("sub_h",  2.100)
-        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
-        mar_w, mar_h    = kwargs.get("mar_w",  0.700), kwargs.get("mar_h",  0.500)
-    elif format == "p5":
-        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
-        sub_w, sub_h    = kwargs.get("sub_w",  6.600), kwargs.get("sub_h",  0.900)
-        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
-        mar_h           = kwargs.get("mar_h",  0.000)
-    elif format == "p7":
-        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
-        sub_w, sub_h    = kwargs.get("sub_w",  6.600), kwargs.get("sub_h",  0.900)
-        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
-        mar_h           = kwargs.get("mar_h",  0.000)
-    elif format == "p10":
-        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
-        sub_w, sub_h    = kwargs.get("sub_w",  6.600), kwargs.get("sub_h",  0.900)
-        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
-        mar_h           = kwargs.get("mar_h",  0.000)
-    figure  = plt.figure(figsize = [fig_w, fig_h])
-    subplots = OrderedDict()
-    if   format.endswith("1"):
-        subplots[1] = figure.add_subplot(1, 1, 1, autoscale_on = False)
-        subplots[1].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,    # Left
-                                  (fig_h - mar_t         - 1*sub_h) / fig_h,    # Bottom
-                                   sub_w                            / fig_w,    # Width
-                                   sub_h                            / fig_h])   # Height
-    elif format.endswith("2"):
-        for i in [1,2]:     subplots[i] = figure.add_subplot(1, 2, i, autoscale_on = False)
-        subplots[1].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
-                                  (fig_h - mar_t         - 1*sub_h) / fig_h,
-                                   sub_w                            / fig_w,
-                                   sub_h                            / fig_h])
-        subplots[2].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
-                                  (fig_h - mar_t - mar_h - 2*sub_h) / fig_h,
-                                   sub_w                            / fig_w,
-                                   sub_h                            / fig_h])
-    elif format.endswith("4"):
-        for i in [1,2,3,4]: subplots[i] = figure.add_subplot(2, 2, i, autoscale_on = False)
-        subplots[1].set_position([(fig_w - mar_r - mar_w - 2*sub_w) / fig_w,
-                                  (fig_h - mar_t         - 1*sub_h) / fig_h,
-                                   sub_w                            / fig_w,
-                                   sub_h                            / fig_h])
-        subplots[2].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
-                                  (fig_h - mar_t         - 1*sub_h) / fig_h,
-                                   sub_w                            / fig_w,
-                                   sub_h                            / fig_h])
-        subplots[3].set_position([(fig_w - mar_r - mar_w - 2*sub_w) / fig_w,
-                                  (fig_h - mar_t - mar_h - 2*sub_h) / fig_h,
-                                   sub_w                            / fig_w,
-                                   sub_h                            / fig_h])
-        subplots[4].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
-                                  (fig_h - mar_t - mar_h - 2*sub_h) / fig_h,
-                                   sub_w                            / fig_w,
-                                   sub_h                            / fig_h])
-    elif format == "p5":
-        for i in [1,2,3,4,5]:
-            subplots[i] = figure.add_subplot(1, 5, i, autoscale_on = False)
-            subplots[i].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
-                                      (fig_h - mar_t         - i*sub_h) / fig_h,
-                                       sub_w                            / fig_w,
-                                       sub_h                            / fig_h])
-    elif format == "p7":
-        for i in [1,2,3,4,5,6,7]:
-            subplots[i] = figure.add_subplot(1, 7, i, autoscale_on = False)
-            subplots[i].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
-                                      (fig_h - mar_t         - i*sub_h) / fig_h,
-                                       sub_w                            / fig_w,
-                                       sub_h                            / fig_h])
-    elif format == "p10":
-        for i in [1,2,3,4,5,6,7,8,9,10]:
-            subplots[i] = figure.add_subplot(1, 10, i, autoscale_on = False)
-            subplots[i].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
-                                      (fig_h - mar_t         - i*sub_h) / fig_h,
-                                       sub_w                            / fig_w,
-                                       sub_h                            / fig_h])
-    return figure, subplots
-
 
