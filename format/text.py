@@ -26,7 +26,7 @@ def set_title(figure, edge_distance = 0.5, fp = "16b", **kwargs):
     edges       = get_edges(figure)
     kwargs["x"] = kwargs.get("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
     kwargs["y"] = kwargs.get("y",  np.max(edges["y"]) + float(1.0 - np.max(edges["y"])) * edge_distance)
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("title")))
+    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("title", "")))
     return set_text(figure, fp = fp, **kwargs)
 
 def set_subtitle(subplot, label, fp = "11b", **kwargs):
@@ -62,7 +62,7 @@ def set_bigxlabel(figure, edge_distance = 0.3, fp = "11b", **kwargs):
     edges       = get_edges(figure)
     kwargs["x"] = kwargs.get("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
     kwargs["y"] = kwargs.get("y",  np.min(edges["y"]) * edge_distance)
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("label")))
+    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("label", "")))
     return set_text(figure, fp = fp, **kwargs)
 
 def set_bigylabel(figure, side = "left", edge_distance = 0.3, fp = "11b", **kwargs):
@@ -85,7 +85,7 @@ def set_bigylabel(figure, side = "left", edge_distance = 0.3, fp = "11b", **kwar
     if side == "left":    kwargs["x"] = kwargs.get("x", np.min(edges["x"]) * edge_distance)
     else:                 kwargs["x"] = kwargs.get("x", 1.0 - (1.0 - np.max(edges["x"])) * edge_distance)
     kwargs["y"]                       = kwargs.get("y", (np.min(edges["y"]) + np.max(edges["y"])) / 2.0)
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("label")))
+    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("label", "")))
     return set_text(figure, fp = fp, rotation = "vertical", **kwargs)
 
 def set_inset(subplot, xpos = 0.5, ypos = 0.5, fp = "11b", **kwargs):
@@ -108,7 +108,7 @@ def set_inset(subplot, xpos = 0.5, ypos = 0.5, fp = "11b", **kwargs):
     ybound      = subplot.get_ybound()
     kwargs["x"] = kwargs.get("x", xbound[0] + xpos * xbound[1])
     kwargs["y"] = kwargs.get("y", ybound[0] + ypos * ybound[1])
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("inset")))
+    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("inset", "")))
     return set_text(subplot, fp = fp, **kwargs)
 
 def set_text(figure_or_subplot, fp = "11b", ha = "center", va = "center", **kwargs):
@@ -125,7 +125,8 @@ def set_text(figure_or_subplot, fp = "11b", ha = "center", va = "center", **kwar
     **Returns:**
         :*text*:                <matplotlib.text.Text>
     """
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text"))
+    print(kwargs)
+    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", ""))
     return figure_or_subplot.text(ha = ha, va = va, fontproperties = gen_font(fp), **kwargs)
 
 
