@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.format.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-13
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-16
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
 import os, sys
@@ -100,7 +100,6 @@ def set_inset(subplot, xpos = 0.5, ypos = 0.5, fp = "11b", **kwargs):
         :*ypos*:    Vertical   position of inset in subplot reference frame; proportion (0.0-1.0)
         :*x*:       Horizontal position of inset in subplot reference frame; absolute (overrides *xpos*)
         :*y*:       Vertical   position of inset in subplot reference frame; absolute (overrides *ypos*)
-        - Several of these labeling functions can probably be merged analagously to set_[x,y]axis
 
     **Returns:**
         :*text*:    <matplotlib.text.Text>

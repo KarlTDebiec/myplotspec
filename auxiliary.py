@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.auxiliary.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-13
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-16
 """
 Auxiliary functions used for various tasks
 

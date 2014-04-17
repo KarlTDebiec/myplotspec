@@ -12,13 +12,16 @@ class Figure_Output:
     Decorator class to help functions that generate plots save figures more easily
 
     **Arguments:**
-        :*outfile*:  Output file name or <matplotlib.backends.backend_pdf.PdfPages> object
+        :*outfile*:  Output file name or <matplotlib.backends.backend_pdf.PdfPages>
 
     **Behavior:**
-        | Calls decorated function, which should return a matplotlib.Figure.Figure object.
+        | Calls decorated function, which should return a <matplotlib.Figure.Figure>
         | If *outfile* is a string ending in '.png', saves figure as a png file.
         | If *outfile* is a string ending in '.pdf', saves figure as a pdf file using PdfPages
         | If *outfile* is a PdfPages object, appends figure to that object as a page
+
+    .. todo:
+        - Support other outfile formats
     """
     def __init__(self, function):
         self.function   = function
