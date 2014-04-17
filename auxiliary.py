@@ -81,19 +81,26 @@ def rgb_to_hsl(r, g, b):
     else:         s = c / (1. - np.abs(2. * l - 1.))
     return np.array([h, s, l])
 
-def pad_zero(ticks, **kwargs):
+def pad_zero(ticks, digits = None, **kwargs):
     """
+    Generates a list of tick labels, each with the same number of digits after the decimal
+
     **Arguments:**
-        :*ticks*:           List or numpy array of ticks
+        :*ticks*:       List or numpy array of ticks
+        :*digits*:      Number of digits to include after the decimal
 
     **Returns:**
-        :*tick_labels*:     Tick labels, each with the same number of trailing zeros
+        :*tick_labels*: Tick labels, each with the same number of digits after the decimal
     """
-    n_zeros = 0
-    for tick in ticks:
-        if '.' in str(tick):    n_zeros = max(n_zeros, len(str(tick).split('.')[1]))
-    if n_zeros  == 0:   return np.array(ticks, dtype = np.int)
-    else:               return ["{0:.{1}f}".format(tick, n_zeros) for tick in ticks]
+    # If the number of digits to include has not been specified, use the largest number of digits in the provided ticks
+    if digits is None:
+        digits = 0
+        for tick in ticks:
+            if '.' in str(tick):    digits = max(digits, len(str(tick).split('.')[1]))
+    if digits  == 0:
+        return np.array(ticks, dtype = np.int)
+    else:
+        return ["{0:.{1}f}".format(tick, digits) for tick in ticks]
 
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def get_edges(figure, **kwargs):
@@ -226,6 +233,11 @@ def gen_figure_subplots(**kwargs):
         sub_w, sub_h    = kwargs.get("sub_w",  2.950), kwargs.get("sub_h",  2.100)
         mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
         mar_w, mar_h    = kwargs.get("mar_w",  0.700), kwargs.get("mar_h",  0.500)
+    elif format == "p5":
+        fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
+        sub_w, sub_h    = kwargs.get("sub_w",  6.600), kwargs.get("sub_h",  0.900)
+        mar_t, mar_r    = kwargs.get("mar_t",  0.500), kwargs.get("mar_r",  0.200)
+        mar_h           = kwargs.get("mar_h",  0.000)
     elif format == "p7":
         fig_w, fig_h    = kwargs.get("fig_w",  7.500), kwargs.get("fig_h", 10.000)
         sub_w, sub_h    = kwargs.get("sub_w",  6.600), kwargs.get("sub_h",  0.900)
@@ -272,6 +284,13 @@ def gen_figure_subplots(**kwargs):
                                   (fig_h - mar_t - mar_h - 2*sub_h) / fig_h,
                                    sub_w                            / fig_w,
                                    sub_h                            / fig_h])
+    elif format == "p5":
+        for i in [1,2,3,4,5]:
+            subplots[i] = figure.add_subplot(1, 5, i, autoscale_on = False)
+            subplots[i].set_position([(fig_w - mar_r         - 1*sub_w) / fig_w,
+                                      (fig_h - mar_t         - i*sub_h) / fig_h,
+                                       sub_w                            / fig_w,
+                                       sub_h                            / fig_h])
     elif format == "p7":
         for i in [1,2,3,4,5,6,7]:
             subplots[i] = figure.add_subplot(1, 7, i, autoscale_on = False)
