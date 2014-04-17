@@ -1,11 +1,12 @@
 #!/usr/bin/python
 #   plot_toolkit.auxiliary.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-16
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-17
 """
 Auxiliary functions used for various tasks
 
 ..todo:
     - Add function to identify subplots; accept subplot OrderedDict and print index in center of each plot
+    - Consider moving some import statements to functions
 """
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
@@ -184,6 +185,69 @@ def gen_cmap(color, **kwargs):
     else: r, g, b = color
     cdict   = {"red": ((0, r, r), (1, r, r)), "green": ((0, g, g), (1, g, g)), "blue": ((0, b, b), (1, b, b))}
     return    cl.LinearSegmentedColormap("cmap", cdict, 256)
+
+def quick_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
+    """
+    Generates a figure and subplots to specifications
+
+    Differs from matplotlib's built-in functions in that it:
+        - Supports input in inches rather that relative figure coordinates
+        - Calculates figure dimensions from provided subplot dimensions, rather than the reverse
+        - Returns subplots in an OrderedDict
+
+    **Arguments:**
+        :*nrows*:      Number of rows of subplots
+        :*ncols*:      Number of columns of subplots
+        :*sub_width*:  Width of subplot(s)
+        :*sub_height*: Height of subplot(s)
+        :*top*:        Distance between top of figure and highest subplot(s)
+        :*bottom*:     Distance between bottom of figure and lowest subplot(s)
+        :*right*:      Distance between right side of figure and rightmost subplot(s)
+        :*left*:       Distance between left side of figure and leftmost subplots(s)
+        :*hspace*:     Vertical distance between adjacent subplots
+        :*wspace*:     Horizontal distance between adjacent subplots
+        :*fig_width*:  Width of figure; by default calculated from above arguments
+        :*fig_height*: Height of figure, by default calculated from above arguments
+ 
+    **Returns:**
+        :*figure*:   <matplotlib.figure.Figure>
+        :*subplots*: OrderedDict of subplots (1-indexed)
+
+    .. todo:
+        - More intelligent default dimensions based on *nrows* and *ncols*
+        - Support centimeters?
+    """
+
+    # Parse arguments
+    sub_width  = kwargs.get("sub_width",  6.000)
+    sub_height = kwargs.get("sub_height", 2.000)
+    top        = kwargs.get("top",        0.200)
+    bottom     = kwargs.get("bottom",     0.400)
+    right      = kwargs.get("right",      0.200)
+    left       = kwargs.get("left",       0.400)
+    hspace     = kwargs.get("hspace",     0.200)
+    wspace     = kwargs.get("wspace",     0.200)
+    fig_width  = kwargs.get("fig_width",  left + (sub_width  * ncols) + (wspace * (ncols - 1)) + right)
+    fig_height = kwargs.get("fig_height", top  + (sub_height * nrows) + (hspace * (nrows - 1)) + bottom)
+
+    # Convert subplot dimensions from absolute inches to relative figure coordinates
+    subplot_kwargs = dict(left   = left                / fig_width,
+                          bottom = bottom              / fig_height,
+                          right  = (fig_width - right) / fig_width,
+                          top    = (fig_height - top)  / fig_height,
+                          wspace = wspace              / fig_width,
+                          hspace = hspace              / fig_height)
+
+    # Generate, adjust, and return figure and subplots
+    figure, subplots = plt.subplots(nrows, ncols, squeeze = True, figsize = [fig_width, fig_height],
+                       subplot_kw = dict(autoscale_on = False))
+    if nrows * ncols == 1:
+        subplots     = [subplots]
+    subplots         = OrderedDict([(i, subplot) for i, subplot in enumerate(subplots, 1)])
+    figure.subplots_adjust(**subplot_kwargs)
+    if verbose:
+        print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(fig_width, fig_height))
+    return figure, subplots
 
 def gen_figure_subplots(**kwargs):
     """

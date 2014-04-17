@@ -125,7 +125,6 @@ def set_text(figure_or_subplot, fp = "11b", ha = "center", va = "center", **kwar
     **Returns:**
         :*text*:                <matplotlib.text.Text>
     """
-    print(kwargs)
     kwargs["s"] = kwargs.pop("s", kwargs.pop("text", ""))
     return figure_or_subplot.text(ha = ha, va = va, fontproperties = gen_font(fp), **kwargs)
 
