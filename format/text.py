@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.format.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-16
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-19
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
 import os, sys
@@ -104,10 +104,12 @@ def set_inset(subplot, xpos = 0.5, ypos = 0.5, fp = "11b", **kwargs):
     **Returns:**
         :*text*:    <matplotlib.text.Text>
     """
-    xbound      = subplot.get_xbound()
-    ybound      = subplot.get_ybound()
-    kwargs["x"] = kwargs.get("x", xbound[0] + xpos * xbound[1])
-    kwargs["y"] = kwargs.get("y", ybound[0] + ypos * ybound[1])
+    xbound = subplot.get_xbound()
+    ybound = subplot.get_ybound()
+    if subplot.xaxis_inverted(): kwargs["x"] = kwargs.get("x", xbound[0] + (1-xpos) * (xbound[1] - xbound[0]))
+    else:                        kwargs["x"] = kwargs.get("x", xbound[0] + xpos     * (xbound[1] - xbound[0]))
+    if subplot.yaxis_inverted(): kwargs["y"] = kwargs.get("y", ybound[0] + (1-ypos) * (ybound[1] - ybound[0]))
+    else:                        kwargs["y"] = kwargs.get("y", ybound[0] + ypos     * (ybound[1] - ybound[0]))
     kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("inset", "")))
     return set_text(subplot, fp = fp, **kwargs)
 
