@@ -6,6 +6,7 @@ from __future__ import division, print_function
 import os, sys, types
 import numpy as np
 import matplotlib
+from matplotlib.backends.backend_pdf import PdfPages
 ###################################################### DECORATORS ######################################################
 class Figure_Output:
     """
