@@ -7,7 +7,7 @@ import os, sys
 import numpy as np
 from ..auxiliary import get_edges, gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
-def set_title(figure, edge_distance = 0.5, fp = "16b", **kwargs):
+def set_title(figure, **kwargs):
     """
     Prints a title for a figure
 
@@ -23,11 +23,13 @@ def set_title(figure, edge_distance = 0.5, fp = "16b", **kwargs):
         - Consider merging with plot_toolkit.set_subtitle and acting appropriately depending on whether a figure or
           subplot is passed
     """
-    edges       = get_edges(figure)
-    kwargs["x"] = kwargs.get("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
-    kwargs["y"] = kwargs.get("y",  np.max(edges["y"]) + float(1.0 - np.max(edges["y"])) * edge_distance)
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("title", "")))
-    return set_text(figure, fp = fp, **kwargs)
+    edges         = get_edges(figure)
+    edge_distance = kwargs.get("edge_distance", 0.5)
+    kwargs["fp"]  = kwargs.get("fp", "16b")
+    kwargs["x"]   = kwargs.get("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
+    kwargs["y"]   = kwargs.get("y",  np.max(edges["y"]) + float(1.0 - np.max(edges["y"])) * edge_distance)
+    kwargs["s"]   = kwargs.pop("s", kwargs.pop("text", kwargs.pop("title", "")))
+    return set_text(figure, **kwargs)
 
 def set_subtitle(subplot, label, fp = "11b", **kwargs):
     """

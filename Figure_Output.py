@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.Figure_Output.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-13
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 14-04-20
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
 import os, sys, types
@@ -10,7 +10,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 ###################################################### DECORATORS ######################################################
 class Figure_Output:
     """
-    Decorator class to help functions that generate plots save figures more easily
+    Decorator class to allow plotting functions to save figures more easily
 
     **Arguments:**
         :*outfile*:  Output file name or <matplotlib.backends.backend_pdf.PdfPages>
@@ -23,6 +23,9 @@ class Figure_Output:
 
     .. todo:
         - Support other outfile formats
+        - Support html output with mpld3
+        - Support show
+        - Figure out why figure cannot be returned from here
     """
     def __init__(self, function):
         self.function   = function
