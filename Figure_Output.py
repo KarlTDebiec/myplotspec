@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.Figure_Output.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 14-04-20
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 14-04-25
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
 import os, sys, types
@@ -22,9 +22,9 @@ class Figure_Output:
         | If *outfile* is a PdfPages object, appends figure to that object as a page
 
     .. todo:
-        - Support other outfile formats
+        - Test other outfile formats
         - Support html output with mpld3
-        - Support show
+        - Support show()
         - Figure out why figure cannot be returned from here
     """
     def __init__(self, function):

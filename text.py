@@ -1,13 +1,17 @@
 #!/usr/bin/python
-#   plot_toolkit.format.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-19
+#   plot_toolkit.text.py
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-03
+"""
+Functions for formatting text
+"""
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
 import os, sys
 import numpy as np
-from ..auxiliary import get_edges, gen_font
+import matplotlib
+from . import gen_font, get_edges, multi_kw
 ################################################# MATPLOTLIB FUNCTIONS #################################################
-def set_title(figure, **kwargs):
+def set_title(figure_or_subplot, *args, **kwargs):
     """
     Prints a title for a figure
 
@@ -23,30 +27,20 @@ def set_title(figure, **kwargs):
         - Consider merging with plot_toolkit.set_subtitle and acting appropriately depending on whether a figure or
           subplot is passed
     """
-    edges         = get_edges(figure)
-    edge_distance = kwargs.get("edge_distance", 0.5)
-    kwargs["fp"]  = kwargs.get("fp", "16b")
-    kwargs["x"]   = kwargs.get("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
-    kwargs["y"]   = kwargs.get("y",  np.max(edges["y"]) + float(1.0 - np.max(edges["y"])) * edge_distance)
-    kwargs["s"]   = kwargs.pop("s", kwargs.pop("text", kwargs.pop("title", "")))
-    return set_text(figure, **kwargs)
+    if   isinstance(figure_or_subplot, matplotlib.figure.Figure):
+        kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "14b"))
+        figure       = figure_or_subplot
+        kwargs["ha"] = kwargs.pop("ha", "center")
+        kwargs["va"] = kwargs.pop("va", "center")
+        kwargs["y"]  = (figure.get_figheight() - kwargs.pop("top", 1.0)) / figure.get_figheight()
+        kwargs["t"]  = multi_kw(["s", "t", "text", "title", "label"], args[0] if len(args) >= 1 else "", kwargs)
+        return figure.suptitle(**kwargs)
+    elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
+        kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b"))
+        kwargs["label"] = multi_kw(["s", "text", "title", "label"], args[0] if len(args) >= 1 else "", kwargs)
+        return figure_or_subplot.set_title(**kwargs)
 
-def set_subtitle(subplot, label, fp = "11b", **kwargs):
-    """
-    Prints a title above a subplot
-
-    **Arguments:**
-        :*subplot*: <matplotlib.axes.AxesSubplot> on which to act
-        :*label*:   Subplot label
-        :*fp*:      Subplot label font in form of '##L'
-
-    .. todo::
-        - Consider merging with plot_toolkit.set_title and acting appropriately depending on whether a figure or
-          subplot is passed
-    """
-    return subplot.set_title(label = label, fontproperties = gen_font(fp), **kwargs)
-
-def set_bigxlabel(figure, edge_distance = 0.3, fp = "11b", **kwargs):
+def set_bigxlabel(figure, *args, **kwargs):
     """
     Prints a large X axis label shared by multiple subplots
 
@@ -61,13 +55,19 @@ def set_bigxlabel(figure, edge_distance = 0.3, fp = "11b", **kwargs):
     **Returns:**
         :*text*:                <matplotlib.text.Text>
     """
-    edges       = get_edges(figure)
-    kwargs["x"] = kwargs.get("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
-    kwargs["y"] = kwargs.get("y",  np.min(edges["y"]) * edge_distance)
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("label", "")))
-    return set_text(figure, fp = fp, **kwargs)
+    kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
+    edges           = get_edges(figure)
+    if "top" in kwargs:
+        top         = kwargs.pop("top")
+        kwargs["y"] = kwargs.get("y", (figure.get_figheight() - top) / figure.get_figheight())
+    else:
+        bottom      = kwargs.get("bottom", 0.2)
+        kwargs["y"] = kwargs.get("y", bottom / figure.get_figheight())
+    kwargs["x"]     = kwargs.get("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
+    kwargs["s"]     = multi_kw(["s", "text", "label", "xlabel"], args[0] if len(args) >= 1 else "", kwargs)
+    return set_text(figure, **kwargs)
 
-def set_bigylabel(figure, side = "left", edge_distance = 0.3, fp = "11b", **kwargs):
+def set_bigylabel(figure, *args, **kwargs):
     """
     Prints a large Y axis label shared by multiple subplots
 
@@ -83,14 +83,20 @@ def set_bigylabel(figure, side = "left", edge_distance = 0.3, fp = "11b", **kwar
     **Returns:**
         :*text*:                <matplotlib.text.Text>
     """
-    edges   = get_edges(figure)
-    if side == "left":    kwargs["x"] = kwargs.get("x", np.min(edges["x"]) * edge_distance)
-    else:                 kwargs["x"] = kwargs.get("x", 1.0 - (1.0 - np.max(edges["x"])) * edge_distance)
-    kwargs["y"]                       = kwargs.get("y", (np.min(edges["y"]) + np.max(edges["y"])) / 2.0)
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("label", "")))
-    return set_text(figure, fp = fp, rotation = "vertical", **kwargs)
+    kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
+    edges           = get_edges(figure)
+    if "right" in kwargs:
+        right       = kwargs.pop("right")
+        kwargs["x"] = kwargs.get("x", (figure.get_figwidth() - right) / figure.get_figwidth())
+    else:
+        left        = kwargs.get("left", 0.2)
+        kwargs["x"] = kwargs.get("x", left / figure.get_figwidth())
+    kwargs["y"]     = kwargs.get("y", (np.min(edges["y"]) + np.max(edges["y"])) / 2.0)
+    kwargs["rotation"] = kwargs.get("rotation", "vertical")
+    kwargs["s"]     = multi_kw(["s", "text", "label", "ylabel"], args[0] if len(args) >= 1 else "", kwargs)
+    return set_text(figure, **kwargs)
 
-def set_inset(subplot, xpos = 0.5, ypos = 0.5, fp = "11b", **kwargs):
+def set_inset(subplot, *args, **kwargs):
     """
     Prints text as an inset to a subplot
 
@@ -106,16 +112,22 @@ def set_inset(subplot, xpos = 0.5, ypos = 0.5, fp = "11b", **kwargs):
     **Returns:**
         :*text*:    <matplotlib.text.Text>
     """
-    xbound = subplot.get_xbound()
-    ybound = subplot.get_ybound()
+    kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
+    xpos         = kwargs.pop("xpos", 0.05)
+    ypos         = kwargs.pop("ypos", 0.95)
+    kwargs["ha"] = kwargs.pop("ha", "left")
+    kwargs["va"] = kwargs.pop("va", "top")
+    xbound       = subplot.get_xbound()
+    ybound       = subplot.get_ybound()
     if subplot.xaxis_inverted(): kwargs["x"] = kwargs.get("x", xbound[0] + (1-xpos) * (xbound[1] - xbound[0]))
     else:                        kwargs["x"] = kwargs.get("x", xbound[0] + xpos     * (xbound[1] - xbound[0]))
     if subplot.yaxis_inverted(): kwargs["y"] = kwargs.get("y", ybound[0] + (1-ypos) * (ybound[1] - ybound[0]))
     else:                        kwargs["y"] = kwargs.get("y", ybound[0] + ypos     * (ybound[1] - ybound[0]))
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", kwargs.pop("inset", "")))
-    return set_text(subplot, fp = fp, **kwargs)
+    kwargs["s"]  = multi_kw(["s", "text", "inset"], args[0] if len(args) >= 1 else "", kwargs)
+#    print(kwargs, xpos, ypos, xbound, ybound)
+    return set_text(subplot, **kwargs)
 
-def set_text(figure_or_subplot, fp = "11b", ha = "center", va = "center", **kwargs):
+def set_text(figure_or_subplot, *args, **kwargs):
     """
     Prints text on a figure or subplot
 
@@ -129,7 +141,9 @@ def set_text(figure_or_subplot, fp = "11b", ha = "center", va = "center", **kwar
     **Returns:**
         :*text*:                <matplotlib.text.Text>
     """
-    kwargs["s"] = kwargs.pop("s", kwargs.pop("text", ""))
-    return figure_or_subplot.text(ha = ha, va = va, fontproperties = gen_font(fp), **kwargs)
-
+    kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "10r", kwargs))
+    kwargs["s"]  = multi_kw(["s", "text"], args[0] if len(args) >= 1 else "", kwargs)
+    kwargs["ha"] = kwargs.pop("ha", "center")
+    kwargs["va"] = kwargs.pop("va", "center")
+    return figure_or_subplot.text(**kwargs)
 
