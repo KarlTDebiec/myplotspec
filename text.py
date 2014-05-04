@@ -1,8 +1,8 @@
 #!/usr/bin/python
 #   plot_toolkit.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-03
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-04
 """
-Functions for formatting text
+Functions for adding text labels and annotations
 """
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
@@ -13,22 +13,19 @@ from . import gen_font, get_edges, multi_kw
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def set_title(figure_or_subplot, *args, **kwargs):
     """
-    Prints a title for a figure
+    Prints a title for a figure or subplot
 
     **Arguments:**
-        :*figure*:          <matplotlib.figure.Figure> on which to act
-        :*text*:            Figure title text ('s' and 'title' also supported)
-        :*edge_distance*:   Distance between top of subplots and vertical center of title; proportion (0.0-1.0)
-        :*fp*:              Figure title font in form of '##L'
-        :*x*:               Horizontal position of title in figure reference frame (0.0-1.0); (override)
-        :*y*:               Vertical   position of title in figure reference frame (0.0-1.0); (override)
+        :*figure_or_subplot*: <Figure> or <Axes> on which to act
+        :*text*:              Title text; *s*, *t*, *title*, and *label* also supported
+        :*fp*:                Title font; *fontproperties* also supported
+        :*top*:               Distance between top of figure and title (inches); applies to Figure title only
 
-    .. todo::
-        - Consider merging with plot_toolkit.set_subtitle and acting appropriately depending on whether a figure or
-          subplot is passed
+    **Returns:**
+        :*text*:              New <Text>
     """
     if   isinstance(figure_or_subplot, matplotlib.figure.Figure):
-        kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "14b"))
+        kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "14b", kwargs))
         figure       = figure_or_subplot
         kwargs["ha"] = kwargs.pop("ha", "center")
         kwargs["va"] = kwargs.pop("va", "center")
@@ -36,27 +33,28 @@ def set_title(figure_or_subplot, *args, **kwargs):
         kwargs["t"]  = multi_kw(["s", "t", "text", "title", "label"], args[0] if len(args) >= 1 else "", kwargs)
         return figure.suptitle(**kwargs)
     elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
-        kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b"))
-        kwargs["label"] = multi_kw(["s", "text", "title", "label"], args[0] if len(args) >= 1 else "", kwargs)
+        kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
+        kwargs["label"] = multi_kw(["s", "t", "text", "title", "label"], args[0] if len(args) >= 1 else "", kwargs)
         return figure_or_subplot.set_title(**kwargs)
 
 def set_bigxlabel(figure, *args, **kwargs):
     """
-    Prints a large X axis label shared by multiple subplots
+    Prints a large x-axis label shared by multiple subplots
 
     **Arguments:**
-        :*figure*:          <matplotlib.figure.Figure> on which to act
-        :*text*:            Figure X axis label text ('s' and 'label' also supported)
-        :*edge_distance*:   Distance between bottom of subplots and vertical center of title; proportion (0.0-1.0)
-        :*fp*:              Figure X axis label font in form of '##L'
-        :*x*:               Horizontal position of title in figure reference frame (0.0-1.0); (override)
-        :*y*:               Vertical   position of title in figure reference frame (0.0-1.0); (override)
+        :*figure*: <Figure> on which to act
+        :*text*:   Label text; *s*, *label*, and *xlabel* also supported
+        :*fp*:     Label font; *fontproperties* also supported
+        :*bottom*: Distance between bottom of figure and label (inches)
+        :*top*:    Distance between top of figure and label (inches); overrides *bottom*
+        :*x*:      Horizontal position of title in figure reference frame (proportion 0.0-1.0); overrides *bottom*/*top*
+        :*y*:      Vertical   position of title in figure reference frame (proportion 0.0-1.0); overrides *bottom*/*top*
 
     **Returns:**
-        :*text*:                <matplotlib.text.Text>
+        :*text*:   New <Text>
     """
     kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
-    edges           = get_edges(figure)
+    edges                    = get_edges(figure)
     if "top" in kwargs:
         top         = kwargs.pop("top")
         kwargs["y"] = kwargs.get("y", (figure.get_figheight() - top) / figure.get_figheight())
@@ -69,22 +67,23 @@ def set_bigxlabel(figure, *args, **kwargs):
 
 def set_bigylabel(figure, *args, **kwargs):
     """
-    Prints a large Y axis label shared by multiple subplots
+    Prints a large x-axis label shared by multiple subplots
 
     **Arguments:**
-        :*figure*:          <matplotlib.figure.Figure> on which to act
-        :*text*:            Figure Y axis label text ('s' and 'label' also supported)
-        :*fp*:              Figure Y axis label font in form of '##L'
-        :*edge_distance*:   Distance between furthest left of subplots and horizontal center of title;
-                            proportion (0.0-1.0)
-        :*x*:               Horizontal position of label in figure reference frame; proportion (0.0-1.0); (override)
-        :*y*:               Vertical   position of label in figure reference frame; proportion (0.0-1.0); (override)
+        :*figure*:   <Figure> on which to act
+        :*text*:     Label text; *s*, *label*, and *ylabel* also supported
+        :*fp*:       Label font; *fontproperties* also supported
+        :*left*:     Distance between left side of figure and label (inches)
+        :*right*:    Distance between right side of figure and label (inches); overrides *right*
+        :*x*:        Horizontal position of title in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
+        :*y*:        Vertical   position of title in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
+        :*rotation*: Label rotation
 
     **Returns:**
-        :*text*:                <matplotlib.text.Text>
+        :*text*:   New <.Text>
     """
     kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
-    edges           = get_edges(figure)
+    edges                    = get_edges(figure)
     if "right" in kwargs:
         right       = kwargs.pop("right")
         kwargs["x"] = kwargs.get("x", (figure.get_figwidth() - right) / figure.get_figwidth())
@@ -98,19 +97,21 @@ def set_bigylabel(figure, *args, **kwargs):
 
 def set_inset(subplot, *args, **kwargs):
     """
-    Prints text as an inset to a subplot
+    Prints an inset to a subplot
 
     **Arguments:**
-        :*subplot*: <matplotlib.axes.AxesSubplot> on which to act
-        :*text*:    Inset text ('s' and 'inset' also supported)
-        :*fp*:      Inset text font in form of '##L'
-        :*xpos*:    Horizontal position of inset in subplot reference frame; proportion (0.0-1.0)
-        :*ypos*:    Vertical   position of inset in subplot reference frame; proportion (0.0-1.0)
-        :*x*:       Horizontal position of inset in subplot reference frame; absolute (overrides *xpos*)
-        :*y*:       Vertical   position of inset in subplot reference frame; absolute (overrides *ypos*)
+        :*subplot*: <Axes> on which to act
+        :*text*:    Inset text; *s* and *inset* also supported
+        :*fp*:      Inset font; *fontproperties* also supported
+        :*xpos*:    Horizontal position of inset in subplot reference frame; (proportion 0.0-1.0)
+        :*ypos*:    Vertical   position of inset in subplot reference frame; (proportion 0.0-1.0)
+        :*x*:       Horizontal position of inset in subplot reference frame; overrides *xpos*
+        :*y*:       Vertical   position of inset in subplot reference frame; overrides *ypos*
+        :*ha*:      Text horizontal alignment; default = 'left'
+        :*va:*:     Text vertical alignment; default = 'top'
 
     **Returns:**
-        :*text*:    <matplotlib.text.Text>
+        :*text*:    New <Text>
     """
     kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
     xpos         = kwargs.pop("xpos", 0.05)
@@ -124,7 +125,6 @@ def set_inset(subplot, *args, **kwargs):
     if subplot.yaxis_inverted(): kwargs["y"] = kwargs.get("y", ybound[0] + (1-ypos) * (ybound[1] - ybound[0]))
     else:                        kwargs["y"] = kwargs.get("y", ybound[0] + ypos     * (ybound[1] - ybound[0]))
     kwargs["s"]  = multi_kw(["s", "text", "inset"], args[0] if len(args) >= 1 else "", kwargs)
-#    print(kwargs, xpos, ypos, xbound, ybound)
     return set_text(subplot, **kwargs)
 
 def set_text(figure_or_subplot, *args, **kwargs):
@@ -132,14 +132,14 @@ def set_text(figure_or_subplot, *args, **kwargs):
     Prints text on a figure or subplot
 
     **Arguments:**
-        :*figure_or_subplot*:   <matplotlib.figure.Figure> or <matplotlib.axes.AxesSubplot> on which to act
-        :*text*:                Text ('s' also supported)
-        :*fp*:                  Text font in form of '##L' (default: '11b')
-        :*ha*:                  Text horizontal alignment  (default: 'center')
-        :*va*:                  Text vertical alignment    (default: 'center')
+        :*figure_or_subplot*: <Figure> or <Axes> on which to act
+        :*text*:              Text; *s* also supported
+        :*fp*:                Font; *fontproperties* also supported
+        :*ha*:                Text horizontal alignment; default = 'center'
+        :*va*:                Text vertical alignment; default = 'center'
 
     **Returns:**
-        :*text*:                <matplotlib.text.Text>
+        :*text*:              New <Text>
     """
     kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "10r", kwargs))
     kwargs["s"]  = multi_kw(["s", "text"], args[0] if len(args) >= 1 else "", kwargs)
