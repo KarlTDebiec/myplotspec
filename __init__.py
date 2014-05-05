@@ -13,23 +13,27 @@ General functions used for various tasks
 from __future__ import division, print_function
 import os, sys, types
 import numpy as np
-from collections import OrderedDict
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import matplotlib.colors as cl
 ################################################## GENERAL FUNCTIONS ###################################################
 def multi_kw(keywords, default, kwargs):
     """
-    Allows use of multiple keyword arguments
+    Function to allow arguments to be set by one of several potential keyword arguments. For example, the keyword
+    argument *s* represeting a string might be set using *s*, *text*, *label*, or if none of these are present, a
+    default value. Note that *kwargs* should not be passed to this function using the ** syntax.
 
     **Arguments:**
-        
-    **Returns:**
+        :*keywords*: List of acceptable keyword arguments; first match is used and other are deleted
+        :*default*:  Default value to use if none of *keywords* are present in *kwargs*
+        :*kwargs*:   Dictionary of keyword arguments to be tested
 
+    **Returns:**
+        :*value*:    Value from *kwargs* of first matching keyword in *keywords*, or *default* if none are present
     """
+    value = None
     for kw in [kw for kw in keywords if kw in kwargs]:
-        return kwargs.pop(kw)
+        if value is None:
+            value = kwargs.pop(kw)
+        else:
+            del kwargs[kw]
     return default
 
 def pad_zero(ticks, digits = None, **kwargs):
@@ -57,10 +61,13 @@ def pad_zero(ticks, digits = None, **kwargs):
 def get_edges(figure, **kwargs):
     """
     **Arguments:**
-        :*figure*:  <matplotlib.figure.Figure> on which to act
+        :*figure*:  <Figure> on which to act
 
     **Returns:**
         :*edges*:   Dictionary; keys are 'x' and 'y', values are numpy arrays with dimensions (axis, min...max)
+
+    .. todo:
+        - Should this instead return a numpy record array?
     """
     return {"x": np.array([[ax.get_position().xmin, ax.get_position().xmax] for ax in figure.axes]),
             "y": np.array([[ax.get_position().ymin, ax.get_position().ymax] for ax in figure.axes])}
@@ -68,14 +75,20 @@ def get_edges(figure, **kwargs):
 def gen_font(fp = None, **kwargs):
     """
     **Arguments:**
-        :*fp*:  String of form '##L' in which '##' is the font size and 'L' is 'r' for regular or 'b' for bold
+        :*fp*:              Font settings
+
+    **Behavior:**
+        If *fp* is:
+        | <FontProperties>: Act as a pass-through, return *fp* argument
+        | String:           Make new <FontProperties> from string, '##L'; '##' = size; 'L' = {'r': regular, 'b' bold}
+        | Dict:             Make new <FontProperties> using given keyword arguments
 
     **Returns:**
-        :*fp*:  <matplotlib.font_manager.FontProperties> object to given specifications
+        :*fp*:  <FontProperties> object to given specifications
     """
-    import matplotlib.font_manager as fm
+    import matplotlib.font_manager
 
-    if   isinstance(fp, fm.FontProperties):
+    if   isinstance(fp, matplotlib.font_manager.FontProperties):
         return fp
     elif isinstance(fp, types.StringTypes):
         if not "fname" in kwargs:
@@ -84,7 +97,7 @@ def gen_font(fp = None, **kwargs):
         kwargs["weight"]     = kwargs.get("weight", {"r":"regular", "b":"bold"}[fp[-1]])
     elif isinstance(fp, types.DictType):
         kwargs.update(fp)
-    return fm.FontProperties(**kwargs)
+    return matplotlib.font_manager.FontProperties(**kwargs)
 
 def gen_contour_levels(I, cutoff = 0.9875, include_negative = False, **kwargs):
     """
@@ -130,6 +143,7 @@ def gen_cmap(color, **kwargs):
     **Returns:**
         :*cmap*:    <matplotlib.colors.LinearSegmentedColormap>
     """
+    import matplotlib.colors as cl
     if isinstance(color, str):
         if   color in ["b", "blue"]:    r, g, b = [0.00, 0.00, 1.00]
         elif color in ["r", "red"]:     r, g, b = [1.00, 0.00, 0.00]
@@ -152,6 +166,7 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
         - Accepts input in inches rather that relative figure coordinates
         - Calculates figure dimensions from provided subplot dimensions, rather than the reverse
         - Returns subplots in an OrderedDict
+        - Smoothly adds additional subplots to a previously-generated figure (i.e. can be called multiple times)
 
     **Arguments:**
         :*nrows*:      Number of rows of subplots
@@ -168,13 +183,16 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
         :*fig_height*: Height of figure, by default calculated from above arguments
  
     **Returns:**
-        :*figure*:   <matplotlib.figure.Figure>
+        :*figure*:   <Figure>
         :*subplots*: OrderedDict of subplots (1-indexed)
 
     .. todo:
         - More intelligent default dimensions based on *nrows* and *ncols*
         - Support centimeters?
     """
+    from collections import OrderedDict
+    import matplotlib
+    import matplotlib.pyplot as plt
 
     # Parse arguments
     nsubplots  = kwargs.get("nsubplots",  nrows * ncols)
@@ -221,9 +239,13 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
 
 def identify(subplots, **kwargs):
     """
-    Identifies index of each subplot
+    Identifies index of each subplot with inset text
+
+    :*Arguments*: OrderedDict of subplots
+
     """
     from .text import set_inset
+
     for i, subplot in subplots.items():
         set_inset(subplot, text = i, xpos = 0.5, ypos = 0.5, ha = "center", va = "center", **kwargs)
 
