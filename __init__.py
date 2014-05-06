@@ -34,7 +34,10 @@ def multi_kw(keywords, default, kwargs):
             value = kwargs.pop(kw)
         else:
             del kwargs[kw]
-    return default
+    if value is not None:
+        return value
+    else:
+        return default
 
 def pad_zero(ticks, digits = None, **kwargs):
     """
@@ -61,10 +64,10 @@ def pad_zero(ticks, digits = None, **kwargs):
 def get_edges(figure, **kwargs):
     """
     **Arguments:**
-        :*figure*:  <Figure> on which to act
+        :*figure*: <Figure> on which to act
 
     **Returns:**
-        :*edges*:   Dictionary; keys are 'x' and 'y', values are numpy arrays with dimensions (axis, min...max)
+        :*edges*:  Dictionary; keys are 'x' and 'y', values are numpy arrays with dimensions (axis, min...max)
 
     .. todo:
         - Should this instead return a numpy record array?
@@ -75,16 +78,16 @@ def get_edges(figure, **kwargs):
 def gen_font(fp = None, **kwargs):
     """
     **Arguments:**
-        :*fp*:              Font settings
+        :*fp*: Font settings
 
     **Behavior:**
-        If *fp* is:
-        | <FontProperties>: Act as a pass-through, return *fp* argument
-        | String:           Make new <FontProperties> from string, '##L'; '##' = size; 'L' = {'r': regular, 'b' bold}
-        | Dict:             Make new <FontProperties> using given keyword arguments
+        | If *fp* is <FontProperties>, acts as a pass-through, return *fp* argument
+        | If *fp* is a String of form '##L', makes new <FontProperties>
+        |         '##' = size; 'L' = {'r': regular, 'b' bold}
+        | If *fp* is a Dict, makes new <FontProperties> using given keyword arguments
 
     **Returns:**
-        :*fp*:  <FontProperties> object to given specifications
+        :*fp*: <FontProperties> object to given specifications
     """
     import matplotlib.font_manager
 

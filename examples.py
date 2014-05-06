@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   plot_toolkit.examples.py
-#   Written by Karl Debiec on 14-04-25, last updated by Karl Debiec on 14-04-26
+#   Written by Karl Debiec on 14-04-25, last updated by Karl Debiec on 14-05-04
 """
 Examples to demonstrate usage of each component of plot_toolkit
 """
@@ -29,10 +29,10 @@ def page_1(**kwargs):
     subplots[1].plot([-10, 10], [  0,  0], color = "black")
     subplots[1].plot([  0,  0], [-10, 10], color = "black")
     subplots[1].plot(np.random.randn(100), np.random.randn(100), ls = "none", marker = "o", color = "blue")
-    set_inset(subplots[1], "Quadrant I",   xpos = 0.95, ypos = 0.95, ha = "right", va = "top") 
-    set_inset(subplots[1], "Quadrant II",  xpos = 0.05, ypos = 0.95, ha = "left",  va = "top")
-    set_inset(subplots[1], "Quadrant III", xpos = 0.05, ypos = 0.05, ha = "left",  va = "bottom")
-    set_inset(subplots[1], "Quadrant IV",  xpos = 0.95, ypos = 0.05, ha = "right", va = "bottom")
+    set_inset(subplots[1], "Quadrant I",   fp = "10r", xpos = 0.95, ypos = 0.95, ha = "right", va = "top") 
+    set_inset(subplots[1], "Quadrant II",  fp = "10r", xpos = 0.05, ypos = 0.95, ha = "left",  va = "top")
+    set_inset(subplots[1], "Quadrant III", fp = "10r", xpos = 0.05, ypos = 0.05, ha = "left",  va = "bottom")
+    set_inset(subplots[1], "Quadrant IV",  fp = "10r", xpos = 0.95, ypos = 0.05, ha = "right", va = "bottom")
     
     # Subplot 2: Tick Parameters
     set_title(subplots[2], "Tick Parameters")
