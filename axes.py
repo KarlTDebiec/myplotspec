@@ -25,11 +25,13 @@ def set_xaxis(subplot, lw = 1, **kwargs):
         :*ticklabels*:   Tick labels
         :*tick_fp*:      Tick label font; passed to gen_font(...)
         :*ticklabel_kw*: Keyword arguments to be passed to set_xticklabels(...)
+        :*tick_params*:  Keyword arguments to be passed to set_tick_params(...)
         :*label*:        Label text
         :*label_fp*:     Label font; passed to gen_font(...)
         :*label_kw*:     Keyword arguments to be passed to set_xlabel(...)
         :*lw*:           Width of x-axis lines
     """
+    kwargs["tick_params"] = dict(kwargs.get("tick_params", {}).items() + dict(axis = "x").items())
     _set_axes(subplot.set_xlabel, subplot.set_xbound, subplot.set_xticks, subplot.set_xticklabels, subplot.tick_params,
       **kwargs)
     subplot.spines["top"].set_lw(lw)
@@ -46,11 +48,13 @@ def set_yaxis(subplot, lw = 1, **kwargs):
         :*ticklabels*:   Tick labels
         :*tick_fp*:      Tick label font; passed to gen_font(...)
         :*ticklabel_kw*: Keyword arguments to be passed to set_yticklabels(...)
+        :*tick_params*:  Keyword arguments to be passed to set_tick_params(...)
         :*label*:        Label text
         :*label_fp*:     Label font; passed to gen_font(...)
         :*label_kw*:     Keyword arguments to be passed to set_ylabel(...)
         :*lw*:           Width of y-axis lines
     """
+    kwargs["tick_params"] = dict(kwargs.get("tick_params", {}).items() + dict(axis = "y").items())
     _set_axes(subplot.set_ylabel, subplot.set_ybound, subplot.set_yticks, subplot.set_yticklabels, subplot.tick_params,
       **kwargs)
     subplot.spines["left"].set_lw(lw)
@@ -100,10 +104,10 @@ def _set_axes(set_label, set_bound, set_ticks, set_ticklabels, set_tick_params, 
         :*ticklabels*:      Tick labels
         :*tick_fp*:         Tick label font; passed to gen_font(...)
         :*ticklabel_kw*:    Keyword arguments to be passed to set_ticklabels(...)
+        :*tick_params*:     Keyword arguments to be passed to set_tick_params(...)
         :*label*:           Label text
         :*label_fp*:        Label font; passed to gen_font(...)
         :*label_kw*:        Keyword arguments to be passed to set_label(...)
-        :*tick_params*:     Keyword arguments to be passed to set_tick_params(...)
 
     .. todo::
         - Support gridlines
