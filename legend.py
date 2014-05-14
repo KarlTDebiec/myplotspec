@@ -1,35 +1,31 @@
 #!/usr/bin/python
 #   plot_toolkit.legend.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-04-25
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-14
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
 import os, sys
 import numpy as np
 from . import gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
-def set_legend(subplot, handles = None, labels = None, fp = "8r", loc = 1, **kwargs):
+def set_legend(subplot, handles = None, labels = None, **kwargs):
     """
     Draws and formats a legend on *subplot*
 
-    By default includes all series, or accepts manual lists of *handles* and *labels* for plotted series
+    By default includes all series; may alternatively accept manual lists of *handles* and *labels* for plotted series
 
     **Arguments:**
-        :*subplot*: <matplotlib.axes.AxesSubplot> on which to act
-        :*handles*: List of handles for plotted series (e.g. <matplotlib.lines.Line2D>)
+        :*subplot*: <Axes> on which to act
+        :*handles*: List of handles for plotted series
         :*labels*:  List of labels for plotted series
-        :*fp*:      Legend font in form of '##L'
-        :*loc*:     Legend location
-        :*kwargs*:  Keyword arguments to be passed to subplot.legend
+        :*fp*:      Legend font; *fontproperties* and *prop* also supported; passed to gen_font(...)
 
     **Returns:**
-        :*legend*:  matplotlib.legend.Legend
-
-    .. todo::
-        - Does *loc* need to be an argument to this function?
+        :*legend*:  <Legend>
     """
+    kwargs["prop"] = gen_font(multi_kw(["fp", "fontproperties", "prop"], "8r", kwargs))
     if handles is not None and labels is not None:
-        return subplot.legend(handles, labels, loc = loc, prop = gen_font(fp), **kwargs)
+        return subplot.legend(handles, labels, loc = loc, **kwargs)
     else:
-        return subplot.legend(loc = loc, prop = gen_font(fp), **kwargs)
+        return subplot.legend(loc = loc, **kwargs)
 
 

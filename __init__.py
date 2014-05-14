@@ -1,13 +1,8 @@
 #!/usr/bin/python
 #   plot_toolkit.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-03
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-14
 """
-General functions used for various tasks
-
-..todo:
-    - Consider moving some import statements to functions
-    - Write wrapper or subclass of PdfPages that supports 'with' syntax
-    - Do not force 'Agg' backend
+General functions
 """
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
@@ -105,12 +100,12 @@ def gen_font(fp = None, **kwargs):
 def gen_contour_levels(I, cutoff = 0.9875, include_negative = False, **kwargs):
     """
     **Arguments:**
-        :*I*:                   Intensity
-        :*cutoff*:              Proportion of data below minimum level (0.0-1.0)
-        :*include_negative*:    Return levels for negative intensity as well as positive
+        :*I*:                Intensity
+        :*cutoff*:           Proportion of data below minimum level (0.0-1.0)
+        :*include_negative*: Return levels for negative intensity as well as positive
 
     **Returns:**
-        :*levels*:              Numpy array of levels
+        :*levels*:           Numpy array of levels
 
     .. todo::
         - Should allow number of levels to be set
@@ -141,10 +136,9 @@ def gen_cmap(color, **kwargs):
     Not useful for heatmaps; useful for countours
 
     **Arguments:**
-        :*color*:   Tuple, list, or numpy array of red, green, and blue (0.0-1.0);
-                    Alternatively, string of named matplotlib color
+        :*color*: Tuple, list, or numpy array of red, green, and blue (0.0-1.0); or string of named matplotlib color
     **Returns:**
-        :*cmap*:    <matplotlib.colors.LinearSegmentedColormap>
+        :*cmap*:  <LinearSegmentedColormap>
     """
     import matplotlib.colors as cl
     if isinstance(color, str):
@@ -167,7 +161,7 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
 
     Differs from matplotlib's built-in functions in that it:
         - Accepts input in inches rather that relative figure coordinates
-        - Calculates figure dimensions from provided subplot dimensions, rather than the reverse
+        - Optionally calculates figure dimensions from provided subplot dimensions, rather than the reverse
         - Returns subplots in an OrderedDict
         - Smoothly adds additional subplots to a previously-generated figure (i.e. can be called multiple times)
 
@@ -244,7 +238,8 @@ def identify(subplots, **kwargs):
     """
     Identifies index of each subplot with inset text
 
-    :*Arguments*: OrderedDict of subplots
+    **Arguments:**
+        :*subplots*: OrderedDict of subplots
 
     """
     from .text import set_inset

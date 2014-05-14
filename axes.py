@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.axes.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-05-04
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-05-14
 """
 Functions for formatting axes
 

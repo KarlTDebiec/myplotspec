@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-04
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-14
 """
 Functions for adding text labels and annotations
 """
@@ -74,10 +74,10 @@ def set_bigylabel(figure, *args, **kwargs):
         :*text*:     Label text; *s*, *label*, and *ylabel* also supported
         :*fp*:       Label font; *fontproperties* also supported; passed to gen_font(...)
         :*left*:     Distance between left side of figure and label (inches)
-        :*right*:    Distance between right side of figure and label (inches); overrides *right*
+        :*right*:    Distance between right side of figure and label (inches); overrides *left*
         :*x*:        Horizontal position of title in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
         :*y*:        Vertical   position of title in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
-        :*rotation*: Label rotation
+        :*rotation*: Label rotation; default = 'vertical'
 
     **Returns:**
         :*text*:   New <.Text>
@@ -108,7 +108,7 @@ def set_inset(subplot, *args, **kwargs):
         :*x*:       Horizontal position of inset in subplot reference frame; overrides *xpos*
         :*y*:       Vertical   position of inset in subplot reference frame; overrides *ypos*
         :*ha*:      Text horizontal alignment; default = 'left'
-        :*va:*:     Text vertical alignment; default = 'top'
+        :*va*:      Text vertical alignment; default = 'top'
 
     **Returns:**
         :*text*:    New <Text>
