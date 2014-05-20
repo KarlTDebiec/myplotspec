@@ -1,11 +1,11 @@
 #!/usr/bin/python
 #   plot_toolkit.legend.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-14
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-15
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
 import os, sys
 import numpy as np
-from . import gen_font
+from . import multi_kw, gen_font
 ################################################# MATPLOTLIB FUNCTIONS #################################################
 def set_legend(subplot, handles = None, labels = None, **kwargs):
     """
@@ -24,8 +24,8 @@ def set_legend(subplot, handles = None, labels = None, **kwargs):
     """
     kwargs["prop"] = gen_font(multi_kw(["fp", "fontproperties", "prop"], "8r", kwargs))
     if handles is not None and labels is not None:
-        return subplot.legend(handles, labels, loc = loc, **kwargs)
+        return subplot.legend(handles, labels, **kwargs)
     else:
-        return subplot.legend(loc = loc, **kwargs)
+        return subplot.legend(**kwargs)
 
 
