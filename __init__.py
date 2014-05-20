@@ -218,7 +218,9 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
 
     # Generate figure and subplots, or add to existing figure and subplots if provided
     i_max    = i + nsubplots
+    breaking = False
     for j in range(nrows - 1, -1, -1):
+        if breaking: break
         for k in range(0, ncols, 1):
             subplots[i] = matplotlib.axes.Axes(figure, rect = [
               (left   + k * sub_width  + k * wspace) / fig_width,  # Left
@@ -228,7 +230,9 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
               autoscale_on = False)
             figure.add_axes(subplots[i])
             i += 1
-            if i >= i_max: break
+            if i >= i_max:
+                breaking = True
+                break
 
     if verbose:
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(figure.get_figwidth(), figure.get_figheight()))
