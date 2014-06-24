@@ -1,12 +1,12 @@
 #!/usr/bin/python
 #   plot_toolkit.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-20
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-06-24
 """
 Functions for adding text labels and annotations
 """
 ####################################################### MODULES ########################################################
 from __future__ import division, print_function
-import os, sys
+import os, sys, types
 import numpy as np
 import matplotlib
 from . import gen_font, get_edges, multi_kw
@@ -34,62 +34,83 @@ def set_title(figure_or_subplot, *args, **kwargs):
         return figure.suptitle(**kwargs)
     elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
         kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
+        subplot         = figure_or_subplot
         kwargs["label"] = multi_kw(["s", "t", "text", "title", "label"], args[0] if len(args) >= 1 else "", kwargs)
-        return figure_or_subplot.set_title(**kwargs)
+        return subplot.set_title(**kwargs)
 
-def set_bigxlabel(figure, *args, **kwargs):
+def set_bigxlabel(figure_or_subplots, *args, **kwargs):
     """
     Prints a large x-axis label shared by multiple subplots
 
     **Arguments:**
-        :*figure*: <Figure> on which to act
+        :*figure_or_subplots*: <Figure> or OrderedDict of <Axes> on which to act
         :*text*:   Label text; *s*, *label*, and *xlabel* also supported
         :*fp*:     Label font; *fontproperties* also supported; passed to gen_font(...)
-        :*bottom*: Distance between bottom of figure and label (inches)
-        :*top*:    Distance between top of figure and label (inches); overrides *bottom*
-        :*x*:      Horizontal position of title in figure reference frame (proportion 0.0-1.0); overrides *bottom*/*top*
-        :*y*:      Vertical   position of title in figure reference frame (proportion 0.0-1.0); overrides *bottom*/*top*
+        :*bottom*: Distance between bottom of figure and label (inches);
+                   if negative, distance between bottommost plot and label
+        :*top*:    Distance between top of figure and label (inches);
+                   if negative, distance between topmost plot and label; overrides *bottom*
+        :*x*:      Horizontal position of label in figure reference frame (proportion 0.0-1.0); overrides *bottom*/*top*
+        :*y*:      Vertical   position of label in figure reference frame (proportion 0.0-1.0); overrides *bottom*/*top*
 
     **Returns:**
         :*text*:   New <Text>
     """
     kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties", "label_fp"], "12b", kwargs))
-    edges                    = get_edges(figure)
+    if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
+        figure = figure_or_subplot
+        edges  = get_edges(figure)
+    elif isinstance(figure_or_subplots, types.DictType):
+        subplots = figure_or_subplots
+        figure   = subplots.values()[0].get_figure()
+        edges    = get_edges(subplots)
     if "top" in kwargs:
-        top         = kwargs.pop("top")
-        kwargs["y"] = kwargs.pop("y", (figure.get_figheight() - top) / figure.get_figheight())
+        top = kwargs.pop("top")
+        if top < 0: kwargs["y"] = np.max(edges["y"]) - top / figure.get_figheight()
+        else:       kwargs["y"] = kwargs.pop("y", (figure.get_figheight() - top) / figure.get_figheight())
     else:
-        bottom      = kwargs.pop("bottom", 0.2)
-        kwargs["y"] = kwargs.pop("y", bottom / figure.get_figheight())
-    kwargs["x"]     = kwargs.pop("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
-    kwargs["s"]     = multi_kw(["s", "text", "label", "xlabel"], args[0] if len(args) >= 1 else "", kwargs)
+        bottom = kwargs.pop("bottom", 0.2)
+        if bottom < 0: kwargs["y"] = np.min(edges["y"]) + bottom / figure.get_figheight()
+        else:          kwargs["y"] = kwargs.pop("y", bottom / figure.get_figheight())
+    kwargs["x"] = kwargs.pop("x", (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
+    kwargs["s"] = multi_kw(["s", "text", "label", "xlabel"], args[0] if len(args) >= 1 else "", kwargs)
     return set_text(figure, **kwargs)
 
-def set_bigylabel(figure, *args, **kwargs):
+def set_bigylabel(figure_or_subplots, *args, **kwargs):
     """
     Prints a large x-axis label shared by multiple subplots
 
     **Arguments:**
-        :*figure*:   <Figure> on which to act
+        :*figure_or_subplots*: <Figure> or OrderedDict of <Axes> on which to act
         :*text*:     Label text; *s*, *label*, and *ylabel* also supported
         :*fp*:       Label font; *fontproperties* also supported; passed to gen_font(...)
-        :*left*:     Distance between left side of figure and label (inches)
-        :*right*:    Distance between right side of figure and label (inches); overrides *left*
-        :*x*:        Horizontal position of title in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
-        :*y*:        Vertical   position of title in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
+        :*left*:     Distance between left side of figure and label (inches);
+                     if negative, distance between leftmost plot and label
+        :*right*:    Distance between right side of figure and label (inches);
+                     if negative, distance between rightmost plot and label; overrides *left*
+        :*x*:        Horizontal position of label in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
+        :*y*:        Vertical   position of label in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
         :*rotation*: Label rotation; default = 'vertical'
 
     **Returns:**
-        :*text*:   New <.Text>
+        :*text*:   New <Text>
     """
     kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties", "label_fp"], "12b", kwargs))
-    edges                    = get_edges(figure)
+    if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
+        figure = figure_or_subplot
+        edges  = get_edges(figure)
+    elif isinstance(figure_or_subplots, types.DictType):
+        subplots = figure_or_subplots
+        figure   = subplots.values()[0].get_figure()
+        edges    = get_edges(subplots)
     if "right" in kwargs:
-        right       = kwargs.pop("right")
-        kwargs["x"] = kwargs.pop("x", (figure.get_figwidth() - right) / figure.get_figwidth())
+        right = kwargs.pop("right")
+        if right < 0: kwargs["x"] = np.max(edges["x"]) - right / figure.get_figwidth()
+        else:         kwargs["x"] = kwargs.pop("x", (figure.get_figwidth() - right) / figure.get_figwidth())
     else:
-        left        = kwargs.pop("left", 0.2)
-        kwargs["x"] = kwargs.pop("x", left / figure.get_figwidth())
+        left = kwargs.pop("left", 0.2)
+        if left < 0:  kwargs["x"] = np.min(edges["x"]) + left / figure.get_figwidth()
+        else:         kwargs["x"] = kwargs.pop("x", left / figure.get_figwidth())
     kwargs["y"]     = kwargs.pop("y", (np.min(edges["y"]) + np.max(edges["y"])) / 2.0)
     kwargs["rotation"] = kwargs.pop("rotation", "vertical")
     kwargs["s"]     = multi_kw(["s", "text", "label", "ylabel"], args[0] if len(args) >= 1 else "", kwargs)
@@ -120,10 +141,10 @@ def set_inset(subplot, *args, **kwargs):
     kwargs["va"] = kwargs.pop("va", "top")
     xbound       = subplot.get_xbound()
     ybound       = subplot.get_ybound()
-    if subplot.xaxis_inverted(): kwargs["x"] = kwargs.get("x", xbound[0] + (1-xpos) * (xbound[1] - xbound[0]))
-    else:                        kwargs["x"] = kwargs.get("x", xbound[0] + xpos     * (xbound[1] - xbound[0]))
-    if subplot.yaxis_inverted(): kwargs["y"] = kwargs.get("y", ybound[0] + (1-ypos) * (ybound[1] - ybound[0]))
-    else:                        kwargs["y"] = kwargs.get("y", ybound[0] + ypos     * (ybound[1] - ybound[0]))
+    if subplot.xaxis_inverted(): kwargs["x"] = kwargs.pop("x", xbound[0] + (1-xpos) * (xbound[1] - xbound[0]))
+    else:                        kwargs["x"] = kwargs.pop("x", xbound[0] + xpos     * (xbound[1] - xbound[0]))
+    if subplot.yaxis_inverted(): kwargs["y"] = kwargs.pop("y", ybound[0] + (1-ypos) * (ybound[1] - ybound[0]))
+    else:                        kwargs["y"] = kwargs.pop("y", ybound[0] + ypos     * (ybound[1] - ybound[0]))
     kwargs["s"]  = multi_kw(["s", "text", "inset"], args[0] if len(args) >= 1 else "", kwargs)
     return set_text(subplot, **kwargs)
 

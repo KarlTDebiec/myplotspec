@@ -39,7 +39,7 @@ class Figure_Output:
         elif isinstance(outfile, types.StringTypes):
             if outfile.endswith("pdf"):
                 outfile  = PdfPages(outfile)
-                figure.savefig(outfile, format = "pdf")
+                figure.savefig(outfile, format = "pdf", transparent = True)
                 if verbose: print("Figure saved to '{0}'.".format(os.path.abspath(outfile._file.fh.name)))
                 outfile.close()
             else:

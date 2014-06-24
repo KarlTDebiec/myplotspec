@@ -7,6 +7,7 @@ Axes
 .. autofunction:: plot_toolkit.axes.set_xaxis(...)
 .. autofunction:: plot_toolkit.axes.set_yaxis(...)
 .. autofunction:: plot_toolkit.axes.set_colorbar(...)
+.. autofunction:: plot_toolkit.axes.set_multi(...)
 
 Text
 ----

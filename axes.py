@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.axes.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-05-14
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-06-24
 """
 Functions for formatting axes
 
@@ -13,6 +13,7 @@ from __future__ import division, print_function
 import os, sys
 import numpy as np
 from . import gen_font
+from .text import set_bigxlabel, set_bigylabel
 ###################################################### FUNCTIONS #######################################################
 def set_xaxis(subplot, lw = 1, **kwargs):
     """
@@ -59,6 +60,65 @@ def set_yaxis(subplot, lw = 1, **kwargs):
       **kwargs)
     subplot.spines["left"].set_lw(lw)
     subplot.spines["right"].set_lw(lw)
+
+def set_multi(subplots, first, nrows, ncols, xkwargs, ykwargs, **kwargs):
+    """
+    Formats a set of multiple plots
+
+    **Arguments:**
+        :*subplots*: OrderedDict of <Axes> on which at act
+        :*first*:    Index of first plot in multiple
+        :*nrows*:    Number of rows of plots in multiple
+        :*ncols*:    Number of columns of plots in multiple
+        :*xkwargs*:  Keyword arguments to be passed to set_xaxis
+        :*ykwargs*:  Keyword arguments to be passed to set_yaxis
+
+    .. todo:
+        - Smooth passage of keyword arguments from x/ykwargs and kwargs to set_bigx/ylabel
+    """
+    xticks      = xkwargs.pop("ticks")
+    xticklabels = xkwargs.pop("ticklabels", xticks)
+
+    xlabel_kw   = dict(xlabel = xkwargs.pop("label", kwargs.pop("xlabel", "")))
+    for kw in ["label_fp", "bottom", "top"]:
+        if kw in  kwargs: xlabel_kw[kw] =  kwargs.get(kw)
+    for kw in ["label_fp", "bottom", "top", "x", "y", "ha", "va", "rotation"]:
+        if kw in xkwargs: xlabel_kw[kw] = xkwargs.pop(kw)
+    if "xlabel_kw" in xkwargs: xlabel_kw.update(xkwargs.pop("xlabel_kw"))
+
+    yticks      = ykwargs.pop("ticks")
+    yticklabels = ykwargs.pop("ticklabels", yticks)
+
+    ylabel_kw   = dict(ylabel = ykwargs.pop("label", kwargs.pop("ylabel", "")))
+    for kw in ["label_fp", "left", "right"]:
+        if kw in  kwargs: ylabel_kw[kw] =  kwargs.get(kw)
+    for kw in ["label_fp", "left", "right", "x", "y", "ha", "va", "rotation"]:
+        if kw in ykwargs: ylabel_kw[kw] = ykwargs.pop(kw)
+    if "ylabel_kw" in ykwargs: ylabel_kw.update(ykwargs.pop("ylabel_kw"))
+
+    xkwargs.update(kwargs)
+    ykwargs.update(kwargs)
+
+    # Loop over subplots
+    for i in range(first, first + (nrows * ncols), 1):
+
+        # Format x axes
+        if   (i == first + (nrows * ncols) - 1):
+            set_xaxis(subplots[i], ticks = xticks, ticklabels = xticklabels,      **xkwargs)
+        elif (i in range(first + ((nrows - 1) * ncols), first + (nrows * ncols) - 1, 1)):
+            set_xaxis(subplots[i], ticks = xticks, ticklabels = xticklabels[:-1], **xkwargs)
+        else:
+            set_xaxis(subplots[i], ticks = xticks, ticklabels = [],               **xkwargs)
+
+        # Format y axes
+        if   (i == first):
+            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels,      **ykwargs)
+        elif (i in range(first + nrows, first + (nrows * ncols), nrows)):
+            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels[:-1], **ykwargs)
+        else:
+            set_yaxis(subplots[i], ticks = yticks, ticklabels = [],               **ykwargs)
+    set_bigxlabel(dict((j, subplots[j]) for j in range(first, first + (nrows * ncols), 1)), **xlabel_kw)
+    set_bigylabel(dict((j, subplots[j]) for j in range(first, first + (nrows * ncols), 1)), **ylabel_kw)
 
 def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b", tick_fp = "8r", **kwargs):
     """

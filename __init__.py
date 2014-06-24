@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-05-14
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-06-24
 """
 General functions
 """
@@ -53,22 +53,26 @@ def pad_zero(ticks, digits = None, **kwargs):
     if digits  == 0:
         return ["{0:d}".format(tick) for tick in map(int, ticks)]
     else:
+    
         return ["{0:.{1}f}".format(tick, digits) for tick in ticks]
 
 ################################################# MATPLOTLIB FUNCTIONS #################################################
-def get_edges(figure, **kwargs):
+def get_edges(figure_or_subplots, **kwargs):
     """
     **Arguments:**
-        :*figure*: <Figure> on which to act
+        :*figure_or_subplots*: <Figure> of dictionary of <Axes> on which to act
 
     **Returns:**
         :*edges*:  Dictionary; keys are 'x' and 'y', values are numpy arrays with dimensions (axis, min...max)
 
     .. todo:
-        - Should this instead return a numpy record array?
+        - Should this instead return a numpy record array instead? Format seems strange
     """
-    return {"x": np.array([[ax.get_position().xmin, ax.get_position().xmax] for ax in figure.axes]),
-            "y": np.array([[ax.get_position().ymin, ax.get_position().ymax] for ax in figure.axes])}
+    import matplotlib
+    if   isinstance(figure_or_subplots, matplotlib.figure.Figure): subplots = figure_or_subplots.axes
+    elif isinstance(figure_or_subplots, types.DictType):           subplots = figure_or_subplots.values()
+    return {"x": np.array([[subplot.get_position().xmin, subplot.get_position().xmax] for subplot in subplots]),
+            "y": np.array([[subplot.get_position().ymin, subplot.get_position().ymax] for subplot in subplots])}
 
 def gen_font(fp = None, **kwargs):
     """
@@ -83,6 +87,9 @@ def gen_font(fp = None, **kwargs):
 
     **Returns:**
         :*fp*: <FontProperties> object to given specifications
+
+    .. todo:
+        - Also accept *fontproperties* keyword
     """
     import matplotlib.font_manager
 
