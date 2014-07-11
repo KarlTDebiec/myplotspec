@@ -97,7 +97,7 @@ def set_bigylabel(figure_or_subplots, *args, **kwargs):
     """
     kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties", "label_fp"], "12b", kwargs))
     if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
-        figure = figure_or_subplot
+        figure = figure_or_subplots
         edges  = get_edges(figure)
     elif isinstance(figure_or_subplots, types.DictType):
         subplots = figure_or_subplots

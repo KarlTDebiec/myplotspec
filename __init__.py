@@ -33,6 +33,7 @@ def multi_kw(keywords, default, kwargs):
         return value
     else:
         return default
+    # edited
 
 def pad_zero(ticks, digits = None, **kwargs):
     """
