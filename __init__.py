@@ -223,7 +223,6 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
     else:
         subplots   = OrderedDict()
         i          = 1
-
     # Generate figure and subplots, or add to existing figure and subplots if provided
     i_max    = i + nsubplots
     breaking = False

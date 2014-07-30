@@ -50,12 +50,15 @@ def set_yaxis(subplot, lw = 1, **kwargs):
         :*tick_fp*:      Tick label font; passed to gen_font(...)
         :*ticklabel_kw*: Keyword arguments to be passed to set_yticklabels(...)
         :*tick_params*:  Keyword arguments to be passed to set_tick_params(...)
+        :*tick_right*:   Place ticks, ticklabels, and label on right side
         :*label*:        Label text
         :*label_fp*:     Label font; passed to gen_font(...)
         :*label_kw*:     Keyword arguments to be passed to set_ylabel(...)
         :*lw*:           Width of y-axis lines
     """
     kwargs["tick_params"] = dict(kwargs.get("tick_params", {}).items() + dict(axis = "y").items())
+    if kwargs.get("tick_right", False):
+        subplot.yaxis.tick_right()
     _set_axes(subplot.set_ylabel, subplot.set_ybound, subplot.set_yticks, subplot.set_yticklabels, subplot.tick_params,
       **kwargs)
     subplot.spines["left"].set_lw(lw)
