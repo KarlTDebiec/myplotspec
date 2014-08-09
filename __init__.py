@@ -96,12 +96,12 @@ def gen_font(fp = None, **kwargs):
 
     if   isinstance(fp, matplotlib.font_manager.FontProperties):
         return fp
-    elif isinstance(fp, types.StringTypes):
+    elif isinstance(fp, str):
         if not "fname" in kwargs:
             kwargs["family"] = kwargs.get("family", "Arial")
         kwargs["size"]       = kwargs.get("size",   int(fp[:-1]))
         kwargs["weight"]     = kwargs.get("weight", {"r":"regular", "b":"bold"}[fp[-1]])
-    elif isinstance(fp, types.DictType):
+    elif isinstance(fp, dict):
         kwargs.update(fp)
     return matplotlib.font_manager.FontProperties(**kwargs)
 
