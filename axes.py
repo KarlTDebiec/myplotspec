@@ -32,9 +32,13 @@ def set_xaxis(subplot, lw = 1, **kwargs):
         :*label_kw*:     Keyword arguments to be passed to set_xlabel(...)
         :*lw*:           Width of x-axis lines
     """
+    for xkey in [key for key in kwargs if key.startswith("x")]:
+        kwargs[xkey[1:]] = kwargs.pop(xkey)
     kwargs["tick_params"] = dict(kwargs.get("tick_params", {}).items() + dict(axis = "x").items())
-    _set_axes(subplot.set_xlabel, subplot.set_xbound, subplot.set_xticks, subplot.set_xticklabels, subplot.tick_params,
-      **kwargs)
+
+    _set_axes(subplot.set_xlabel, subplot.set_xbound, subplot.set_xticks,
+      subplot.set_xticklabels, subplot.tick_params, **kwargs)
+
     subplot.spines["top"].set_lw(lw)
     subplot.spines["bottom"].set_lw(lw)
 
@@ -56,11 +60,15 @@ def set_yaxis(subplot, lw = 1, **kwargs):
         :*label_kw*:     Keyword arguments to be passed to set_ylabel(...)
         :*lw*:           Width of y-axis lines
     """
+    for ykey in [key for key in kwargs if key.startswith("y")]:
+        kwargs[ykey[1:]] = kwargs.pop(ykey)
     kwargs["tick_params"] = dict(kwargs.get("tick_params", {}).items() + dict(axis = "y").items())
     if kwargs.get("tick_right", False):
         subplot.yaxis.tick_right()
-    _set_axes(subplot.set_ylabel, subplot.set_ybound, subplot.set_yticks, subplot.set_yticklabels, subplot.tick_params,
-      **kwargs)
+
+    _set_axes(subplot.set_ylabel, subplot.set_ybound, subplot.set_yticks,
+      subplot.set_yticklabels, subplot.tick_params, **kwargs)
+
     subplot.spines["left"].set_lw(lw)
     subplot.spines["right"].set_lw(lw)
 

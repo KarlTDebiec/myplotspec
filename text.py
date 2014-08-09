@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-06-24
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-08-09
 """
 Functions for adding text labels and annotations
 """
