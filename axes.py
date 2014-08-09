@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.axes.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-06-24
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-08-08
 """
 Functions for formatting axes
 
@@ -34,7 +34,8 @@ def set_xaxis(subplot, lw = 1, **kwargs):
     """
     for xkey in [key for key in kwargs if key.startswith("x")]:
         kwargs[xkey[1:]] = kwargs.pop(xkey)
-    kwargs["tick_params"] = dict(kwargs.get("tick_params", {}).items() + dict(axis = "x").items())
+    kwargs["tick_params"] = kwargs.get("tick_params", {})
+    kwargs["tick_params"].update(dict(axis = "x"))
 
     _set_axes(subplot.set_xlabel, subplot.set_xbound, subplot.set_xticks,
       subplot.set_xticklabels, subplot.tick_params, **kwargs)
@@ -62,7 +63,8 @@ def set_yaxis(subplot, lw = 1, **kwargs):
     """
     for ykey in [key for key in kwargs if key.startswith("y")]:
         kwargs[ykey[1:]] = kwargs.pop(ykey)
-    kwargs["tick_params"] = dict(kwargs.get("tick_params", {}).items() + dict(axis = "y").items())
+    kwargs["tick_params"] = kwargs.get("tick_params", {})
+    kwargs["tick_params"].update(dict(axis = "y"))
     if kwargs.get("tick_right", False):
         subplot.yaxis.tick_right()
 

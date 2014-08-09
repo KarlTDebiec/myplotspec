@@ -36,7 +36,7 @@ class Figure_Output:
         if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
             figure.savefig(outfile, format = "pdf")
             if verbose: print("Figure saved to '{0}'.".format(os.path.abspath(outfile._file.fh.name)))
-        elif isinstance(outfile, types.StringTypes):
+        else:
             if outfile.endswith("pdf"):
                 outfile  = PdfPages(outfile)
                 figure.savefig(outfile, format = "pdf", transparent = True)
@@ -48,7 +48,5 @@ class Figure_Output:
                     if verbose: print("Figure saved to'{0}'.".format(outfile))
                 except:
                     raise Exception("UNABLE TO OUTPUT TO FILE:" + outfile)
-        else:
-            raise Exception("TYPE OF OUTFILE NOT UNDERSTOOD:" + outfile)
 
 
