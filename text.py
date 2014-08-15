@@ -141,11 +141,15 @@ def set_inset(subplot, *args, **kwargs):
     kwargs["va"] = kwargs.pop("va", "top")
     xbound       = subplot.get_xbound()
     ybound       = subplot.get_ybound()
-    if subplot.xaxis_inverted(): kwargs["x"] = kwargs.pop("x", xbound[0] + (1-xpos) * (xbound[1] - xbound[0]))
-    else:                        kwargs["x"] = kwargs.pop("x", xbound[0] + xpos     * (xbound[1] - xbound[0]))
-    if subplot.yaxis_inverted(): kwargs["y"] = kwargs.pop("y", ybound[0] + (1-ypos) * (ybound[1] - ybound[0]))
-    else:                        kwargs["y"] = kwargs.pop("y", ybound[0] + ypos     * (ybound[1] - ybound[0]))
-    kwargs["s"]  = multi_kw(["s", "text", "inset"], args[0] if len(args) >= 1 else "", kwargs)
+    if subplot.xaxis_inverted():
+        kwargs["x"] = kwargs.pop("x", xbound[0] + (1-xpos) * (xbound[1] - xbound[0]))
+    else:
+        kwargs["x"] = kwargs.pop("x", xbound[0] + xpos     * (xbound[1] - xbound[0]))
+    if subplot.yaxis_inverted():
+        kwargs["y"] = kwargs.pop("y", ybound[0] + (1-ypos) * (ybound[1] - ybound[0]))
+    else:
+        kwargs["y"] = kwargs.pop("y", ybound[0] + ypos     * (ybound[1] - ybound[0]))
+    kwargs["s"] = multi_kw(["s", "text", "inset"], args[0] if len(args) >= 1 else "", kwargs)
     return set_text(subplot, **kwargs)
 
 def set_text(figure_or_subplot, *args, **kwargs):
@@ -166,6 +170,16 @@ def set_text(figure_or_subplot, *args, **kwargs):
     kwargs["s"]  = multi_kw(["s", "text"], args[0] if len(args) >= 1 else "", kwargs)
     kwargs["ha"] = kwargs.pop("ha", "center")
     kwargs["va"] = kwargs.pop("va", "center")
+    if "left" in kwargs:
+        if   isinstance(figure_or_subplot, matplotlib.figure.Figure):
+            kwargs["x"] = kwargs.pop("left") / figure_or_subplot.get_figwidth()
+        elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
+            raise()
+    if "top" in kwargs:
+        if   isinstance(figure_or_subplot, matplotlib.figure.Figure):
+            kwargs["y"] = kwargs.pop("top") / figure_or_subplot.get_figheight()
+        elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
+            raise()
     return figure_or_subplot.text(**kwargs)
 
 

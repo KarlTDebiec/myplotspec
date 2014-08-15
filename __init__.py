@@ -219,7 +219,10 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
         figure     = plt.figure(figsize = [fig_width, fig_height])
     if "subplots" in kwargs:
         subplots   = kwargs.pop("subplots")
-        i          = max([i for i in subplots.keys() if str(i).isdigit()]) + 1
+        if len(subplots) == 0:
+            i = 1
+        else:
+            i = max([i for i in subplots.keys() if str(i).isdigit()]) + 1
     else:
         subplots   = OrderedDict()
         i          = 1
