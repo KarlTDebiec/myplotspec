@@ -124,10 +124,10 @@ def set_inset(subplot, *args, **kwargs):
         :*subplot*: <Axes> on which to act
         :*text*:    Inset text; *s* and *inset* also supported
         :*fp*:      Inset font; *fontproperties* also supported; passed to gen_font(...)
-        :*xpos*:    Horizontal position of inset in subplot reference frame; (proportion 0.0-1.0)
-        :*ypos*:    Vertical   position of inset in subplot reference frame; (proportion 0.0-1.0)
-        :*x*:       Horizontal position of inset in subplot reference frame; overrides *xpos*
-        :*y*:       Vertical   position of inset in subplot reference frame; overrides *ypos*
+        :*xpro*:    Horizontal position of inset in subplot reference frame; (proportion 0.0-1.0)
+        :*ypro*:    Vertical   position of inset in subplot reference frame; (proportion 0.0-1.0)
+        :*x*:       Horizontal position of inset in subplot reference frame; overrides *xpro*
+        :*y*:       Vertical   position of inset in subplot reference frame; overrides *ypro*
         :*ha*:      Text horizontal alignment; default = 'left'
         :*va*:      Text vertical alignment; default = 'top'
 
@@ -135,20 +135,20 @@ def set_inset(subplot, *args, **kwargs):
         :*text*:    New <Text>
     """
     kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties", "inset_fp"], "12b", kwargs))
-    xpos         = kwargs.pop("xpos", 0.05)
-    ypos         = kwargs.pop("ypos", 0.95)
+    xpro         = kwargs.pop("xpro", 0.05)
+    ypro         = kwargs.pop("ypro", 0.95)
     kwargs["ha"] = kwargs.pop("ha", "left")
     kwargs["va"] = kwargs.pop("va", "top")
     xbound       = subplot.get_xbound()
     ybound       = subplot.get_ybound()
     if subplot.xaxis_inverted():
-        kwargs["x"] = kwargs.pop("x", xbound[0] + (1-xpos) * (xbound[1] - xbound[0]))
+        kwargs["x"] = kwargs.pop("x", xbound[0] + (1-xpro) * (xbound[1] - xbound[0]))
     else:
-        kwargs["x"] = kwargs.pop("x", xbound[0] + xpos     * (xbound[1] - xbound[0]))
+        kwargs["x"] = kwargs.pop("x", xbound[0] + xpro     * (xbound[1] - xbound[0]))
     if subplot.yaxis_inverted():
-        kwargs["y"] = kwargs.pop("y", ybound[0] + (1-ypos) * (ybound[1] - ybound[0]))
+        kwargs["y"] = kwargs.pop("y", ybound[0] + (1-ypro) * (ybound[1] - ybound[0]))
     else:
-        kwargs["y"] = kwargs.pop("y", ybound[0] + ypos     * (ybound[1] - ybound[0]))
+        kwargs["y"] = kwargs.pop("y", ybound[0] + ypro     * (ybound[1] - ybound[0]))
     kwargs["s"] = multi_kw(["s", "text", "inset"], args[0] if len(args) >= 1 else "", kwargs)
     return set_text(subplot, **kwargs)
 
