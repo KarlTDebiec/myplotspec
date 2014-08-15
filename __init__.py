@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-06-24
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-08-08
 """
 General functions
 """
@@ -8,6 +8,43 @@ General functions
 from __future__ import division, print_function
 import os, sys, types
 import numpy as np
+colors = dict(
+  default = dict(
+    blue   = [0.298, 0.447, 0.690],
+    green  = [0.333, 0.659, 0.408],
+    red    = [0.769, 0.306, 0.321],
+    purple = [0.506, 0.447, 0.698],
+    yellow = [0.800, 0.725, 0.455],
+    cyan   = [0.392, 0.710, 0.804]),
+  pastel   = dict(
+    blue   = [0.573, 0.776, 1.000],
+    green  = [0.592, 0.941, 0.667],
+    red    = [1.000, 0.624, 0.604],
+    purple = [0.816, 0.733, 1.000],
+    yellow = [1.000, 0.996, 0.639],
+    cyan   = [0.690, 0.878, 0.902]),
+  muted    = dict(
+    blue   = [0.282, 0.471, 0.812],
+    green  = [0.416, 0.800, 0.396],
+    red    = [0.839, 0.373, 0.373],
+    purple = [0.706, 0.486, 0.780],
+    yellow = [0.769, 0.678, 0.400],
+    cyan   = [0.467, 0.745, 0.859]),
+  deep     = dict(
+    blue   = [0.298, 0.447, 0.690],
+    green  = [0.333, 0.659, 0.408],
+    red    = [0.769, 0.306, 0.322],
+    purple = [0.506, 0.447, 0.698],
+    yellow = [0.800, 0.725, 0.455],
+    cyan   = [0.392, 0.710, 0.804]),
+  dark     = dict(
+    blue   = [0.000, 0.110, 0.498],
+    green  = [0.004, 0.459, 0.090],
+    red    = [0.549, 0.035, 0.000],
+    purple = [0.463, 0.000, 0.631],
+    yellow = [0.722, 0.525, 0.043],
+    cyan  = [0.000, 0.388, 0.455]))
+
 ################################################## GENERAL FUNCTIONS ###################################################
 def multi_kw(keywords, default, kwargs):
     """
