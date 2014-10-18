@@ -1,41 +1,53 @@
 #!/usr/bin/python
 #   plot_toolkit.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-08-09
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-10-16
 """
 Functions for adding text labels and annotations
+
+.. todo:
+    - Finish formatting for 80 column
 """
-####################################################### MODULES ########################################################
+################################### MODULES ####################################
 from __future__ import division, print_function
 import os, sys, types
 import numpy as np
 import matplotlib
 from . import gen_font, get_edges, multi_kw
-################################################# MATPLOTLIB FUNCTIONS #################################################
+################################## FUNCTIONS ###################################
 def set_title(figure_or_subplot, *args, **kwargs):
     """
     Prints a title for a figure or subplot
 
     **Arguments:**
         :*figure_or_subplot*: <Figure> or <Axes> on which to act
-        :*text*:              Title text; *s*, *t*, *title*, and *label* also supported
-        :*fp*:                Title font; *fontproperties* also supported; passed to gen_font(...)
-        :*top*:               Distance between top of figure and title (inches); applies to Figure title only
+        :*text*: Title text; *s*, *t*, *title*, and *label* also
+                 supported
+        :*fp*:   Title font properties; *fontproperties* also
+                 supported; passed to gen_font(...)
+        :*top*:  Distance between top of figure and title (inches);
+                 applies to Figure title only
 
     **Returns:**
         :*text*:              New <Text>
     """
     if   isinstance(figure_or_subplot, matplotlib.figure.Figure):
-        kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties", "title_fp"], "14b", kwargs))
+        kwargs["fontproperties"] = gen_font(multi_kw(
+          ["fp", "fontproperties", "title_fp"], "14b", kwargs))
         figure       = figure_or_subplot
         kwargs["ha"] = kwargs.pop("ha", "center")
         kwargs["va"] = kwargs.pop("va", "center")
-        kwargs["y"]  = (figure.get_figheight() - kwargs.pop("top", 1.0)) / figure.get_figheight()
-        kwargs["t"]  = multi_kw(["s", "t", "text", "title", "label"], args[0] if len(args) >= 1 else "", kwargs)
+        kwargs["y"]  = kwargs.pop("y", 
+          (figure.get_figheight() - kwargs.pop("top", 1.0))
+          / figure.get_figheight())
+        kwargs["t"]  = multi_kw(["s", "t", "text", "title", "label"],
+          args[0] if len(args) >= 1 else "", kwargs)
         return figure.suptitle(**kwargs)
     elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
-        kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"], "12b", kwargs))
+        kwargs["fontproperties"] = gen_font(multi_kw(
+          ["fp", "fontproperties"], "12b", kwargs))
         subplot         = figure_or_subplot
-        kwargs["label"] = multi_kw(["s", "t", "text", "title", "label"], args[0] if len(args) >= 1 else "", kwargs)
+        kwargs["label"] = multi_kw(["s", "t", "text", "title", "label"],
+          args[0] if len(args) >= 1 else "", kwargs)
         return subplot.set_title(**kwargs)
 
 def set_bigxlabel(figure_or_subplots, *args, **kwargs):
@@ -43,15 +55,22 @@ def set_bigxlabel(figure_or_subplots, *args, **kwargs):
     Prints a large x-axis label shared by multiple subplots
 
     **Arguments:**
-        :*figure_or_subplots*: <Figure> or OrderedDict of <Axes> on which to act
-        :*text*:   Label text; *s*, *label*, and *xlabel* also supported
-        :*fp*:     Label font; *fontproperties* also supported; passed to gen_font(...)
-        :*bottom*: Distance between bottom of figure and label (inches);
-                   if negative, distance between bottommost plot and label
-        :*top*:    Distance between top of figure and label (inches);
-                   if negative, distance between topmost plot and label; overrides *bottom*
-        :*x*:      Horizontal position of label in figure reference frame (proportion 0.0-1.0); overrides *bottom*/*top*
-        :*y*:      Vertical   position of label in figure reference frame (proportion 0.0-1.0); overrides *bottom*/*top*
+        :*figure_or_subplots*: <Figure> or OrderedDict of <Axes> on
+                               which to act
+        :*text*:   Label text; *s*, *label*, and *xlabel* also
+                   supported
+        :*fp*:     Label font properties ; *fontproperties* also
+                   supported; passed to gen_font(...)
+        :*bottom*: Distance between bottom of figure and label
+                   (inches); if negative, distance between bottommost
+                   plot and label
+        :*top*:    Distance between top of figure and label (inches); if
+                   negative, distance between topmost plot and label;
+                   overrides *bottom*
+        :*x*:      Horizontal position of label in figure reference
+                   frame (proportion 0.0-1.0); overrides *bottom*/*top*
+        :*y*:      Vertical   position of label in figure reference
+                   frame (proportion 0.0-1.0); overrides *bottom*/*top*
 
     **Returns:**
         :*text*:   New <Text>
@@ -81,16 +100,25 @@ def set_bigylabel(figure_or_subplots, *args, **kwargs):
     Prints a large x-axis label shared by multiple subplots
 
     **Arguments:**
-        :*figure_or_subplots*: <Figure> or OrderedDict of <Axes> on which to act
-        :*text*:     Label text; *s*, *label*, and *ylabel* also supported
-        :*fp*:       Label font; *fontproperties* also supported; passed to gen_font(...)
-        :*left*:     Distance between left side of figure and label (inches);
-                     if negative, distance between leftmost plot and label
-        :*right*:    Distance between right side of figure and label (inches);
-                     if negative, distance between rightmost plot and label; overrides *left*
-        :*x*:        Horizontal position of label in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
-        :*y*:        Vertical   position of label in figure reference frame (proportion 0.0-1.0); overrides *left*/*right*
-        :*rotation*: Label rotation; default = 'vertical'
+        :*figure_or_subplots*: <Figure> or OrderedDict of <Axes> on
+                               which to act
+        :*text*:     Label text; *s*, *label*, and *ylabel* also
+                     supported
+        :*fp*:       Label font properties; *fontproperties* also
+                     supported; passed to gen_font(...)
+        :*left*:     Distance between left side of figure and label
+                     (inches); if negative, distance between leftmost
+                     plot and label
+        :*right*:    Distance between right side of figure and label
+                     (inches); if negative, distance between rightmost
+                     plot and label; overrides *left*
+        :*x*:        Horizontal position of label in figure reference
+                     frame (proportion 0.0-1.0); overrides
+                     *left*/*right*
+        :*y*:        Vertical position of label in figure reference
+                     frame (proportion 0.0-1.0); overrides
+                     *left*/*right*
+        :*rotation*: Label rotation; default: 'vertical'
 
     **Returns:**
         :*text*:   New <Text>
@@ -123,13 +151,18 @@ def set_inset(subplot, *args, **kwargs):
     **Arguments:**
         :*subplot*: <Axes> on which to act
         :*text*:    Inset text; *s* and *inset* also supported
-        :*fp*:      Inset font; *fontproperties* also supported; passed to gen_font(...)
-        :*xpro*:    Horizontal position of inset in subplot reference frame; (proportion 0.0-1.0)
-        :*ypro*:    Vertical   position of inset in subplot reference frame; (proportion 0.0-1.0)
-        :*x*:       Horizontal position of inset in subplot reference frame; overrides *xpro*
-        :*y*:       Vertical   position of inset in subplot reference frame; overrides *ypro*
-        :*ha*:      Text horizontal alignment; default = 'left'
-        :*va*:      Text vertical alignment; default = 'top'
+        :*fp*:      Inset font; *fontproperties* also supported; passed
+                    to gen_font(...)
+        :*xpro*:    Horizontal position of inset in subplot reference
+                    frame; (proportion 0.0-1.0)
+        :*ypro*:    Vertical   position of inset in subplot reference
+                    frame; (proportion 0.0-1.0)
+        :*x*:       Horizontal position of inset in subplot reference
+                    frame; overrides *xpro*
+        :*y*:       Vertical   position of inset in subplot reference
+                    frame; overrides *ypro*
+        :*ha*:      Text horizontal alignment; default: 'left'
+        :*va*:      Text vertical alignment; default: 'top'
 
     **Returns:**
         :*text*:    New <Text>
@@ -158,10 +191,11 @@ def set_text(figure_or_subplot, *args, **kwargs):
 
     **Arguments:**
         :*figure_or_subplot*: <Figure> or <Axes> on which to act
-        :*text*:              Text; *s* also supported
-        :*fp*:                Font; *fontproperties* also supported; passed to gen_font(...)
-        :*ha*:                Text horizontal alignment; default = 'center'
-        :*va*:                Text vertical alignment; default = 'center'
+        :*text*: Text; *s* also supported
+        :*fp*:   Font properties ; *fontproperties* also supported;
+                 passed to gen_font(...)
+        :*ha*:   Text horizontal alignment; default: 'center'
+        :*va*:   Text vertical alignment; default: 'center'
 
     **Returns:**
         :*text*:              New <Text>

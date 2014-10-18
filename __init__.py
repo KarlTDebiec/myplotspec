@@ -1,64 +1,88 @@
 #!/usr/bin/python
 #   plot_toolkit.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-08-08
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-10-16
 """
 General functions
 """
-####################################################### MODULES ########################################################
+################################### MODULES ####################################
 from __future__ import division, print_function
 import os, sys, types
 import numpy as np
-colors = dict(
-  default = dict(
-    blue   = [0.298, 0.447, 0.690],
-    green  = [0.333, 0.659, 0.408],
-    red    = [0.769, 0.306, 0.321],
-    purple = [0.506, 0.447, 0.698],
-    yellow = [0.800, 0.725, 0.455],
-    cyan   = [0.392, 0.710, 0.804]),
-  pastel   = dict(
-    blue   = [0.573, 0.776, 1.000],
-    green  = [0.592, 0.941, 0.667],
-    red    = [1.000, 0.624, 0.604],
-    purple = [0.816, 0.733, 1.000],
-    yellow = [1.000, 0.996, 0.639],
-    cyan   = [0.690, 0.878, 0.902]),
-  muted    = dict(
-    blue   = [0.282, 0.471, 0.812],
-    green  = [0.416, 0.800, 0.396],
-    red    = [0.839, 0.373, 0.373],
-    purple = [0.706, 0.486, 0.780],
-    yellow = [0.769, 0.678, 0.400],
-    cyan   = [0.467, 0.745, 0.859]),
-  deep     = dict(
-    blue   = [0.298, 0.447, 0.690],
-    green  = [0.333, 0.659, 0.408],
-    red    = [0.769, 0.306, 0.322],
-    purple = [0.506, 0.447, 0.698],
-    yellow = [0.800, 0.725, 0.455],
-    cyan   = [0.392, 0.710, 0.804]),
-  dark     = dict(
-    blue   = [0.000, 0.110, 0.498],
-    green  = [0.004, 0.459, 0.090],
-    red    = [0.549, 0.035, 0.000],
-    purple = [0.463, 0.000, 0.631],
-    yellow = [0.722, 0.525, 0.043],
-    cyan  = [0.000, 0.388, 0.455]))
+################################## VARIABLES ###################################
+def gen_color(color):
+    colors = dict(
+      default = dict(
+        blue   = [0.298, 0.447, 0.690],
+        green  = [0.333, 0.659, 0.408],
+        red    = [0.769, 0.306, 0.321],
+        purple = [0.506, 0.447, 0.698],
+        yellow = [0.800, 0.725, 0.455],
+        cyan   = [0.392, 0.710, 0.804]),
+      pastel   = dict(
+        blue   = [0.573, 0.776, 1.000],
+        green  = [0.592, 0.941, 0.667],
+        red    = [1.000, 0.624, 0.604],
+        purple = [0.816, 0.733, 1.000],
+        yellow = [1.000, 0.996, 0.639],
+        cyan   = [0.690, 0.878, 0.902]),
+      muted    = dict(
+        blue   = [0.282, 0.471, 0.812],
+        green  = [0.416, 0.800, 0.396],
+        red    = [0.839, 0.373, 0.373],
+        purple = [0.706, 0.486, 0.780],
+        yellow = [0.769, 0.678, 0.400],
+        cyan   = [0.467, 0.745, 0.859]),
+      deep     = dict(
+        blue   = [0.298, 0.447, 0.690],
+        green  = [0.333, 0.659, 0.408],
+        red    = [0.769, 0.306, 0.322],
+        purple = [0.506, 0.447, 0.698],
+        yellow = [0.800, 0.725, 0.455],
+        cyan   = [0.392, 0.710, 0.804]),
+      dark     = dict(
+        blue   = [0.000, 0.110, 0.498],
+        green  = [0.004, 0.459, 0.090],
+        red    = [0.549, 0.035, 0.000],
+        purple = [0.463, 0.000, 0.631],
+        yellow = [0.722, 0.525, 0.043],
+        cyan   = [0.000, 0.388, 0.455]))
 
-################################################## GENERAL FUNCTIONS ###################################################
+    if isinstance(color, str):
+        try:
+            color = float(color)
+            return [color, color, color]
+        except:
+            pass
+        if "." in color:
+            palette, color = color.split(".")
+            return colors[palette][color]
+        elif color in colors["default"]:
+            return colors["default"][color]
+        else:
+            return color
+    elif (isinstance(color, list)
+    or    isinstance(color, np.ndarray)
+    or    isinstance(color, float)):
+        return color
+
 def multi_kw(keywords, default, kwargs):
     """
-    Function to allow arguments to be set by one of several potential keyword arguments. For example, the keyword
-    argument *s* represeting a string might be set using *s*, *text*, *label*, or if none of these are present, a
-    default value. Note that *kwargs* should not be passed to this function using the ** syntax.
+    Function to allow arguments to be set by one of several potential
+    keyword arguments. For example, the keyword argument *s*
+    represeting a string might be set using *s*, *text*, *label*, or if
+    none of these are present, a default value. Note that *kwargs*
+    should not be passed to this function using the ** syntax.
 
     **Arguments:**
-        :*keywords*: List of acceptable keyword arguments; first match is used and other are deleted
-        :*default*:  Default value to use if none of *keywords* are present in *kwargs*
+        :*keywords*: List of acceptable keyword arguments in order of
+                     priority; first match is used and other are deleted
+        :*default*:  Default value to use if none of *keywords* are
+                     present in *kwargs*
         :*kwargs*:   Dictionary of keyword arguments to be tested
 
     **Returns:**
-        :*value*:    Value from *kwargs* of first matching keyword in *keywords*, or *default* if none are present
+        :*value*:    Value from *kwargs* of first matching keyword in
+                     *keywords*, or *default* if none are present
     """
     value = None
     for kw in [kw for kw in keywords if kw in kwargs]:
@@ -74,60 +98,71 @@ def multi_kw(keywords, default, kwargs):
 
 def pad_zero(ticks, digits = None, **kwargs):
     """
-    Returns a list of tick labels, each with the same number of digits after the decimal
+    Returns a list of tick labels, each with the same number of digits
+    after the decimal
 
     **Arguments:**
         :*ticks*:       List or numpy array of ticks
         :*digits*:      Number of digits to include after the decimal
 
     **Returns:**
-        :*tick_labels*: Tick labels, each with the same number of digits after the decimal
+        :*tick_labels*: Tick labels, each with the same number of
+                        digits after the decimal
     """
-    # If the number of digits to include has not been specified, use the largest number of digits in the provided ticks
+    # If the number of digits to include has not been specified, use the
+    #   largest number of digits in the provided ticks
     if digits is None:
         digits = 0
         for tick in ticks:
-            if '.' in str(tick):    digits = max(digits, len(str(tick).split('.')[1]))
+            if '.' in str(tick):
+                digits = max(digits, len(str(tick).split('.')[1]))
     if digits  == 0:
         return ["{0:d}".format(tick) for tick in map(int, ticks)]
     else:
     
         return ["{0:.{1}f}".format(tick, digits) for tick in ticks]
 
-################################################# MATPLOTLIB FUNCTIONS #################################################
+############################# MATPLOTLIB FUNCTIONS #############################
 def get_edges(figure_or_subplots, **kwargs):
     """
     **Arguments:**
-        :*figure_or_subplots*: <Figure> of dictionary of <Axes> on which to act
+        :*figure_or_subplots*: <Figure> of dictionary of <Axes> on which
+                               to act
 
     **Returns:**
-        :*edges*:  Dictionary; keys are 'x' and 'y', values are numpy arrays with dimensions (axis, min...max)
+        :*edges*: Dictionary; keys are 'x' and 'y', values are numpy
+                  arrays with dimensions (axis, min...max)
 
     .. todo:
-        - Should this instead return a numpy record array instead? Format seems strange
+        - Should this instead return a numpy record array instead?
+          Format seems strange
     """
     import matplotlib
-    if   isinstance(figure_or_subplots, matplotlib.figure.Figure): subplots = figure_or_subplots.axes
-    elif isinstance(figure_or_subplots, types.DictType):           subplots = figure_or_subplots.values()
-    return {"x": np.array([[subplot.get_position().xmin, subplot.get_position().xmax] for subplot in subplots]),
-            "y": np.array([[subplot.get_position().ymin, subplot.get_position().ymax] for subplot in subplots])}
+    if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
+        subplots = figure_or_subplots.axes
+    elif isinstance(figure_or_subplots, types.DictType):
+        subplots = figure_or_subplots.values()
+    return {"x": np.array([[subplot.get_position().xmin,
+                 subplot.get_position().xmax] for subplot in subplots]),
+            "y": np.array([[subplot.get_position().ymin,
+                 subplot.get_position().ymax] for subplot in subplots])}
 
 def gen_font(fp = None, **kwargs):
     """
     **Arguments:**
-        :*fp*: Font settings
+        :*fp*: Font properties
 
     **Behavior:**
-        | If *fp* is <FontProperties>, acts as a pass-through, return *fp* argument
+        | If *fp* is <FontProperties>, acts as a pass-through, returns
+        |   *fp* argument
         | If *fp* is a String of form '##L', makes new <FontProperties>
-        |         '##' = size; 'L' = {'r': regular, 'b' bold}
-        | If *fp* is a Dict, makes new <FontProperties> using given keyword arguments
+        |   object for which '##' = size; 'L' = {'r': regular,
+        |   'b' bold}
+        | If *fp* is a Dict, makes new <FontProperties> using given
+        |    keyword arguments
 
     **Returns:**
         :*fp*: <FontProperties> object to given specifications
-
-    .. todo:
-        - Also accept *fontproperties* keyword
     """
     import matplotlib.font_manager
 
@@ -137,7 +172,8 @@ def gen_font(fp = None, **kwargs):
         if not "fname" in kwargs:
             kwargs["family"] = kwargs.get("family", "Arial")
         kwargs["size"]       = kwargs.get("size",   int(fp[:-1]))
-        kwargs["weight"]     = kwargs.get("weight", {"r":"regular", "b":"bold"}[fp[-1]])
+        kwargs["weight"]     = kwargs.get("weight", {"r":"regular",
+            "b":"bold"}[fp[-1]])
     elif isinstance(fp, dict):
         kwargs.update(fp)
     return matplotlib.font_manager.FontProperties(**kwargs)

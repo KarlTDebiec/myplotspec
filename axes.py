@@ -5,6 +5,7 @@
 Functions for formatting axes
 
 .. todo:
+    - Finish formatting for 80 column
     - Figure out how to adjust the positions of specific ticks properly
       and automatically ('1' often looks bad)
 """
@@ -144,6 +145,7 @@ def set_yaxis(subplot, ykwargs = {}, y2kwargs = {}, **kwargs):
 
     if y2kwargs != {}:
         subplot_y2 = subplot.twinx()
+        subplot_y2.set_autoscale_on(False)
         _set_axes(subplot_y2.set_ylabel, subplot_y2.set_ybound,
           subplot_y2.set_yticks, subplot_y2.set_yticklabels,
           subplot_y2.tick_params, **y2kwargs)
