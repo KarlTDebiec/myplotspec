@@ -63,7 +63,7 @@ def gen_color(color):
     elif (isinstance(color, list)
     or    isinstance(color, np.ndarray)
     or    isinstance(color, float)):
-        return color
+        return [color, color, color]
 
 def multi_kw(keywords, default, kwargs):
     """
@@ -241,28 +241,37 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
     Generates a figure and subplots to specifications
 
     Differs from matplotlib's built-in functions in that it:
-        - Accepts input in inches rather that relative figure coordinates
-        - Optionally calculates figure dimensions from provided subplot dimensions, rather than the reverse
+        - Accepts input in inches rather that relative figure
+          coordinates
+        - Optionally calculates figure dimensions from provided subplot
+          dimensions, rather than the reverse
         - Returns subplots in an OrderedDict
-        - Smoothly adds additional subplots to a previously-generated figure (i.e. can be called multiple times)
+        - Smoothly adds additional subplots to a previously-generated
+          figure (i.e. can be called multiple times)
 
     **Arguments:**
         :*nrows*:      Number of rows of subplots
         :*ncols*:      Number of columns of subplots
         :*sub_width*:  Width of subplot(s)
         :*sub_height*: Height of subplot(s)
-        :*top*:        Distance between top of figure and highest subplot(s)
-        :*bottom*:     Distance between bottom of figure and lowest subplot(s)
-        :*right*:      Distance between right side of figure and rightmost subplot(s)
-        :*left*:       Distance between left side of figure and leftmost subplots(s)
+        :*top*:        Distance between top of figure and highest
+                       subplot
+        :*bottom*:     Distance between bottom of figure and lowest
+                       subplot
+        :*right*:      Distance between right side of figure and
+                       rightmost subplot
+        :*left*:       Distance between left side of figure and
+                       leftmost subplots
         :*hspace*:     Vertical distance between adjacent subplots
         :*wspace*:     Horizontal distance between adjacent subplots
-        :*fig_width*:  Width of figure; by default calculated from above arguments
-        :*fig_height*: Height of figure, by default calculated from above arguments
+        :*fig_width*:  Width of figure; by default calculated from
+                       above arguments
+        :*fig_height*: Height of figure, by default calculated from
+                       above arguments
  
     **Returns:**
         :*figure*:   <Figure>
-        :*subplots*: OrderedDict of subplots (1-indexed)
+        :*subplots*: OrderedDict of subplots
 
     .. todo:
         - More intelligent default dimensions based on *nrows* and *ncols*
@@ -287,19 +296,22 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
         fig_height = figure.get_figheight()
         fig_width  = figure.get_figwidth()
     else:
-        fig_width  = kwargs.get("fig_width",  left + (sub_width  * ncols) + (wspace * (ncols - 1)) + right)
-        fig_height = kwargs.get("fig_height", top  + (sub_height * nrows) + (hspace * (nrows - 1)) + bottom)
+        fig_width  = kwargs.get("fig_width",
+          left + (sub_width  * ncols) + (wspace * (ncols - 1)) + right)
+        fig_height = kwargs.get("fig_height",
+           top  + (sub_height * nrows) + (hspace * (nrows - 1)) + bottom)
         figure     = plt.figure(figsize = [fig_width, fig_height])
     if "subplots" in kwargs:
         subplots   = kwargs.pop("subplots")
         if len(subplots) == 0:
-            i = 1
+            i = 0
         else:
             i = max([i for i in subplots.keys() if str(i).isdigit()]) + 1
     else:
-        subplots   = OrderedDict()
-        i          = 1
-    # Generate figure and subplots, or add to existing figure and subplots if provided
+        subplots = OrderedDict()
+        i        = 0
+    # Generate figure and subplots, or add to existing figure and
+    #   subplots if provided
     i_max    = i + nsubplots
     breaking = False
     for j in range(nrows - 1, -1, -1):
@@ -318,7 +330,8 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
                 break
 
     if verbose:
-        print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(figure.get_figwidth(), figure.get_figheight()))
+        print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(
+          figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots
 
 def identify(subplots, **kwargs):
