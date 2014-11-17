@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.axes.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-10-16
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-11-01
 """
 Functions for formatting axes
 
@@ -68,7 +68,8 @@ def set_xaxis(subplot, xkwargs = {}, **kwargs):
     subplot.spines["top"].set_lw(xkwargs.get("lw", 1))
     subplot.spines["bottom"].set_lw(xkwargs.get("lw", 1))
     _set_axes(subplot.set_xlabel, subplot.set_xbound, subplot.set_xticks,
-      subplot.set_xticklabels, subplot.tick_params, **xkwargs)
+      subplot.set_xticklabels, subplot.tick_params,
+      subplot.get_xaxis().get_major_ticks, **xkwargs)
 
 def set_yaxis(subplot, ykwargs = {}, y2kwargs = {}, **kwargs):
     """
@@ -141,14 +142,15 @@ def set_yaxis(subplot, ykwargs = {}, y2kwargs = {}, **kwargs):
     subplot.spines["left"].set_lw(ykwargs.get("lw", 1))
     subplot.spines["right"].set_lw(ykwargs.get("lw", 1))
     _set_axes(subplot.set_ylabel, subplot.set_ybound, subplot.set_yticks,
-      subplot.set_yticklabels, subplot.tick_params, **ykwargs)
+      subplot.set_yticklabels, subplot.tick_params,
+      subplot.get_yaxis().get_major_ticks, **ykwargs)
 
-    if y2kwargs != {}:
+    if y2kwargs != {} and not "disabled" in y2kwargs:
         subplot_y2 = subplot.twinx()
         subplot_y2.set_autoscale_on(False)
         _set_axes(subplot_y2.set_ylabel, subplot_y2.set_ybound,
           subplot_y2.set_yticks, subplot_y2.set_yticklabels,
-          subplot_y2.tick_params, **y2kwargs)
+          subplot_y2.tick_params, subplot_y2.get_major_ticks, **y2kwargs)
 
 def set_multi(subplots, first, nrows, ncols, xkwargs, ykwargs, **kwargs):
     """
@@ -242,8 +244,8 @@ def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b",
 
 ############################## INTERNAL FUNCTIONS ##############################
 def _set_axes(set_label, set_bound, set_ticks, set_ticklabels, set_tick_params,
-      ticks, ticklabels = None, tick_fp = "8r", label = "", label_fp = "10b",
-      **kwargs):
+    get_major_ticks, ticks, ticklabels = None, tick_fp = "8r", label = "",
+    label_fp = "10b", tick_pad = 8, **kwargs):
     """
     Formats an axis
 
@@ -284,5 +286,5 @@ def _set_axes(set_label, set_bound, set_ticks, set_ticklabels, set_tick_params,
       **kwargs.get("label_kw", {}))
     set_tick_params(
       **kwargs.get("tick_params", {}))
-
-
+    for tick in get_major_ticks():
+        tick.set_pad(tick_pad)
