@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.axes.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-11-01
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-11-22
 """
 Functions for formatting axes
 
@@ -16,24 +16,24 @@ import numpy as np
 from . import gen_font
 from .text import set_bigxlabel, set_bigylabel
 ################################## FUNCTIONS ###################################
-def set_xaxis(subplot, xkwargs = {}, **kwargs):
+def set_xaxis(subplot, xaxis_kw = {}, **kwargs):
     """
     Formats the x-axis of a subplot using provided keyword arguments
 
     Arguments are pulled from three sources. Highest priority is given
-    to keyword arguments included in the dictionary *xkwargs* (e.g.
-    set_xaxis(subplot, xkwargs = {"label": "X Axis"})). Lower priority
+    to keyword arguments included in the dictionary *xaxis_kw* (e.g.
+    set_xaxis(subplot, xaxis_kw = {"label": "X Axis"})). Lower priority
     is given to keyword arguments passed directly to this function, and
     preprended with 'x' (e.g. set_xaxis(subplot, xlabel = "X Axis")).
     These will not overwrite keyword arguments already present in
-    *xkwargs*. Lowest priority is given to keyword arguments passed
+    *xaxis_kw*. Lowest priority is given to keyword arguments passed
     directly to this function that are not prepended with either 'x' or
     'y' (e.g. set_xaxis(subplot, label = "X Axis")). These will not
     overwrite keyword arguments from either of the previous sources.
 
     **Arguments:**
         :*subplot*:         <Axes> on which to act
-        :*xkwargs*:         Keyword arguments for x axis; may include
+        :*xaxis_kw*:         Keyword arguments for x axis; may include
                             any listed below
         :*(x)ticks*:        Ticks; first and last are used as upper and
                             lower boundaries
@@ -56,32 +56,32 @@ def set_xaxis(subplot, xkwargs = {}, **kwargs):
     """
     for xkey in [key for key in kwargs if key.startswith("x")]:
         xvalue = kwargs.pop(xkey)
-        if not xkey in xkwargs:
-            xkwargs[xkey[1:]] = xvalue
+        if not xkey in xaxis_kw:
+            xaxis_kw[xkey[1:]] = xvalue
     for key in [key for key in kwargs if not key.startswith("y")]:
         value = kwargs.pop(key)
-        if not key in xkwargs: 
-            xkwargs[key] = value
-    if "tick_params" in xkwargs:
-        xkwargs["tick_params"].update(dict(axis = "x"))
+        if not key in xaxis_kw: 
+            xaxis_kw[key] = value
+    if "tick_params" in xaxis_kw:
+        xaxis_kw["tick_params"].update(dict(axis = "x"))
 
-    subplot.spines["top"].set_lw(xkwargs.get("lw", 1))
-    subplot.spines["bottom"].set_lw(xkwargs.get("lw", 1))
+    subplot.spines["top"].set_lw(xaxis_kw.get("lw", 1))
+    subplot.spines["bottom"].set_lw(xaxis_kw.get("lw", 1))
     _set_axes(subplot.set_xlabel, subplot.set_xbound, subplot.set_xticks,
       subplot.set_xticklabels, subplot.tick_params,
-      subplot.get_xaxis().get_major_ticks, **xkwargs)
+      subplot.get_xaxis().get_major_ticks, **xaxis_kw)
 
-def set_yaxis(subplot, ykwargs = {}, y2kwargs = {}, **kwargs):
+def set_yaxis(subplot, yaxis_kw = {}, y2kwargs = {}, **kwargs):
     """
     Formats the y-axis of a subplot using provided keyword arguments
 
     Arguments are pulled from three sources. Highest priority is given
-    to keyword arguments included in the dictionary *ykwargs* (e.g.
-    set_yaxis(subplot, ykwargs = {"label": "Y Axis"})). Lower priority
+    to keyword arguments included in the dictionary *yaxis_kw* (e.g.
+    set_yaxis(subplot, yaxis_kw = {"label": "Y Axis"})). Lower priority
     is given to keyword arguments passed directly to this function, and
     preprended with 'y' (e.g. set_yaxis(subplot, ylabel = "Y Axis")).
     These will not overwrite keyword arguments already present in
-    *ykwargs*. Lowest priority is given to keyword arguments passed
+    *yaxis_kw*. Lowest priority is given to keyword arguments passed
     directly to this function that are not prepended with either 'x' or
     'y' (e.g. set_yaxis(subplot, label = "Y Axis")). These will not
     overwrite keyword arguments from either of the previous sources.
@@ -94,7 +94,7 @@ def set_yaxis(subplot, ykwargs = {}, y2kwargs = {}, **kwargs):
 
     **Arguments:**
         :*subplot*:         <Axes> on which to act
-        :*ykwargs*:         Keyword arguments for y axis; may include
+        :*yaxis_kw*:         Keyword arguments for y axis; may include
                             any listed below
         :*y2kwargs*:        Keyword arguments for second y axisl may
                             include any listed below
@@ -125,25 +125,25 @@ def set_yaxis(subplot, ykwargs = {}, y2kwargs = {}, **kwargs):
             y2kwargs[y2key[2:]] = y2value
     for ykey in [key for key in kwargs if key.startswith("y")]:
         yvalue = kwargs.pop(ykey)
-        if not ykey in ykwargs:
-            ykwargs[ykey[1:]] = yvalue
+        if not ykey in yaxis_kw:
+            yaxis_kw[ykey[1:]] = yvalue
     for key in [key for key in kwargs if not key.startswith("x")]:
         value = kwargs.pop(key)
-        if not key in ykwargs:
-            ykwargs[key] = value
-    if "tick_params" in ykwargs:
-        ykwargs["tick_params"].update(dict(axis = "y"))
+        if not key in yaxis_kw:
+            yaxis_kw[key] = value
+    if "tick_params" in yaxis_kw:
+        yaxis_kw["tick_params"].update(dict(axis = "y"))
     if "tick_params" in y2kwargs:
         y2kwargs["tick_params"].update(dict(axis = "y"))
 
-    if ykwargs.pop("tick_right", False):
+    if yaxis_kw.pop("tick_right", False):
         subplot.yaxis.tick_right()
 
-    subplot.spines["left"].set_lw(ykwargs.get("lw", 1))
-    subplot.spines["right"].set_lw(ykwargs.get("lw", 1))
+    subplot.spines["left"].set_lw(yaxis_kw.get("lw", 1))
+    subplot.spines["right"].set_lw(yaxis_kw.get("lw", 1))
     _set_axes(subplot.set_ylabel, subplot.set_ybound, subplot.set_yticks,
       subplot.set_yticklabels, subplot.tick_params,
-      subplot.get_yaxis().get_major_ticks, **ykwargs)
+      subplot.get_yaxis().get_major_ticks, **yaxis_kw)
 
     if y2kwargs != {} and not "disabled" in y2kwargs:
         subplot_y2 = subplot.twinx()
@@ -152,7 +152,7 @@ def set_yaxis(subplot, ykwargs = {}, y2kwargs = {}, **kwargs):
           subplot_y2.set_yticks, subplot_y2.set_yticklabels,
           subplot_y2.tick_params, subplot_y2.get_major_ticks, **y2kwargs)
 
-def set_multi(subplots, first, nrows, ncols, xkwargs, ykwargs, **kwargs):
+def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
     """
     Formats a set of multiple plots
 
@@ -161,54 +161,54 @@ def set_multi(subplots, first, nrows, ncols, xkwargs, ykwargs, **kwargs):
         :*first*:    Index of first plot in multiple
         :*nrows*:    Number of rows of plots in multiple
         :*ncols*:    Number of columns of plots in multiple
-        :*xkwargs*:  Keyword arguments to be passed to set_xaxis
-        :*ykwargs*:  Keyword arguments to be passed to set_yaxis
+        :*xaxis_kw*:  Keyword arguments to be passed to set_xaxis
+        :*yaxis_kw*:  Keyword arguments to be passed to set_yaxis
 
     .. todo:
-        - Smooth passage of keyword arguments from x/ykwargs and kwargs
+        - Smooth passage of keyword arguments from x/yaxis_kw and kwargs
           to set_bigx/ylabel
     """
-    xticks      = xkwargs.pop("ticks")
-    xticklabels = xkwargs.pop("ticklabels", xticks)
+    xticks      = xaxis_kw.pop("ticks")
+    xticklabels = xaxis_kw.pop("ticklabels", xticks)
 
-    xlabel_kw   = dict(xlabel = xkwargs.pop("label", kwargs.pop("xlabel", "")))
+    xlabel_kw   = dict(xlabel = xaxis_kw.pop("label", kwargs.pop("xlabel", "")))
     for kw in ["label_fp", "bottom", "top"]:
         if kw in  kwargs: xlabel_kw[kw] =  kwargs.get(kw)
     for kw in ["label_fp", "bottom", "top", "x", "y", "ha", "va", "rotation"]:
-        if kw in xkwargs: xlabel_kw[kw] = xkwargs.pop(kw)
-    if "xlabel_kw" in xkwargs: xlabel_kw.update(xkwargs.pop("xlabel_kw"))
+        if kw in xaxis_kw: xlabel_kw[kw] = xaxis_kw.pop(kw)
+    if "xlabel_kw" in xaxis_kw: xlabel_kw.update(xaxis_kw.pop("xlabel_kw"))
 
-    yticks      = ykwargs.pop("ticks")
-    yticklabels = ykwargs.pop("ticklabels", yticks)
+    yticks      = yaxis_kw.pop("ticks")
+    yticklabels = yaxis_kw.pop("ticklabels", yticks)
 
-    ylabel_kw   = dict(ylabel = ykwargs.pop("label", kwargs.pop("ylabel", "")))
+    ylabel_kw   = dict(ylabel = yaxis_kw.pop("label", kwargs.pop("ylabel", "")))
     for kw in ["label_fp", "left", "right"]:
         if kw in  kwargs: ylabel_kw[kw] =  kwargs.get(kw)
     for kw in ["label_fp", "left", "right", "x", "y", "ha", "va", "rotation"]:
-        if kw in ykwargs: ylabel_kw[kw] = ykwargs.pop(kw)
-    if "ylabel_kw" in ykwargs: ylabel_kw.update(ykwargs.pop("ylabel_kw"))
+        if kw in yaxis_kw: ylabel_kw[kw] = yaxis_kw.pop(kw)
+    if "ylabel_kw" in yaxis_kw: ylabel_kw.update(yaxis_kw.pop("ylabel_kw"))
 
-    xkwargs.update(kwargs)
-    ykwargs.update(kwargs)
+    xaxis_kw.update(kwargs)
+    yaxis_kw.update(kwargs)
 
     # Loop over subplots
     for i in range(first, first + (nrows * ncols), 1):
 
         # Format x axes
         if   (i == first + (nrows * ncols) - 1):
-            set_xaxis(subplots[i], ticks = xticks, ticklabels = xticklabels,      **xkwargs)
+            set_xaxis(subplots[i], ticks = xticks, ticklabels = xticklabels,      **xaxis_kw)
         elif (i in range(first + ((nrows - 1) * ncols), first + (nrows * ncols) - 1, 1)):
-            set_xaxis(subplots[i], ticks = xticks, ticklabels = xticklabels[:-1], **xkwargs)
+            set_xaxis(subplots[i], ticks = xticks, ticklabels = xticklabels[:-1], **xaxis_kw)
         else:
-            set_xaxis(subplots[i], ticks = xticks, ticklabels = [],               **xkwargs)
+            set_xaxis(subplots[i], ticks = xticks, ticklabels = [],               **xaxis_kw)
 
         # Format y axes
         if   (i == first):
-            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels,      **ykwargs)
+            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels,      **yaxis_kw)
         elif (i in range(first + nrows, first + (nrows * ncols), nrows)):
-            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels[:-1], **ykwargs)
+            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels[:-1], **yaxis_kw)
         else:
-            set_yaxis(subplots[i], ticks = yticks, ticklabels = [],               **ykwargs)
+            set_yaxis(subplots[i], ticks = yticks, ticklabels = [],               **yaxis_kw)
     set_bigxlabel(dict((j, subplots[j]) for j in range(first, first + (nrows * ncols), 1)), **xlabel_kw)
     set_bigylabel(dict((j, subplots[j]) for j in range(first, first + (nrows * ncols), 1)), **ylabel_kw)
 
@@ -244,8 +244,8 @@ def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b",
 
 ############################## INTERNAL FUNCTIONS ##############################
 def _set_axes(set_label, set_bound, set_ticks, set_ticklabels, set_tick_params,
-    get_major_ticks, ticks, ticklabels = None, tick_fp = "8r", label = "",
-    label_fp = "10b", tick_pad = 8, **kwargs):
+    get_major_ticks, ticks, ticklabels = None, tick_fp = "8r", tick_pad = 8,
+    label = None, label_fp = "10b", **kwargs):
     """
     Formats an axis
 
@@ -282,8 +282,9 @@ def _set_axes(set_label, set_bound, set_ticks, set_ticklabels, set_tick_params,
       **kwargs.get("tick_kw", {}))
     set_ticklabels(ticklabels, fontproperties = gen_font(tick_fp),
       **kwargs.get("ticklabel_kw", {}))
-    set_label(label, fontproperties = gen_font(label_fp),
-      **kwargs.get("label_kw", {}))
+    if label is not None:
+        set_label(label, fontproperties = gen_font(label_fp),
+          **kwargs.get("label_kw", {}))
     set_tick_params(
       **kwargs.get("tick_params", {}))
     for tick in get_major_ticks():

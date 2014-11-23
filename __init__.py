@@ -1,12 +1,13 @@
 #!/usr/bin/python
 #   plot_toolkit.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-10-16
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-11-19
 """
 General functions
 """
 ################################### MODULES ####################################
-from __future__ import division, print_function
+from __future__ import absolute_import,division,print_function,unicode_literals
 import os, sys, types
+import six
 import numpy as np
 ################################## VARIABLES ###################################
 def gen_color(color):
@@ -168,7 +169,7 @@ def gen_font(fp = None, **kwargs):
 
     if   isinstance(fp, matplotlib.font_manager.FontProperties):
         return fp
-    elif isinstance(fp, str):
+    elif isinstance(fp, six.types.StringTypes):
         if not "fname" in kwargs:
             kwargs["family"] = kwargs.get("family", "Arial")
         kwargs["size"]       = kwargs.get("size",   int(fp[:-1]))

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.Figure_Output.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 14-10-25
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 14-11-18
 """
 """
 ################################## MODULES ####################################
@@ -35,12 +35,13 @@ class Figure_Output(object):
     def __init__(self, function):
         from functools import update_wrapper
 
-        self.function   = function
+        self.function = function
         update_wrapper(self, function)
 
-    def __call__(self, outfile = "test.pdf", *args, **kwargs):
+    def __call__(self, *args, **kwargs):
         verbose = kwargs.get("verbose", "True")
 
+        outfile = kwargs.pop("outfile", "test.pdf")
         figure  = self.function(*args, **kwargs)
 
         if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
@@ -64,5 +65,3 @@ class Figure_Output(object):
                 except:
                     raise Exception("UNABLE TO OUTPUT TO FILE:" + outfile)
         return figure
-
-
