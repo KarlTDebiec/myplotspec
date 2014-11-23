@@ -30,6 +30,7 @@ class Figure_Manager(object):
     """
 
     defaults_yaml = ""
+    default_mode  = "default"
 
     def __init__(self, **kwargs):
         import yaml
@@ -44,7 +45,7 @@ class Figure_Manager(object):
         self.draw_report(**kwargs)
 
     @Sieve_Kwargs()
-    def draw_report(self, mode = "default", **kwargs):
+    def draw_report(self, mode = None, **kwargs):
         """
         .. todo:
             - Loop over figures properly
@@ -52,7 +53,10 @@ class Figure_Manager(object):
               of pdfpages object; then add pages as the are generated;
               then close
         """
-        self.mode     = mode
+        if mode is not None:
+            self.mode = mode
+        else:
+            self.mode = self.default_mode
         self.defaults = self.defaults_by_mode.get(self.mode, {})
         self.draw_figure(
           defaults           = self.defaults.get("draw_figure", {}),
