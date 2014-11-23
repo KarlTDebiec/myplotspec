@@ -11,17 +11,42 @@ from .Figure_Output import Figure_Output
 from kwargsieve import Sieve_Kwargs
 ################################### CLASSES ####################################
 def merge_dicts(dict1, dict2):
+    """
+    Recursively merges two dictionaries
+
+    **Arguments:**
+        :*dict1*: First dictionary
+        :*dict2*: Second dictionary; values for keys shared by both
+                  dictionaries are drawn from *dict2*
+
+    **Returns:**
+        :*merged*: Merged dictionary
+    """
     def merge(dict1, dict2):
-        for k in set(dict1.keys()).union(dict2.keys()):
-            if k in dict1 and k in dict2:
-                if isinstance(dict1[k], dict) and isinstance(dict2[k], dict):
-                    yield (k, dict(merge(dict1[k], dict2[k])))
+        """
+        Generator used to recursively merge two dictionaries
+
+        **Arguments:**
+            :*dict1*: First dictionary
+            :*dict2*: Second dictionary; values for keys shared by both
+                      dictionaries are drawn from *dict2*
+
+        **Yields:**
+            :*(key, value)*: Merged key value pair
+        
+        """
+        for key in set(dict1.keys()).union(dict2.keys()):
+            if key in dict1 and key in dict2:
+                if  (isinstance(dict1[key], dict)
+                and  isinstance(dict2[key], dict)):
+                    yield (key, dict(merge(dict1[key], dict2[key])))
                 else:
-                    yield (k, dict2[k])
-            elif k in dict1:
-                yield (k, dict1[k])
+                    yield (key, dict2[key])
+            elif key in dict1:
+                yield (key, dict1[key])
             else:
-                yield (k, dict2[k])
+                yield (key, dict2[key])
+
     return dict(merge(dict1, dict2))
 
 class Figure_Manager(object):
@@ -48,7 +73,6 @@ class Figure_Manager(object):
     def draw_report(self, mode = None, **kwargs):
         """
         .. todo:
-            - Loop over figures properly
             - If outfile is a pdf, open pdfpages and add to dictionary
               of pdfpages object; then add pages as the are generated;
               then close
@@ -58,10 +82,15 @@ class Figure_Manager(object):
         else:
             self.mode = self.default_mode
         self.defaults = self.defaults_by_mode.get(self.mode, {})
-        self.draw_figure(
-          defaults           = self.defaults.get("draw_figure", {}),
-          kwarg_pool         = kwargs.get("kwarg_pool", {}),
-          kwarg_pool_sources = [["figures", "all"], ["figures", 0]])
+        figure_spec    = kwargs.pop("figures", {})
+        figure_indexes = sorted([i for i in figure_spec.keys()
+                           if str(i).isdigit()])
+
+        for i in figure_indexes:
+            self.draw_figure(
+              defaults           = self.defaults.get("draw_figure", {}),
+              kwarg_pool         = kwargs.get("kwarg_pool", {}),
+              kwarg_pool_sources = [["figures", "all"], ["figures", i]])
 
     @Sieve_Kwargs()
     @Figure_Output
