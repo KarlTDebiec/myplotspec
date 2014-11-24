@@ -71,7 +71,7 @@ def set_xaxis(subplot, xaxis_kw = {}, **kwargs):
       subplot.set_xticklabels, subplot.tick_params,
       subplot.get_xaxis().get_major_ticks, **xaxis_kw)
 
-def set_yaxis(subplot, yaxis_kw = {}, y2kwargs = {}, **kwargs):
+def set_yaxis(subplot, yaxis_kw = {}, y2axis_kw = {}, **kwargs):
     """
     Formats the y-axis of a subplot using provided keyword arguments
 
@@ -87,7 +87,7 @@ def set_yaxis(subplot, yaxis_kw = {}, y2kwargs = {}, **kwargs):
     overwrite keyword arguments from either of the previous sources.
 
     Arguments may additionally be provided for the secondary y axis,
-    analagously using y2kwargs and keyword arguments passed directly
+    analagously using y2axis_kw and keyword arguments passed directly
     to this function prepended with 'y2'. Other keyword arguments will
     not be applied to the secondary y axis. If no keywords are provided
     for the secondary y axis, none will be created.
@@ -96,7 +96,7 @@ def set_yaxis(subplot, yaxis_kw = {}, y2kwargs = {}, **kwargs):
         :*subplot*:         <Axes> on which to act
         :*yaxis_kw*:         Keyword arguments for y axis; may include
                             any listed below
-        :*y2kwargs*:        Keyword arguments for second y axisl may
+        :*y2axis_kw*:        Keyword arguments for second y axisl may
                             include any listed below
         :*(y)ticks*:        Ticks; first and last are used as upper and
                             lower boundaries
@@ -119,22 +119,30 @@ def set_yaxis(subplot, yaxis_kw = {}, y2kwargs = {}, **kwargs):
                             set_ylabel(...)
         :*(y)lw*:           Width of y-axis lines
     """
+    # Move kwargs that start with 'y2' to y2axis_kw
     for y2key in [key for key in kwargs if key.startswith("y2")]:
         y2value = kwargs.pop(y2key)
-        if not y2key in y2kwargs:
-            y2kwargs[y2key[2:]] = y2value
+        if not y2key in y2axis_kw:
+            y2axis_kw[y2key[2:]] = y2value
+
+    # Move kwargs that start with 'y' (and not 'y2') to yaxis_kw
     for ykey in [key for key in kwargs if key.startswith("y")]:
         yvalue = kwargs.pop(ykey)
         if not ykey in yaxis_kw:
             yaxis_kw[ykey[1:]] = yvalue
+
+    # Move kwargs that do not start with 'x' to yaxis_kw
+    # If y2axis_kw has contents, move them there also
     for key in [key for key in kwargs if not key.startswith("x")]:
         value = kwargs.pop(key)
         if not key in yaxis_kw:
             yaxis_kw[key] = value
+        if y2axis_kw != {} and not key in y2axis_kw:
+            y2axis_kw[key] = value
     if "tick_params" in yaxis_kw:
         yaxis_kw["tick_params"].update(dict(axis = "y"))
-    if "tick_params" in y2kwargs:
-        y2kwargs["tick_params"].update(dict(axis = "y"))
+    if "tick_params" in y2axis_kw:
+        y2axis_kw["tick_params"].update(dict(axis = "y"))
 
     if yaxis_kw.pop("tick_right", False):
         subplot.yaxis.tick_right()
@@ -145,12 +153,13 @@ def set_yaxis(subplot, yaxis_kw = {}, y2kwargs = {}, **kwargs):
       subplot.set_yticklabels, subplot.tick_params,
       subplot.get_yaxis().get_major_ticks, **yaxis_kw)
 
-    if y2kwargs != {} and not "disabled" in y2kwargs:
+    if y2axis_kw != {} and not "disabled" in y2axis_kw:
         subplot_y2 = subplot.twinx()
         subplot_y2.set_autoscale_on(False)
         _set_axes(subplot_y2.set_ylabel, subplot_y2.set_ybound,
           subplot_y2.set_yticks, subplot_y2.set_yticklabels,
-          subplot_y2.tick_params, subplot_y2.get_major_ticks, **y2kwargs)
+          subplot_y2.tick_params, subplot_y2.get_yaxis().get_major_ticks,
+          **y2axis_kw)
 
 def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
     """
