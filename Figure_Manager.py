@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.Figure_Manager.py
-#   Written by Karl Debiec on 14-11-17, last updated by Karl Debiec on 14-11-22
+#   Written by Karl Debiec on 14-11-17, last updated by Karl Debiec on 14-11-24
 """
 Class to manage figure generation
 """
@@ -8,47 +8,9 @@ Class to manage figure generation
 from __future__ import absolute_import,division,print_function,unicode_literals
 import os, sys
 from .Figure_Output import Figure_Output
+from . import merge_dicts
 from kwargsieve import Sieve_Kwargs
 ################################### CLASSES ####################################
-def merge_dicts(dict1, dict2):
-    """
-    Recursively merges two dictionaries
-
-    **Arguments:**
-        :*dict1*: First dictionary
-        :*dict2*: Second dictionary; values for keys shared by both
-                  dictionaries are drawn from *dict2*
-
-    **Returns:**
-        :*merged*: Merged dictionary
-    """
-    def merge(dict1, dict2):
-        """
-        Generator used to recursively merge two dictionaries
-
-        **Arguments:**
-            :*dict1*: First dictionary
-            :*dict2*: Second dictionary; values for keys shared by both
-                      dictionaries are drawn from *dict2*
-
-        **Yields:**
-            :*(key, value)*: Merged key value pair
-        
-        """
-        for key in set(dict1.keys()).union(dict2.keys()):
-            if key in dict1 and key in dict2:
-                if  (isinstance(dict1[key], dict)
-                and  isinstance(dict2[key], dict)):
-                    yield (key, dict(merge(dict1[key], dict2[key])))
-                else:
-                    yield (key, dict2[key])
-            elif key in dict1:
-                yield (key, dict1[key])
-            else:
-                yield (key, dict2[key])
-
-    return dict(merge(dict1, dict2))
-
 class Figure_Manager(object):
     """
     Class to manage figure generation
@@ -94,7 +56,8 @@ class Figure_Manager(object):
 
     @Sieve_Kwargs()
     @Figure_Output
-    def draw_figure(self, title, sharedxlabel, sharedylabel, **kwargs):
+    def draw_figure(self, title = None, sharedxlabel = None,
+        sharedylabel = None, **kwargs):
         from plot_toolkit import gen_figure_subplots
         from plot_toolkit.text import set_title, set_bigxlabel, set_bigylabel
 

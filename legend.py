@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 #   plot_toolkit.legend.py
 #   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-11-22
 ################################### MODULES ####################################
@@ -26,8 +27,7 @@ def set_legend(subplot, handles = None, labels = None, legend_kw = {},
         :*legend*:  <Legend>
     """
     legend_kw["prop"] = gen_font(multi_kw(
-      ["fp", "fontproperties", "legend_fp", "prop"],
-      "8r", kwargs))
+      ["fp", "fontproperties", "legend_fp", "prop"], "8r", kwargs))
     if handles is not None and labels is not None:
         return subplot.legend(handles, labels, **legend_kw)
     else:

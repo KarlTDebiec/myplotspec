@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #   plot_toolkit.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-11-19
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-11-24
 """
 General functions
 """
@@ -9,8 +9,50 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 import os, sys, types
 import six
 import numpy as np
-################################## VARIABLES ###################################
+################################## FUNCTIONS ###################################
+def merge_dicts(dict1, dict2):
+    """
+    Recursively merges two dictionaries
+
+    **Arguments:**
+        :*dict1*: First dictionary
+        :*dict2*: Second dictionary; values for keys shared by both
+                  dictionaries are drawn from *dict2*
+
+    **Returns:**
+        :*merged*: Merged dictionary
+    """
+    def merge(dict1, dict2):
+        """
+        Generator used to recursively merge two dictionaries
+
+        **Arguments:**
+            :*dict1*: First dictionary
+            :*dict2*: Second dictionary; values for keys shared by both
+                      dictionaries are drawn from *dict2*
+
+        **Yields:**
+            :*(key, value)*: Merged key value pair
+        
+        """
+        for key in set(dict1.keys()).union(dict2.keys()):
+            if key in dict1 and key in dict2:
+                if  (isinstance(dict1[key], dict)
+                and  isinstance(dict2[key], dict)):
+                    yield (key, dict(merge(dict1[key], dict2[key])))
+                else:
+                    yield (key, dict2[key])
+            elif key in dict1:
+                yield (key, dict1[key])
+            else:
+                yield (key, dict2[key])
+
+    return dict(merge(dict1, dict2))
+
 def gen_color(color):
+    """
+    Generates a color
+    """
     colors = dict(
       default = dict(
         blue   = [0.298, 0.447, 0.690],
@@ -62,8 +104,9 @@ def gen_color(color):
         else:
             return color
     elif (isinstance(color, list)
-    or    isinstance(color, np.ndarray)
-    or    isinstance(color, float)):
+    or    isinstance(color, np.ndarray)):
+        return color
+    elif   isinstance(color, float):
         return [color, color, color]
 
 def multi_kw(keywords, default, kwargs):
@@ -183,30 +226,28 @@ def gen_contour_levels(I, cutoff = 0.9875, include_negative = False, **kwargs):
     """
     **Arguments:**
         :*I*:                Intensity
-        :*cutoff*:           Proportion of data below minimum level (0.0-1.0)
-        :*include_negative*: Return levels for negative intensity as well as positive
+        :*cutoff*:           Proportion of data below minimum level
+                             (0.0-1.0)
+        :*include_negative*: Return levels for negative intensity as
+                             well as positive
 
     **Returns:**
-        :*levels*:           Numpy array of levels
-
-    .. todo::
-        - Should allow number of levels to be set
-        - Should allow minimum level and maximum level to be set manually
-        - Needs partner function to analyze amino acid sequence, estimate number of peaks, and choose appropriate cutoff
-        - Double check overall; probably could be considerably improved
+        :*levels*:  Numpy array of levels
     """
 
     I_flat      = np.sort(I.flatten())
     min_level   = kwargs.get("min_level", I_flat[int(I_flat.size * cutoff)])
     max_level   = kwargs.get("max_level", I_flat[-1])
     exp_int     = (max_level ** (1.0 / 9.0)) / (min_level ** (1.0 / 9.0))
-    p_levels    = np.array([min_level * exp_int ** a for a in range(0, 10, 1)][:-1], dtype = np.int)
+    p_levels    = np.array([min_level * exp_int ** a for a in range(0, 10, 1)]
+                    [:-1], dtype = np.int)
     if include_negative:
         I_flat      = I_flat[I_flat < 0]
         min_level   = -1 * I_flat[0]
         max_level   = -1 * I_flat[int(I_flat.size * (1 - cutoff))]
         exp_int     = (max_level ** (1.0 / 9.0)) / (min_level ** (1.0 / 9.0))
-        m_levels    = -1 * np.array([min_level * exp_int ** a for a in range(0, 10, 1)][:-1], dtype = np.int)
+        m_levels    = -1 * np.array([min_level * exp_int ** a
+                        for a in range(0, 10, 1)][:-1], dtype = np.int)
         return        np.append(m_levels, p_levels)
     else:
         return p_levels
