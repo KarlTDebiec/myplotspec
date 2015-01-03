@@ -17,7 +17,7 @@ from kwargsieve import Collect_Kwargs
 ################################### CLASSES ####################################
 class Figure_Manager(object):
     """
-    Class to manage figure generation
+    Class to manage the generation of figures using matplotlib
     """
 
     defaults_yaml = ""
@@ -40,6 +40,8 @@ class Figure_Manager(object):
     @Collect_Kwargs()
     def draw_report(self, mode = None, **kwargs):
         """
+        DOCUMENT
+
         .. todo:
             - If outfile is a pdf, open pdfpages and add to dictionary
               of pdfpages object; then add pages as the are generated;
@@ -65,6 +67,12 @@ class Figure_Manager(object):
     def draw_figure(self, title = None, sharedxlabel = None,
         sharedylabel = None, **kwargs):
         """
+        DOCUMENT
+
+        **Arguments:**
+            :*title*:        Figure title
+            :*sharedxlabel*: X label to be shared among subplots
+            :*sharedylabel*: Y label to be shared among subplots
         """
         from MYPlotSpec import gen_figure_subplots
         from MYPlotSpec.text import set_title, set_bigxlabel, set_bigylabel
@@ -97,22 +105,76 @@ class Figure_Manager(object):
               kwarg_pool_sources = subplot_kwarg_pool_sources)
 
         # Return results
-        return figure
 
-    def draw_subplot(self, **kwargs):
+    @Collect_Kwargs()
+    def draw_subplot(self, subplot, title = None, legend = True, **kwargs):
         """
-        .. todo:
-            - Implement a basic version; should be sufficient for many
-              purposes
-        """
-        raise NotImplementedError("draw_subplot function is not implemented " +
-          "in this base Figure_Manager class")
+        DOCUMENT
 
-    def draw_dataset(self, **kwargs):
+        **Arguments:**
+            :*subplot*: <Axes> on which to act
+            :*title*:   Subplot's title
+            :*legend*:  Subplot's legend
         """
-        .. todo:
-            - Implement a basic version; should be sufficient for many
-              purposes
+        from MYPlotSpec.axes import set_xaxis, set_yaxis
+        from MYPlotSpec.legend import set_legend
+        from MYPlotSpec.text import set_title
+
+        # Get dataset specification
+        dataset_spec    = kwargs.pop("datasets", {})
+        dataset_indexes = sorted([i for i in dataset_spec.keys()
+                            if str(i).isdigit()])
+
+        # Format
+        set_xaxis(subplot, **kwargs)
+        set_yaxis(subplot, **kwargs)
+        if title is not None and str(title) != "None":
+            set_title(subplot, title = title, **kwargs)
+
+        # Loop over datasets
+        handles = []
+        labels  = []
+        subplot_kwarg_pool_sources = kwargs.pop("kwarg_pool_sources")
+        for i in dataset_indexes:
+            dataset_kwarg_pool_sources = []
+            for subplot_kwarg_pool_source in subplot_kwarg_pool_sources:
+                dataset_kwarg_pool_sources += [
+                  subplot_kwarg_pool_source + ["datasets", "all"],
+                  subplot_kwarg_pool_source + ["datasets", i]]
+            self.draw_dataset(
+                subplot            = subplot,
+                handles            = handles,
+                labels             = labels,
+                defaults           = self.defaults.get("draw_dataset", {}),
+                kwarg_pool         = kwargs.get("kwarg_pool", {}),
+                kwarg_pool_sources = dataset_kwarg_pool_sources)
+
+        # Draw legend
+        if legend:
+            set_legend(subplot, handles = handles, labels = labels, **kwargs)
+
+    @Collect_Kwargs()
+    def draw_dataset(self, subplot, label = "", color = "blue", lw = 1,
+      ls = "-", xoffset = 0, yoffset = 0, handles = [], labels = [], 
+      dataset_kw = {}, plot_kw = {}, **kwargs):
         """
-        raise NotImplementedError("draw_dataset function is not implemented " +
-          "in this base Figure_Manager class")
+        DOCUMENT
+
+        **Arguments:**
+            :*subplot*: <Axes> on which to act
+            :*xoffset*: Offset to be added to x coordinates
+            :*yoffset*: Offset to be added to y coordinates
+        """
+        from MYPlotSpec import  gen_color
+        kwargs.pop("kwarg_pool")
+
+        # Loop over infiles
+#        dataset = FPLC_Dataset(**kwargs)
+#        labels += [label]
+#        color   = gen_color(color)
+
+        # Plot
+#        handles += subplot.plot(
+#          dataset.absorbance_280["volume_eluted_mL"] - xoffset,
+#          dataset.absorbance_280["A280_AU"] - yoffset,
+#          color = color, lw = lw, ls = ls, **plot_kw)
