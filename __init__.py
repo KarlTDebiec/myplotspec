@@ -1,14 +1,19 @@
 #!/usr/bin/python
-#   plot_toolkit.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-11-24
+# -*- coding: utf-8 -*-
+#   MYPlotSpec.__init__.py
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec on 15-01-03
 """
 General functions
+
+.. todo:
+    - Check
+    - Check types vs. six
 """
 ################################### MODULES ####################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 import os, sys, types
 import six
-import numpy as np
+import numpy
 ################################## FUNCTIONS ###################################
 def merge_dicts(dict1, dict2):
     """
@@ -104,7 +109,7 @@ def gen_color(color):
         else:
             return color
     elif (isinstance(color, list)
-    or    isinstance(color, np.ndarray)):
+    or    isinstance(color, numpy.ndarray)):
         return color
     elif   isinstance(color, float):
         return [color, color, color]
@@ -182,13 +187,14 @@ def get_edges(figure_or_subplots, **kwargs):
           Format seems strange
     """
     import matplotlib
+
     if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
         subplots = figure_or_subplots.axes
     elif isinstance(figure_or_subplots, types.DictType):
         subplots = figure_or_subplots.values()
-    return {"x": np.array([[subplot.get_position().xmin,
+    return {"x": numpy.array([[subplot.get_position().xmin,
                  subplot.get_position().xmax] for subplot in subplots]),
-            "y": np.array([[subplot.get_position().ymin,
+            "y": numpy.array([[subplot.get_position().ymin,
                  subplot.get_position().ymax] for subplot in subplots])}
 
 def gen_font(fp = None, **kwargs):
@@ -221,62 +227,6 @@ def gen_font(fp = None, **kwargs):
     elif isinstance(fp, dict):
         kwargs.update(fp)
     return matplotlib.font_manager.FontProperties(**kwargs)
-
-def gen_contour_levels(I, cutoff = 0.9875, include_negative = False, **kwargs):
-    """
-    **Arguments:**
-        :*I*:                Intensity
-        :*cutoff*:           Proportion of data below minimum level
-                             (0.0-1.0)
-        :*include_negative*: Return levels for negative intensity as
-                             well as positive
-
-    **Returns:**
-        :*levels*:  Numpy array of levels
-    """
-
-    I_flat      = np.sort(I.flatten())
-    min_level   = kwargs.get("min_level", I_flat[int(I_flat.size * cutoff)])
-    max_level   = kwargs.get("max_level", I_flat[-1])
-    exp_int     = (max_level ** (1.0 / 9.0)) / (min_level ** (1.0 / 9.0))
-    p_levels    = np.array([min_level * exp_int ** a for a in range(0, 10, 1)]
-                    [:-1], dtype = np.int)
-    if include_negative:
-        I_flat      = I_flat[I_flat < 0]
-        min_level   = -1 * I_flat[0]
-        max_level   = -1 * I_flat[int(I_flat.size * (1 - cutoff))]
-        exp_int     = (max_level ** (1.0 / 9.0)) / (min_level ** (1.0 / 9.0))
-        m_levels    = -1 * np.array([min_level * exp_int ** a
-                        for a in range(0, 10, 1)][:-1], dtype = np.int)
-        return        np.append(m_levels, p_levels)
-    else:
-        return p_levels
-
-def gen_cmap(color, **kwargs):
-    """
-    Returns colormap that is *color* over all values 
-
-    Not useful for heatmaps; useful for countours
-
-    **Arguments:**
-        :*color*: Tuple, list, or numpy array of red, green, and blue (0.0-1.0); or string of named matplotlib color
-    **Returns:**
-        :*cmap*:  <LinearSegmentedColormap>
-    """
-    import matplotlib.colors as cl
-    if isinstance(color, str):
-        if   color in ["b", "blue"]:    r, g, b = [0.00, 0.00, 1.00]
-        elif color in ["r", "red"]:     r, g, b = [1.00, 0.00, 0.00]
-        elif color in ["g", "green"]:   r, g, b = [0.00, 0.50, 0.00]
-        elif color in ["c", "cyan"]:    r, g, b = [0.00, 0.75, 0.75]
-        elif color in ["m", "magenta"]: r, g, b = [0.75, 0.00, 0.75]
-        elif color in ["y", "yellow"]:  r, g, b = [0.75, 0.75, 0.00]
-        elif color in ["k", "black"]:   r, g, b = [0.00, 0.00, 0.00]
-        elif color in ["w", "white"]:   r, g, b = [1.00, 1.00, 1.00]
-        else:                           raise Exception("Unrecognized input to gen_cmap(): {0}".format(color))
-    else: r, g, b = color
-    cdict   = {"red": ((0, r, r), (1, r, r)), "green": ((0, g, g), (1, g, g)), "blue": ((0, b, b), (1, b, b))}
-    return    cl.LinearSegmentedColormap("cmap", cdict, 256)
 
 def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
     """
@@ -387,6 +337,7 @@ def identify(subplots, **kwargs):
     from .text import set_inset
 
     for i, subplot in subplots.items():
-        set_inset(subplot, text = i, xpos = 0.5, ypos = 0.5, ha = "center", va = "center", **kwargs)
+        set_inset(subplot, text = i, xpos = 0.5, ypos = 0.5, ha = "center",
+          va = "center", **kwargs)
 
 

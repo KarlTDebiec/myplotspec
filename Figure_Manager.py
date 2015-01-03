@@ -1,15 +1,19 @@
 #!/usr/bin/python
-#   plot_toolkit.Figure_Manager.py
-#   Written by Karl Debiec on 14-11-17, last updated by Karl Debiec on 14-11-24
+# -*- coding: utf-8 -*-
+#   MYPlotSpec.Figure_Manager.py
+#   Written by Karl Debiec on 14-11-17, last updated by Karl Debiec on 15-01-03
 """
-Class to manage figure generation
+Class to manage the generation of figures using matplotlib
+
+.. todo:
+    - Check
 """
 ################################### MODULES ####################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 import os, sys
 from .Figure_Output import Figure_Output
 from . import merge_dicts
-from kwargsieve import Sieve_Kwargs
+from kwargsieve import Collect_Kwargs
 ################################### CLASSES ####################################
 class Figure_Manager(object):
     """
@@ -20,6 +24,8 @@ class Figure_Manager(object):
     default_mode  = "default"
 
     def __init__(self, **kwargs):
+        """
+        """
         import yaml
         defaults_dict = yaml.load(self.defaults_yaml)
 
@@ -31,7 +37,7 @@ class Figure_Manager(object):
 
         self.draw_report(**kwargs)
 
-    @Sieve_Kwargs()
+    @Collect_Kwargs()
     def draw_report(self, mode = None, **kwargs):
         """
         .. todo:
@@ -54,12 +60,14 @@ class Figure_Manager(object):
               kwarg_pool         = kwargs.get("kwarg_pool", {}),
               kwarg_pool_sources = [["figures", "all"], ["figures", i]])
 
-    @Sieve_Kwargs()
+    @Collect_Kwargs()
     @Figure_Output
     def draw_figure(self, title = None, sharedxlabel = None,
         sharedylabel = None, **kwargs):
-        from plot_toolkit import gen_figure_subplots
-        from plot_toolkit.text import set_title, set_bigxlabel, set_bigylabel
+        """
+        """
+        from MYPlotSpec import gen_figure_subplots
+        from MYPlotSpec.text import set_title, set_bigxlabel, set_bigylabel
 
         # Prepare figure and subplots with specified dimensions
         subplots_spec    = kwargs.pop("subplots", {})
@@ -92,9 +100,19 @@ class Figure_Manager(object):
         return figure
 
     def draw_subplot(self, **kwargs):
+        """
+        .. todo:
+            - Implement a basic version; should be sufficient for many
+              purposes
+        """
         raise NotImplementedError("draw_subplot function is not implemented " +
           "in this base Figure_Manager class")
 
     def draw_dataset(self, **kwargs):
+        """
+        .. todo:
+            - Implement a basic version; should be sufficient for many
+              purposes
+        """
         raise NotImplementedError("draw_dataset function is not implemented " +
           "in this base Figure_Manager class")

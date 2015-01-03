@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# plot_toolkit documentation build configuration file, created by
+# MYPlotSpec documentation build configuration file, created by
 # sphinx-quickstart on Fri Apr  4 17:01:49 2014.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -13,7 +13,7 @@
 
 import sys, os
 
-todo_include_todos=False
+todo_include_todos=True
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -42,8 +42,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Plot Toolkit'
-copyright = u'2014, Karl Debiec'
+project = u'Matplotlib YAML Plot Specification'
+copyright = u'2015, Karl Debiec'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -166,7 +166,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "plot_toolkitdoc"
+htmlhelp_basename = "MYPlotSpecdoc"
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -185,7 +185,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ("index", "plot_toolkit.tex", "Plot Toolkit Documentation",
+  ("index", "MYPlotSpec.tex", "Matplotlib YAML Plot Specification Documentation",
    "Karl Debiec", "manual"),
 ]
 
@@ -215,7 +215,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'plot_toolkit', u'plot_toolkit Documentation',
+    ('index', 'MYPlotSpec', u'MYPlotSpec Documentation',
      [u'Karl Debiec'], 1)
 ]
 
@@ -229,8 +229,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'plot_toolkit', u'Plot Toolkit Documentation',
-   u'Karl Debiec', 'plot_toolkit', 'One line description of project.',
+  ('index', 'MYPlotSpec', u'Matplotlib YAML Plot Specification Documentation',
+   u'Karl Debiec', 'MYPlotSpec', 'One line description of project.',
    'Miscellaneous'),
 ]
 

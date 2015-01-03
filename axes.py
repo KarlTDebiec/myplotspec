@@ -1,18 +1,19 @@
 #!/usr/bin/python
-#   plot_toolkit.axes.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec 14-11-22
+# -*- coding: utf-8 -*-
+#   MYPlotSpec.axes.py
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 15-01-03
 """
 Functions for formatting axes
 
 .. todo:
-    - Finish formatting for 80 column
+    - Check
+    - Check that set_multi still works
     - Figure out how to adjust the positions of specific ticks properly
       and automatically ('1' often looks bad)
 """
 ################################### MODULES ####################################
 from __future__ import division, print_function
 import os, sys
-import numpy as np
 from . import gen_font
 from .text import set_bigxlabel, set_bigylabel
 ################################## FUNCTIONS ###################################
@@ -205,21 +206,29 @@ def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
 
         # Format x axes
         if   (i == first + (nrows * ncols) - 1):
-            set_xaxis(subplots[i], ticks = xticks, ticklabels = xticklabels,      **xaxis_kw)
+            set_xaxis(subplots[i], ticks = xticks,
+              ticklabels = xticklabels, **xaxis_kw)
         elif (i in range(first + ((nrows - 1) * ncols), first + (nrows * ncols) - 1, 1)):
-            set_xaxis(subplots[i], ticks = xticks, ticklabels = xticklabels[:-1], **xaxis_kw)
+            set_xaxis(subplots[i], ticks = xticks,
+              ticklabels = xticklabels[:-1], **xaxis_kw)
         else:
-            set_xaxis(subplots[i], ticks = xticks, ticklabels = [],               **xaxis_kw)
+            set_xaxis(subplots[i], ticks = xticks,
+              ticklabels = [], **xaxis_kw)
 
         # Format y axes
         if   (i == first):
-            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels,      **yaxis_kw)
+            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels,
+              **yaxis_kw)
         elif (i in range(first + nrows, first + (nrows * ncols), nrows)):
-            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels[:-1], **yaxis_kw)
+            set_yaxis(subplots[i], ticks = yticks,
+              ticklabels = yticklabels[:-1], **yaxis_kw)
         else:
-            set_yaxis(subplots[i], ticks = yticks, ticklabels = [],               **yaxis_kw)
-    set_bigxlabel(dict((j, subplots[j]) for j in range(first, first + (nrows * ncols), 1)), **xlabel_kw)
-    set_bigylabel(dict((j, subplots[j]) for j in range(first, first + (nrows * ncols), 1)), **ylabel_kw)
+            set_yaxis(subplots[i], ticks = yticks,
+              ticklabels = [], **yaxis_kw)
+    set_bigxlabel(dict((j, subplots[j])
+      for j in range(first, first + (nrows * ncols), 1)), **xlabel_kw)
+    set_bigylabel(dict((j, subplots[j])
+      for j in range(first, first + (nrows * ncols), 1)), **ylabel_kw)
 
 def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b",
       tick_fp = "8r", **kwargs):
@@ -238,7 +247,7 @@ def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b",
 
     if ticklabels is None:
         ticklabels = ticks
-    zticks  = np.array(ticks, np.float32)
+    zticks  = numpy.array(ticks, numpy.float32)
     zticks  = (zticks - zticks[0]) / (zticks[-1] - zticks[0])
     cbar.ax.tick_params(bottom = "off", top = "off", left = "off",
       right = "off")
@@ -287,7 +296,7 @@ def _set_axes(set_label, set_bound, set_ticks, set_ticklabels, set_tick_params,
         set_bound(float(ticks[0]), float(ticks[-1]))
     if ticklabels is None:
         ticklabels = ticks
-    set_ticks(np.array(ticks, np.float32),
+    set_ticks(numpy.array(ticks, numpy.float32),
       **kwargs.get("tick_kw", {}))
     set_ticklabels(ticklabels, fontproperties = gen_font(tick_fp),
       **kwargs.get("ticklabel_kw", {}))

@@ -1,13 +1,16 @@
 #!/usr/bin/python
-#   plot_toolkit.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec 14-11-22
+# -*- coding: utf-8 -*-
+#   MYPlotSpec.text.py
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec on 15-01-03
 """
-Functions for adding text labels and annotations
+Functions for formatting text
+
+.. todo:
+    - Check
 """
 ################################### MODULES ####################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 import os, sys, types
-import numpy as np
 import matplotlib
 from . import gen_font, get_edges, multi_kw
 ################################## FUNCTIONS ###################################
@@ -86,18 +89,18 @@ def set_bigxlabel(figure_or_subplots, *args, **kwargs):
     if "top" in kwargs:
         top = kwargs.pop("top")
         if top < 0:
-          kwargs["y"] = np.max(edges["y"]) - top / figure.get_figheight()
+          kwargs["y"] = numpy.max(edges["y"]) - top / figure.get_figheight()
         else:
           kwargs["y"] = kwargs.pop("y",
             (figure.get_figheight() - top) / figure.get_figheight())
     else:
         bottom = kwargs.pop("bottom", 0.2)
         if bottom < 0:
-          kwargs["y"] = np.min(edges["y"]) + bottom / figure.get_figheight()
+          kwargs["y"] = numpy.min(edges["y"]) + bottom / figure.get_figheight()
         else:
           kwargs["y"] = kwargs.pop("y", bottom / figure.get_figheight())
     kwargs["x"] = kwargs.pop("x",
-      (np.min(edges["x"]) + np.max(edges["x"])) / 2.0)
+      (numpy.min(edges["x"]) + numpy.max(edges["x"])) / 2.0)
     kwargs["s"] = multi_kw(["s", "text", "label", "xlabel"],
       args[0] if len(args) >= 1 else "", kwargs)
     return set_text(figure, **kwargs)
@@ -142,18 +145,18 @@ def set_bigylabel(figure_or_subplots, *args, **kwargs):
     if "right" in kwargs:
         right = kwargs.pop("right")
         if right < 0:
-          kwargs["x"] = np.max(edges["x"]) - right / figure.get_figwidth()
+          kwargs["x"] = numpy.max(edges["x"]) - right / figure.get_figwidth()
         else:
           kwargs["x"] = kwargs.pop("x",
             (figure.get_figwidth() - right) / figure.get_figwidth())
     else:
         left = kwargs.pop("left", 0.2)
         if left < 0:
-           kwargs["x"] = np.min(edges["x"]) + left / figure.get_figwidth()
+           kwargs["x"] = numpy.min(edges["x"]) + left / figure.get_figwidth()
         else:
            kwargs["x"] = kwargs.pop("x", left / figure.get_figwidth())
     kwargs["y"]     = kwargs.pop("y",
-      (np.min(edges["y"]) + np.max(edges["y"])) / 2.0)
+      (numpy.min(edges["y"]) + numpy.max(edges["y"])) / 2.0)
     kwargs["rotation"] = kwargs.pop("rotation", "vertical")
     kwargs["s"] = multi_kw(["s", "text", "label", "ylabel"],
       args[0] if len(args) >= 1 else "", kwargs)

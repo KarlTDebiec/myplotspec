@@ -1,19 +1,24 @@
 #!/usr/bin/python
-#   plot_toolkit.Figure_Output.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 14-11-18
+# -*- coding: utf-8 -*-
+#   MYPlotSpec.Figure_Output.py
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 15-01-03
 """
+Decorator class to allow wrapped function to save figures without
+writing additional code
+
+.. todo:
+    - Check
 """
-################################## MODULES ####################################
+################################### MODULES ####################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-import os, sys, types
-import numpy as np
+import os, sys
 import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
 ################################### CLASSES ####################################
 class Figure_Output(object):
     """
-    Decorator class to allow plotting functions to save figures more
-    easily
+    Decorator class to allow wrapped function to save figures without
+    writing additional code
 
     **Arguments:**
         :*outfile*: Output file name or
@@ -33,12 +38,16 @@ class Figure_Output(object):
         - Support show()
     """
     def __init__(self, function):
+        """
+        """
         from functools import update_wrapper
 
         self.function = function
         update_wrapper(self, function)
 
     def __call__(self, *args, **kwargs):
+        """
+        """
         verbose = kwargs.get("verbose", "True")
 
         outfile = kwargs.pop("outfile", "test.pdf")

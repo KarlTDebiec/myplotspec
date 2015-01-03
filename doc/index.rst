@@ -1,10 +1,25 @@
-Plot Toolkit Documentation
-==========================
+Matplotlib YAML Plot Specification Documentation
+================================================
 
 Introduction
 ------------
 
 .. include:: ../README
+
+Classes
+---------
+
+.. toctree::
+    :maxdepth: 4
+
+    classes
+
+Decorators
+----------
+.. toctree::
+    :maxdepth: 4
+
+    decorators
 
 Functions
 ---------
@@ -13,13 +28,6 @@ Functions
     :maxdepth: 4
 
     functions
-
-Decorators
-----------
-.. toctree::
-    :maxdepth: 4
-
-    decorators
 
 .. only:: html
 

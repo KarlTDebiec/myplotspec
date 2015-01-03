@@ -3,41 +3,41 @@ Formatting
 
 Axes
 ----
-.. automodule:: plot_toolkit.axes
-.. autofunction:: plot_toolkit.axes.set_xaxis(...)
-.. autofunction:: plot_toolkit.axes.set_yaxis(...)
-.. autofunction:: plot_toolkit.axes.set_colorbar(...)
-.. autofunction:: plot_toolkit.axes.set_multi(...)
+.. automodule:: MYPlotSpec.axes
+.. autofunction:: MYPlotSpec.axes.set_xaxis
+.. autofunction:: MYPlotSpec.axes.set_yaxis
+.. autofunction:: MYPlotSpec.axes.set_colorbar
+.. autofunction:: MYPlotSpec.axes.set_multi
 
 Text
 ----
-.. automodule:: plot_toolkit.text
-.. autofunction:: plot_toolkit.text.set_title(...)
-.. autofunction:: plot_toolkit.text.set_bigxlabel(...)
-.. autofunction:: plot_toolkit.text.set_bigylabel(...)
-.. autofunction:: plot_toolkit.text.set_inset(...)
-.. autofunction:: plot_toolkit.text.set_text(...)
+.. automodule:: MYPlotSpec.text
+.. autofunction:: MYPlotSpec.text.set_title
+.. autofunction:: MYPlotSpec.text.set_bigxlabel
+.. autofunction:: MYPlotSpec.text.set_bigylabel
+.. autofunction:: MYPlotSpec.text.set_inset
+.. autofunction:: MYPlotSpec.text.set_text
 
 Legend
 ------
-.. automodule:: plot_toolkit.legend
-.. autofunction:: plot_toolkit.legend.set_legend(...)
+.. automodule:: MYPlotSpec.legend
+.. autofunction:: MYPlotSpec.legend.set_legend
 
 Auxiliary
 =========
 
 General
 -------
-.. automodule:: plot_toolkit
-.. autofunction:: plot_toolkit.multi_kw(...)
-.. autofunction:: plot_toolkit.pad_zero(...)
+.. automodule:: MYPlotSpec
+.. autofunction:: MYPlotSpec.merge_dicts
+.. autofunction:: MYPlotSpec.gen_color
+.. autofunction:: MYPlotSpec.multi_kw
+.. autofunction:: MYPlotSpec.pad_zero
 
 Matplotlib
 ----------
-.. autofunction:: plot_toolkit.get_edges(...)
-.. autofunction:: plot_toolkit.gen_font(...)
-.. autofunction:: plot_toolkit.gen_contour_levels(...)
-.. autofunction:: plot_toolkit.gen_cmap(...)
-.. autofunction:: plot_toolkit.gen_figure_subplots(...)
-.. autofunction:: plot_toolkit.identify(...)
+.. autofunction:: MYPlotSpec.get_edges
+.. autofunction:: MYPlotSpec.gen_font
+.. autofunction:: MYPlotSpec.gen_figure_subplots
+.. autofunction:: MYPlotSpec.identify
 

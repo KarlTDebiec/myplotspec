@@ -1,7 +1,12 @@
-Plot Toolkit is a set of python functions, classes, and decorators intended to
-simplify usage of the matplotlib package. Matplotlib provides an excellent
-framework for rapidly generating plots, however, applying strict formatting
-specifications to these plots typically requires writing a lot amount of code.
-Plot Toolkit's purpose is to reduce this.
+Matplotlib YAML Plot Specification (MYPlotSpec) is a Python package used to
+write Matplotlib-based plotting scripts that may be configured using YAML.
 
+The intended purpose is to help users rapidly write scripts to plot new types of
+data, while retaining access to the detailed control of plot settings using
+matplotlib.
 
+Requirements:
+    - matplotlib
+    - yaml
+    - numpy
+    - six
