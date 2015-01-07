@@ -109,8 +109,6 @@ class Figure_Manager(object):
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [["figures", "all"], ["figures", i]]
             out_kwargs["outfiles"]  = outfiles
-            print(i, out_kwargs["preset"])
-            print(i, out_kwargs["yaml_keys"])
             self.draw_figure(**out_kwargs)
 
         # Clean up
