@@ -1,12 +1,61 @@
 Matplotlib YAML Plot Specification (MYPlotSpec) is a Python package used to
 write Matplotlib-based plotting scripts that may be configured using YAML.
 
-The intended purpose is to help users rapidly write scripts to plot new types of
-data, while retaining access to the detailed control of plot settings using
-matplotlib.
+This package is intended to provide an easy interface for managing
+dataset-specific configuration settings (e.g input and output files) alongside
+matplotlib style settings (e.g. color, font, ticks), without needing to manually
+implement the style settings.
+
+For example: the following input file might be used to plot three datasets on
+three pages of a pdf file:
+
+::
+
+    figures:
+      all:
+        outfile: test.pdf
+        subplots:
+          all:
+            xticks:  [1,2,3,4,5,6,7,8,9,10]
+            yticks:  [0,1,2,3,4,5]
+      0:
+        subplots:
+          0:
+            infile:  dataset_0.txt
+      1:
+        subplots:
+          0:
+            infile:  dataset_1.txt
+      2:
+        subplots:
+          0:
+            infile:  dataset_2.txt
+
+However, the third dataset extends beyond the range we have set. we may adjust
+the range for that figure only:
+
+::
+
+    figures:
+      2:
+        subplots:
+          0:
+            infile:  dataset_2.txt
+            yticks:  [0,1,2,3,4,5,6,7,8,9,10]
 
 Requirements:
+    - Python 2.7 (3.4 compatibility intended but untested)
     - matplotlib
     - yaml
     - numpy
     - six
+
+.. todo:
+    - License
+    - Make arguments consistent with matplotlib (less forgiving)
+    - Remove multi_kw
+    - Choose a consistent framework for settings and where they go
+    - Base class for command-line tools (or just put in
+      Figure_Manager.py)
+    
+

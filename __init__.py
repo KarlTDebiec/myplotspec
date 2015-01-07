@@ -1,12 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec on 15-01-03
+#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec on 15-01-06
 """
 General functions
 
 .. todo:
-    - Check
     - Check types vs. six
 """
 ################################### MODULES ####################################
@@ -15,9 +14,38 @@ import os, sys, types
 import six
 import numpy
 ################################## FUNCTIONS ###################################
+def get_yaml(input):
+    """
+    Generates an object provided from an input in one of three forms.
+
+    If *input* is a dictionary, returns *input*; If *input* is a path
+    to a file, loads object from *input* file using yaml and returns.
+    If *input* is a string but not a path to a file, load object from
+    *input* string using yaml and returns.
+
+    **Argument:**
+        :*input*: Input object, path to file, or yaml string
+
+    **Returns:**
+        :*object*: Object specified by input
+    """
+    if isinstance(input, dict):
+        return input
+    elif isinstance(input, six.string_types):
+        import yaml
+
+        if os.path.isfile(input):
+            with file(input, "r") as infile:
+                return yaml.load(infile)
+        else:
+            return yaml.load(input)
+    else:
+        raise TypeError("get_yaml does not understand input of type " +
+          "{0}".format(type(input)))
+
 def merge_dicts(dict1, dict2):
     """
-    Recursively merges two dictionaries
+    Recursively merges two dictionaries.
 
     **Arguments:**
         :*dict1*: First dictionary
@@ -57,6 +85,18 @@ def merge_dicts(dict1, dict2):
 def gen_color(color):
     """
     Generates a color
+
+    **Arguments:**
+        :*color*: May be a string "red", "blue", etc. corresponding to
+                  a default color; a string "pastel.red", "pastel.blue"
+                  corresponding to a palette and color, a list of
+                  three floating point numbers corresponding to red,
+                  green, and blue values, or a single floating point
+                  number corresponding to a grayscale color
+    .. todo:
+        - Support mode = {"RGB", "HSV", "HSB"} as argument
+        - For RGB, HSV, or HSB values, if value is greater than 1
+          divide by 255
     """
     colors = dict(
       default = dict(
@@ -228,7 +268,7 @@ def gen_font(fp = None, **kwargs):
         kwargs.update(fp)
     return matplotlib.font_manager.FontProperties(**kwargs)
 
-def gen_figure_subplots(nrows = 1, ncols = 1, verbose = True, **kwargs):
+def gen_figure_subplots(nrows = 1, ncols = 1, verbose = False, **kwargs):
     """
     Generates a figure and subplots to specifications
 

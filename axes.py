@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.axes.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 15-01-03
+#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 15-01-04
 """
 Functions for formatting axes
 
@@ -14,10 +14,13 @@ Functions for formatting axes
 ################################### MODULES ####################################
 from __future__ import division, print_function
 import os, sys
+import numpy
 from . import gen_font
 from .text import set_bigxlabel, set_bigylabel
+from .Debug import Debug_Arguments
 ################################## FUNCTIONS ###################################
-def set_xaxis(subplot, xaxis_kw = {}, **kwargs):
+@Debug_Arguments()
+def set_xaxis(subplot, **kwargs):
     """
     Formats the x-axis of a subplot using provided keyword arguments
 
@@ -55,6 +58,8 @@ def set_xaxis(subplot, xaxis_kw = {}, **kwargs):
                             set_xlabel(...)
         :*(x)lw*:           Width of x-axis lines
     """
+    xaxis_kw = kwargs.pop("xaxis_kw", {})
+
     for xkey in [key for key in kwargs if key.startswith("x")]:
         xvalue = kwargs.pop(xkey)
         if not xkey in xaxis_kw:
@@ -72,7 +77,8 @@ def set_xaxis(subplot, xaxis_kw = {}, **kwargs):
       subplot.set_xticklabels, subplot.tick_params,
       subplot.get_xaxis().get_major_ticks, **xaxis_kw)
 
-def set_yaxis(subplot, yaxis_kw = {}, y2axis_kw = {}, **kwargs):
+@Debug_Arguments()
+def set_yaxis(subplot, **kwargs):
     """
     Formats the y-axis of a subplot using provided keyword arguments
 
@@ -120,6 +126,9 @@ def set_yaxis(subplot, yaxis_kw = {}, y2axis_kw = {}, **kwargs):
                             set_ylabel(...)
         :*(y)lw*:           Width of y-axis lines
     """
+    yaxis_kw  = kwargs.pop("yaxis_kw",  {})
+    y2axis_kw = kwargs.pop("y2axis_kw", {})
+
     # Move kwargs that start with 'y2' to y2axis_kw
     for y2key in [key for key in kwargs if key.startswith("y2")]:
         y2value = kwargs.pop(y2key)
@@ -162,6 +171,7 @@ def set_yaxis(subplot, yaxis_kw = {}, y2axis_kw = {}, **kwargs):
           subplot_y2.tick_params, subplot_y2.get_yaxis().get_major_ticks,
           **y2axis_kw)
 
+@Debug_Arguments()
 def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
     """
     Formats a set of multiple plots
@@ -208,7 +218,8 @@ def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
         if   (i == first + (nrows * ncols) - 1):
             set_xaxis(subplots[i], ticks = xticks,
               ticklabels = xticklabels, **xaxis_kw)
-        elif (i in range(first + ((nrows - 1) * ncols), first + (nrows * ncols) - 1, 1)):
+        elif (i in range(first + ((nrows - 1) * ncols),
+           first + (nrows * ncols) - 1, 1)):
             set_xaxis(subplots[i], ticks = xticks,
               ticklabels = xticklabels[:-1], **xaxis_kw)
         else:
@@ -230,6 +241,7 @@ def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
     set_bigylabel(dict((j, subplots[j])
       for j in range(first, first + (nrows * ncols), 1)), **ylabel_kw)
 
+@Debug_Arguments()
 def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b",
       tick_fp = "8r", **kwargs):
     """
@@ -261,9 +273,10 @@ def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b",
     cbar.set_label(label, fontproperties = gen_font(label_fp))
 
 ############################## INTERNAL FUNCTIONS ##############################
+@Debug_Arguments()
 def _set_axes(set_label, set_bound, set_ticks, set_ticklabels, set_tick_params,
-    get_major_ticks, ticks, ticklabels = None, tick_fp = "8r", tick_pad = 8,
-    label = None, label_fp = "10b", **kwargs):
+    get_major_ticks, ticks = range(10), ticklabels = None, tick_fp = "8r",
+    tick_pad = 8, label = None, label_fp = "10b", **kwargs):
     """
     Formats an axis
 
