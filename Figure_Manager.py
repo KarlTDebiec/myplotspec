@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.Figure_Manager.py
-#   Written by Karl Debiec on 14-11-17, last updated by Karl Debiec on 15-01-06
+#   Written by Karl Debiec on 14-11-17, last updated by Karl Debiec on 15-01-07
 """
 Class to manage the generation of figures using matplotlib
 """
@@ -103,9 +103,14 @@ class Figure_Manager(object):
 
         # Configure and plot figures
         for i in figure_indexes:
-            out_kwargs              = in_kwargs.copy()
+            out_kwargs              = figure_specs[i].copy()
+            out_kwargs["debug"]     = in_kwargs.get("debug",     False)
+            out_kwargs["preset"]    = in_kwargs.get("preset",    [])[:]
+            out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [["figures", "all"], ["figures", i]]
             out_kwargs["outfiles"]  = outfiles
+            print(i, out_kwargs["preset"])
+            print(i, out_kwargs["yaml_keys"])
             self.draw_figure(**out_kwargs)
 
         # Clean up
@@ -150,18 +155,18 @@ class Figure_Manager(object):
 
         # Configure and plot subplots
         for i in subplot_indexes:
-            out_kwargs                      = {}
-            out_kwargs["subplot"]           = subplots[i]
-            out_kwargs["debug"]             = in_kwargs.get("debug", False)
-            out_kwargs["yaml_dict"]         = in_kwargs.get("yaml_dict", {})
-            out_kwargs["yaml_keys"]         = [key
+            out_kwargs              = subplot_specs[i].copy()
+            out_kwargs["debug"]     = in_kwargs.get("debug",     False)
+            out_kwargs["preset"]    = in_kwargs.get("preset",    [])
+            out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
+            out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["subplots", "all"],
                             key3 + ["subplots", i]]
               for key3 in in_kwargs.get("yaml_keys")]
               for key  in key2]
             if str(shared_legend) != "None":
                 out_kwargs["shared_handles"] = shared_handles
-            self.draw_subplot(**out_kwargs)
+            self.draw_subplot(subplot = subplots[i], **out_kwargs)
 
         # Draw legend
         if str(shared_legend) != "None":
@@ -174,7 +179,7 @@ class Figure_Manager(object):
     @Method_Defaults_Presets()
     @Manage_Kwargs()
     def draw_subplot(self, subplot, title = None, legend = None,
-        shared_handles = None, debug = False, **in_kwargs):
+        shared_handles = None, **in_kwargs):
         """
         Draws a subplot
 
@@ -203,10 +208,11 @@ class Figure_Manager(object):
         dataset_indexes = sorted([i for i in dataset_specs.keys()
                             if str(i).isdigit()])
         for i in dataset_indexes:
-            out_kwargs                      = {}
-            out_kwargs["debug"]             = in_kwargs.get("debug", False)
-            out_kwargs["yaml_dict"]         = in_kwargs.get("yaml_dict", {})
-            out_kwargs["yaml_keys"]         = [key
+            out_kwargs              = dataset_specs[i].copy()
+            out_kwargs["debug"]     = in_kwargs.get("debug",    False)
+            out_kwargs["preset"]    = in_kwargs.get("preset",    [])
+            out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
+            out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["datasets", "all"],
                             key3 + ["datasets", i]]
               for key3 in in_kwargs.get("yaml_keys")]

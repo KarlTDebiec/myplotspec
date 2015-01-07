@@ -14,7 +14,6 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 import os, sys
 from .Debug import Debug_Arguments
 ################################## FUNCTIONS ###################################
-@Debug_Arguments()
 def set_legend(subplot, handles = None, legend_kw = {}, **kwargs):
     """
     Draws and formats a legend on *subplot*
@@ -41,7 +40,6 @@ def set_legend(subplot, handles = None, legend_kw = {}, **kwargs):
     else:
         return subplot.legend(**legend_kw)
 
-@Debug_Arguments()
 def set_shared_legend(figure, subplots, **kwargs):
     """
     """

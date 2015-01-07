@@ -15,7 +15,6 @@ import matplotlib
 from . import gen_font, get_edges, multi_kw
 from .Debug import Debug_Arguments
 ################################## FUNCTIONS ###################################
-@Debug_Arguments()
 def set_title(figure_or_subplot, title_kw = {}, **kwargs):
     """
     Prints a title for a figure or subplot
@@ -54,7 +53,6 @@ def set_title(figure_or_subplot, title_kw = {}, **kwargs):
           "", kwargs)
         return subplot.set_title(**title_kw)
 
-@Debug_Arguments()
 def set_bigxlabel(figure_or_subplots, *args, **kwargs):
     """
     Prints a large x-axis label shared by multiple subplots
@@ -108,7 +106,6 @@ def set_bigxlabel(figure_or_subplots, *args, **kwargs):
       args[0] if len(args) >= 1 else "", kwargs)
     return set_text(figure, **kwargs)
 
-@Debug_Arguments()
 def set_bigylabel(figure_or_subplots, *args, **kwargs):
     """
     Prints a large x-axis label shared by multiple subplots
@@ -166,7 +163,6 @@ def set_bigylabel(figure_or_subplots, *args, **kwargs):
       args[0] if len(args) >= 1 else "", kwargs)
     return set_text(figure, **kwargs)
 
-@Debug_Arguments()
 def set_inset(subplot, *args, **kwargs):
     """
     Prints an inset to a subplot
@@ -214,7 +210,6 @@ def set_inset(subplot, *args, **kwargs):
       args[0] if len(args) >= 1 else "", kwargs)
     return set_text(subplot, **kwargs)
 
-@Debug_Arguments()
 def set_text(figure_or_subplot, *args, **kwargs):
     """
     Prints text on a figure or subplot

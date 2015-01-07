@@ -152,9 +152,9 @@ class Method_Defaults_Presets(Debug_Arguments):
                         if db:
                             db_s("preset '{0}' unavailable".format(preset_key) +
                                  " for this method", 1)
-                else:
-                    if db:
-                        db_s("presets unavailable for this class", 1)
+            else:
+                if db:
+                    db_s("presets unavailable for this class", 1)
             out_kwargs["presets"] = out_presets
 
             return method(self, *out_args, **out_kwargs)

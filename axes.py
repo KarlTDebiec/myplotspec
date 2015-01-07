@@ -19,7 +19,6 @@ from . import gen_font
 from .text import set_bigxlabel, set_bigylabel
 from .Debug import Debug_Arguments
 ################################## FUNCTIONS ###################################
-@Debug_Arguments()
 def set_xaxis(subplot, **kwargs):
     """
     Formats the x-axis of a subplot using provided keyword arguments
@@ -77,7 +76,6 @@ def set_xaxis(subplot, **kwargs):
       subplot.set_xticklabels, subplot.tick_params,
       subplot.get_xaxis().get_major_ticks, **xaxis_kw)
 
-@Debug_Arguments()
 def set_yaxis(subplot, **kwargs):
     """
     Formats the y-axis of a subplot using provided keyword arguments
@@ -171,7 +169,6 @@ def set_yaxis(subplot, **kwargs):
           subplot_y2.tick_params, subplot_y2.get_yaxis().get_major_ticks,
           **y2axis_kw)
 
-@Debug_Arguments()
 def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
     """
     Formats a set of multiple plots
@@ -241,7 +238,6 @@ def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
     set_bigylabel(dict((j, subplots[j])
       for j in range(first, first + (nrows * ncols), 1)), **ylabel_kw)
 
-@Debug_Arguments()
 def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b",
       tick_fp = "8r", **kwargs):
     """
@@ -273,7 +269,6 @@ def set_colorbar(cbar, ticks, ticklabels = None, label = "", label_fp = "11b",
     cbar.set_label(label, fontproperties = gen_font(label_fp))
 
 ############################## INTERNAL FUNCTIONS ##############################
-@Debug_Arguments()
 def _set_axes(set_label, set_bound, set_ticks, set_ticklabels, set_tick_params,
     get_major_ticks, ticks = range(10), ticklabels = None, tick_fp = "8r",
     tick_pad = 8, label = None, label_fp = "10b", **kwargs):

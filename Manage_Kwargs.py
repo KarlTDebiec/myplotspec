@@ -149,7 +149,11 @@ class Manage_Kwargs(Debug_Arguments):
                             break
                 sel_yaml[sel_yaml_key] = node
                 if "preset" in node and not node["preset"] in sel_presets:
-                    sel_presets += [node.pop("preset")]
+                    add_presets = node.pop("preset")
+                    if isinstance(add_presets, six.string_types):
+                        sel_presets += [add_presets]
+                    else:
+                        sel_presets += add_presets
 
             # Lowest priority: Defaults
             if db:
