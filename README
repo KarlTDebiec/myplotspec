@@ -57,5 +57,6 @@ Requirements:
     - Choose a consistent framework for settings and where they go
     - Base class for command-line tools (or just put in
       Figure_Manager.py)
-    
-
+    - Basic Figure_Manager draw_dataset
+    - Consistent numpy or np
+    - in get_yaml, scan for "None" and change to python's None

@@ -85,7 +85,7 @@ class Figure_Output(object):
 
             if outfile_name.endswith("pdf"):
                 savefig_kw["format"] = "pdf"
-                if outfiles is None
+                if outfiles is None:
                     outfile_pdf = PdfPages(outfile_name)
                     figure.savefig(outfile_pdf, **savefig_kw)
                     outfile_pdf.close()
@@ -93,15 +93,14 @@ class Figure_Output(object):
                     outfile_pdf = outfiles[outfile_name]
                     figure.savefig(outfile_pdf, **savefig_kw)
                 else:
-                    outfile_pdf = outfiles[outfil_ename] = PdfPages(
+                    outfile_pdf = outfiles[outfile_name] = PdfPages(
                       outfile_name)
                     figure.savefig(outfile_pdf, **savefig_kw)
             else:
                 figure.savefig(outfile, **savefig_kw)
                     
             if verbose:
-                print("Figure saved to '{0}'.".format(
-                  outfile_name)
+                print("Figure saved to '{0}'.".format(outfile_name))
 
             return figure
 
