@@ -1,246 +1,344 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.text.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec on 15-01-03
+#   Written:    Karl Debiec     12-10-22
+#   Updated:    Karl Debiec     15-01-10
 """
 Functions for formatting text
-
-.. todo:
-    - Check
 """
-################################### MODULES ####################################
+################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-import os, sys, types
-import matplotlib
-from . import gen_font, get_edges, multi_kw
-from .Debug import Debug_Arguments
-################################## FUNCTIONS ###################################
-def set_title(figure_or_subplot, title_kw = {}, **kwargs):
+################################## FUNCTIONS ##################################
+def set_title(figure_or_subplot, title = None, title_fp = None, *args,
+    **kwargs):
     """
-    Prints a title for a figure or subplot
+    Draw a title on *figure_or_subplot*
 
     **Arguments:**
         :*figure_or_subplot*: <Figure> or <Axes> on which to act
-        :*text*: Title text; *s*, *t*, *title*, and *label* also
-                 supported
-        :*fp*:   Title font properties; *fontproperties* also
-                 supported; passed to gen_font(...)
-        :*top*:  Distance between top of figure and title (inches);
-                 applies to Figure title only
+        :*title*:    Title text
+        :*title_fp*: Title font
+        :*top*:      Distance between top of figure and title (inches);
+                     Figure title only
+        :*title_kw*: Keyword arguments passed to figure.suptitle() or
+                     subplot.set_title()
+
+    **Additional title_kw Arguments:**
+        :*top*: Distance between top of figure and title
 
     **Returns:**
-        :*text*: New <Text>
+        :*title*: <Text>
+
+    .. todo:
+        - If *top* is negative, use distance from highest subplot
     """
+    import matplotlib
+    from . import get_font, multi_kw, fp_keys
+
+    title_kw = kwargs.pop("title_kw", {})
+
+    title_fp_2 = multi_kw(["title_fp"] + fp_keys, title_kw)
+    if title_fp_2 is not None:
+        title_kw["fontproperties"] = get_font(title_fp_2)
+    elif title_fp   is not None:
+        title_kw["fontproperties"] = get_font(title_fp)
+
     if isinstance(figure_or_subplot, matplotlib.figure.Figure):
-        title_kw["fontproperties"] = gen_font(multi_kw(
-          ["fp", "fontproperties", "title_fp"],
-          "14b",
-          kwargs))
-        figure       = figure_or_subplot
-        title_kw["ha"] = kwargs.pop("ha", "center")
-        title_kw["va"] = kwargs.pop("va", "center")
-        title_kw["y"]  = kwargs.pop("y", 
-          (figure.get_figheight() - title_kw.pop("top", kwargs.pop("top", 1.0)))
-          / figure.get_figheight())
-        title_kw["t"]  = multi_kw(["s", "t", "text", "title", "label"],
-          "", kwargs)
-        return figure.suptitle(t = title_kw.pop("t"), **title_kw)
+        figure = figure_or_subplot
+
+        title_2 = multi_kw(["title", "t"], title_kw)
+        if title_2 is not None:
+            title_kw["t"] = title_2
+        elif title   is not None:
+            title_kw["t"] = title
+        elif len(args) >= 1:
+            title_kw["t"] = args[0]
+        else:
+            return None
+
+        if "top" in title_kw:
+            top           = title_kw.pop
+            fig_height    = figure.get_figheight()
+            title_kw["y"] = (fig_height - top) / fig_height
+
+        return figure.suptitle(**title_kw)
+
     elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
-        title_kw["fontproperties"] = gen_font(multi_kw(
-          ["fp", "fontproperties", "title_fp"], "12b", kwargs))
         subplot = figure_or_subplot
-        title_kw["label"] = multi_kw(["s", "t", "text", "title", "label"],
-          "", kwargs)
+
+        title_2 = multi_kw(["title", "label"], title_kw)
+        if title_2 is not None:
+            title_kw["label"] = title_2
+        elif title   is not None:
+            title_kw["label"] = title
+        elif len(args) >= 1:
+            title_kw["label"] = args[0]
+        else:
+            return None
+
         return subplot.set_title(**title_kw)
 
-def set_bigxlabel(figure_or_subplots, *args, **kwargs):
+def set_shared_xlabel(figure_or_subplots, xlabel = None, xlabel_fp = None,
+    label_fp = None, *args, **kwargs):
     """
-    Prints a large x-axis label shared by multiple subplots
+    Draws an x-axis label shared by multiple subplots
 
     **Arguments:**
         :*figure_or_subplots*: <Figure> or OrderedDict of <Axes> on
-                               which to act
-        :*text*:   Label text; *s*, *label*, and *xlabel* also
-                   supported
-        :*fp*:     Label font properties ; *fontproperties* also
-                   supported; passed to gen_font(...)
-        :*bottom*: Distance between bottom of figure and label
-                   (inches); if negative, distance between bottommost
-                   plot and label
-        :*top*:    Distance between top of figure and label (inches); if
+                               which to act; if Figure, position is
+                               relative to all subplots, if
+                               OrderedDict, position is relative to
+                               subplots in OrderedDict only
+        :*xlabel*:      Label text
+        :*[x]label_fp*: Label font
+        :*xlabel_kw*:   Keyword arguments passed to set_text()
+
+    **Additional xlabel_kw Arguments:**
+        :*top*:    Distance between top of figure and label; if
                    negative, distance between topmost plot and label;
                    overrides *bottom*
-        :*x*:      Horizontal position of label in figure reference
-                   frame (proportion 0.0-1.0); overrides *bottom*/*top*
-        :*y*:      Vertical   position of label in figure reference
-                   frame (proportion 0.0-1.0); overrides *bottom*/*top*
+        :*bottom*: Distance between bottom of figure and label; if
+                   negative, distance between bottommost plot and label
 
     **Returns:**
-        :*text*:   New <Text>
+        :*label*: <Text>
     """
-    kwargs["fontproperties"] = gen_font(multi_kw(
-      ["fp", "fontproperties", "label_fp"], "12b", kwargs))
-    if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
+    import matplotlib
+    from . import get_font, multi_kw, fp_keys
+
+    label_kw = kwargs.pop("xlabel_kw", {})
+
+    label_fp_2 = multi_kw(["xlabel_fp", "label_fp"] + fp_keys, label_kw)
+    if label_fp_2 is not None:
+        label_kw["fontproperties"] = get_font(label_fp_2)
+    elif xlabel_fp is not None:
+        label_kw["fontproperties"] = get_font(xlabel_fp)
+    elif label_fp is not None:
+        label_kw["fontproperties"] = get_font(label_fp)
+
+    label_2 = multi_kw(["xlabel", "label", "s"], label_kw)
+    if label_2 is not None:
+        label_kw["s"] = label_2
+    elif xlabel is not None:
+        label_kw["s"] = xlabel
+    elif len(args) >= 1:
+        label_kw["s"] = args[0]
+    else:
+        return None
+
+    if isinstance(figure_or_subplots, matplotlib.figure.Figure):
         figure = figure_or_subplots
         edges  = get_edges(figure)
-    elif isinstance(figure_or_subplots, types.DictType):
+    elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots
         figure   = subplots.values()[0].get_figure()
         edges    = get_edges(subplots)
-    if "top" in kwargs:
-        top = kwargs.pop("top")
-        if top < 0:
-          kwargs["y"] = numpy.max(edges["y"]) - top / figure.get_figheight()
-        else:
-          kwargs["y"] = kwargs.pop("y",
-            (figure.get_figheight() - top) / figure.get_figheight())
-    else:
-        bottom = kwargs.pop("bottom", 0.2)
-        if bottom < 0:
-          kwargs["y"] = numpy.min(edges["y"]) + bottom / figure.get_figheight()
-        else:
-          kwargs["y"] = kwargs.pop("y", bottom / figure.get_figheight())
-    kwargs["x"] = kwargs.pop("x",
-      (numpy.min(edges["x"]) + numpy.max(edges["x"])) / 2.0)
-    kwargs["s"] = multi_kw(["s", "text", "label", "xlabel"],
-      args[0] if len(args) >= 1 else "", kwargs)
-    return set_text(figure, **kwargs)
 
-def set_bigylabel(figure_or_subplots, *args, **kwargs):
+    if "x" not in label_kw:
+        label_kw["x"] = (edges["min"] + edges["max"]) / 2.0
+
+    if "y" not in label_kw:
+        fig_height = figure.get_figheight()
+        if "top" in label_kw:
+            top = label_kw.pop("top")
+            if top < 0:
+                label_kw["y"] = (edges["top"] - top) / fig_height
+            else:
+                label_kw["y"] = (fig_height - top) / fig_height
+        else:
+            bottom = label_kw.pop("bottom", -0.5)
+            if bottom < 0:
+                label_kw["y"] = (edges["bottom"] + bottom) / fig_height
+            else:
+                label_kw["y"] = bottom / fig_height
+
+    return set_text(figure, text_kw = label_kw, **kwargs)
+
+def set_shared_ylabel(figure_or_subplots, ylabel = None, ylabel_fp = None,
+    label_fp = None, *args, **kwargs):
     """
-    Prints a large x-axis label shared by multiple subplots
+    Draws a y-axis label shared by multiple subplots
 
     **Arguments:**
         :*figure_or_subplots*: <Figure> or OrderedDict of <Axes> on
-                               which to act
-        :*text*:     Label text; *s*, *label*, and *ylabel* also
-                     supported
-        :*fp*:       Label font properties; *fontproperties* also
-                     supported; passed to gen_font(...)
-        :*left*:     Distance between left side of figure and label
-                     (inches); if negative, distance between leftmost
-                     plot and label
-        :*right*:    Distance between right side of figure and label
-                     (inches); if negative, distance between rightmost
-                     plot and label; overrides *left*
-        :*x*:        Horizontal position of label in figure reference
-                     frame (proportion 0.0-1.0); overrides
-                     *left*/*right*
-        :*y*:        Vertical position of label in figure reference
-                     frame (proportion 0.0-1.0); overrides
-                     *left*/*right*
+                               which to act; if Figure, position is
+                               relative to all subplots, if OrderDict,
+                               position is relative to subplots in
+                               OrderedDict
+        :*ylabel*:      Label text
+        :*[y]label_fp*: Label font
+        :*ylabel_kw*:   Keyword arguments passed to set_text()
+
+    **Additional ylabel_kw Arguments:**
+        :*left*:     Distance between left side of figure and label; if
+                     negative, distance between leftmost plot and label
+        :*right*:    Distance between right side of figure and label;
+                     if negative, distance between rightmost plot and
+                     label; overrides *left*
         :*rotation*: Label rotation; default: 'vertical'
 
     **Returns:**
-        :*text*:   New <Text>
+        :*text*: <Text>
     """
-    kwargs["fontproperties"] = gen_font(multi_kw(
-      ["fp", "fontproperties", "label_fp"], "12b", kwargs))
-    if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
+    import matplotlib
+    from . import get_font, multi_kw, fp_keys
+
+    label_kw = kwargs.pop("ylabel_kw", {})
+
+    label_fp_2 = multi_kw(["ylabel_fp", "label_fp"] + fp_keys, label_kw)
+    if label_fp_2 is not None:
+        label_kw["fontproperties"] = get_font(label_fp_2)
+    elif ylabel_fp is not None:
+        label_kw["fontproperties"] = get_font(ylabel_fp)
+    elif label_fp   is not None:
+        label_kw["fontproperties"] = get_font(label_fp)
+
+    if "rotation" not in label_kw:
+        label_kw["rotation"] = rotation
+
+    label_2 = multi_kw(["ylabel", "label", "s"], label_kw)
+    if label_2 is not None:
+        label_kw["s"] = label_2
+    elif ylabel is not None:
+        label_kw["s"] = ylabel
+    elif len(args) >= 1:
+        label_kw["s"] = args[0]
+    else:
+        return None
+
+    if isinstance(figure_or_subplots, matplotlib.figure.Figure):
         figure = figure_or_subplots
         edges  = get_edges(figure)
     elif isinstance(figure_or_subplots, types.DictType):
         subplots = figure_or_subplots
         figure   = subplots.values()[0].get_figure()
         edges    = get_edges(subplots)
-    if "right" in kwargs:
-        right = kwargs.pop("right")
-        if right < 0:
-          kwargs["x"] = numpy.max(edges["x"]) - right / figure.get_figwidth()
-        else:
-          kwargs["x"] = kwargs.pop("x",
-            (figure.get_figwidth() - right) / figure.get_figwidth())
-    else:
-        left = kwargs.pop("left", 0.2)
-        if left < 0:
-           kwargs["x"] = numpy.min(edges["x"]) + left / figure.get_figwidth()
-        else:
-           kwargs["x"] = kwargs.pop("x", left / figure.get_figwidth())
-    kwargs["y"]     = kwargs.pop("y",
-      (numpy.min(edges["y"]) + numpy.max(edges["y"])) / 2.0)
-    kwargs["rotation"] = kwargs.pop("rotation", "vertical")
-    kwargs["s"] = multi_kw(["s", "text", "label", "ylabel"],
-      args[0] if len(args) >= 1 else "", kwargs)
-    return set_text(figure, **kwargs)
 
-def set_inset(subplot, *args, **kwargs):
+    if "x" not in label_kw:
+        fig_width = figure.get_figwidth()
+        if "right" in label_kw:
+            right = label_kw.pop("right")
+            if right < 0:
+                label_kw["x"] = (edges["right"] - right) / fig_width
+            else:
+                label_kw["x"] = (fig_width - right) / fig_width
+        else:
+            left = label_kw.pop("left", -0.5)
+            if left < 0:
+                label_kw["x"] = (edges["min"] + left) / fig_width
+            else:
+                label_kw["x"] = left / fig_width
+
+    if "y" not in label_kw:
+        label_kw["y"] = (edges["min"] + edges["max"]) / 2.0
+
+    return set_text(figure, text_kw = label_kw, **kwargs)
+
+def set_inset(subplot, inset = None, inset_fp = None, *args, **kwargs):
     """
-    Prints an inset to a subplot
+    Draws an inset on a subplot
 
     **Arguments:**
-        :*subplot*: <Axes> on which to act
-        :*text*:    Inset text; *s* and *inset* also supported
-        :*fp*:      Inset font; *fontproperties* also supported; passed
-                    to gen_font(...)
-        :*xpro*:    Horizontal position of inset in subplot reference
-                    frame; (proportion 0.0-1.0)
-        :*ypro*:    Vertical   position of inset in subplot reference
-                    frame; (proportion 0.0-1.0)
-        :*x*:       Horizontal position of inset in subplot reference
-                    frame; overrides *xpro*
-        :*y*:       Vertical   position of inset in subplot reference
-                    frame; overrides *ypro*
-        :*ha*:      Text horizontal alignment; default: 'left'
-        :*va*:      Text vertical alignment; default: 'top'
+        :*subplot*:  <Axes> on which to act
+        :*inset*:    Inset text
+        :*inset_fp*: Inset font
+        :*inset_kw*: Keyword arguments passed to set_text()
+
+    **Additional inset_kw Arguments:**
+        :*x*:        Horizontal position of inset in subplot reference
+                     frame (subplot coordinate); overrides *xpro*
+        :*y*:        Vertical   position of inset in subplot reference
+                     frame (subplot coordinate), overrides *ypro*
+        :*xpro*:     Horizontal position of inset in subplot reference
+                     frame (proportion)
+        :*ypro*:     Vertical   position of inset in subplot reference
+                     frame (proportion)
 
     **Returns:**
-        :*text*:    New <Text>
-    """
-    kwargs["fontproperties"] = gen_font(multi_kw(
-      ["fp", "fontproperties", "inset_fp"], "12b", kwargs))
-    xpro         = kwargs.pop("xpro", 0.05)
-    ypro         = kwargs.pop("ypro", 0.95)
-    kwargs["ha"] = kwargs.pop("ha", "left")
-    kwargs["va"] = kwargs.pop("va", "top")
-    xbound       = subplot.get_xbound()
-    ybound       = subplot.get_ybound()
-    if subplot.xaxis_inverted():
-        kwargs["x"] = kwargs.pop("x",
-          xbound[0] + (1-xpro) * (xbound[1] - xbound[0]))
-    else:
-        kwargs["x"] = kwargs.pop("x",
-          xbound[0] + xpro     * (xbound[1] - xbound[0]))
-    if subplot.yaxis_inverted():
-        kwargs["y"] = kwargs.pop("y",
-          ybound[0] + (1-ypro) * (ybound[1] - ybound[0]))
-    else:
-        kwargs["y"] = kwargs.pop("y",
-          ybound[0] + ypro     * (ybound[1] - ybound[0]))
-    kwargs["s"] = multi_kw(["s", "text", "inset"],
-      args[0] if len(args) >= 1 else "", kwargs)
-    return set_text(subplot, **kwargs)
+        :*text*: <Text>
 
-def set_text(figure_or_subplot, *args, **kwargs):
+    .. todo:
+        - Support providing x and y in standard units (e.g. inches),
+          probably via *left*, *right*, *top*, *bottom*
+    """
+    from . import get_font, multi_kw, fp_keys
+
+    inset_kw = kwargs.pop("inset_kw", {})
+
+    inset_fp_2 = multi_kw(["inset_fp"] + fp_keys, inset_kw)
+    if inset_fp_2 is not None:
+        inset_kw["fontproperties"] = get_font(inset_fp_2)
+    elif inset_fp   is not None:
+        inset_kw["fontproperties"] = get_font(inset_fp)
+
+    if "ha" not in inset_kw:
+        inset_kw["ha"] = "left"
+
+    if "va" not in inset_kw:
+        inset_kw["va"] = "top"
+
+    inset_2 = multi_kw(["inset", "s"], inset_kw)
+    if inset_2 is not None:
+        inset_kw["s"] = inset_2
+    elif inset is not None:
+        inset_kw["s"] = inset_2
+    elif len(args) >= 1:
+        inset_kw["s"] = args[0]
+    else:
+        return None
+
+    if "x" not in inset_kw:
+        xmin, xmax = subplot.get_xbound()
+        xpro = inset_kw.pop("xpro", 0.05)
+        if subplot.xaxis_inverted():
+            inset_kw["x"] = xmin + (1 - xpro) * (xmax - xmin)
+        else:
+            inset_kw["x"] = xmin +      xpro  * (xmax - xmin)
+
+    if "y" not in inset_kw:
+        ymin, ymax = subplot.get_ybound()
+        ypro = inset_kw.pop("ypro", 0.95)
+        if subplot.yaxis_inverted():
+            inset_kw["y"] = ymin + (1 - ypro) * (ymax - ymin)
+        else:
+            inset_kw["y"] = ymax +      ypro  * (ymax - ymin)
+
+    return set_text(subplot, test_kw = inset_kw, **kwargs)
+
+def set_text(figure_or_subplot, text = None, text_fp = None, *args, **kwargs):
     """
     Prints text on a figure or subplot
 
     **Arguments:**
         :*figure_or_subplot*: <Figure> or <Axes> on which to act
-        :*text*: Text; *s* also supported
-        :*fp*:   Font properties ; *fontproperties* also supported;
-                 passed to gen_font(...)
-        :*ha*:   Text horizontal alignment; default: 'center'
-        :*va*:   Text vertical alignment; default: 'center'
+        :*text*:    Text
+        :*text_fp*: Text Font
+        :*text_kw*: Keyword arguments passed to text()
 
     **Returns:**
-        :*text*:              New <Text>
+        :*text*: <Text>
     """
-    kwargs["fontproperties"] = gen_font(multi_kw(["fp", "fontproperties"],
-      "10r", kwargs))
-    kwargs["s"]  = multi_kw(["s", "text"],
-      args[0] if len(args) >= 1 else "", kwargs)
-    kwargs["ha"] = kwargs.pop("ha", "center")
-    kwargs["va"] = kwargs.pop("va", "center")
-    if "left" in kwargs:
-        if   isinstance(figure_or_subplot, matplotlib.figure.Figure):
-            kwargs["x"] = kwargs.pop("left") / figure_or_subplot.get_figwidth()
-        elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
-            raise()
-    if "top" in kwargs:
-        if   isinstance(figure_or_subplot, matplotlib.figure.Figure):
-            kwargs["y"] = kwargs.pop("top") / figure_or_subplot.get_figheight()
-        elif isinstance(figure_or_subplot, matplotlib.axes.Axes):
-            raise()
-    return figure_or_subplot.text(**kwargs)
+    from . import get_font, multi_kw, fp_keys
 
+    text_kw = kwargs.pop("text_kw", {})
 
+    text_fp_2 = multi_kw(["text_fp"] + fp_keys, text_kw)
+    if text_fp_2 is not None:
+        text_kw["fontproperties"] = get_font(text_fp_2)
+    elif text_fp   is not None:
+        text_kw["fontproperties"] = get_font(text_fp)
+
+    if "va" not in inset_kw:
+        inset_kw["va"] = "top"
+
+    text_2 = multi_kw(["text", "s"], text_kw)
+    if text_2 is not None:
+        text_kw["s"] = text_2
+    elif text is not None:
+        text_kw["s"] = text_2
+    elif len(args) >= 1:
+        text_kw["s"] = args[0]
+    else:
+        return None
+
+    return figure_or_subplot.text(**text_kw)

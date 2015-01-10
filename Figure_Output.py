@@ -1,40 +1,37 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.Figure_Output.py
-#   Written by Karl Debiec on 13-10-22, last updated by Karl Debiec on 15-01-06
+#   Written:    Karl Debiec     13-10-22
+#   Updated:    Karl Debiec     15-01-10
 """
 Decorator class to manage the output of matplotlib figures by a wrapped
 function or method
 """
-################################### MODULES ####################################
+################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-import os, sys
-import six
-import matplotlib
-from matplotlib.backends.backend_pdf import PdfPages
-################################### CLASSES ####################################
+################################### CLASSES ###################################
 class Figure_Output(object):
     """
     Decorator class to manage the output of matplotlib figures by a
     wrapped function or method
 
-    Saves figure returned by wrapped function to a file named
-    *outfile*; passing additional keyword arguments *savefig_kw* to
-    savefig. For pdf output, additional argument *outfiles* may be
-    provided; this contains a dictionary whose keys are the absolute
-    paths to output pdf files, and whose values are references to open
-    PdfPages objects representing those files. The purpose of this is
-    to allow figures output from multiple calls to the wrapped function
-    (or other analogously wrapped functions) to be output to sequential
-    pages of the same pdf file. Typically *outfiles* will be
-    initialized before calling this wrapped function; and once calls to
-    the function is complete the close() method of each outfile in
-    *outfiles* should be run.
+    Saves figure returned by wrapped function to a file named *outfile*;
+    passing additional keyword arguments *savefig_kw* to savefig. For
+    pdf output, additional argument *outfiles* may be provided; this
+    contains a dictionary whose keys are the absolute paths to output
+    pdf files, and whose values are references to open PdfPages objects
+    representing those files. The purpose of this is to allow figures
+    output from multiple calls to the wrapped function (or other
+    analogously wrapped functions) to be output to sequential pages of
+    the same pdf file. Typically *outfiles* will be initialized before
+    calling this wrapped function; and once calls to the function is
+    complete the close() method of each outfile in *outfiles* should be
+    run.
 
     .. todo:
         - Support show()
     """
-    def __init__(self, debug = False, verbose = False):
+    def __init__(self, debug = False, verbose = True):
         """
         Stores decoration arguments
 
@@ -70,6 +67,11 @@ class Figure_Output(object):
                 :*\*args*:     Arguments passed to function
                 :*\*\*kwargs*: Keyword arguments passed to function
             """
+            from os.path import abspath
+            import six
+            import matplotlib
+            from matplotlib.backends.backend_pdf import PdfPages
+
             debug   = self.debug   or kwargs.get("debug",   False)
             verbose = self.verbose or kwargs.get("verbose", False)
 
@@ -79,9 +81,9 @@ class Figure_Output(object):
             savefig_kw = kwargs.pop("savefig_kw", {"transparent": True})
 
             if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
-                outfile_name = os.path.abspath(outfile._file.fh.name)
+                outfile_name = abspath(outfile._file.fh.name)
             elif isinstance(outfile, six.string_types):
-                outfile_name = os.path.abspath(outfile)
+                outfile_name = abspath(outfile)
 
             if outfile_name.endswith("pdf"):
                 savefig_kw["format"] = "pdf"
@@ -98,7 +100,7 @@ class Figure_Output(object):
                     figure.savefig(outfile_pdf, **savefig_kw)
             else:
                 figure.savefig(outfile, **savefig_kw)
-                    
+
             if verbose:
                 print("Figure saved to '{0}'.".format(outfile_name))
 

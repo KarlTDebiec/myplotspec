@@ -43,6 +43,15 @@ the range for that figure only:
             infile:  dataset_2.txt
             yticks:  [0,1,2,3,4,5,6,7,8,9,10]
 
+The package tries to allow some consistency in the names of arguments
+passed to matplotlib functions, particularly for the names of text
+strings and font properties. In matplotlib different text-related
+functions accept string arguments with names including 's', 't',
+'title', and 'label'; and font properties arguments with names
+including fontproperties, font_properties, fp, and prop. MYPlotSpec
+should support the original argument names as well as a more consistent
+alternative such as title_fp, label_fp, tick_fp, or legend_fp.
+
 Requirements:
     - Python 2.7 (3.4 compatibility intended but untested)
     - matplotlib
@@ -52,11 +61,14 @@ Requirements:
 
 .. todo:
     - License
-    - Make arguments consistent with matplotlib (less forgiving)
-    - Remove multi_kw
-    - Choose a consistent framework for settings and where they go
-    - Base class for command-line tools (or just put in
+    - Validate Python 3.4 compatibility
+    - Select and implement some general principles about specific
+      positions in absolute units
+    - Base class for command-line tools (or just move to
       Figure_Manager.py)
-    - Basic Figure_Manager draw_dataset
+    - Basic Figure_Manager draw_dataset (use numpy.loadtxt, probably)
     - Consistent numpy or np
-    - in get_yaml, scan for "None" and change to python's None
+    - Double-check documentation
+    - Examples
+    - Polish 'debug' implementation
+    - Implement 'verbose'

@@ -1,19 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.Figure_Manager.py
-#   Written by Karl Debiec on 14-11-17, last updated by Karl Debiec on 15-01-07
+#   Written:    Karl Debiec     14-11-17
+#   Updated:    Karl Debiec     15-01-10
 """
 Class to manage the generation of figures using matplotlib
 """
-################################### MODULES ####################################
+################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-import os, sys
-from collections import OrderedDict
 from . import merge_dicts, get_yaml
 from .Method_Defaults_Presets import Method_Defaults_Presets
 from .Manage_Kwargs import Manage_Kwargs
 from .Figure_Output import Figure_Output
-################################### CLASSES ####################################
+################################### CLASSES ###################################
 class Figure_Manager(object):
     """
     Class to manage the generation of figures using matplotlib
@@ -26,18 +25,6 @@ class Figure_Manager(object):
             top:          1
             sub_height:   5.5
             bottom:       1
-            title_fp:     12r
-            label_fp:     12r
-            hand:
-                stump: 1
-                nay:   bama
-          draw_subplot:
-            title_fp:     12r
-            label_fp:     12r
-            tick_fp:      10r
-            lw:           1
-          draw_dataset:
-            lw:           1
     """
     presets  = """
         presentation:
@@ -73,9 +60,9 @@ class Figure_Manager(object):
             label_fp:     18r
             tick_fp:      14r
             legend_fp:    14r
-            lw:           2
+            lw:           1
           draw_dataset:
-            lw:           2
+            lw:           1
     """
 
     def __init__(self, **kwargs):
@@ -88,11 +75,9 @@ class Figure_Manager(object):
     @Manage_Kwargs()
     def draw_report(self, **in_kwargs):
         """
-        Draws a series of figures based on a series of figure
-        specifications
+        Draws a series of figures based on provided specifications
 
         **Arguments:**
-            :*outfile*:
             :*figures*: Figure specifications
         """
 
@@ -133,7 +118,7 @@ class Figure_Manager(object):
         from collections import OrderedDict
         from . import gen_figure_subplots
         from .legend import set_shared_legend
-        from .text import set_title, set_bigxlabel, set_bigylabel
+        from .text import set_title, set_shared_xlabel, set_shared_ylabel
 
         # Prepare figure and subplots with specified dimensions
         subplot_specs    = in_kwargs.pop("subplots", {})
@@ -142,13 +127,13 @@ class Figure_Manager(object):
         figure, subplots = gen_figure_subplots(**in_kwargs)
 
         # Format Figure
-        if str(title) != "None":
+        if title is not None:
             set_title(figure, title = title, **in_kwargs)
-        if str(shared_xlabel) != "None":
-            set_bigxlabel(figure, label = shared_xlabel, **in_kwargs)
-        if str(shared_ylabel) != "None":
-            set_bigylabel(figure, label = shared_ylabel, **in_kwargs)
-        if str(shared_legend) != "None":
+        if shared_xlabel is not None:
+            set_shared_xlabel(figure, label = shared_xlabel, **in_kwargs)
+        if shared_ylabel is not None:
+            set_shared_ylabel(figure, label = shared_ylabel, **in_kwargs)
+        if shared_legend is not None:
             shared_handles = OrderedDict()
 
         # Configure and plot subplots
@@ -162,12 +147,12 @@ class Figure_Manager(object):
                             key3 + ["subplots", i]]
               for key3 in in_kwargs.get("yaml_keys")]
               for key  in key2]
-            if str(shared_legend) != "None":
+            if shared_legend is not None:
                 out_kwargs["shared_handles"] = shared_handles
             self.draw_subplot(subplot = subplots[i], **out_kwargs)
 
         # Draw legend
-        if str(shared_legend) != "None":
+        if shared_legend is not None:
             set_shared_legend(figure, subplots, handles = shared_handles,
               **shared_legend)
 
@@ -197,7 +182,7 @@ class Figure_Manager(object):
         # Format
         set_xaxis(subplot, **in_kwargs)
         set_yaxis(subplot, **in_kwargs)
-        if str(title) != "None":
+        if title is not None:
             set_title(subplot, title = title, **in_kwargs)
 
         # Configure and plot datasets
@@ -219,35 +204,22 @@ class Figure_Manager(object):
               **out_kwargs)
 
         # Draw legend
-        if str(legend) != "None":
+        if legend is not None:
             set_legend(subplot, handles = handles, **in_kwargs)
-        if str(shared_handles) != "None":
+        if shared_handles is not None:
             for label, handle in handles.items():
-                if not label in shared_handles:
+                if label not in shared_handles:
                     shared_handles[label] = handle
 
-#    @Select_Defaults()
-#    @Collect_Kwargs()
-#    @Debug_Args()
-#    def draw_dataset(self, subplot, infile, label = "",
-#      xoffset = 0, yoffset = 0, handles = OrderedDict(),
-#      dataset_kw = {}, plot_kw = {}, **in_kwargs):
-#        """
-#        Draws a dataset
-#
-#        **Arguments:**
-#            :*subplot*: <Axes> on which to act
-#            :*xoffset*: Offset to be added to x coordinates
-#            :*yoffset*: Offset to be added to y coordinates
-#        """
-#        from . import gen_color
-#
-#        # Loop over infiles
-#        dataset = np.loadtxt(infile, **dataset_kw)
-#        color   = gen_color(color)
-#
-#        # Plot
-#        import numpy as np
-#        handle = subplot.plot(np.random.randn(10)+5, np.random.randn(10)+5,
-#          **plot_kw)
-#        handles[label] = handle
+    @Method_Defaults_Presets()
+    @Manage_Kwargs()
+    def draw_dataset(self, subplot, label = None, handles = None, **kwargs):
+        """
+        Draws a dataset
+
+        **Arguments:**
+            :*subplot*: <Axes> on which to act
+            :*label*:   Dataset label
+            :*handles*: Nascent list of dataset handles on subplot
+        """
+        from . import get_color

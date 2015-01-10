@@ -1,87 +1,91 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.Manage_Kwargs.py
-#   Written by Karl Debiec on 14-10-25, last updated by Karl Debiec on 15-01-06
+#   Written:    Karl Debiec     14-10-25
+#   Updated:    Karl Debiec     15-01-10
 """
 Decorator class to manage the passage of keyword arguments to a wrapped
 function or method
 """
-################################### MODULES ####################################
+################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-import os, sys
-import six
 from . import get_yaml, merge_dicts
 from .Debug import db_s, db_kv, Debug_Arguments
-################################### CLASSES ####################################
+################################### CLASSES ###################################
 class Manage_Kwargs(Debug_Arguments):
     """
-    Decorator class to manage the passage keyword arguments to a
-    wrapped function or method
+    Decorator class to manage the passage keyword arguments to a wrapped
+    function or method
 
     Accumulates keyword arguments from several sources, in order of
     increasing priority:
-        - *defaults* keyword argument at call:
-            ::
 
-                my_function(
-                  defaults = {
-                    "width":  5.0
-                    "height": 5.0
-                    },
-                ...)
+    - *defaults* keyword argument at call:
 
-          *defaults* may be a dictionary, path to a yaml file, or a
-          yaml string.
-        - *preset* and *presets* keyword arguments at call:
-            ::
+        ::
 
-                my_function(
-                  preset  = "letter",
-                  presets = {
-                    "letter": {
-                      "width":   8.5
-                      "height": 11.0
-                    },
-                    "legal": {
-                      "width":   8.5
-                      "height": 14.0
-                    }
-                ...)
+            my_function(
+              defaults = {
+                "width":  5.0
+                "height": 5.0
+                },
+            ...)
 
-          *preset* defines the selected preset (or a list of selected
-          presets), and *presets* the available presets; *preset* may
-          be a string or list, and *presets* may be a dictionary, path
-          to a yaml file, or yaml string.
-        - *yaml_dict* and *yaml_keys* keyword arguments at function
-          call:
-            ::
+      *defaults* may be a dictionary, path to a yaml file, or a yaml
+      string.
+    - *preset* and *presets* keyword arguments at call:
 
-                my_function(
-                  yaml_dict = \"\"\"
-                    figures:
-                      all:
-                        width:   11.0
-                        height:  17.0
-                        outfile: plot.pdf
-                    figures:
-                      0:
-                        width:   12.0
-                  \"\"\"
-                  yaml_keys = [["figures", "all"], ["figures", "0"]]
-                ...)
+        ::
 
-          *yaml_dict* defines the yaml file, and *yaml_keys* the paths
-          within the yaml file from whih to load arguments, in order of
-          priority. *yaml_dict* may be a dictionary, path to a yaml
-          file, or yaml string if yaml_keys* is omitted, the complete
-          yaml file will be used.
+            my_function(
+              preset  = "letter",
+              presets = {
+                "letter": {
+                  "width":   8.5
+                  "height": 11.0
+                },
+                "legal": {
+                  "width":   8.5
+                  "height": 14.0
+                }
+            ...)
 
-        - Additional keyword arguments at call
-            ::
+      *preset* defines the selected preset (or a list of selected
+      presets), and *presets* the available presets; *preset* may be a
+      string or list, and *presets* may be a dictionary, path to a yaml
+      file, or yaml string.
+    - *yaml_dict* and *yaml_keys* keyword arguments at function
+      call:
 
-                my_wrapped_function(
-                  width = 6.0,
-                ...)
+        ::
+
+            my_function(
+              yaml_dict = \"\"\"
+                figures:
+                  all:
+                    width:   11.0
+                    height:  17.0
+                    outfile: plot.pdf
+                figures:
+                  0:
+                    width:   12.0
+              \"\"\"
+              yaml_keys = [["figures", "all"], ["figures", "0"]]
+            ...)
+
+      *yaml_dict* defines the yaml file, and *yaml_keys* the paths
+      within the yaml file from whih to load arguments, in order of
+      priority. *yaml_dict* may be a dictionary, path to a yaml file, or
+      yaml string if yaml_keys* is omitted, the complete yaml file will
+      be used.
+
+    - Additional keyword arguments at call
+
+        ::
+
+            my_wrapped_function(
+              width = 6.0,
+            ...)
 
     All of the above will override defaults provided in the function
     declaration itself.
@@ -114,6 +118,8 @@ class Manage_Kwargs(Debug_Arguments):
                 :*\*\*in_kwargs*: Keyword arguments passed to function
                                   at call
             """
+            import six
+
             if hasattr(self, "debug"):
                 db = dec_debug or self.debug or in_kwargs.get("debug", False)
             else:
@@ -170,7 +176,7 @@ class Manage_Kwargs(Debug_Arguments):
                 db_s("Intermediate priority: Presets", 1)
                 for sel_preset in sel_presets:
                     db_s(sel_preset, 2)
-                    if not sel_preset in in_presets:
+                    if sel_preset not in in_presets:
                         continue
                     for key in sorted(in_presets[sel_preset]):
                         if key in out_kwargs:
@@ -178,7 +184,7 @@ class Manage_Kwargs(Debug_Arguments):
                         else:
                             db_kv(key, in_presets[sel_preset][key], 3, "+")
             for sel_preset in sel_presets:
-                if not sel_preset in in_presets:
+                if sel_preset not in in_presets:
                     continue
                 out_kwargs = merge_dicts(out_kwargs, in_presets[sel_preset])
 

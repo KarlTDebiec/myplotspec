@@ -1,21 +1,21 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.Method_Defaults_Presets.py
-#   Written by Karl Debiec on 15-01-03, last updated by Karl Debiec on 15-01-06
+#   Written:    Karl Debiec     15-01-03
+#   Updated:    Karl Debiec     15-01-10
 """
 Decorator class to manage the passage of defaults and presets from
 a class to a method of that class.
 """
-################################### MODULES ####################################
+################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-import os, sys
 from . import get_yaml
 from .Debug import db_s, db_kv, Debug_Arguments
-################################### CLASSES ####################################
+################################### CLASSES ###################################
 class Method_Defaults_Presets(Debug_Arguments):
     """
-    Decorator class to manage the passage of defaults and presets from
-    a class to a method of that class.
+    Decorator class to manage the passage of defaults and presets from a
+    class to a method of that class.
 
     Defaults are accessed from the class's instance (or class)variable
     ``self.defaults``, and may be a dictionary, a path to a yaml file,
@@ -40,6 +40,7 @@ class Method_Defaults_Presets(Debug_Arguments):
     of keys corresponding to names of the available presets:
 
     ::
+
         self.presets = \"\"\"
             preset_1:
                 method_1:
@@ -59,10 +60,11 @@ class Method_Defaults_Presets(Debug_Arguments):
 
     When this decorator is used to wrap a method of a class, it adds to
     the arguments being passed ``defaults``, containing only the
-    defaults specified for that method, and ``presets``, containing
-    only the presets containing arguments for that method.
+    defaults specified for that method, and ``presets``, containing only
+    the presets containing arguments for that method.
 
     ::
+
         @Method_Defaults_Presets()
         def method_1(*args, **kwargs):
             ...
@@ -116,7 +118,7 @@ class Method_Defaults_Presets(Debug_Arguments):
             else:
                 db = dec_debug or in_kwargs.get("debug", False)
             if db:
-                db_s("Managing defaults and presets for method " + 
+                db_s("Managing defaults and presets for method " +
                   "'{0}' ".format(method.__name__,
                   "of class '{0}':".format(type(self).__name__)))
 
@@ -146,12 +148,13 @@ class Method_Defaults_Presets(Debug_Arguments):
                 for preset_key, preset_value in in_presets.items():
                     if method.__name__ in preset_value:
                         if db:
-                            db_s("preset '{0}' available".format(preset_key), 1)
+                            db_s("preset '{0}'".format(preset_key) +
+                                 " available", 1)
                         out_presets[preset_key] = preset_value[method.__name__]
                     else:
                         if db:
-                            db_s("preset '{0}' unavailable".format(preset_key) +
-                                 " for this method", 1)
+                            db_s("preset '{0}'".format(preset_key) +
+                                 " unavailable for this method", 1)
             else:
                 if db:
                     db_s("presets unavailable for this class", 1)

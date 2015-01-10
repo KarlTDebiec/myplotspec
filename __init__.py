@@ -1,26 +1,23 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.__init__.py
-#   Written by Karl Debiec on 12-10-22, last updated by Karl Debiec on 15-01-06
+#   Written:    Karl Debiec     12-10-22
+#   Updated:    Karl Debiec     15-01-10
 """
 General functions
-
-.. todo:
-    - Check types vs. six
 """
-################################### MODULES ####################################
+################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-import os, sys, types
-import six
-import numpy
-################################## FUNCTIONS ###################################
+################################## VARIABLES ##################################
+fp_keys = ["fp", "font_properties", "fontproperties", "prop"]
+################################## FUNCTIONS ##################################
 def get_yaml(input):
     """
     Generates an object provided from an input in one of three forms.
 
-    If *input* is a dictionary, returns *input*; If *input* is a path
-    to a file, loads object from *input* file using yaml and returns.
-    If *input* is a string but not a path to a file, load object from
+    If *input* is a dictionary, returns *input*; If *input* is a path to
+    a file, loads object from *input* file using yaml and returns.  If
+    *input* is a string but not a path to a file, load object from
     *input* string using yaml and returns.
 
     **Argument:**
@@ -29,12 +26,15 @@ def get_yaml(input):
     **Returns:**
         :*object*: Object specified by input
     """
+    from os.path import isfile
+    import six
+
     if isinstance(input, dict):
         return input
     elif isinstance(input, six.string_types):
         import yaml
 
-        if os.path.isfile(input):
+        if isfile(input):
             with file(input, "r") as infile:
                 return yaml.load(infile)
         else:
@@ -66,7 +66,7 @@ def merge_dicts(dict1, dict2):
 
         **Yields:**
             :*(key, value)*: Merged key value pair
-        
+
         """
         for key in set(dict1.keys()).union(dict2.keys()):
             if key in dict1 and key in dict2:
@@ -82,22 +82,24 @@ def merge_dicts(dict1, dict2):
 
     return dict(merge(dict1, dict2))
 
-def gen_color(color):
+def get_color(color):
     """
     Generates a color
 
     **Arguments:**
         :*color*: May be a string "red", "blue", etc. corresponding to
                   a default color; a string "pastel.red", "pastel.blue"
-                  corresponding to a palette and color, a list of
-                  three floating point numbers corresponding to red,
-                  green, and blue values, or a single floating point
-                  number corresponding to a grayscale color
+                  corresponding to a palette and color, a list of three
+                  floating point numbers corresponding to red, green,
+                  and blue values, or a single floating point number
+                  corresponding to a grayscale color
     .. todo:
         - Support mode = {"RGB", "HSV", "HSB"} as argument
         - For RGB, HSV, or HSB values, if value is greater than 1
           divide by 255
     """
+    import numpy as np
+
     colors = dict(
       default = dict(
         blue   = [0.298, 0.447, 0.690],
@@ -149,41 +151,37 @@ def gen_color(color):
         else:
             return color
     elif (isinstance(color, list)
-    or    isinstance(color, numpy.ndarray)):
+    or    isinstance(color, np.ndarray)):
         return color
     elif   isinstance(color, float):
         return [color, color, color]
 
-def multi_kw(keywords, default, kwargs):
+def multi_kw(keys, dictionary):
     """
-    Function to allow arguments to be set by one of several potential
-    keyword arguments. For example, the keyword argument *s*
-    represeting a string might be set using *s*, *text*, *label*, or if
-    none of these are present, a default value. Note that *kwargs*
-    should not be passed to this function using the ** syntax.
+    Scans *dictionary* for *keys*, returns first matching value (or None
+    if none are present), and deletes *keys* from *dictionary*
+
+    This is not really ideal, but is appropriate here due to the
+    inconsistency of the names of some of matplotlib's arguments, in
+    particular fontproperties, font_properties, fp, and sometimes prop.
 
     **Arguments:**
-        :*keywords*: List of acceptable keyword arguments in order of
-                     priority; first match is used and other are deleted
-        :*default*:  Default value to use if none of *keywords* are
-                     present in *kwargs*
-        :*kwargs*:   Dictionary of keyword arguments to be tested
+        :*keys*:       List of acceptable keyword arguments in order of
+                       priority; first match is used and other are
+                       deleted
+        :*dictionary*: Dictionary of keyword arguments to be tested
 
     **Returns:**
-        :*value*:    Value from *kwargs* of first matching keyword in
-                     *keywords*, or *default* if none are present
+        :*value*: Value from *dictionary* of first matching keyword in
+                  *keys*, or *None if none are present
     """
     value = None
-    for kw in [kw for kw in keywords if kw in kwargs]:
+    for key in [key for key in keys if key in dictionary]:
         if value is None:
-            value = kwargs.pop(kw)
+            value = dictionary.pop(key)
         else:
-            del kwargs[kw]
-    if value is not None:
-        return value
-    else:
-        return default
-    # edited
+            del dictionary[key]
+    return value
 
 def pad_zero(ticks, digits = None, **kwargs):
     """
@@ -208,36 +206,34 @@ def pad_zero(ticks, digits = None, **kwargs):
     if digits  == 0:
         return ["{0:d}".format(tick) for tick in map(int, ticks)]
     else:
-    
+
         return ["{0:.{1}f}".format(tick, digits) for tick in ticks]
 
-############################# MATPLOTLIB FUNCTIONS #############################
 def get_edges(figure_or_subplots, **kwargs):
     """
+    Finds the outermost edges of a set of subplots on a figure
+
     **Arguments:**
-        :*figure_or_subplots*: <Figure> of dictionary of <Axes> on which
-                               to act
+        :*figure_or_subplots*: <Figure> or list or dictionary of <Axes>
+                               on which to act
 
     **Returns:**
-        :*edges*: Dictionary; keys are 'x' and 'y', values are numpy
-                  arrays with dimensions (axis, min...max)
-
-    .. todo:
-        - Should this instead return a numpy record array instead?
-          Format seems strange
+        :*edges*: dictionary of edges; keys are 'left', 'right', 'top',
+                  and 'bottom'
     """
     import matplotlib
 
     if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
         subplots = figure_or_subplots.axes
-    elif isinstance(figure_or_subplots, types.DictType):
+    elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots.values()
-    return {"x": numpy.array([[subplot.get_position().xmin,
-                 subplot.get_position().xmax] for subplot in subplots]),
-            "y": numpy.array([[subplot.get_position().ymin,
-                 subplot.get_position().ymax] for subplot in subplots])}
+    return dict(
+      left   = min([subplot.get_position().xmin for subplot in subplots]),
+      right  = max([subplot.get_position().xmax for subplot in subplots]),
+      top    = max([subplot.get_position().ymax for subplot in subplots]),
+      bottom = min([subplot.get_position().ymin for subplot in subplots]))
 
-def gen_font(fp = None, **kwargs):
+def get_font(fp = None, **kwargs):
     """
     **Arguments:**
         :*fp*: Font properties
@@ -254,13 +250,12 @@ def gen_font(fp = None, **kwargs):
     **Returns:**
         :*fp*: <FontProperties> object to given specifications
     """
+    import six
     import matplotlib.font_manager
 
     if   isinstance(fp, matplotlib.font_manager.FontProperties):
         return fp
-    elif isinstance(fp, six.types.StringTypes):
-        if not "fname" in kwargs:
-            kwargs["family"] = kwargs.get("family", "Arial")
+    elif isinstance(fp, six.string_types):
         kwargs["size"]       = kwargs.get("size",   int(fp[:-1]))
         kwargs["weight"]     = kwargs.get("weight", {"r":"regular",
             "b":"bold"}[fp[-1]])
@@ -300,7 +295,7 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = False, **kwargs):
                        above arguments
         :*fig_height*: Height of figure, by default calculated from
                        above arguments
- 
+
     **Returns:**
         :*figure*:   <Figure>
         :*subplots*: OrderedDict of subplots
@@ -347,13 +342,14 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = False, **kwargs):
     i_max    = i + nsubplots
     breaking = False
     for j in range(nrows - 1, -1, -1):
-        if breaking: break
+        if breaking:
+            break
         for k in range(0, ncols, 1):
             subplots[i] = matplotlib.axes.Axes(figure, rect = [
-              (left   + k * sub_width  + k * wspace) / fig_width,  # Left
-              (bottom + j * sub_height + j * hspace) / fig_height, # Bottom
-              sub_width  / fig_width,                              # Width
-              sub_height / fig_height],                            # Height
+              (left   + k * sub_width  + k * wspace) / fig_width,   # Left
+              (bottom + j * sub_height + j * hspace) / fig_height,  # Bottom
+              sub_width  / fig_width,                               # Width
+              sub_height / fig_height],                             # Height
               autoscale_on = False)
             figure.add_axes(subplots[i])
             i += 1
@@ -379,5 +375,3 @@ def identify(subplots, **kwargs):
     for i, subplot in subplots.items():
         set_inset(subplot, text = i, xpos = 0.5, ypos = 0.5, ha = "center",
           va = "center", **kwargs)
-
-
