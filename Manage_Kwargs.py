@@ -135,8 +135,8 @@ class Manage_Kwargs(Debug_Arguments):
             if isinstance(sel_presets, six.string_types):
                 sel_presets = [sel_presets]
             in_yaml       = get_yaml(in_kwargs.get("yaml_dict", {}))
-            sel_yaml_keys = map(tuple, in_kwargs.get("yaml_keys",
-                              [["__complete_file__"]]))
+            sel_yaml_keys = list(map(tuple, in_kwargs.get("yaml_keys",
+                              [["__complete_file__"]])))
             out_args      = in_args
             out_kwargs    = {}
 

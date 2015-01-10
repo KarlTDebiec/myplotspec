@@ -74,11 +74,11 @@ def set_shared_legend(figure, subplots, **kwargs):
     **Returns:**
         :*legend*: new legend
     """
-    from . import gen_figure_subplots, get_font
+    from . import get_figure_subplots, get_font
     from .axes import set_xaxis, set_yaxis
 
     # Add subplot to figure, draw and format legend
-    figure, subplots = gen_figure_subplots(
+    figure, subplots = get_figure_subplots(
       figure = figure, subplots = subplots, **kwargs)
     subplot = subplots[len(subplots) - 1]
     legend  = set_legend(subplot, **kwargs)

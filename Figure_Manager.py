@@ -80,7 +80,6 @@ class Figure_Manager(object):
         **Arguments:**
             :*figures*: Figure specifications
         """
-
         figure_specs   = in_kwargs.pop("figures", {})
         figure_indexes = sorted([i for i in figure_specs.keys()
                            if str(i).isdigit()])
@@ -116,7 +115,7 @@ class Figure_Manager(object):
             :*shared_legend*: Legend to be shared among subplots
         """
         from collections import OrderedDict
-        from . import gen_figure_subplots
+        from . import get_figure_subplots
         from .legend import set_shared_legend
         from .text import set_title, set_shared_xlabel, set_shared_ylabel
 
@@ -124,7 +123,7 @@ class Figure_Manager(object):
         subplot_specs    = in_kwargs.pop("subplots", {})
         subplot_indexes  = sorted([i for i in subplot_specs.keys()
                              if str(i).isdigit()])
-        figure, subplots = gen_figure_subplots(**in_kwargs)
+        figure, subplots = get_figure_subplots(**in_kwargs)
 
         # Format Figure
         if title is not None:
@@ -140,7 +139,7 @@ class Figure_Manager(object):
         for i in subplot_indexes:
             out_kwargs              = subplot_specs[i].copy()
             out_kwargs["debug"]     = in_kwargs.get("debug",     False)
-            out_kwargs["preset"]    = in_kwargs.get("preset",    [])
+            out_kwargs["preset"]    = in_kwargs.get("preset",    [])[:]
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["subplots", "all"],
@@ -193,7 +192,7 @@ class Figure_Manager(object):
         for i in dataset_indexes:
             out_kwargs              = dataset_specs[i].copy()
             out_kwargs["debug"]     = in_kwargs.get("debug",    False)
-            out_kwargs["preset"]    = in_kwargs.get("preset",    [])
+            out_kwargs["preset"]    = in_kwargs.get("preset",    [])[:]
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["datasets", "all"],

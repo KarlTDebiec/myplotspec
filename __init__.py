@@ -8,6 +8,11 @@ General functions
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
+import six
+if six.PY2:
+    open_yaml = file
+else:
+    open_yaml = open
 ################################## VARIABLES ##################################
 fp_keys = ["fp", "font_properties", "fontproperties", "prop"]
 ################################## FUNCTIONS ##################################
@@ -26,16 +31,14 @@ def get_yaml(input):
     **Returns:**
         :*object*: Object specified by input
     """
-    from os.path import isfile
-    import six
-
     if isinstance(input, dict):
         return input
     elif isinstance(input, six.string_types):
+        from os.path import isfile
         import yaml
 
         if isfile(input):
-            with file(input, "r") as infile:
+            with open_yaml(input, "r") as infile:
                 return yaml.load(infile)
         else:
             return yaml.load(input)
@@ -250,7 +253,6 @@ def get_font(fp = None, **kwargs):
     **Returns:**
         :*fp*: <FontProperties> object to given specifications
     """
-    import six
     import matplotlib.font_manager
 
     if   isinstance(fp, matplotlib.font_manager.FontProperties):
@@ -263,7 +265,8 @@ def get_font(fp = None, **kwargs):
         kwargs.update(fp)
     return matplotlib.font_manager.FontProperties(**kwargs)
 
-def gen_figure_subplots(nrows = 1, ncols = 1, verbose = False, **kwargs):
+def get_figure_subplots(nrows = 1, ncols = 1, debug = False, verbose = False,
+    **kwargs):
     """
     Generates a figure and subplots to specifications
 
@@ -291,8 +294,8 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = False, **kwargs):
                        leftmost subplots
         :*hspace*:     Vertical distance between adjacent subplots
         :*wspace*:     Horizontal distance between adjacent subplots
-        :*fig_width*:  Width of figure; by default calculated from
-                       above arguments
+        :*fig_width*:  Width of figure; by default calculated from above
+                       arguments
         :*fig_height*: Height of figure, by default calculated from
                        above arguments
 
@@ -301,7 +304,8 @@ def gen_figure_subplots(nrows = 1, ncols = 1, verbose = False, **kwargs):
         :*subplots*: OrderedDict of subplots
 
     .. todo:
-        - More intelligent default dimensions based on *nrows* and *ncols*
+        - More intelligent default dimensions based on *nrows* and
+          *ncols*
         - Support centimeters?
     """
     from collections import OrderedDict

@@ -53,7 +53,7 @@ should support the original argument names as well as a more consistent
 alternative such as title_fp, label_fp, tick_fp, or legend_fp.
 
 Requirements:
-    - Python 2.7 (3.4 compatibility intended but untested)
+    - Python 2.7 or 3.4
     - matplotlib
     - yaml
     - numpy
@@ -61,14 +61,11 @@ Requirements:
 
 .. todo:
     - License
-    - Validate Python 3.4 compatibility
-    - Select and implement some general principles about specific
-      positions in absolute units
+    - Decide how to manage the specification of sizes, positions, etc.
+      in real-world units (inches or centimeters)
     - Base class for command-line tools (or just move to
       Figure_Manager.py)
     - Basic Figure_Manager draw_dataset (use numpy.loadtxt, probably)
-    - Consistent numpy or np
     - Double-check documentation
-    - Examples
-    - Polish 'debug' implementation
-    - Implement 'verbose'
+    - Example usage
+    - Make 'debug' and 'verbose' more useful
