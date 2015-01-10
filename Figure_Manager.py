@@ -8,7 +8,11 @@ Class to manage the generation of figures using matplotlib
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
+if __name__ == "__main__":
+    __package__ = str("MYPlotSpec")
+    import MYPlotSpec
 from . import merge_dicts, get_yaml
+from .Debug import db_s, db_kv
 from .Method_Defaults_Presets import Method_Defaults_Presets
 from .Manage_Kwargs import Manage_Kwargs
 from .Figure_Output import Figure_Output
@@ -20,10 +24,10 @@ class Figure_Manager(object):
     defaults = """
           draw_figure:
             left:         1
-            sub_width:    5.5
+            sub_width:    6.0
             right:        1
             top:          1
-            sub_height:   5.5
+            sub_height:   6.0
             bottom:       1
     """
     presets  = """
@@ -65,9 +69,9 @@ class Figure_Manager(object):
             lw:           1
     """
 
-    def __init__(self, **kwargs):
+    def __call__(self, **kwargs):
         """
-        Initializes
+        Draws report when called
         """
         self.draw_report(**kwargs)
 
@@ -222,3 +226,44 @@ class Figure_Manager(object):
             :*handles*: Nascent list of dataset handles on subplot
         """
         from . import get_color
+
+    def main(self):
+        """
+        Provides command-line functionality
+        """
+        import argparse
+
+        parser = argparse.ArgumentParser(
+          description     = __doc__,
+          formatter_class = argparse.RawTextHelpFormatter)
+
+        parser.add_argument(
+          "-yaml",
+          type     = str,
+          required = True,
+          dest     = "yaml_dict",
+          metavar  = "/PATH/TO/YAML.yaml",
+          help     = "YAML configuration file")
+
+        parser.add_argument(
+          "--debug",
+          action   = "store_true",
+          help     = "Debug output")
+
+        arguments = vars(parser.parse_args())
+
+        if arguments["debug"]:
+            from os import environ
+            db_s("Environment variables")
+            for key in sorted(environ):
+                db_kv(key, environ[key], 1)
+            
+            db_s("Command-line arguments")
+            for key in sorted(arguments.keys()):
+                db_kv(key, arguments[key], 1)
+
+        self(**arguments)
+
+#################################### MAIN #####################################
+if __name__ == "__main__":
+    Figure_Manager().main()

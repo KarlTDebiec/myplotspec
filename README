@@ -59,13 +59,14 @@ Requirements:
     - numpy
     - six
 
+This package has been tested with Anaconda python 2.1.0 on OSX and 
+Windows 8.1.
+
 .. todo:
     - License
+    - Basic Figure_Manager draw_dataset (use numpy.loadtxt, probably)
+    - Example usage
+    - Double-check documentation
     - Decide how to manage the specification of sizes, positions, etc.
       in real-world units (inches or centimeters)
-    - Base class for command-line tools (or just move to
-      Figure_Manager.py)
-    - Basic Figure_Manager draw_dataset (use numpy.loadtxt, probably)
-    - Double-check documentation
-    - Example usage
     - Make 'debug' and 'verbose' more useful

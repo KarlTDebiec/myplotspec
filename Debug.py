@@ -15,7 +15,7 @@ def db_s(string = "", indent = 0):
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
-def db_kv(key, value, indent = 0, flag = "+"):
+def db_kv(key, value, indent = 0, flag = " "):
     output = "DEBUG: {0}  {1} {2}:{3}".format("    " * max(indent - 1, 0),
                flag, key, value)
     if len(output) >= 80:
