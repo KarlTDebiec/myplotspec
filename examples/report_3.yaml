@@ -1,0 +1,27 @@
+figures:
+  all:
+    subplot_kw:
+      autoscale_on: False
+  0:
+    outfile: examples/outfile_3.pdf
+    left:   0.8
+    right:  0.8
+    bottom: 0.8
+    top:    0.8
+    subplots:
+      0:
+        title:       Example 3
+        xlabel:      X axis
+        ylabel:      Y axis
+        xticks:      [0,1,2,3,4,5,6,7,8,9,10]
+        xticklabels: ["zero","one","two","three","four","five","six","seven","eight", "nine","ten"]
+        yticks:      [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2]
+        title_fp:    24b
+        tick_fp:     12r
+        label_fp:    24b
+        legend:      True
+        datasets:
+          0:
+            infile: examples/dataset_1.txt
+            color:  dark.red
+            label:  Dataset 1

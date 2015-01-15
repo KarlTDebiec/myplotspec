@@ -11,8 +11,6 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 if __name__ == "__main__":
     __package__ = str("MYPlotSpec")
     import MYPlotSpec
-from . import merge_dicts, get_yaml
-from .Debug import db_s, db_kv
 from .Method_Defaults_Presets import Method_Defaults_Presets
 from .Manage_Kwargs import Manage_Kwargs
 from .Figure_Output import Figure_Output
@@ -22,51 +20,48 @@ class Figure_Manager(object):
     Class to manage the generation of figures using matplotlib
     """
     defaults = """
-          draw_figure:
-            left:         1
-            sub_width:    6.0
-            right:        1
-            top:          1
-            sub_height:   6.0
-            bottom:       1
+        draw_subplot:
+          lw:           1
+        draw_dataset:
+          lw:           1
     """
     presets  = """
-        presentation:
-          draw_figure:
-            title_fp:     24r
-            label_fp:     24r
-          draw_subplot:
-            title_fp:     24r
-            label_fp:     24r
-            tick_fp:      18r
-            legend_fp:    18r
-            lw:           2
-          draw_dataset:
-            lw:           2
-        notebook:
-          draw_figure:
-            title_fp:     12r
-            label_fp:     12r
-          draw_subplot:
-            title_fp:     12r
-            label_fp:     12r
-            tick_fp:      10r
-            legend_fp:    10r
-            lw:           1
-          draw_dataset:
-            lw:           1
-        letter:
-          draw_figure:
-            title_fp:     18r
-            label_fp:     18r
-          draw_subplot:
-            title_fp:     18r
-            label_fp:     18r
-            tick_fp:      14r
-            legend_fp:    14r
-            lw:           1
-          draw_dataset:
-            lw:           1
+      presentation:
+        draw_figure:
+          title_fp:     24r
+          label_fp:     24r
+        draw_subplot:
+          title_fp:     24r
+          label_fp:     24r
+          tick_fp:      18r
+          legend_fp:    18r
+          lw:           2
+        draw_dataset:
+          lw:           2
+      notebook:
+        draw_figure:
+          title_fp:     12r
+          label_fp:     12r
+        draw_subplot:
+          title_fp:     12r
+          label_fp:     12r
+          tick_fp:      10r
+          legend_fp:    10r
+          lw:           1
+        draw_dataset:
+          lw:           1
+      letter:
+        draw_figure:
+          title_fp:     18r
+          label_fp:     18r
+        draw_subplot:
+          title_fp:     18r
+          label_fp:     18r
+          tick_fp:      14r
+          legend_fp:    14r
+          lw:           1
+        draw_dataset:
+          lw:           1
     """
 
     def __call__(self, **kwargs):
@@ -216,22 +211,43 @@ class Figure_Manager(object):
 
     @Method_Defaults_Presets()
     @Manage_Kwargs()
-    def draw_dataset(self, subplot, label = None, handles = None, **kwargs):
+    def draw_dataset(self, subplot, infile, label = None, handles = None,
+        **kwargs):
         """
         Draws a dataset
 
         **Arguments:**
             :*subplot*: <Axes> on which to act
+            :*infile*:  Input file; first column is x, second is y
             :*label*:   Dataset label
             :*handles*: Nascent list of dataset handles on subplot
         """
         from . import get_color
+        import numpy as np
+
+        plot_kw = kwargs.get("plot_kw", {})
+        if "color" in plot_kw:
+            plot_kw["color"] = get_color(plot_kw.pop("color"))
+        elif "color" in kwargs:
+            plot_kw["color"] = get_color(kwargs.pop("color"))
+        if label is not None:
+            plot_kw["label"] = label
+
+        dataset = np.loadtxt(infile)
+        x = dataset[:,0]
+        y = dataset[:,1]
+
+        # Plot
+        handle = subplot.plot(x, y, **plot_kw)[0]
+        if handles is not None:
+            handles[label] = handle
 
     def main(self):
         """
         Provides command-line functionality
         """
         import argparse
+        from .Debug import db_s, db_kv
 
         parser = argparse.ArgumentParser(
           description     = __doc__,

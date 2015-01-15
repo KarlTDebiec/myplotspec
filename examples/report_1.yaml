@@ -1,0 +1,9 @@
+figures:
+  0:
+    outfile: examples/outfile_1.pdf
+    subplots:
+      0:
+        title:    Example 1
+        datasets:
+          0:
+            infile: examples/dataset_1.txt

@@ -37,6 +37,6 @@ Matplotlib
 .. autofunction:: MYPlotSpec.get_edges
 .. autofunction:: MYPlotSpec.get_color
 .. autofunction:: MYPlotSpec.get_font
-.. autofunction:: MYPlotSpec.gen_figure_subplots
+.. autofunction:: MYPlotSpec.get_figure_subplots
 .. autofunction:: MYPlotSpec.identify
 

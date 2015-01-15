@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #   MYPlotSpec.__init__.py
 #   Written:    Karl Debiec     12-10-22
-#   Updated:    Karl Debiec     15-01-10
+#   Updated:    Karl Debiec     15-01-12
 """
 General functions
 """
@@ -96,10 +96,12 @@ def get_color(color):
                   floating point numbers corresponding to red, green,
                   and blue values, or a single floating point number
                   corresponding to a grayscale color
+
     .. todo:
         - Support mode = {"RGB", "HSV", "HSB"} as argument
         - For RGB, HSV, or HSB values, if value is greater than 1
           divide by 255
+
     """
     import numpy as np
 
@@ -173,10 +175,12 @@ def multi_kw(keys, dictionary):
                        priority; first match is used and other are
                        deleted
         :*dictionary*: Dictionary of keyword arguments to be tested
+        :*default*:    Value to return if not found
 
     **Returns:**
         :*value*: Value from *dictionary* of first matching keyword in
-                  *keys*, or *None if none are present
+                  *keys*, or None if none are present
+
     """
     value = None
     for key in [key for key in keys if key in dictionary]:
@@ -265,14 +269,17 @@ def get_font(fp = None, **kwargs):
         kwargs.update(fp)
     return matplotlib.font_manager.FontProperties(**kwargs)
 
-def get_figure_subplots(nrows = 1, ncols = 1, debug = False, verbose = False,
-    **kwargs):
+def get_figure_subplots(figure = None, subplots = None, nrows = None,
+    ncols = None, nsubplots = None, left = None, sub_width = None,
+    wspace = None, right = None, top = None, sub_height = None, hspace = None,
+    bottom = None, fig_width = None, fig_height = None, figsize = None,
+    verbose = False, debug = False, **kwargs):
     """
     Generates a figure and subplots to specifications
 
     Differs from matplotlib's built-in functions in that it:
-        - Accepts input in inches rather that relative figure
-          coordinates
+        - Accepts subplot dimensions is inches rather than proportional
+          figure coordinates
         - Optionally calculates figure dimensions from provided subplot
           dimensions, rather than the reverse
         - Returns subplots in an OrderedDict
@@ -280,69 +287,115 @@ def get_figure_subplots(nrows = 1, ncols = 1, debug = False, verbose = False,
           figure (i.e. can be called multiple times)
 
     **Arguments:**
+        :*figure*:     Figure, if adding subplots to a
+                       previously-existing figure
+        :*subplots*:   OrderedDict of subplots, if adding subplots to
+                       a previously-existing figure
         :*nrows*:      Number of rows of subplots
         :*ncols*:      Number of columns of subplots
+        :*nsubplots*:  Number of subplots to add; if less than
+                       nrows*ncols (e.g. 2 cols and 2 rows but only
+                       three subplots)
         :*sub_width*:  Width of subplot(s)
         :*sub_height*: Height of subplot(s)
-        :*top*:        Distance between top of figure and highest
-                       subplot
-        :*bottom*:     Distance between bottom of figure and lowest
-                       subplot
-        :*right*:      Distance between right side of figure and
+        :*left*:       Margin between left side of figure and leftmost
+                       subplots
+        :*right*:      Margin between right side of figure and
                        rightmost subplot
-        :*left*:       Distance between left side of figure and
-                       leftmost subplots
-        :*hspace*:     Vertical distance between adjacent subplots
-        :*wspace*:     Horizontal distance between adjacent subplots
-        :*fig_width*:  Width of figure; by default calculated from above
-                       arguments
-        :*fig_height*: Height of figure, by default calculated from
-                       above arguments
+        :*top*:        Margin between top of figure and highest subplot
+        :*bottom*:     Margin between bottom of figure and lowest
+                       subplot
+        :*wspace*:     Horizontal margin between adjacent subplots
+        :*hspace*:     Vertical margin between adjacent subplots
+        :*fig_width*:  Width of figure; may be determined from above
+        :*fig_height*: Height of figure, may be determined from above
+        :*figsize*:    Equivalent to [fig_width, fig_height]
+        :*figure_kw*:  Keyword arguments passed to figure()
+        :*subplot_kw*: Keyword arguments passed to Axes()
+        :*axes_kw*:    Alias to subplot_kw
+        :*verbose*:    Enable verbose output
+        :*debug*:      Enable debug output
 
     **Returns:**
         :*figure*:   <Figure>
         :*subplots*: OrderedDict of subplots
-
-    .. todo:
-        - More intelligent default dimensions based on *nrows* and
-          *ncols*
-        - Support centimeters?
     """
     from collections import OrderedDict
-    import matplotlib
-    import matplotlib.pyplot as plt
+    import matplotlib 
+    import matplotlib.pyplot as pyplot
+    from . import multi_kw
 
-    # Parse arguments
-    nsubplots  = kwargs.get("nsubplots",  nrows * ncols)
-    sub_width  = kwargs.get("sub_width",  1.00)
-    sub_height = kwargs.get("sub_height", 1.00)
-    top        = kwargs.get("top",        0.20)
-    bottom     = kwargs.get("bottom",     0.40)
-    right      = kwargs.get("right",      0.20)
-    left       = kwargs.get("left",       0.40)
-    hspace     = kwargs.get("hspace",     0.20)
-    wspace     = kwargs.get("wspace",     0.20)
-    if "figure" in kwargs:
-        figure     = kwargs.pop("figure")
+    # Manage margins
+    if ncols  is None:  ncols  = 1
+    if left   is None:  left   = matplotlib.rcParams["figure.subplot.left"]
+    if wspace is None:  wspace = matplotlib.rcParams["figure.subplot.wspace"]
+    if right  is None:  right  = matplotlib.rcParams["figure.subplot.right"]
+    if nrows  is None:  nrows  = 1
+    if top    is None:  top    = matplotlib.rcParams["figure.subplot.top"]
+    if hspace is None:  hspace = matplotlib.rcParams["figure.subplot.hspace"]
+    if bottom is None:  bottom = matplotlib.rcParams["figure.subplot.bottom"]
+
+    # Manage figure and subplot dimensions
+    if figure is not None:
         fig_height = figure.get_figheight()
         fig_width  = figure.get_figwidth()
-    else:
-        fig_width  = kwargs.get("fig_width",
-          left + (sub_width  * ncols) + (wspace * (ncols - 1)) + right)
-        fig_height = kwargs.get("fig_height",
-           top  + (sub_height * nrows) + (hspace * (nrows - 1)) + bottom)
-        figure     = plt.figure(figsize = [fig_width, fig_height])
-    if "subplots" in kwargs:
-        subplots   = kwargs.pop("subplots")
+        figsize = [fig_width, fig_height]
+    if  ((sub_width is None or sub_height is None)
+    and ((fig_width is None or fig_height is None) and figsize is None)):
+        # Lack subplot and figure dimensions
+        figsize = matplotlib.rcParams["figure.figsize"]
+        if fig_width is None:
+            fig_width = figsize[0]
+        if fig_height is None:
+            fig_height = figsize[1]
+        figsize = [fig_width, fig_height]
+        if sub_width is None:
+            sub_width  = fig_width  - left - (wspace * (ncols - 1)) - right
+        if sub_height is None:
+            sub_height = fig_height - top  - (hspace * (nrows - 1)) - bottom
+    elif      ((sub_width is None or sub_height is None)
+    and   not ((fig_width is None or fig_height is None) and figsize is None)):
+        # Lack sublot dimensions, but have figure dimensions
+        if figsize is not None:
+            fig_width, fig_height = figsize
+        figsize = [fig_width, fig_height]
+        if sub_width is None:
+            sub_width  = fig_width  - left - (wspace * (ncols - 1)) - right
+        if sub_height is None:
+            sub_height = fig_height - top  - (hspace * (nrows - 1)) - bottom
+    elif (not (sub_width is None or sub_height is None)
+    and      ((fig_width is None or fig_height is None) and figsize is None)):
+        # Have subplot dimensions, but lack figure dimensions
+        if fig_width is None:
+            fig_width  = left+(sub_width*ncols)+(wspace*(ncols-1))+right
+        if fig_height is None:
+            fig_height = top+(sub_height*nrows)+(hspace*(nrows-1))+bottom
+        figsize    = [fig_width, fig_height]
+    elif (not  (sub_width is None or sub_height is None)
+    and   not ((fig_width is None or fig_height is None) and figsize is None)):
+        # Have subplot and figure dimensions
+        figsize = [fig_width, fig_height]
+
+    # Manage figure
+    if figure is None:
+        figure_kw = kwargs.get("figure_kw", {})
+        figure = pyplot.figure(figsize = figsize, **figure_kw)
+
+    # Manage subplots
+    subplot_kw = kwargs.get("subplot_kw", kwargs.get("axes_kw", {}))
+    if subplots is not None:
         if len(subplots) == 0:
             i = 0
         else:
             i = max([i for i in subplots.keys() if str(i).isdigit()]) + 1
     else:
         subplots = OrderedDict()
-        i        = 0
+        i = 0
+
     # Generate figure and subplots, or add to existing figure and
     #   subplots if provided
+    if nsubplots is None:
+        nsubplots = ncols * nrows
     i_max    = i + nsubplots
     breaking = False
     for j in range(nrows - 1, -1, -1):
@@ -354,7 +407,7 @@ def get_figure_subplots(nrows = 1, ncols = 1, debug = False, verbose = False,
               (bottom + j * sub_height + j * hspace) / fig_height,  # Bottom
               sub_width  / fig_width,                               # Width
               sub_height / fig_height],                             # Height
-              autoscale_on = False)
+              **subplot_kw)
             figure.add_axes(subplots[i])
             i += 1
             if i >= i_max:
@@ -368,7 +421,7 @@ def get_figure_subplots(nrows = 1, ncols = 1, debug = False, verbose = False,
 
 def identify(subplots, **kwargs):
     """
-    Identifies index of each subplot with inset text
+    Identifies key of each subplot with inset text
 
     **Arguments:**
         :*subplots*: OrderedDict of subplots

@@ -1,13 +1,49 @@
-Matplotlib YAML Plot Specification (MYPlotSpec) is a Python package used to
-write Matplotlib-based plotting scripts that may be configured using YAML.
+Introduction
+------------
 
-This package is intended to provide an easy interface for managing
-dataset-specific configuration settings (e.g input and output files) alongside
-matplotlib style settings (e.g. color, font, ticks), without needing to manually
-implement the style settings.
+MYPlotSpec (Matplotlib YAML Plot Specification) is a Python package used
+to write Matplotlib-based plotting scripts that may be configured using
+YAML.
 
-For example: the following input file might be used to plot three datasets on
-three pages of a pdf file:
+The intended purporse is to make it possible to very quickly write
+plotting scripts for particular types of data while detailed control
+over plot configuration.  Essentially, the minimal 'quick & dirty' code
+needed to plot a certain type of data should be identical to the
+polished code used to produce a publication-quality figure with
+precisely chosen proportions, ticks, colors, and fonts.  Settings may be
+routed to specific figures, subplots, or datasets.  MyPlotSpec supports
+a system of defaults and presets that make it easy to prepare multiple
+versions of figures, such as for notebook, printing, and presentation.
+
+This project has no affiliation with the developers of matplotlib or
+YAML.
+
+Example Usage
+~~~~~~~~~~~~~
+
+For example: the following input file might be used to plot three
+datasets on three pages of a pdf file:
+
+::
+
+    figures:
+      all:
+        outfile: test.pdf
+      0:
+        subplots:
+          0:
+            infile:  dataset_0.txt
+      1:
+        subplots:
+          0:
+            infile:  dataset_1.txt
+      2:
+        subplots:
+          0:
+            infile:  dataset_2.txt
+
+However, the third dataset extends beyond the range we have set. we may
+adjust the range for that figure only:
 
 ::
 
@@ -29,19 +65,8 @@ three pages of a pdf file:
       2:
         subplots:
           0:
-            infile:  dataset_2.txt
-
-However, the third dataset extends beyond the range we have set. we may adjust
-the range for that figure only:
-
-::
-
-    figures:
-      2:
-        subplots:
-          0:
-            infile:  dataset_2.txt
             yticks:  [0,1,2,3,4,5,6,7,8,9,10]
+            infile:  dataset_2.txt
 
 The package tries to allow some consistency in the names of arguments
 passed to matplotlib functions, particularly for the names of text
@@ -52,21 +77,66 @@ including fontproperties, font_properties, fp, and prop. MYPlotSpec
 should support the original argument names as well as a more consistent
 alternative such as title_fp, label_fp, tick_fp, or legend_fp.
 
-Requirements:
-    - Python 2.7 or 3.4
-    - matplotlib
-    - yaml
-    - numpy
-    - six
+Requirements
+~~~~~~~~~~~~
 
-This package has been tested with Anaconda python 2.1.0 on OSX and 
-Windows 8.1.
+MYPlotSpec supports Python 2.7 and 3.4, and requires the following
+packages:
+
+- matplotlib
+- numpy
+- six
+- yaml
+
+This package has been tested with Anaconda python 2.1.0 on Arch Linux,
+OSX Yosemite, and in Cygwin on Windows 8.1.
+
+Installation
+~~~~~~~~~~~~
+
+Put in your ``$PYTHONPATH``:
+
+::
+    export PYTHONPATH=/path/to/my/python/modules:$PYTHONPATH
+
+where ``/path/to/my/python/modules`` contains ``MYPlotSpec``. If writing
+a module that uses MYPlotSpec, it is recommended to include it as a
+submodule, as the module is still undergoing changes that may break
+compatibility.
+
+License
+~~~~~~~
+
+Released under a 3-clause BSD licence
 
 .. todo:
     - License
-    - Basic Figure_Manager draw_dataset (use numpy.loadtxt, probably)
     - Example usage
     - Double-check documentation
     - Decide how to manage the specification of sizes, positions, etc.
       in real-world units (inches or centimeters)
+    - Support setting rcParams in yaml file
+    - Chech cooperation with seaborn
+    - Consider supporting figure and subplot specs as lists rather than
+      exclusively an integer indexed dictionary
     - Make 'debug' and 'verbose' more useful
+
+Getting Started
+---------------
+
+For most users the first step for using MYPlotSpec is to create a subclass of
+``Figure_Manager`` in which ``draw_dataset`` has been overridden to draw the
+desired type of data.
+
+::
+
+    from MYPlotSpec.Figure_Manager import Figure_Manager
+    from MYPlotSpec.Method_Defaults_Presets import Method_Defaults_Presets
+    from MYPlotSpec.Manage_Kwargs import Manage_Kwargs
+
+    class Custom_Figure_Mangater(Figure_Manager)
+
+        @Method_Defaults_Presets
+        def draw_dataset(subplot, **kwargs):
+
+        

@@ -1,13 +1,10 @@
 Matplotlib YAML Plot Specification Documentation
 ================================================
 
-Introduction
-------------
-
 .. include:: ../README
 
 Classes
----------
+-------
 
 .. toctree::
     :maxdepth: 4

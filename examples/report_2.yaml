@@ -1,0 +1,15 @@
+figures:
+  0:
+    outfile: examples/outfile_2.pdf
+    left:   0.8
+    right:  0.8
+    bottom: 0.8
+    top:    0.8
+    subplots:
+      0:
+        title:    Example 2
+        xlabel:   X axis
+        ylabel:   Y axis
+        datasets:
+          0:
+            infile: examples/dataset_1.txt

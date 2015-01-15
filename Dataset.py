@@ -13,22 +13,27 @@ class Dataset(object):
     """
     Class for managing datasets
     """
-    def __init__(self, **kwargs):
+    def __init__(self, verbose = True, debug = False, **kwargs):
         """
         Initializes
 
         **Arguments:**
-            :*infiles*: List of Paths to infiles
+            :*infiles*: List of paths to infiles
             :*infile*:  Path to single infile
             :*kwargs*:  Added as attributes
+            :*verbose*: Enable verbose output
+            :*debug*:   Enable debug output
         """
         self.datasets = {}
-        self.attrs    = {}
+        self.verbose  = verbose
+        self.debug    = debug
 
         if   "infiles" in kwargs:
             infiles = kwargs.pop("infiles")
         elif "infile" in kwargs:
-            infiles = [infile]
+            infiles = [kwargs.pop("infile")]
+        else:
+            infiles = []
         self.load(infiles, **kwargs)
 
     def load(self, infiles, **kwargs):
@@ -38,24 +43,30 @@ class Dataset(object):
         **Arguments:**
             :*infiles*: Paths to infiles
         """
-        from os import isfile
-        from warnings import warn
+        from os.path import isfile
+        import six
+        import numpy as np
 
         for infile in infiles:
-            if   len(infile) == 1:
-                in_path = infile
-                out_key = in_path
-            elif len(infile) == 2:
-                in_path, out_key = infile
+            if isinstance(infile, six.string_types):
+                in_path = out_key = infile
+            elif isinstance(infile, list):
+                if len(infile) == 1:
+                    in_path = infile
+                    out_key = in_path
+                elif len(infile) == 2:
+                    in_path, out_key = infile
 
             if not isfile(in_path):
-                print("File {0} not found".format(in_path))
+                if self.verbose:
+                    print("File {0} not found".format(in_path))
                 continue
 
             if in_path.endswith("npy"):
-                data = np.load(in_path, **kwargs)
+                dataset = np.load(in_path)
             else:
-                data = np.loadtxt(in_path, **kwargs)
+                dataset = np.loadtxt(in_path)
             self.datasets[out_key] = np.array(dataset)
-            print("Loaded Dataset {0}; Stored at {1}".format(
-                  in_path, out_key))
+            if self.verbose:
+                print("Loaded Dataset {0}; Stored at {1}".format(
+                      in_path, out_key))
