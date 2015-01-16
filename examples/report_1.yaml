@@ -7,3 +7,7 @@ figures:
         datasets:
           0:
             infile: examples/dataset_1.txt
+          1:
+            infile: examples/dataset_2.txt
+          2:
+            infile: examples/dataset_3.txt

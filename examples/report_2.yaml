@@ -1,15 +1,36 @@
 figures:
-  0:
+  all:
     outfile: examples/outfile_2.pdf
+  0:
+    subplots:
+      0:
+        title:    Example 2 Figure 1
+        datasets:
+          0:
+            infile: examples/dataset_1.txt
+          1:
+            infile: examples/dataset_2.txt
+          2:
+            infile: examples/dataset_3.txt
+  1:
     left:   0.8
     right:  0.8
     bottom: 0.8
     top:    0.8
+    subplot_kw:
+      autoscale_on: False
     subplots:
       0:
-        title:    Example 2
-        xlabel:   X axis
-        ylabel:   Y axis
+        title:       Example 2 Figure 2
+        xlabel:      X axis
+        ylabel:      Y axis
+        xticks:      [0,1,2,3,4,5,6,7,8,9,10]
+        xticklabels: ["zero","one","two","three","four","five","six","seven","eight", "nine","ten"]
+        yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
         datasets:
           0:
             infile: examples/dataset_1.txt
+          1:
+            infile: examples/dataset_2.txt
+          2:
+            infile: examples/dataset_3.txt

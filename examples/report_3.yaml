@@ -1,27 +1,61 @@
 figures:
   all:
+    outfile: examples/outfile_3.pdf
     subplot_kw:
       autoscale_on: False
-  0:
-    outfile: examples/outfile_3.pdf
     left:   0.8
     right:  0.8
     bottom: 0.8
     top:    0.8
     subplots:
-      0:
-        title:       Example 3
+      all:
         xlabel:      X axis
         ylabel:      Y axis
         xticks:      [0,1,2,3,4,5,6,7,8,9,10]
         xticklabels: ["zero","one","two","three","four","five","six","seven","eight", "nine","ten"]
-        yticks:      [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2]
-        title_fp:    24b
-        tick_fp:     12r
-        label_fp:    24b
-        legend:      True
+        yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
+  0:
+    subplots:
+      0:
+        title:     Example 3 Figure 1
+        title_fp:  24r
+        label_fp:  24r
+        tick_fp:   18r
+        legend_fp: 18r
+        legend:    True
+        lw:        2
+        datasets:
+          all:
+            plot_kw:
+              lw:   2
+          0:
+            label:  Dataset 1
+            infile: examples/dataset_1.txt
+            color:  dark.blue
+          1:
+            label:  Dataset 2
+            infile: examples/dataset_2.txt
+            color:  dark.green
+          2:
+            label:  Dataset 3
+            infile: examples/dataset_3.txt
+            color:  dark.red
+  1:
+    subplots:
+      0:
+        title:  Example 3 Figure 2
+        preset: presentation
+        legend: True
         datasets:
           0:
-            infile: examples/dataset_1.txt
-            color:  dark.red
             label:  Dataset 1
+            infile: examples/dataset_1.txt
+            color:  dark.blue
+          1:
+            label:  Dataset 2
+            infile: examples/dataset_2.txt
+            color:  dark.green
+          2:
+            label:  Dataset 3
+            infile: examples/dataset_3.txt
+            color:  dark.red

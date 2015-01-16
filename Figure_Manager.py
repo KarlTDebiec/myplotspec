@@ -8,6 +8,8 @@ Class to manage the generation of figures using matplotlib
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
+import matplotlib
+matplotlib.use("agg")
 if __name__ == "__main__":
     __package__ = str("MYPlotSpec")
     import MYPlotSpec
@@ -37,7 +39,8 @@ class Figure_Manager(object):
           legend_fp:    18r
           lw:           2
         draw_dataset:
-          lw:           2
+          plot_kw:
+            lw:         2
       notebook:
         draw_figure:
           title_fp:     12r
@@ -49,7 +52,8 @@ class Figure_Manager(object):
           legend_fp:    10r
           lw:           1
         draw_dataset:
-          lw:           1
+          plot_kw:
+            lw:         1
       letter:
         draw_figure:
           title_fp:     18r
@@ -61,7 +65,8 @@ class Figure_Manager(object):
           legend_fp:    14r
           lw:           1
         draw_dataset:
-          lw:           1
+          plot_kw:
+            lw:         1
     """
 
     def __call__(self, **kwargs):
@@ -74,7 +79,19 @@ class Figure_Manager(object):
     @Manage_Kwargs()
     def draw_report(self, **in_kwargs):
         """
-        Draws a series of figures based on provided specifications
+        Draws a series of figures based on provided specification
+
+        This function is partially responsible for outputting figures to
+        a series of pdf outfiles, if specified. It manages a dictionary
+        *outfiles* of the form outfiles[outfilename] = 
+        PdfPages(outfilename).
+        figures are output. Each time draw_figure() is called, the
+        wrapper Figure_Output() pulls off the keyword argument
+        *outfile*. If the *outfile* specified is a pdf file,
+        Figure_Output opens a PdfPages object and stores it in
+        *outfiles*. Subsequent calls to draw_figure() that share that
+        outfile name will be appended to the pdf file. Once all figures
+        have been drawn, draw_report closes the outfiles.
 
         **Arguments:**
             :*figures*: Figure specifications
