@@ -1,8 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   MYPlotSpec.Figure_Manager.py
-#   Written:    Karl Debiec     14-11-17
-#   Updated:    Karl Debiec     15-01-10
+#   myplotspec.FigureManager.py
+#
+#   Copyright (C) 2015 Karl T Debiec
+#   All rights reserved.
+#
+#   This software may be modified and distributed under the terms of the
+#   BSD license. See the LICENSE file for details.
 """
 Class to manage the generation of figures using matplotlib
 """
@@ -11,13 +15,13 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 import matplotlib
 matplotlib.use("agg")
 if __name__ == "__main__":
-    __package__ = str("MYPlotSpec")
-    import MYPlotSpec
-from .Method_Defaults_Presets import Method_Defaults_Presets
-from .Manage_Kwargs import Manage_Kwargs
-from .Figure_Output import Figure_Output
+    __package__ = str("myplotspec")
+    import myplotspec
+from .manage_defaults_presets import manage_defaults_presets
+from .manage_kwargs import manage_kwargs
+from .manage_output import manage_output
 ################################### CLASSES ###################################
-class Figure_Manager(object):
+class FigureManager(object):
     """
     Class to manage the generation of figures using matplotlib
     """
@@ -75,8 +79,8 @@ class Figure_Manager(object):
         """
         self.draw_report(**kwargs)
 
-    @Method_Defaults_Presets()
-    @Manage_Kwargs()
+    @manage_defaults_presets()
+    @manage_kwargs()
     def draw_report(self, **in_kwargs):
         """
         Draws a series of figures based on provided specification
@@ -86,9 +90,9 @@ class Figure_Manager(object):
         *outfiles* of the form outfiles[outfilename] = 
         PdfPages(outfilename).
         figures are output. Each time draw_figure() is called, the
-        wrapper Figure_Output() pulls off the keyword argument
+        wrapper manage_output() pulls off the keyword argument
         *outfile*. If the *outfile* specified is a pdf file,
-        Figure_Output opens a PdfPages object and stores it in
+        manage_output opens a PdfPages object and stores it in
         *outfiles*. Subsequent calls to draw_figure() that share that
         outfile name will be appended to the pdf file. Once all figures
         have been drawn, draw_report closes the outfiles.
@@ -115,9 +119,9 @@ class Figure_Manager(object):
         for outfile in outfiles.values():
             outfile.close()
 
-    @Method_Defaults_Presets()
-    @Manage_Kwargs()
-    @Figure_Output()
+    @manage_defaults_presets()
+    @manage_kwargs()
+    @manage_output()
     def draw_figure(self, title = None, shared_xlabel = None,
         shared_ylabel = None, shared_legend = None, **in_kwargs):
         """
@@ -174,8 +178,8 @@ class Figure_Manager(object):
         # Return results
         return figure
 
-    @Method_Defaults_Presets()
-    @Manage_Kwargs()
+    @manage_defaults_presets()
+    @manage_kwargs()
     def draw_subplot(self, subplot, title = None, legend = None,
         shared_handles = None, **in_kwargs):
         """
@@ -226,8 +230,8 @@ class Figure_Manager(object):
                 if label not in shared_handles:
                     shared_handles[label] = handle
 
-    @Method_Defaults_Presets()
-    @Manage_Kwargs()
+    @manage_defaults_presets()
+    @manage_kwargs()
     def draw_dataset(self, subplot, infile, label = None, handles = None,
         **kwargs):
         """
@@ -281,7 +285,7 @@ class Figure_Manager(object):
         parser.add_argument(
           "--debug",
           action   = "store_true",
-          help     = "Debug output")
+          help     = "Enable debug output")
 
         arguments = vars(parser.parse_args())
 
@@ -299,4 +303,4 @@ class Figure_Manager(object):
 
 #################################### MAIN #####################################
 if __name__ == "__main__":
-    Figure_Manager().main()
+    FigureManager().main()

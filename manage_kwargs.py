@@ -1,8 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   MYPlotSpec.Manage_Kwargs.py
-#   Written:    Karl Debiec     14-10-25
-#   Updated:    Karl Debiec     15-01-10
+#   myplotspec.manage_kwargs.py
+#
+#   Copyright (C) 2015 Karl T Debiec
+#   All rights reserved.
+#
+#   This software may be modified and distributed under the terms of the
+#   BSD license. See the LICENSE file for details.
 """
 Decorator class to manage the passage of keyword arguments to a wrapped
 function or method
@@ -10,9 +14,9 @@ function or method
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 from . import get_yaml, merge_dicts
-from .Debug import db_s, db_kv, Debug_Arguments
+from .debug import db_s, db_kv
 ################################### CLASSES ###################################
-class Manage_Kwargs(Debug_Arguments):
+class manage_kwargs(object):
     """
     Decorator class to manage the passage keyword arguments to a wrapped
     function or method
@@ -90,6 +94,15 @@ class Manage_Kwargs(Debug_Arguments):
     All of the above will override defaults provided in the function
     declaration itself.
     """
+
+    def __init__(self, debug = False):
+        """
+        Stores decoration debug setting
+
+        **Arguments:**
+            :*debug*: Enable debug output
+        """
+        self.debug = debug
 
     def __call__(self, function):
         """

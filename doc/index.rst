@@ -1,10 +1,10 @@
-Matplotlib YAML Plot Specification Documentation
-================================================
+MYPlotSpec Documentation
+========================
 
 .. include:: ../README
 
 Classes
--------
+=======
 
 .. toctree::
     :maxdepth: 4
@@ -12,14 +12,14 @@ Classes
     classes
 
 Decorators
-----------
+==========
 .. toctree::
     :maxdepth: 4
 
     decorators
 
 Functions
----------
+=========
 
 .. toctree::
     :maxdepth: 4

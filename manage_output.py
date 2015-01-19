@@ -1,8 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   MYPlotSpec.Figure_Output.py
-#   Written:    Karl Debiec     13-10-22
-#   Updated:    Karl Debiec     15-01-10
+#   myplotspec.manage_output.py
+#
+#   Copyright (C) 2015 Karl T Debiec
+#   All rights reserved.
+#
+#   This software may be modified and distributed under the terms of the
+#   BSD license. See the LICENSE file for details.
 """
 Decorator class to manage the output of matplotlib figures by a wrapped
 function or method
@@ -10,7 +14,7 @@ function or method
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################### CLASSES ###################################
-class Figure_Output(object):
+class manage_output(object):
     """
     Decorator class to manage the output of matplotlib figures by a
     wrapped function or method
@@ -36,7 +40,7 @@ class Figure_Output(object):
         Stores decoration arguments
 
         **Arguments:**
-            :*debug*:   Debug
+            :*debug*:   Enable debug output
             :*verbose*: Verbose
         """
         self.debug   = debug
@@ -78,7 +82,7 @@ class Figure_Output(object):
             figure     = function(*args, **kwargs)
             outfile    = kwargs.pop("outfile",    "outfile.pdf")
             outfiles   = kwargs.pop("outfiles",   None)
-            savefig_kw = kwargs.pop("savefig_kw", {"transparent": True})
+            savefig_kw = kwargs.pop("savefig_kw", {})
 
             if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
                 outfile_name = abspath(outfile._file.fh.name)

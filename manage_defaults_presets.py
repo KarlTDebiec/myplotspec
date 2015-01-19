@@ -1,8 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   MYPlotSpec.Method_Defaults_Presets.py
-#   Written:    Karl Debiec     15-01-03
-#   Updated:    Karl Debiec     15-01-10
+#   myplotspec.manage_defaults_presets.py
+#
+#   Copyright (C) 2015 Karl T Debiec
+#   All rights reserved.
+#
+#   This software may be modified and distributed under the terms of the
+#   BSD license. See the LICENSE file for details.
 """
 Decorator class to manage the passage of defaults and presets from
 a class to a method of that class.
@@ -10,9 +14,9 @@ a class to a method of that class.
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 from . import get_yaml
-from .Debug import db_s, db_kv, Debug_Arguments
+from .debug import db_s, db_kv
 ################################### CLASSES ###################################
-class Method_Defaults_Presets(Debug_Arguments):
+class manage_defaults_presets(object):
     """
     Decorator class to manage the passage of defaults and presets from a
     class to a method of that class.
@@ -65,7 +69,7 @@ class Method_Defaults_Presets(Debug_Arguments):
 
     ::
 
-        @Method_Defaults_Presets()
+        @manage_defaults_presets()
         def method_1(*args, **kwargs):
             ...
 
@@ -88,6 +92,15 @@ class Method_Defaults_Presets(Debug_Arguments):
         > }
 
     """
+
+    def __init__(self, debug = False):
+        """
+        Stores decoration debug setting
+
+        **Arguments:**
+            :*debug*: Enable debug output
+        """
+        self.debug = debug
 
     def __call__(self, method):
         """

@@ -3,25 +3,28 @@ figures:
     outfile: examples/outfile_3.pdf
     subplot_kw:
       autoscale_on: False
-    left:   0.8
-    right:  0.8
-    bottom: 0.8
-    top:    0.8
+    left:       0.8
+    sub_width:  4.0
+    right:      0.8
+    bottom:     0.8
+    sub_height: 3.0
+    top:        0.8
     subplots:
       all:
         xlabel:      X axis
         ylabel:      Y axis
-        xticks:      [0,1,2,3,4,5,6,7,8,9,10]
-        xticklabels: ["zero","one","two","three","four","five","six","seven","eight", "nine","ten"]
+        xticks:      [0,2,4,6,8,10]
+        xticklabels: ["zero","two","four","six","eight","ten"]
         yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
   0:
+#    outfile: examples/example_3.png
     subplots:
       0:
-        title:     Example 3 Figure 1
-        title_fp:  24r
-        label_fp:  24r
-        tick_fp:   18r
-        legend_fp: 18r
+        title:     Example 3
+        title_fp:  12r
+        label_fp:  12r
+        tick_fp:   10r
+        legend_fp: 10r
         legend:    True
         lw:        2
         datasets:
@@ -41,10 +44,11 @@ figures:
             infile: examples/dataset_3.txt
             color:  dark.red
   1:
+#    outfile: examples/example_4.png
     subplots:
       0:
-        title:  Example 3 Figure 2
-        preset: presentation
+        title:  Example 4
+        preset: notebook
         legend: True
         datasets:
           0:

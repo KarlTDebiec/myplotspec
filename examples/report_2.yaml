@@ -1,22 +1,14 @@
 figures:
-  all:
-    outfile: examples/outfile_2.pdf
+#  all:
+#    outfile: examples/outfile_2.pdf
   0:
-    subplots:
-      0:
-        title:    Example 2 Figure 1
-        datasets:
-          0:
-            infile: examples/dataset_1.txt
-          1:
-            infile: examples/dataset_2.txt
-          2:
-            infile: examples/dataset_3.txt
-  1:
-    left:   0.8
-    right:  0.8
-    bottom: 0.8
-    top:    0.8
+    outfile: examples/outfile_2-2.png
+    left:       0.8
+    sub_width:  4.0
+    right:      0.8
+    bottom:     0.8
+    sub_height: 3.0
+    top:        0.8
     subplot_kw:
       autoscale_on: False
     subplots:

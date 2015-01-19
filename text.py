@@ -1,8 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   MYPlotSpec.text.py
-#   Written:    Karl Debiec     12-10-22
-#   Updated:    Karl Debiec     15-01-10
+#   myplotspec.text.py
+#
+#   Copyright (C) 2015 Karl T Debiec
+#   All rights reserved.
+#
+#   This software may be modified and distributed under the terms of the
+#   BSD license. See the LICENSE file for details.
 """
 Functions for formatting text
 """

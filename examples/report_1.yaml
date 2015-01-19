@@ -1,6 +1,6 @@
 figures:
   0:
-    outfile: examples/outfile_1.pdf
+    outfile: examples/example_1.png
     subplots:
       0:
         title:    Example 1
@@ -11,3 +11,118 @@ figures:
             infile: examples/dataset_2.txt
           2:
             infile: examples/dataset_3.txt
+  1:
+    outfile: examples/example_2.png
+    left:       0.6
+    sub_width:  4.0
+    right:      0.2
+    bottom:     0.5
+    sub_height: 3.0
+    top:        0.4
+    subplots:
+      0:
+        title:       Example 2
+        datasets:
+          0:
+            infile: examples/dataset_1.txt
+          1:
+            infile: examples/dataset_2.txt
+          2:
+            infile: examples/dataset_3.txt
+  2:
+    outfile: examples/example_3.png
+    left:       0.6
+    sub_width:  4.0
+    right:      0.2
+    bottom:     0.5
+    sub_height: 3.0
+    top:        0.4
+    subplot_kw:
+      autoscale_on: False
+    subplots:
+      0:
+        title:       Example 3
+        xlabel:      X axis
+        ylabel:      Y axis
+        xticks:      [0,2,4,6,8,10]
+        xticklabels: ["zero","two","four","six","eight","ten"]
+        yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
+        title_fp:    12r
+        label_fp:    12r
+        tick_fp:     10r
+        datasets:
+          0:
+            infile: examples/dataset_1.txt
+          1:
+            infile: examples/dataset_2.txt
+          2:
+            infile: examples/dataset_3.txt
+  3:
+    outfile: examples/example_4.png
+    left:       0.6
+    sub_width:  4.0
+    right:      0.2
+    bottom:     0.5
+    sub_height: 3.0
+    top:        0.4
+    subplot_kw:
+      autoscale_on: False
+    subplots:
+      0:
+        title:       Example 4
+        xlabel:      X axis
+        ylabel:      Y axis
+        xticks:      [0,2,4,6,8,10]
+        xticklabels: ["zero","two","four","six","eight","ten"]
+        yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
+        title_fp:    12r
+        label_fp:    12r
+        tick_fp:     10r
+        legend_fp:   10r
+        legend:      True
+        datasets:
+          0:
+            label:  Dataset 1
+            infile: examples/dataset_1.txt
+            color:  dark.blue
+          1:
+            label:  Dataset 2
+            infile: examples/dataset_2.txt
+            color:  dark.green
+          2:
+            label:  Dataset 3
+            infile: examples/dataset_3.txt
+            color:  dark.red
+  4:
+    outfile: examples/example_5.png
+    left:       0.6
+    sub_width:  4.0
+    right:      0.2
+    bottom:     0.5
+    sub_height: 3.0
+    top:        0.4
+    subplot_kw:
+      autoscale_on: False
+    preset:     notebook
+    subplots:
+      0:
+        title:       Example 5
+        xlabel:      X axis
+        ylabel:      Y axis
+        xticks:      [0,2,4,6,8,10]
+        xticklabels: ["zero","two","four","six","eight","ten"]
+        yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
+        legend:      True
+        datasets:
+          0:
+            label:  Dataset 1
+            infile: examples/dataset_1.txt
+            color:  dark.blue
+          1:
+            label:  Dataset 2
+            infile: examples/dataset_2.txt
+            color:  dark.green
+          2:
+            label:  Dataset 3
+            infile: examples/dataset_3.txt
+            color:  dark.red

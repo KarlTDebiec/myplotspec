@@ -1,14 +1,14 @@
-Method_Defaults_Presets
+manage_defaults_presets
 =======================
-.. automodule:: MYPlotSpec.Method_Defaults_Presets
+.. automodule:: myplotspec.manage_defaults_presets
    :members:
 
-Manage_Kwargs
+manage_kwargs
 =============
-.. automodule:: MYPlotSpec.Manage_Kwargs
+.. automodule:: myplotspec.manage_kwargs
    :members:
 
-Figure_Output
+manage_output
 =============
-.. automodule:: MYPlotSpec.Figure_Output
+.. automodule:: myplotspec.manage_output
    :members:

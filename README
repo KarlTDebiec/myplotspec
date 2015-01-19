@@ -1,7 +1,7 @@
 Introduction
 ============
 
-MYPlotSpec is a Python package used to write Matplotlib-based plotting
+MYPlotSpec is a Python package used to write matplotlib-based plotting
 programs that may be configured using YAML.
 
 The intended purporse is to rapidly write programs for plotting
@@ -9,11 +9,11 @@ particular types of data while retaining detailed control over plot
 configuration. The minimal 'quick & dirty' code needed to plot a certain
 type of data should be very close to the polished code used to produce
 publication-quality figures featuring precisely chosen proportions,
-ticks, colors, and fonts. MYPlotSpec accomplishes this by providing a
+ticks, colors, and fonts. myplotspec accomplishes this by providing a
 system for routing arguments provided in a YAML configuration file to
 matplotlib's existing formatting functions. Settings may be applied
 globally or routed to specific figures, subplots, and datasets.
-MYPlotSpec should have no conflict with existing matplotlibrc settings,
+myplotspec should have no conflict with existing matplotlibrc settings,
 instead offering a level of specific control on top of them. MyPlotSpec
 supports a system of defaults and presets that make it easy to prepare
 multiple versions of plots, such as for a notebook, printout, or
@@ -22,7 +22,7 @@ presentation.
 Dependencies
 ------------
 
-MYPlotSpec supports Python 2.7 and 3.4, and requires the following
+myplotspec supports Python 2.7 and 3.4, and requires the following
 packages:
 
 - matplotlib
@@ -42,12 +42,12 @@ Put in your ``$PYTHONPATH``:
 
     export PYTHONPATH=/path/to/my/python/modules:$PYTHONPATH
 
-where ``/path/to/my/python/modules`` contains ``MYPlotSpec``.
+where ``/path/to/my/python/modules`` contains ``myplotspec``.
 
 Authorship
 ----------
 
-MYPlotSpec is developed by Karl T Debiec, a graduate student at the
+myplotspec is developed by Karl T Debiec, a graduate student at the
 University of Pittsburgh advised by Professors Lillian T Chong and
 Angela M Gronenborn.
 
@@ -55,6 +55,187 @@ License
 -------
 
 Released under a 3-clause BSD licence.
+
+Getting Started
+===============
+
+The ``examples`` subfolder contains several example YAML inputs and
+corresponing outputs.
+
+::
+
+    figures:
+      0:
+        outfile: examples/example_1.png
+        subplots:
+          0:
+            title:    Example 1
+            datasets:
+              0:
+                infile: examples/dataset_1.txt
+              1:
+                infile: examples/dataset_2.txt
+              2:
+                infile: examples/dataset_3.txt
+
+.. image:: _static/example_1.png
+    :align: center
+
+This uses matplotlib's rcParams for all margins, yielding a poorly
+formatted figure. We may specify the margins and subplot dimensions of
+the figure in the yaml file:
+
+::
+
+    figures:
+
+      ...
+
+      1:
+        outfile: examples/example_2.png
+        left:       0.6
+        sub_width:  4.0
+        right:      0.2
+        bottom:     0.5
+        sub_height: 3.0
+        top:        0.4
+        subplots:
+          0:
+            title:       Example 2
+            datasets:
+              0:
+                infile: examples/dataset_1.txt
+              1:
+                infile: examples/dataset_2.txt
+              2:
+                infile: examples/dataset_3.txt
+
+.. image:: _static/example_2.png
+    :align: center
+
+This yields a much nicer plot. We may similarly format the ticks and
+labels of the subplot:
+
+::
+
+    figures:
+      ...
+      2:
+        outfile: examples/example_3.png
+        left:       0.6
+        sub_width:  4.0
+        right:      0.2
+        bottom:     0.5
+        sub_height: 3.0
+        top:        0.4
+        subplot_kw:
+          autoscale_on: False
+        subplots:
+          0:
+            title:       Example 3
+            xlabel:      X axis
+            ylabel:      Y axis
+            xticks:      [0,2,4,6,8,10]
+            xticklabels: ["zero","two","four","six","eight","ten"]
+            yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
+            title_fp:    12r
+            label_fp:    12r
+            tick_fp:     10r
+            datasets:
+              0:
+                infile: examples/dataset_1.txt
+              1:
+                infile: examples/dataset_2.txt
+              2:
+                infile: examples/dataset_3.txt
+
+.. image:: _static/example_3.png
+    :align: center
+
+::
+
+    figures:
+      ...
+      3:
+        outfile: examples/example_4.png
+        left:       0.6
+        sub_width:  4.0
+        right:      0.2
+        bottom:     0.5
+        sub_height: 3.0
+        top:        0.4
+        subplot_kw:
+          autoscale_on: False
+        subplots:
+          0:
+            title:       Example 4
+            xlabel:      X axis
+            ylabel:      Y axis
+            xticks:      [0,2,4,6,8,10]
+            xticklabels: ["zero","two","four","six","eight","ten"]
+            yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
+            title_fp:    12r
+            label_fp:    12r
+            tick_fp:     10r
+            legend_fp:   10r
+            legend:      True
+            datasets:
+              0:
+                label:  Dataset 1
+                infile: examples/dataset_1.txt
+                color:  dark.blue
+              1:
+                label:  Dataset 2
+                infile: examples/dataset_2.txt
+                color:  dark.green
+              2:
+                label:  Dataset 3
+                infile: examples/dataset_3.txt
+                color:  dark.red
+
+.. image:: _static/example_4.png
+    :align: center
+
+::
+
+    figures:
+      ...
+      4:
+        outfile: examples/example_5.png
+        left:       0.6
+        sub_width:  4.0
+        right:      0.2
+        bottom:     0.5
+        sub_height: 3.0
+        top:        0.4
+        subplot_kw:
+          autoscale_on: False
+        preset:     notebook
+        subplots:
+          0:
+            title:       Example 5
+            xlabel:      X axis
+            ylabel:      Y axis
+            xticks:      [0,2,4,6,8,10]
+            xticklabels: ["zero","two","four","six","eight","ten"]
+            yticks:      [0.0,0.2,0.4,0.6,0.8,1.0,1.2,1.4,1.6]
+            legend:      True
+            datasets:
+              0:
+                label:  Dataset 1
+                infile: examples/dataset_1.txt
+                color:  dark.blue
+              1:
+                label:  Dataset 2
+                infile: examples/dataset_2.txt
+                color:  dark.green
+              2:
+                label:  Dataset 3
+                infile: examples/dataset_3.txt
+                color:  dark.red
+
+.. image:: _static/example_5.png
+    :align: center
 
 .. todo:
     - Decide how to manage the specification of sizes, positions, etc.
@@ -65,22 +246,3 @@ Released under a 3-clause BSD licence.
       exclusively an integer indexed dictionary
     - Make 'debug' and 'verbose' more useful
 
-Getting Started
----------------
-
-For most users the first step for using MYPlotSpec is to create a subclass of
-``Figure_Manager`` in which ``draw_dataset`` has been overridden to draw the
-desired type of data.
-
-::
-
-    from MYPlotSpec.Figure_Manager import Figure_Manager
-    from MYPlotSpec.Method_Defaults_Presets import Method_Defaults_Presets
-    from MYPlotSpec.Manage_Kwargs import Manage_Kwargs
-
-    class Custom_Figure_Mangater(Figure_Manager)
-
-        @Method_Defaults_Presets
-        def draw_dataset(subplot, **kwargs):
-
-        

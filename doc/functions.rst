@@ -3,40 +3,40 @@ Formatting
 
 Axes
 ----
-.. automodule:: MYPlotSpec.axes
-.. autofunction:: MYPlotSpec.axes.set_xaxis
-.. autofunction:: MYPlotSpec.axes.set_yaxis
+.. automodule:: myplotspec.axes
+.. autofunction:: myplotspec.axes.set_xaxis
+.. autofunction:: myplotspec.axes.set_yaxis
 
 Text
 ----
-.. automodule:: MYPlotSpec.text
-.. autofunction:: MYPlotSpec.text.set_title
-.. autofunction:: MYPlotSpec.text.set_shared_xlabel
-.. autofunction:: MYPlotSpec.text.set_shared_ylabel
-.. autofunction:: MYPlotSpec.text.set_inset
-.. autofunction:: MYPlotSpec.text.set_text
+.. automodule:: myplotspec.text
+.. autofunction:: myplotspec.text.set_title
+.. autofunction:: myplotspec.text.set_shared_xlabel
+.. autofunction:: myplotspec.text.set_shared_ylabel
+.. autofunction:: myplotspec.text.set_inset
+.. autofunction:: myplotspec.text.set_text
 
 Legend
 ------
-.. automodule:: MYPlotSpec.legend
-.. autofunction:: MYPlotSpec.legend.set_legend
-.. autofunction:: MYPlotSpec.legend.set_shared_legend
+.. automodule:: myplotspec.legend
+.. autofunction:: myplotspec.legend.set_legend
+.. autofunction:: myplotspec.legend.set_shared_legend
 
 Auxiliary
 =========
 
 General
 -------
-.. automodule:: MYPlotSpec
-.. autofunction:: MYPlotSpec.merge_dicts
-.. autofunction:: MYPlotSpec.multi_kw
-.. autofunction:: MYPlotSpec.pad_zero
+.. automodule:: myplotspec
+.. autofunction:: myplotspec.merge_dicts
+.. autofunction:: myplotspec.multi_kw
+.. autofunction:: myplotspec.pad_zero
 
 Matplotlib
 ----------
-.. autofunction:: MYPlotSpec.get_edges
-.. autofunction:: MYPlotSpec.get_color
-.. autofunction:: MYPlotSpec.get_font
-.. autofunction:: MYPlotSpec.get_figure_subplots
-.. autofunction:: MYPlotSpec.identify
+.. autofunction:: myplotspec.get_edges
+.. autofunction:: myplotspec.get_color
+.. autofunction:: myplotspec.get_font
+.. autofunction:: myplotspec.get_figure_subplots
+.. autofunction:: myplotspec.identify
 

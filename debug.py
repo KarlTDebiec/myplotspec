@@ -1,11 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   MYPlotSpec.Debug.py
-#   Written:    Karl Debiec     15-01-03
-#   Updated:    Karl Debiec     15-01-10
+#   myplotspec.debug.py
+#
+#   Copyright (C) 2015 Karl T Debiec
+#   All rights reserved.
+#
+#   This software may be modified and distributed under the terms of the
+#   BSD license. See the LICENSE file for details.
 """
-Decorator class to debug the passage of arguments to a wrapped function
-or method
+Functions and classes for debugging
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -22,7 +25,7 @@ def db_kv(key, value, indent = 0, flag = " "):
         output = output[:77] + "..."
     print(output)
 ################################### CLASSES ###################################
-class Debug_Arguments(object):
+class debug_arguments(object):
     """
     Decorator class to debug the passage of arguments to a wrapped
     function or method
@@ -42,12 +45,12 @@ class Debug_Arguments(object):
       decorator logic.
     """
 
-    def __init__(self, debug = False, **kwargs):
+    def __init__(self, debug = False):
         """
         Stores decoration debug setting
 
         **Arguments:**
-            :*debug*: Debug
+            :*debug*: Enable debug output
         """
         self.debug = debug
 
