@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #   myplotspec.FigureManager.py
 #
@@ -242,6 +242,7 @@ class FigureManager(object):
             :*infile*:  Input file; first column is x, second is y
             :*label*:   Dataset label
             :*handles*: Nascent list of dataset handles on subplot
+            :*plot_kw*: Keyword arguments pased to plot()
         """
         from . import get_color
         import numpy as np
@@ -260,7 +261,7 @@ class FigureManager(object):
 
         # Plot
         handle = subplot.plot(x, y, **plot_kw)[0]
-        if handles is not None:
+        if handles is not None and label is not None:
             handles[label] = handle
 
     def main(self):
@@ -268,7 +269,7 @@ class FigureManager(object):
         Provides command-line functionality
         """
         import argparse
-        from .Debug import db_s, db_kv
+        from .debug import db_s, db_kv
 
         parser = argparse.ArgumentParser(
           description     = __doc__,

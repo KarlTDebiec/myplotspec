@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   myplotspec.legend.py
 #
@@ -35,8 +34,7 @@ def set_legend(subplot, handles = None, legend_lw = None, legend_fp = None,
 
     **Arguments:**
         :*subplot*:   <Axes> on which to act
-        :*handles*:   OrderedDict; keys are series labels and values
-                      are handles
+        :*handles*:   OrderedDict of form [label]: handle
         :*legend_lw*: Legend handle linewidth
         :*legend_fp*: Legend font
         :*legend_kw*: Keyword arguments passed to *subplot*.legend()
