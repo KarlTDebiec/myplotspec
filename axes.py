@@ -19,30 +19,29 @@ Functions for formatting axes
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################## FUNCTIONS ##################################
 def set_xaxis(subplot, xticks = None, xtick_kw = None, xticklabels = None,
-    xticklabel_fp = None, ticklabel_fp = None, xticklabel_kw = None,
-    xlabel = None, xlabel_fp = None, label_fp = None, xlabel_kw = None,
-    xtick_params = None, tick_params = None, xtick_pad = None, tick_pad = None,
-    xlw = None, lw = None, **kwargs):
+    xtick_fp = None, tick_fp = None, xticklabel_fp = None, ticklabel_fp = None,
+    xticklabel_kw = None, xlabel = None, xlabel_fp = None, label_fp = None,
+    xlabel_kw = None, xtick_params = None, tick_params = None,
+    xtick_pad = None, tick_pad = None, xlw = None, lw = None, **kwargs):
     """
     Formats the x-axis of a subplot using provided keyword arguments
 
     **Arguments:**
-        :*subplot*:        <Axes> on which to act
-        :*xticks*:          Ticks; first and last are used as upper and
-                            lower boundaries
-        :*xtick_kw*:        Keyword arguments passed to set_xticks()
-        :*xticklabels*:     Tick label text
-        :*[x]ticklabel_fp*: Tick label font
-        :*xticklabel_kw*:   Keyword arguments passed to
-                            set_xticklabels()
-        :*xlabel*:          Label text
-        :*[x]label_fp*:     Label font
-        :*xlabel_kw*:       Keyword arguments passed to set_xlabel()
-        :*[x]tick_params*:  Keyword arguments passed to
-                            set_tick_params(); only affect x axis
-        :*xaxis_kw*:        Additional keyword arguments
-        :*[x]tick_pad*: Padding between ticks and labels
-        :*[x]lw*:       Line width
+        :*subplot*:           <Axes> on which to act
+        :*xticks*:            Ticks; first and last are used as upper
+                              and lower boundaries
+        :*xtick_kw*:          Keyword arguments passed to set_xticks()
+        :*xticklabels*:       Tick label text
+        :*[x]tick[label]_fp*: Tick label font
+        :*xticklabel_kw*:     Keyword arguments passed to
+                              set_xticklabels()
+        :*xlabel*:            Label text
+        :*[x]label_fp*:       Label font
+        :*xlabel_kw*:         Keyword arguments passed to set_xlabel()
+        :*[x]tick_params*:    Keyword arguments passed to
+                              set_tick_params(); only affect x axis
+        :*[x]tick_pad*:       Padding between ticks and labels
+        :*[x]lw*:             Line width
     """
     from . import fp_keys, get_font, multi_kw
 
@@ -64,10 +63,14 @@ def set_xaxis(subplot, xticks = None, xtick_kw = None, xticklabels = None,
     if xticklabels is None and xticks is not None:
         xticklabels = xticks
 
-    xticklabel_fp_2 = multi_kw(["xticklabel_fp", "ticklabel_fp"] + fp_keys,
-                        xticklabel_kw)
+    xticklabel_fp_2 = multi_kw(["xtick_fp", "tick_fp", "xticklabel_fp",
+                        "ticklabel_fp"] + fp_keys, xticklabel_kw)
     if xticklabel_fp_2 is not None:
         xticklabel_kw["fontproperties"] = get_font(xticklabel_fp_2)
+    elif xtick_fp is not None:
+        xticklabel_kw["fontproperties"] = get_font(xtick_fp)
+    elif tick_fp is not None:
+        xticklabel_kw["fontproperties"] = get_font(tick_fp)
     elif xticklabel_fp is not None:
         xticklabel_kw["fontproperties"] = get_font(xticklabel_fp)
     elif ticklabel_fp is not None:
@@ -114,30 +117,29 @@ def set_xaxis(subplot, xticks = None, xtick_kw = None, xticklabels = None,
         subplot.spines["bottom"].set_lw(lw)
 
 def set_yaxis(subplot, yticks = None, ytick_kw = None, yticklabels = None,
-    yticklabel_fp = None, ticklabel_fp = None, yticklabel_kw = None,
-    ylabel = None, ylabel_fp = None, label_fp = None, ylabel_kw = None,
-    ytick_params = None, tick_params = None,  ytick_pad = None,
-    tick_pad = None, ylw = None, lw = None, **kwargs):
+    ytick_fp = None, tick_fp = None, yticklabel_fp = None, ticklabel_fp = None,
+    yticklabel_kw = None, ylabel = None, ylabel_fp = None, label_fp = None,
+    ylabel_kw = None, ytick_params = None, tick_params = None,
+    ytick_pad = None, tick_pad = None, ylw = None, lw = None, **kwargs):
     """
     Formats the y-axis of a subplot using provided keyword arguments
 
     **Arguments:**
-        :*subplot*:        <Axes> on which to act
-        :*yticks*:          Ticks; first and last are used as upper and
-                            lower boundaries
-        :*ytick_kw*:        Keyword arguments passed to set_yticks()
-        :*yticklabels*:     Tick label text
-        :*[y]ticklabel_fp*: Tick label font
-        :*yticklabel_kw*:   Keyword arguments passed to
-                            set_yticklabels()
-        :*ylabel*:          Label text
-        :*[y]label_fp*:     Label font
-        :*ylabel_kw*:       Keyword arguments passed to set_ylabel()
-        :*[y]tick_params*:  Keyword arguments passed to
-                            set_tick_params(); only affect y axis
-        :*yaxis_kw*:        Additional keyword arguments
-        :*[y]tick_pad*:     Padding between ticks and labels
-        :*[y]lw*:           Line width
+        :*subplot*:           <Axes> on which to act
+        :*yticks*:            Ticks; first and last are used as upper and
+                              lower boundaries
+        :*ytick_kw*:          Keyword arguments passed to set_yticks()
+        :*yticklabels*:       Tick label text
+        :*[y]tick[label]_fp*: Tick label font
+        :*yticklabel_kw*:     Keyword arguments passed to
+                              set_yticklabels()
+        :*ylabel*:            Label text
+        :*[y]label_fp*:       Label font
+        :*ylabel_kw*:         Keyword arguments passed to set_ylabel()
+        :*[y]tick_params*:    Keyword arguments passed to
+                              set_tick_params(); only affect y axis
+        :*[y]tick_pad*:       Padding between ticks and labels
+        :*[y]lw*:             Line width
 
     """
     from . import fp_keys, get_font, multi_kw
@@ -160,10 +162,14 @@ def set_yaxis(subplot, yticks = None, ytick_kw = None, yticklabels = None,
     if yticklabels is None and yticks is not None:
         yticklabels = yticks
 
-    yticklabel_fp_2 = multi_kw(["yticklabel_fp", "ticklabel_fp"] + fp_keys,
-                        yticklabel_kw)
+    yticklabel_fp_2 = multi_kw(["ytick_fp", "tick_fp", "yticklabel_fp",
+                        "ticklabel_fp"] + fp_keys,yticklabel_kw)
     if yticklabel_fp_2 is not None:
         yticklabel_kw["fontproperties"] = get_font(yticklabel_fp_2)
+    elif ytick_fp is not None:
+        yticklabel_kw["fontproperties"] = get_font(ytick_fp)
+    elif tick_fp is not None:
+        yticklabel_kw["fontproperties"] = get_font(tick_fp)
     elif yticklabel_fp is not None:
         yticklabel_kw["fontproperties"] = get_font(yticklabel_fp)
     elif ticklabel_fp is not None:
