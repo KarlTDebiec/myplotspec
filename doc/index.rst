@@ -1,6 +1,6 @@
 MYPlotSpec
 ==========
-.. include:: ../README
+.. include:: ../README.rst
 .. include:: ../LICENSE
 
 Usage
