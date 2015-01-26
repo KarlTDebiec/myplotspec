@@ -33,9 +33,7 @@ Yosemite, and Windows 8.1.
 Installation
 ------------
 
-Put in your ``$PYTHONPATH``:
-
-::
+Put in your ``$PYTHONPATH``::
 
     export PYTHONPATH=/path/to/my/python/modules:$PYTHONPATH
 
