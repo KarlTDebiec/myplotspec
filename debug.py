@@ -7,61 +7,86 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Functions and classes for debugging
+Classes and functions for debugging.
+
+.. todo:
+  - should *indent* be specified in units of 1 space rather than 4
+    spaces?
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################## FUNCTIONS ##################################
-def db_s(string = "", indent = 0):
+def db_s(string, indent=0):
+    """
+    Prints debug output.
+
+    Arguments:
+      string (str): Content of debug output
+      indent (int, optional): Indentation level; multiple of 4
+    """
     output = "DEBUG: {0}{1}".format("    " * indent, string)
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
-def db_kv(key, value, indent = 0, flag = " "):
+
+def db_kv(key, value, indent=0, flag=" "):
+    """
+    Prints debug output for a key:value pair, truncated to 80 columns.
+
+    Arguments:
+      key (str): key
+      value (str): value
+      indent (int, optional): Indentation level; multiple of 4
+      flag (str, optional): Single-character flag describing pair
+    """
     output = "DEBUG: {0}  {1} {2}:{3}".format("    " * max(indent - 1, 0),
                flag, key, value)
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
+
+def identify(subplots, **kwargs):
+    """
+    Identifies key of each subplot with inset text.
+
+    Arguments:
+      subplots (OrderedDict): subplots
+    """
+    from .text import set_inset
+
+    for key, subplot in subplots.items():
+        set_inset(subplot, text = key, xpos = 0.5, ypos = 0.5, ha = "center",
+          va = "center", **kwargs)
 ################################### CLASSES ###################################
 class debug_arguments(object):
     """
-    Decorator class to debug the passage of arguments to a wrapped
-    function or method
+    Decorator to debug argument passage to a function or method.
 
-    Note: This is a decorator class with arguments. These use a
-      different syntax from decorator classes without arguments. When
-      the wrapped function is declared, __init__ and __call__ from the
-      decorator are called sequentially. __init__ receives the
-      arguments, while __call__ receives the function. __init__ should
-      store the values of the arguments, while __call__ should prepare
-      and return a wrapped function using their values. Subsequent calls
-      will go to the wrapped function. For decorator classes without
-      arguments, __init__ is called when the function is declared, and
-      should store the reference to the function; __call__ is called
-      when the function is called, and should carry out the pre-function
-      decorator logic, run the function, and carry out the post-function
-      decorator logic.
+    Provides more verbose output if a TypeError is encountered at
+    function call
+
+    Attributes:
+      debug (bool): Enable debug output
     """
 
-    def __init__(self, debug = False):
+    def __init__(self, debug=False):
         """
-        Stores decoration debug setting
+        Stores arguments provided at decoration.
 
-        **Arguments:**
-            :*debug*: Enable debug output
+        Arguments:
+          debug (bool): Enable debug output
         """
         self.debug = debug
 
     def __call__(self, function):
         """
-        Wraps function or method
+        Wraps function or method.
 
-        **Arguments:**
-            :*function*: function to wrap
+        Arguments:
+          function (function): Function or method to wrap
 
-        **Returns:**
-            :*wrapped_function*: Wrapped function
+        Returns:
+          (function): Wrapped function or method
         """
         from functools import wraps
 
@@ -72,42 +97,27 @@ class debug_arguments(object):
             """
             Wrapped version of function or method
 
-            **Arguments:**
-                :*\*args*:     Arguments passed to function at call
-                               time
-                :*\*\*kwargs*: Keyword arguments passed to function at
-                               call time
+            Arguments:
+              args (tuple): Arguments passed to function
+              kwargs (dict): Keyword arguments passed to function
 
-            Note: The purpose of using *args_from call and **kwargs_from
-              call is to allow this decorator to wrap class methods as
-              well as functions. Standard usage of arguments in the
-              declaration line of a decorator may make it very difficult
-              to wrap both functions and methods with the same code. If
-              a function is to be wrapped, the arguments pass from the
-              call into the function as expected. However, if a method
-              is to be wrapped, the first argument is the object hosting
-              the method, shifting the positions of the other arguments.
-              This may be avoided using the *args and **kwargs syntax.
-              *args and **kwargs may be passed straight to the function
-              or method, retaining the reference to the host object if
-              present; while any keyword arguments needed by the
-              decorator may be accessed from kwargs using pop or get.
+            Returns:
+              Return value of wrapped function
+
             """
             debug = self.debug or kwargs.get("debug", False)
 
             if debug:
-                print(
-                  "DEBUG: Arguments passed to function/method '{0}':".format(
+                db_s("Arguments passed to function/method '{0}':".format(
                   function.__name__))
                 if len(args) > 0:
-                    print("DEBUG:     Arguments:")
+                    db_s("Arguments:", 1)
                     for arg in args:
-                        print("DEBUG:         {0}".format(arg))
+                        db_s(arg, 2)
                 if len(kwargs) > 0:
-                    print("DEBUG:     Keyword arguments:")
+                    db_s("Keyword arguments:", 1)
                     for key in sorted(kwargs.keys()):
-                        print("DEBUG:         {0}: {1}".format(key,
-                          kwargs[key]))
+                        db_kv(key, kwargs[key], 2)
             try:
                 return function(*args, **kwargs)
             except TypeError as e:
@@ -117,6 +127,10 @@ class debug_arguments(object):
 
     def raise_verbosely(self, e, args, kwargs):
         """
+        Arguments:
+          e (TypeError): Error that cause wrapped function to fail
+          args (tuple): Arguments passed to wrapped function
+          kwargs (dict): Keyword arguments passed to wrapped function
         """
         from inspect import getargspec
 

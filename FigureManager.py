@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #   myplotspec.FigureManager.py
 #
@@ -8,7 +8,7 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Class to manage the generation of figures using matplotlib
+Generates one or more figures to specifications provided in a YAML file.
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -17,20 +17,68 @@ matplotlib.use("agg")
 if __name__ == "__main__":
     __package__ = str("myplotspec")
     import myplotspec
-from .manage_defaults_presets import manage_defaults_presets
-from .manage_kwargs import manage_kwargs
-from .manage_output import manage_output
 ################################### CLASSES ###################################
 class FigureManager(object):
     """
-    Class to manage the generation of figures using matplotlib
+    Manages the generation of figures using matplotlib.
+
+    Attributes:
+      defaults (str, dict): Default arguments to :func:`draw_report`,
+        :func:`draw_figure`, :func:`draw_subplot`, and
+        :func:`draw_dataset` functions, in yaml format. Outer level (of
+        indentation or keys) provides function names, and inner level
+        provides default arguments to each function::
+
+          defaults = \"\"\"
+              method_1:
+                method_1_arg_1: 1000
+                method_1_arg_2: abcd
+              method_2
+                method_2_arg_1: 2000
+                method_2_arg_2: efgh
+              ...
+          \"\"\"
+
+      presets (str, dict): Available sets of preset arguments to
+        :func:`draw_report`, :func:`draw_figure`, :func:`draw_subplot`,
+        and :func:`draw_dataset` functions, in yaml format. Outer level
+        (of indentation or keys) provides preset names, middle level
+        provides function names, and inner level provides arguments to
+        pass to each function when preset is active::
+
+          presets = \"\"\"
+            preset_1:
+              method_1:
+                method_1_arg_1: 1001
+                method_1_arg_2: abcde
+              method_2
+                method_2_arg_1: 2001
+                method_2_arg_2: efghi
+            preset_2:
+              method_1:
+                method_1_arg_1: 1002
+                method_1_arg_2: abcdef
+              method_2
+                method_2_arg_1: 2002
+                method_2_arg_2: efghij
+          \"\"\"
+
+    .. todo:
+      - Accept presets from file, e.g. --preset-file /path/to/file.yaml
+      - Support mutual exclusivity between presets
+      - Set subplot's autoscale_on to false in draw_subplot
     """
+    from .manage_defaults_presets import manage_defaults_presets
+    from .manage_kwargs import manage_kwargs
+    from .manage_output import manage_output
+
     defaults = """
         draw_subplot:
           lw:           1
         draw_dataset:
           lw:           1
     """
+
     presets  = """
       presentation:
         draw_figure:
@@ -47,13 +95,13 @@ class FigureManager(object):
             lw:         2
       notebook:
         draw_figure:
-          title_fp:     12r
-          label_fp:     12r
+          title_fp:     10b
+          label_fp:     10b
         draw_subplot:
-          title_fp:     12r
-          label_fp:     12r
+          title_fp:     10b
+          label_fp:     10b
           tick_fp:      10r
-          legend_fp:    10r
+          legend_fp:    8r
           lw:           1
         draw_dataset:
           plot_kw:
@@ -73,46 +121,91 @@ class FigureManager(object):
             lw:         1
     """
 
-    def __call__(self, **kwargs):
+    def __call__(self, *args, **kwargs):
         """
-        Draws report when called
+        When called as function, calls :func:`draw_report`.
+
+        Arguments:
+          args (tuple): Passed to :func:`draw_report`
+          kwargs (dict): Passed to :func:`draw_report`
         """
-        self.draw_report(**kwargs)
+        self.draw_report(*args, **kwargs)
 
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_report(self, **in_kwargs):
         """
-        Draws a series of figures based on provided specification
+        Draws a series of figures based on provided specifications.
 
-        This function is partially responsible for outputting figures to
-        a series of pdf outfiles, if specified. It manages a dictionary
-        *outfiles* of the form outfiles[outfilename] = 
-        PdfPages(outfilename).
-        figures are output. Each time draw_figure() is called, the
-        wrapper manage_output() pulls off the keyword argument
-        *outfile*. If the *outfile* specified is a pdf file,
-        manage_output opens a PdfPages object and stores it in
-        *outfiles*. Subsequent calls to draw_figure() that share that
-        outfile name will be appended to the pdf file. Once all figures
-        have been drawn, draw_report closes the outfiles.
+        Figure specifications are provided in a dict structured as
+        follows::
 
-        **Arguments:**
-            :*figures*: Figure specifications
+            figures = {
+                'all': {
+                    'shared_xlabel': 'Time',
+                    'shared_ylabel': 'Measurement',
+                    'shared_legend': True,
+                    ...
+                },
+                '0': {
+                    'title': 'Trial 1',
+                    'subplots': {
+                        ...
+                    },
+                    ...
+                },
+                '1': {
+                    'title': 'Trial 2',
+                    'subplots': {
+                        ...
+                    },
+                    ...
+                },
+                '2': {
+                    'title': 'Trial 3',
+                    'subplots': {
+                        ...
+                    },
+                    ...
+                },
+                ...
+            }
+
+        The values stored at each (0-indexed) integer key provide the
+        arguments to be passed to :func:`draw_figure` for each of a
+        series of figures. Values stored at 'all' are passed to each
+        figure, but overridden by values specific to that figure.
+
+        Arguments:
+          figures (dict): Figure specifications
+          in_kwargs (dict): Additional keyword arguments
+
+        Note:
+          This function is one of two responsible for managing the
+          output of figures to pdf files, if specified. While other
+          output formats are single-page, pdf files may be multi-page.
+          In order to allow multiple figures to be output to multiple
+          pdfs, this function maintains a dict outfiles containing
+          references to a PdfPages object for each specified pdf
+          outfile. :func:`draw_figure`'s decorator
+          :class:`~.manage_output.manage_output` adds new PdfPages
+          objects as requested, or adds pages to existing ones. Once all
+          figures have been drawn, this function closes each PdfPages.
         """
-        figure_specs   = in_kwargs.pop("figures", {})
+        figure_specs = in_kwargs.pop("figures", {})
         figure_indexes = sorted([i for i in figure_specs.keys()
                            if str(i).isdigit()])
-        outfiles       = {}
+        outfiles = {}
 
         # Configure and plot figures
         for i in figure_indexes:
-            out_kwargs              = figure_specs[i].copy()
-            out_kwargs["debug"]     = in_kwargs.get("debug",     False)
-            out_kwargs["preset"]    = in_kwargs.get("preset",    [])[:]
+            out_kwargs = figure_specs[i].copy()
+            out_kwargs["verbose"] = in_kwargs.get("verbose", False)
+            out_kwargs["debug"] = in_kwargs.get("debug", False)
+            out_kwargs["preset"] = in_kwargs.get("preset", [])[:]
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [["figures", "all"], ["figures", i]]
-            out_kwargs["outfiles"]  = outfiles
+            out_kwargs["outfiles"] = outfiles
             self.draw_figure(**out_kwargs)
 
         # Clean up
@@ -122,17 +215,69 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     @manage_output()
-    def draw_figure(self, title = None, shared_xlabel = None,
-        shared_ylabel = None, shared_legend = None, **in_kwargs):
+    def draw_figure(self, title=None, shared_xlabel=None,
+        shared_ylabel=None, shared_legend=None, **in_kwargs):
         """
-        Draws a figure
+        Draws a figure.
 
-        **Arguments:**
-            :*outfile*:       Output filename
-            :*title*:         Figure title
-            :*shared_xlabel*: X label to be shared among subplots
-            :*shared_ylabel*: Y label to be shared among subplots
-            :*shared_legend*: Legend to be shared among subplots
+        Figure will typically contain one or more subplots, whose
+        specifications are provided in a dict structured as follows::
+
+            subplots = {
+                'all': {
+                    'legend': True,
+                    ...
+                },
+                '0': {
+                    'title':    'Subplot 1',
+                    'datasets': {
+                        ...
+                    },
+                    ...
+                },
+                '1': {
+                    'title':    'Subplot 2',
+                    'datasets': {
+                        ...
+                    },
+                    ...
+                },
+                '2': {
+                    'title':    'Subplot 3',
+                    'datasets': {
+                        ...
+                    },
+                    ...
+                },
+                ...
+            }
+
+        The values stored at each integer key (0-indexed) provide the
+        arguments to be passed to :func:`draw_subplot` for each of a
+        series of subplots. Values stored at 'all' are passed to each
+        subplot, but overridden by values specific to that subplot.
+
+        Figure may be annotated by drawing a title, shared x axis label,
+        shared y axis label, or shared legend. Title and shared axis
+        labels are (by default) centered on all subplots present on the
+        figure, Shared legend is drawn on an additional subplot created
+        after those specified in subplots, using the arguments provided
+        in ``shared_legend``.
+
+        Arguments:
+          outfile (str): Output filename
+          subplots (dict): Subplot specifications
+          title (str, optional): Figure title
+          shared_xlabel (str, optional): X label to be shared among
+            subplots
+          shared_ylabel (str, optional): Y label to be shared among
+            subplots
+          shared_legend (dict, optional): Keyword arguments used to
+            generate a legend shared among subplots, if provided
+          in_kwargs (dict): Additional keyword arguments
+
+        Returns:
+          (*Figure*): Figure
         """
         from collections import OrderedDict
         from . import get_figure_subplots
@@ -140,9 +285,9 @@ class FigureManager(object):
         from .text import set_title, set_shared_xlabel, set_shared_ylabel
 
         # Prepare figure and subplots with specified dimensions
-        subplot_specs    = in_kwargs.pop("subplots", {})
-        subplot_indexes  = sorted([i for i in subplot_specs.keys()
-                             if str(i).isdigit()])
+        subplot_specs = in_kwargs.pop("subplots", {})
+        subplot_indexes = sorted([i for i in subplot_specs.keys()
+                            if str(i).isdigit()])
         figure, subplots = get_figure_subplots(**in_kwargs)
 
         # Format Figure
@@ -157,9 +302,10 @@ class FigureManager(object):
 
         # Configure and plot subplots
         for i in subplot_indexes:
-            out_kwargs              = subplot_specs[i].copy()
-            out_kwargs["debug"]     = in_kwargs.get("debug",     False)
-            out_kwargs["preset"]    = in_kwargs.get("preset",    [])[:]
+            out_kwargs = subplot_specs[i].copy()
+            out_kwargs["verbose"] = in_kwargs.get("verbose", False)
+            out_kwargs["debug"] = in_kwargs.get("debug", False)
+            out_kwargs["preset"] = in_kwargs.get("preset", [])[:]
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["subplots", "all"],
@@ -180,18 +326,57 @@ class FigureManager(object):
 
     @manage_defaults_presets()
     @manage_kwargs()
-    def draw_subplot(self, subplot, title = None, legend = None,
-        shared_handles = None, **in_kwargs):
+    def draw_subplot(self, subplot, title=None, legend=None,
+        shared_handles=None, **in_kwargs):
         """
-        Draws a subplot
+        Draws a subplot.
 
-        **Arguments:**
-            :*subplot*:        <Axes> on which to act
-            :*title*:          Subplot's title
-            :*legend*:         Subplot's legend
-            :*shared_handles*: Nascent OrderedDict of handles and
-                               labels shared among subplots of host
-                               figure
+        Subplot will typically plot one or more datasets, whose
+        specifications are provided in a dict structured as follows::
+
+            datasets = {
+                'all': {
+                    'lw': 2,
+                    ...
+                },
+                '0': {
+                    'label':  'Dataset 1',
+                    'infile': '/path/to/dataset_1.txt',
+                    'color':  'red',
+                    ...
+                },
+                '1': {
+                    'label':  'Dataset 2',
+                    'infile': '/path/to/dataset_2.txt',
+                    'color':  'green',
+                    ...
+                },
+                '2': {
+                    'label':  'Dataset 3',
+                    'infile': '/path/to/dataset_3.txt',
+                    'color':  'blue',
+                    ...
+                },
+                ...
+            }
+
+        The values stored at each integer key (0-indexed) provide the
+        arguments to be passed to :func:`draw_dataset` for each of a
+        series of datasets. Values stored at 'all' are passed to each
+        dataset, but overridden by values specific to that dataset.
+
+        Subplot may be formatted by adjusting or labeling the x and y
+        axes, or drawing a title or a legend.
+
+        Arguments:
+          subplot (Axes): Axes on which to act
+          datasets (dict): Dataset specifications
+          title (str, optional): Subplot title
+          legend (bool, optional): Draw legend on subplot
+          shared_handles (OrderedDict, optional): Nascent OrderedDict of
+            [labels]:handles shared among subplots of host figure; used
+            to draw shared legend
+          in_kwargs (dict): Additional keyword arguments
         """
         from collections import OrderedDict
         from .axes import set_xaxis, set_yaxis
@@ -205,14 +390,15 @@ class FigureManager(object):
             set_title(subplot, title = title, **in_kwargs)
 
         # Configure and plot datasets
-        handles         = OrderedDict()
-        dataset_specs   = in_kwargs.pop("datasets", {})
+        handles = OrderedDict()
+        dataset_specs = in_kwargs.pop("datasets", {})
         dataset_indexes = sorted([i for i in dataset_specs.keys()
                             if str(i).isdigit()])
         for i in dataset_indexes:
-            out_kwargs              = dataset_specs[i].copy()
-            out_kwargs["debug"]     = in_kwargs.get("debug",    False)
-            out_kwargs["preset"]    = in_kwargs.get("preset",    [])[:]
+            out_kwargs = dataset_specs[i].copy()
+            out_kwargs["verbose"] = in_kwargs.get("verbose", False)
+            out_kwargs["debug"] = in_kwargs.get("debug", False)
+            out_kwargs["preset"] = in_kwargs.get("preset", [])[:]
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["datasets", "all"],
@@ -232,17 +418,22 @@ class FigureManager(object):
 
     @manage_defaults_presets()
     @manage_kwargs()
-    def draw_dataset(self, subplot, infile, label = None, handles = None,
+    def draw_dataset(self, subplot, infile, label=None, handles=None,
         **kwargs):
         """
-        Draws a dataset
+        Draws a dataset.
 
-        **Arguments:**
-            :*subplot*: <Axes> on which to act
-            :*infile*:  Input file; first column is x, second is y
-            :*label*:   Dataset label
-            :*handles*: Nascent list of dataset handles on subplot
-            :*plot_kw*: Keyword arguments pased to plot()
+        Arguments:
+          subplot (Axes): Axes on which to draw
+          infile (str): Path to input text file; first column is x,
+            second is y
+          label (str, optional): Dataset label
+          color (str, list, ndarray, float, optional): Dataset color
+          plot_kw (dict, optional): Additional keyword arguments passed
+            to subplot.plot()
+          handles (OrderedDict, optional): Nascent OrderedDict of
+            [labels]: handles on subplot
+          kwargs (dict): Additional keyword arguments
         """
         from . import get_color
         import numpy as np
@@ -266,10 +457,9 @@ class FigureManager(object):
 
     def main(self):
         """
-        Provides command-line functionality
+        Provides command-line functionality.
         """
         import argparse
-        from .debug import db_s, db_kv
 
         parser = argparse.ArgumentParser(
           description     = __doc__,
@@ -284,6 +474,13 @@ class FigureManager(object):
           help     = "YAML configuration file")
 
         parser.add_argument(
+          "-v",
+          "--verbose",
+          action   = "store_true",
+          help     = "Enable verbose output")
+
+        parser.add_argument(
+          "-d",
           "--debug",
           action   = "store_true",
           help     = "Enable debug output")
@@ -292,6 +489,8 @@ class FigureManager(object):
 
         if arguments["debug"]:
             from os import environ
+            from .debug import db_s, db_kv
+
             db_s("Environment variables")
             for key in sorted(environ):
                 db_kv(key, environ[key], 1)

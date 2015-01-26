@@ -7,128 +7,144 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Decorator class to manage the passage of defaults and presets from
-a class to a method of that class.
+Decorator to manage the passage of defaults and presets to a method.
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-from . import get_yaml
-from .debug import db_s, db_kv
 ################################### CLASSES ###################################
 class manage_defaults_presets(object):
     """
-    Decorator class to manage the passage of defaults and presets from a
-    class to a method of that class.
+    Decorator to manage the passage of defaults and presets to a method.
 
-    Defaults are accessed from the class's instance (or class)variable
-    ``self.defaults``, and may be a dictionary, a path to a yaml file,
-    or a yaml string. The first level of keys are the names of methods
-    of the class, and the values are the corresponding defaults for each
-    argument of that method:
+    This decorator is a partner to
+    :class:`~.manage_kwargs.manage_kwargs`, desiged to allows its use
+    for methods of objects containg central ``defaults`` and ``presets``
+    attributes. It obtains available defaults and presets for the
+    wrapped method from their central location in the host object, and
+    passes on those applicable to the wrapped method.
+    :class:`~.manage_kwargs.manage_kwargs` then selects arguments to
+    pass from among the provided defaults, available and selected
+    presets, YAML file, and arguments provided at call time.
 
-    ::
+    Defaults are accessed from the host object's instance (or class)
+    variable ``self.defaults``, and may be a dict, a path to a YAML
+    file, or a YAML string. Outer level (of indentation or keys)
+    provides function names, and inner level provides default arguments
+    to each function::
 
-        self.defaults = \"\"\"
+        defaults = \"\"\"
             method_1:
-              method_1_argument_1: 1000
-              method_1_argument_2: abcd
+                method_1_arg_1: 1000
+                method_1_arg_2: abcd
             method_2
-              method_2_argument_1: 2000
-              method_2_argument_2: efgh
+                method_2_arg_1: 2000
+                method_2_arg_2: efgh
             ...
         \"\"\"
 
-    Presets are accessed from the instance variable ``self.presets``.
-    These are treated similarly to defaults, but contain an outer level
-    of keys corresponding to names of the available presets:
+    Presets are accessed from the host objects's instance (or class)
+    variable ``self.presets``, in formats analagous to
+    ``self.defaults``. Presets contain an outer level of keys providing
+    the names of available presets::
 
-    ::
-
-        self.presets = \"\"\"
+        presets = \"\"\"
             preset_1:
                 method_1:
-                  method_1_argument_1: 1001
-                  method_1_argument_2: abcde
+                    method_1_arg_1: 1001
+                    method_1_arg_2: abcde
                 method_2
-                  method_2_argument_1: 2001
-                  method_2_argument_2: efghi
+                    method_2_arg_1: 2001
+                    method_2_arg_2: efghi
             preset_2:
                 method_1:
-                  method_1_argument_1: 1002
-                  method_1_argument_2: abcdef
+                    method_1_arg_1: 1002
+                    method_1_arg_2: abcdef
                 method_2
-                  method_2_argument_1: 2002
-                  method_2_argument_2: efghij
+                    method_2_arg_1: 2002
+                method_2_arg_2: efghij
         \"\"\"
 
     When this decorator is used to wrap a method of a class, it adds to
-    the arguments being passed ``defaults``, containing only the
-    defaults specified for that method, and ``presets``, containing only
-    the presets containing arguments for that method.
-
-    ::
+    the arguments being passed ``defaults``, containing the defaults
+    specified for the method, and ``presets``, containing only the
+    presets applicable to the method::
 
         @manage_defaults_presets()
         def method_1(*args, **kwargs):
+            print(kwargs)
             ...
 
-        > kwargs = {
-        >   "defaults": {
-        >     "method_1_argument_1": 1000,
-        >     "method_1_argument_2": "asdf"
-        >   },
-        >   "presets": {
-        >     "preset_1": {
-        >       "method_1_argument_1": 1001,
-        >       "method_1_argument_2": "asde"
-        >     },
-        >     "preset_1": {
-        >       "method_1_argument_1": 1002,
-        >       "method_1_argument_2": "asdef"
-        >     }
-        >   },
-        >   ...
-        > }
+        {
+            'defaults': {
+                'method_1_argument_1': 1000,
+                'method_1_argument_2': 'asdf'
+            },
+            'presets': {
+                'preset_1': {
+                    'method_1_argument_1': 1001,
+                    'method_1_argument_2': 'asde'
+                },
+                'preset_1': {
+                    'method_1_argument_1': 1002,
+                    'method_1_argument_2': 'asdef'
+                }
+            },
+            ...
+        }
 
+    Attributes:
+      verbose (bool): Enable verbose output
+      debug (bool): Enable debug output
     """
+    from . import get_yaml
+    from .debug import db_s, db_kv
 
-    def __init__(self, debug = False):
+    def __init__(self, verbose=False, debug=False):
         """
-        Stores decoration debug setting
+        Stores arguments provided at decoration.
 
-        **Arguments:**
-            :*debug*: Enable debug output
+        Arguments:
+          verbose (bool): Enable verbose output
+          debug (bool): Enable debug output
         """
+        self.verbose = verbose
         self.debug = debug
 
     def __call__(self, method):
         """
-        Wraps method
+        Wraps method.
 
-        **Arguments:**
-            :*method*: method to wrap
+        Arguments:
+          method (method): method to wrap
 
-        **Returns:**
-            :*wrapped_method*: Wrapped method
+        Returns:
+          (method): Wrapped method
         """
         from functools import wraps
 
-        dec_debug = self.debug
+        decorator = self
+        self.method = method
 
         @wraps(method)
         def wrapped_method(self, *in_args, **in_kwargs):
             """
             Wrapped version of method
 
-            **Arguments:**
-                :*\*in_args*:     Arguments passed to method at call
-                :*\*\*in_kwargs*: Keyword arguments passed to method at
-                                  call
+            Arguments:
+              in_args (tuple): Arguments passed to function
+              in_kwargs (dict): Keyword arguments passed to function
+
+            Returns:
+              Return value of wrapped function
             """
+            from . import get_yaml
+            from .debug import db_s
+
             if hasattr(self, "debug"):
-                db = dec_debug or self.debug or in_kwargs.get("debug", False)
+                db = (decorator.debug or self.debug or in_kwargs.get("debug",
+                False))
             else:
-                db = dec_debug or in_kwargs.get("debug", False)
+                db = decorator.debug or in_kwargs.get("debug", False)
             if db:
                 db_s("Managing defaults and presets for method " +
                   "'{0}' ".format(method.__name__,

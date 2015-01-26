@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
-todo_include_todos=False
+todo_include_todos = False
 
-# needs_sphinx = '1.0'
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.todo']
+needs_sphinx = '1.3'
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx.ext.todo']
 # templates_path = ['_templates']
 source_suffix = '.rst'
-# source_encoding = 'utf-8-sig'
+source_encoding = 'utf-8'
+napoleon_use_rtype = False
 
 master_doc = 'index'
-project   = "MYPlotSpec"
-copyright = "2015, Karl Debiec"
+project = "MYPlotSpec"
+copyright = "2015, Karl T Debiec"
 version = "0.1"
 release = "0.1"
 
@@ -50,10 +51,10 @@ htmlhelp_basename = "MYPlotSpecdoc"
 latex_elements = {
 "preamble": "\setcounter{tocdepth}{4}",
 }
-
+latex_use_modindex = False
 latex_documents = [
   ("index", "MYPlotSpec.tex", "MYPlotSpec Documentation",
-   "Karl Debiec", "manual"),
+   "Karl T Debiec", "manual"),
 ]
 # latex_logo = None
 # latex_use_parts = False
@@ -62,18 +63,23 @@ latex_documents = [
 # latex_appendices = []
 # latex_domain_indices = True
 
-man_pages = [
-    ('index', 'MYPlotSpec', u'MYPlotSpec Documentation',
-     [u'Karl Debiec'], 1)
-]
- #man_show_urls = False
+# man_pages = [
+#     ('index', 'MYPlotSpec', u'MYPlotSpec Documentation',
+#      [u'Karl Debiec'], 1)
+# ]
+# man_show_urls = False
 
-texinfo_documents = [
-  ('index', 'MYPlotSpec', u'Matplotlib YAML Plot Specification Documentation',
-   u'Karl Debiec', 'MYPlotSpec', 'One line description of project.',
-   'Miscellaneous'),
-]
+# texinfo_documents = [
+#   ('index',
+#    'MYPlotSpec',
+#    'MYPlotSpec Documentation',
+#    'Karl Debiec',
+#    'MYPlotSpec',
+#    'One line description of project.',
+#    'Miscellaneous'),
+# ]
 # texinfo_appendices = []
 # texinfo_domain_indices = True
 # texinfo_show_urls = 'footnote'
+
 # intersphinx_mapping = {'http://docs.python.org/': None}

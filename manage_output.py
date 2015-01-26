@@ -7,68 +7,72 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Decorator class to manage the output of matplotlib figures by a wrapped
-function or method
+Decorator to manage the output of matplotlib figures.
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################### CLASSES ###################################
 class manage_output(object):
     """
-    Decorator class to manage the output of matplotlib figures by a
-    wrapped function or method
+    Decorator to manage the output of matplotlib figures.
 
-    Saves figure returned by wrapped function to a file named *outfile*;
-    passing additional keyword arguments *savefig_kw* to savefig. For
-    pdf output, additional argument *outfiles* may be provided; this
-    contains a dictionary whose keys are the absolute paths to output
-    pdf files, and whose values are references to open PdfPages objects
-    representing those files. The purpose of this is to allow figures
-    output from multiple calls to the wrapped function (or other
-    analogously wrapped functions) to be output to sequential pages of
-    the same pdf file. Typically *outfiles* will be initialized before
-    calling this wrapped function; and once calls to the function is
-    complete the close() method of each outfile in *outfiles* should be
-    run.
+    Saves figure returned by wrapped function to a file named
+    ``outfile``; passing additional keyword arguments ``savefig_kw`` to
+    ``Figure.savefig()``. For pdf output, additional argument
+    ``outfiles`` may be provided; containing a dictionary whose keys are
+    the paths to output pdf files, and whose values are open PdfPages
+    objects representing those files. The purpose of this is to allow
+    figures output from multiple calls to the wrapped function to be
+    output to sequential pages of the same pdf file. Typically
+    ``outfiles`` will be initialized before calling this wrapped
+    function; and once calls to the function is complete the
+    ``PdfPages.close()`` method of each outfile in ``outfiles`` is
+    called.
 
     .. todo:
         - Support show()
     """
-    def __init__(self, debug = False, verbose = True):
-        """
-        Stores decoration arguments
 
-        **Arguments:**
-            :*debug*:   Enable debug output
-            :*verbose*: Verbose
+    def __init__(self, verbose=False, debug=False):
         """
-        self.debug   = debug
+        Stores arguments provided at decoration.
+
+        Arguments:
+          verbose (bool): Enable verbose output
+          debug (bool): Enable debug output
+        """
         self.verbose = verbose
+        self.debug = debug
 
     def __call__(self, function):
         """
-        Wraps function or method
+        Wraps function or method.
 
-        **Arguments:**
-            :*function*: function to wrap
+        Arguments:
+          function (function): Function or method to wrap
 
-        **Returns:**
-            :*wrapped_function*: Wrapped function
+        Returns:
+          (function): Wrapped function or method
         """
         from functools import wraps
+
+        self.function = function
 
         @wraps(function)
         def wrapped_function(*args, **kwargs):
             """
             Wrapped version of function or method
 
-            **Arguments:**
-                :*outfile*:    Outfile name or <PdfPages>
-                :*outfiles*:   Nascent dictionary of outfile names and
-                               references to associated PdfPages
-                :*savefig_kw*: Keyword arguments passed to savefig
-                :*\*args*:     Arguments passed to function
-                :*\*\*kwargs*: Keyword arguments passed to function
+            Arguments:
+              outfile (str, PdfPages): outfile path or PDFpages
+                object
+              outfiles (dict): Nascent dict of [outfile path]: PdfPages 
+              savefig_kw (dict): Keyword arguments passed to savefig()
+              args (tuple): Arguments passed to function
+              kwargs (dict): Keyword arguments passed to function
+
+            Returns:
+              Return value of wrapped function
             """
             from os.path import abspath
             import six

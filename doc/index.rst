@@ -1,37 +1,25 @@
-MYPlotSpec Documentation
-========================
-
-.. include:: ../README
-
-Classes
-=======
-
-.. toctree::
-    :maxdepth: 4
-
-    classes
-
-Decorators
+MYPlotSpec
 ==========
+.. include:: ../README
+.. include:: ../LICENSE
+
+Usage
+=====
 .. toctree::
     :maxdepth: 4
 
-    decorators
+    usage
 
-Functions
-=========
-
+Code
+====
 .. toctree::
     :maxdepth: 4
 
-    functions
+    code
 
 .. only:: html
 
-    Indices
-    -------
+    Index
+    =====
 
-    * :ref:`genindex`
-    * :ref:`modindex`
-    * :ref:`search`
-
+    :ref:`genindex`

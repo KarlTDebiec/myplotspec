@@ -7,11 +7,10 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Functions for formatting legends
+Functions for formatting legends.
 
-Note: Acceptable values of *loc* and their meanings, for reference:
-
-::
+Note: 
+  Acceptable values of ``loc`` and their meanings, for reference::
 
     0 = Best
     +---------+
@@ -20,6 +19,9 @@ Note: Acceptable values of *loc* and their meanings, for reference:
     |3   8   4|
     +---------+
 
+.. todo:
+  - Double-check if legend and shared_legend are passed arguments in consistent
+    style
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -27,26 +29,28 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 def set_legend(subplot, handles = None, legend_lw = None, legend_fp = None,
     **kwargs):
     """
-    Draws and formats a legend on *subplot*
+    Draws and formats a legend on a subplot.
 
-    By default includes all series; may alternatively accept manual
-    OrderedDict of handles and labels
+    Arguments:
+      subplot (Axes): Subplot to which to add legend
+      handles (OrderedDict): Collection of [labels]: handles for
+        datasets to be plotted on legend; by default all available
+        datasets are included
+      legend_lw (float): Legend handle linewidth
+      legend_fp (str, dict, FontProperties): Legend font
+      legend_kw (dict): Keyword arguments passed to subplot.legend()
 
-    **Arguments:**
-        :*subplot*:   <Axes> on which to act
-        :*handles*:   OrderedDict of form [label]: handle
-        :*legend_lw*: Legend handle linewidth
-        :*legend_fp*: Legend font
-        :*legend_kw*: Keyword arguments passed to *subplot*.legend()
+    Returns:
+      (*Legend*): Legend
 
-    **Returns:**
-        :*legend*: <Legend>
+    .. todo:
+      - Test legend title and accept font properties setting
     """
-    from . import fp_keys, get_font, multi_kw
+    from . import FP_KEYS, get_font, multi_kw
 
     # Manage arguments
     legend_kw   = kwargs.pop("legend_kw", {})
-    legend_fp_2 = multi_kw(["legend_fp"] + fp_keys, legend_kw)
+    legend_fp_2 = multi_kw(["legend_fp"] + FP_KEYS, legend_kw)
     if legend_fp_2 is not None:
         legend_kw["prop"] = get_font(legend_fp_2)
     elif legend_fp is not None:
@@ -64,17 +68,18 @@ def set_legend(subplot, handles = None, legend_lw = None, legend_fp = None,
 
 def set_shared_legend(figure, subplots, **kwargs):
     """
-    Adds a subplot to *figure*, draws a legend on it and hides subplot
-    borders
+    Draws a legend on a figure, shared by multiple subplots.
 
-    Useful when several plots on the same figure share the same source.
+    Useful when several plots on the same figure share the same
+    description and plot style.
 
-    **Arguments:**
-        :*figure*:   Figure
-        :*subplots*: OrderedDict of subplots
+    Arguments:
+      figure (Figure): Figure to which to add shared legend
+      subplots (OrderedDict): Collection of subplots to which to append
+        new subplot for shared legend
 
-    **Returns:**
-        :*legend*: new legend
+    Returns:
+      (*Legend*): Legend
     """
     from . import get_figure_subplots, get_font
     from .axes import set_xaxis, set_yaxis

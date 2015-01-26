@@ -7,135 +7,148 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Decorator class to manage the passage of keyword arguments to a wrapped
-function or method
+Decorator to manage the passage of keyword arguments to function or method.
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-from . import get_yaml, merge_dicts
-from .debug import db_s, db_kv
 ################################### CLASSES ###################################
 class manage_kwargs(object):
     """
-    Decorator class to manage the passage keyword arguments to a wrapped
-    function or method
+    Decorator to manage the passage of keyword arguments to function or
+    method.
 
     Accumulates keyword arguments from several sources, in order of
     increasing priority:
 
-    - *defaults* keyword argument at call:
+    1. Defaults
 
-        ::
+      Obtained from the argument ``defaults``, which may be a dict, a
+      path to a YAML file, or a YAML string::
 
-            my_function(
-              defaults = {
-                "width":  5.0
-                "height": 5.0
+        my_function(
+            defaults = {
+                'fig_width':  5.0
+                'fig_height': 5.0
+            },
+            ...
+        )
+
+    2. Presets
+
+      Available presets are obtained from the argument ``presets``,
+      which may be a dict, a path to a YAML file, or a YAML string.
+      Selected presets are obtained from the argument ``preset``, which
+      may be a string or list of strings::
+
+        my_function(
+            preset = 'letter',
+            presets = {
+                'letter': {
+                    'fig_width':   8.5
+                    'fig_height': 11.0
                 },
-            ...)
-
-      *defaults* may be a dictionary, path to a yaml file, or a yaml
-      string.
-    - *preset* and *presets* keyword arguments at call:
-
-        ::
-
-            my_function(
-              preset  = "letter",
-              presets = {
-                "letter": {
-                  "width":   8.5
-                  "height": 11.0
-                },
-                "legal": {
-                  "width":   8.5
-                  "height": 14.0
+                'legal': {
+                    'fig_width':   8.5
+                    'fig_height': 14.0
                 }
-            ...)
+            },
+            ...
+        )
 
-      *preset* defines the selected preset (or a list of selected
-      presets), and *presets* the available presets; *preset* may be a
-      string or list, and *presets* may be a dictionary, path to a yaml
-      file, or yaml string.
-    - *yaml_dict* and *yaml_keys* keyword arguments at function
-      call:
+    3. YAML file
 
-        ::
+      YAML file is obtained from the keyword argument ``yaml_dict``,
+      which may be a dict, a path to a YAML file, or a YAML string.
+      Selected keys within the YAML file from which to load arguments
+      are obtained from the argument ``yaml_keys``, which is a list of
+      lists in order of increasing priority::
 
-            my_function(
-              yaml_dict = \"\"\"
-                figures:
-                  all:
-                    width:   11.0
-                    height:  17.0
-                    outfile: plot.pdf
-                figures:
-                  0:
-                    width:   12.0
-              \"\"\"
-              yaml_keys = [["figures", "all"], ["figures", "0"]]
-            ...)
+        my_function(
+            yaml_dict = {
+                'figures': {
+                    'all': {
+                        'fig_width':  11.0,
+                        'fig_height': 17.0,
+                        'outfile':    'plot.pdf'
+                    },
+                    '0': {
+                        'fig_width':  12.0
+                    }
+                }
+            },
+            yaml_keys = [['figures', 'all'], ['figures', '0']],
+            ...
+        )
 
-      *yaml_dict* defines the yaml file, and *yaml_keys* the paths
-      within the yaml file from whih to load arguments, in order of
-      priority. *yaml_dict* may be a dictionary, path to a yaml file, or
-      yaml string if yaml_keys* is omitted, the complete yaml file will
-      be used.
+      If ``yaml_keys`` is omitted, the complete yaml file will be used.
 
-    - Additional keyword arguments at call
+    4. Function call
 
-        ::
+      Arguments provided at function call::
 
-            my_wrapped_function(
-              width = 6.0,
-            ...)
+        my_wrapped_function(
+            fig_width  = 6.0,
+            fig_height = 6.0,
+            ...
+        )
 
     All of the above will override defaults provided in the function
     declaration itself.
+
+    Attributes:
+      verbose (bool): Enable verbose output
+      debug (bool): Enable debug output
     """
+    from . import get_yaml, merge_dicts
+    from .debug import db_s, db_kv
 
-    def __init__(self, debug = False):
+    def __init__(self, verbose=False, debug=False):
         """
-        Stores decoration debug setting
+        Stores arguments provided at decoration.
 
-        **Arguments:**
-            :*debug*: Enable debug output
+        Arguments:
+          verbose (bool): Enable verbose output
+          debug (bool): Enable debug output
         """
+        self.verbose = verbose
         self.debug = debug
 
     def __call__(self, function):
         """
-        Wraps function or method
+        Wraps function or method.
 
-        **Arguments:**
-            :*function*: Function or method to wrap
+        Arguments:
+          function (function): Function or method to wrap
 
-        **Returns:**
-            :*wrapped_function*: Wrapped function or method
+        Returns:
+          (function): Wrapped function or method
         """
         from functools import wraps
 
-        dec_debug = self.debug
+        self.function = function
 
+        decorator = self
         @wraps(function)
         def wrapped_function(*in_args, **in_kwargs):
             """
             Wrapped version of function or method
 
-            **Arguments:**
-                :*defaults*:      Call-time default arguments to
-                                  function; may be dictionary, path to
-                                  yaml file, or yaml string
-                :*\*in_args*:     Arguments passed to function at call
-                :*\*\*in_kwargs*: Keyword arguments passed to function
-                                  at call
+            Arguments:
+              in_args (tuple): Arguments passed to function
+              in_kwargs (dict): Keyword arguments passed to function
+
+            Returns:
+              Return value of wrapped function
             """
             import six
+            from . import get_yaml, merge_dicts
+            from .debug import db_s, db_kv
 
             if hasattr(self, "debug"):
-                db = dec_debug or self.debug or in_kwargs.get("debug", False)
+                db = (decorator.debug or self.debug or in_kwargs.get("debug",
+                False))
             else:
-                db = dec_debug or in_kwargs.get("debug", False)
+                db = decorator.debug or in_kwargs.get("debug", False)
 
             # Prepare inputs and outputs
             if db:

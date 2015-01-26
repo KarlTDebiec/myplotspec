@@ -7,33 +7,47 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-General functions
+General functions.
+
+.. todo:
+  - Decide how to manage the specification of sizes, positions, etc. in
+    real-world units (inches or centimeters)
+  - Support setting rcParams in YAML file
+  - Check compatibility with seaborn
+  - Consider supporting figure and subplot specs as lists rather than
+    exclusively an integer indexed dictionary
+  - Make 'debug' and 'verbose' more useful
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-import six
-if six.PY2:
-    open_yaml = file
-else:
-    open_yaml = open
 ################################## VARIABLES ##################################
-fp_keys = ["fp", "font_properties", "fontproperties", "prop"]
+FP_KEYS = ["fp", "font_properties", "fontproperties", "prop"]
 ################################## FUNCTIONS ##################################
 def get_yaml(input):
     """
-    Generates an object provided from an input in one of three forms.
+    Generates a data structure from YAML input.
 
-    If *input* is a dictionary, returns *input*; If *input* is a path to
-    a file, loads object from *input* file using yaml and returns.  If
-    *input* is a string but not a path to a file, load object from
-    *input* string using yaml and returns.
+    If ``input`` is a string, tests whether or not it is a path to a YAML file.
+    If it is, the file is loaded using yaml; if it is not, the string itself is
+    loaded using YAML. If ``input`` is a dict, it is returned without
+    modification.
 
-    **Argument:**
-        :*input*: Input object, path to file, or yaml string
+    Arguments:
+      input (str, dict): YAML input
 
-    **Returns:**
-        :*object*: Object specified by input
+    Returns:
+      (*dict*): Data structure specified by input
+
+    Raises:
+      TypeError: Input file type not understood.
     """
+    import six
+
+    if six.PY2:
+        open_yaml = file
+    else:
+        open_yaml = open
+
     if isinstance(input, dict):
         return input
     elif isinstance(input, six.string_types):
@@ -49,62 +63,67 @@ def get_yaml(input):
         raise TypeError("get_yaml does not understand input of type " +
           "{0}".format(type(input)))
 
-def merge_dicts(dict1, dict2):
+def merge_dicts(dict_1, dict_2):
     """
     Recursively merges two dictionaries.
 
-    **Arguments:**
-        :*dict1*: First dictionary
-        :*dict2*: Second dictionary; values for keys shared by both
-                  dictionaries are drawn from *dict2*
+    Arguments:
+      dict_1 (dict): First dictionary
+      dict_2 (dict): Second dictionary; values for keys shared by both
+        dictionaries are drawn from dict_2
 
-    **Returns:**
-        :*merged*: Merged dictionary
+    Returns:
+      (*dict*): Merged dictionary
     """
-    def merge(dict1, dict2):
+    def merge(dict_1, dict_2):
         """
         Generator used to recursively merge two dictionaries
 
-        **Arguments:**
-            :*dict1*: First dictionary
-            :*dict2*: Second dictionary; values for keys shared by both
-                      dictionaries are drawn from *dict2*
+        Arguments:
+          dict_1 (dict): First dictionary
+          dict_2 (dict): Second dictionary; values for keys shared by
+            both dictionaries are drawn from dict_2
 
-        **Yields:**
-            :*(key, value)*: Merged key value pair
+        Yields:
+          (*tuple*): Merged (key, value) pair
 
         """
-        for key in set(dict1.keys()).union(dict2.keys()):
-            if key in dict1 and key in dict2:
-                if  (isinstance(dict1[key], dict)
-                and  isinstance(dict2[key], dict)):
-                    yield (key, dict(merge(dict1[key], dict2[key])))
+        for key in set(dict_1.keys()).union(dict_2.keys()):
+            if key in dict_1 and key in dict_2:
+                if (isinstance(dict_1[key], dict)
+                and isinstance(dict_2[key], dict)):
+                    yield (key, dict(merge(dict_1[key], dict_2[key])))
                 else:
-                    yield (key, dict2[key])
-            elif key in dict1:
-                yield (key, dict1[key])
+                    yield (key, dict_2[key])
+            elif key in dict_1:
+                yield (key, dict_1[key])
             else:
-                yield (key, dict2[key])
+                yield (key, dict_2[key])
 
-    return dict(merge(dict1, dict2))
+    return dict(merge(dict_1, dict_2))
 
 def get_color(color):
     """
-    Generates a color
+    Generates a color.
 
-    **Arguments:**
-        :*color*: May be a string "red", "blue", etc. corresponding to
-                  a default color; a string "pastel.red", "pastel.blue"
-                  corresponding to a palette and color, a list of three
-                  floating point numbers corresponding to red, green,
-                  and blue values, or a single floating point number
-                  corresponding to a grayscale color
+    If color is a str, may be of form 'pastel.red', 'dark.blue', etc.
+    corresponding to a color set and color; if no set is specified the
+    'default' set is used. If list or ndarray, should contain three floating
+    point numbers corresponding to red, green, and blue values If float, should
+    correspond to a grayscale shade.
+
+    Arguments:
+      color (str, list, ndarray, float): color
+
+    Returns:
+      (*list*): [red, green, blue] on interval 0.0-1.0
 
     .. todo:
-        - Support mode = {"RGB", "HSV", "HSB"} as argument
-        - For RGB, HSV, or HSB values, if value is greater than 1
-          divide by 255
-
+        - Useful error messages
+        - Support dict format to specify mode,
+          e.g.: get_color(color = {RGB: [0.1, 0.2, 0.3]})
+        - For RGB, HSL, or alues, if values are greater than 1 divide by
+          255
     """
     import numpy as np
 
@@ -161,29 +180,19 @@ def get_color(color):
     elif (isinstance(color, list)
     or    isinstance(color, np.ndarray)):
         return color
-    elif   isinstance(color, float):
+    elif isinstance(color, float):
         return [color, color, color]
 
 def multi_kw(keys, dictionary):
     """
-    Scans *dictionary* for *keys*, returns first matching value (or None
-    if none are present), and deletes *keys* from *dictionary*
+    Scans dict for keys; returns first value and deletes others.
 
-    This is not really ideal, but is appropriate here due to the
-    inconsistency of the names of some of matplotlib's arguments, in
-    particular fontproperties, font_properties, fp, and sometimes prop.
+    Arguments:
+      keys (list): Acceptable keys in order of decreasing priority
+      dictionary (dict): dict to be tested
 
-    **Arguments:**
-        :*keys*:       List of acceptable keyword arguments in order of
-                       priority; first match is used and other are
-                       deleted
-        :*dictionary*: Dictionary of keyword arguments to be tested
-        :*default*:    Value to return if not found
-
-    **Returns:**
-        :*value*: Value from *dictionary* of first matching keyword in
-                  *keys*, or None if none are present
-
+    Returns:
+      Value from first matching key; or None if not found
     """
     value = None
     for key in [key for key in keys if key in dictionary]:
@@ -193,27 +202,24 @@ def multi_kw(keys, dictionary):
             del dictionary[key]
     return value
 
-def pad_zero(ticks, digits = None, **kwargs):
+def pad_zero(ticks, digits=None, **kwargs):
     """
-    Returns a list of tick labels, each with the same number of digits
-    after the decimal
+    Prepares list of tick labels, each with the same precision.
 
-    **Arguments:**
-        :*ticks*:       List or numpy array of ticks
-        :*digits*:      Number of digits to include after the decimal
+    Arguments:
+      ticks (list, ndarray): ticks
+      digits (int, optional): Precision; by default uses largest provided
 
-    **Returns:**
-        :*tick_labels*: Tick labels, each with the same number of
-                        digits after the decimal
+    Returns:
+      (*list*): Tick labels, each with the same number of digits after the
+        decimal
     """
-    # If the number of digits to include has not been specified, use the
-    #   largest number of digits in the provided ticks
     if digits is None:
         digits = 0
         for tick in ticks:
             if '.' in str(tick):
                 digits = max(digits, len(str(tick).split('.')[1]))
-    if digits  == 0:
+    if digits == 0:
         return ["{0:d}".format(tick) for tick in map(int, ticks)]
     else:
 
@@ -221,19 +227,18 @@ def pad_zero(ticks, digits = None, **kwargs):
 
 def get_edges(figure_or_subplots, **kwargs):
     """
-    Finds the outermost edges of a set of subplots on a figure
+    Finds the outermost edges of a set of subplots on a figure.
 
-    **Arguments:**
-        :*figure_or_subplots*: <Figure> or list or dictionary of <Axes>
-                               on which to act
+    Arguments:
+      figure_or_subplots (Figure, list, dict): Axes whose edges to
+        get; if Figure, use all Axes
 
-    **Returns:**
-        :*edges*: dictionary of edges; keys are 'left', 'right', 'top',
-                  and 'bottom'
+    Returns:
+      (*dict*): Edges; keys are 'left', 'right', 'top', and 'bottom'
     """
     import matplotlib
 
-    if   isinstance(figure_or_subplots, matplotlib.figure.Figure):
+    if isinstance(figure_or_subplots, matplotlib.figure.Figure):
         subplots = figure_or_subplots.axes
     elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots.values()
@@ -243,85 +248,88 @@ def get_edges(figure_or_subplots, **kwargs):
       top    = max([subplot.get_position().ymax for subplot in subplots]),
       bottom = min([subplot.get_position().ymin for subplot in subplots]))
 
-def get_font(fp = None, **kwargs):
+def get_font(fp=None, **kwargs):
     """
-    **Arguments:**
-        :*fp*: Font properties
+    Generates font based on provided specification.
 
-    **Behavior:**
-        | If *fp* is <FontProperties>, acts as a pass-through, returns
-        |   *fp* argument
-        | If *fp* is a String of form '##L', makes new <FontProperties>
-        |   object for which '##' = size; 'L' = {'r': regular,
-        |   'b' bold}
-        | If *fp* is a Dict, makes new <FontProperties> using given
-        |    keyword arguments
+    fp may be a string of form '##L' in which '##' is the font size and L
+    is 'r' for regular or 'b' for bold. fp may also be a dict of keyword
+    arguments to pass to FontProperties. fp may also be a
+    FontProperties, in which case it is returned without modification
 
-    **Returns:**
-        :*fp*: <FontProperties> object to given specifications
+    Arguments:
+        fp (str, dict, FontProperties): Font specifications
+
+    Returns:
+        (*FontProperties*): Font with given specifications
     """
-    import matplotlib.font_manager
+    import six
+    from matplotlib.font_manager import FontProperties
 
-    if   isinstance(fp, matplotlib.font_manager.FontProperties):
+    if isinstance(fp, FontProperties):
         return fp
     elif isinstance(fp, six.string_types):
-        kwargs["size"]       = kwargs.get("size",   int(fp[:-1]))
-        kwargs["weight"]     = kwargs.get("weight", {"r":"regular",
+        kwargs["size"] = kwargs.get("size", int(fp[:-1]))
+        kwargs["weight"] = kwargs.get("weight", {"r":"regular",
             "b":"bold"}[fp[-1]])
     elif isinstance(fp, dict):
         kwargs.update(fp)
-    return matplotlib.font_manager.FontProperties(**kwargs)
+    else:
+        raise TypeError("get_font does not understand input of type " +
+          "{0}".format(type(fp)))
+    return FontProperties(**kwargs)
 
-def get_figure_subplots(figure = None, subplots = None, nrows = None,
-    ncols = None, nsubplots = None, left = None, sub_width = None,
-    wspace = None, right = None, top = None, sub_height = None, hspace = None,
-    bottom = None, fig_width = None, fig_height = None, figsize = None,
-    verbose = False, debug = False, **kwargs):
+def get_figure_subplots(figure=None, subplots=None, nrows=None,
+    ncols=None, nsubplots=None, left=None, sub_width=None, wspace=None,
+    right=None, bottom=None, sub_height=None, hspace=None, top=None,
+    fig_width=None, fig_height=None, figsize=None, verbose=False,
+    debug=False, **kwargs):
     """
-    Generates a figure and subplots to specifications
+    Generates a figure and subplots to provided specifications.
 
     Differs from matplotlib's built-in functions in that it:
-        - Accepts subplot dimensions is inches rather than proportional
-          figure coordinates
-        - Optionally calculates figure dimensions from provided subplot
-          dimensions, rather than the reverse
-        - Returns subplots in an OrderedDict
-        - Smoothly adds additional subplots to a previously-generated
-          figure (i.e. can be called multiple times)
+      - Accepts subplot dimensions is inches rather than proportional
+        figure coordinates
+      - Optionally calculates figure dimensions from provided subplot
+        dimensions, rather than the reverse
+      - Returns subplots in an OrderedDict
+      - Smoothly adds additional subplots to a previously-generated
+        figure (i.e. can be called multiple times)
 
-    **Arguments:**
-        :*figure*:     Figure, if adding subplots to a
-                       previously-existing figure
-        :*subplots*:   OrderedDict of subplots, if adding subplots to
-                       a previously-existing figure
-        :*nrows*:      Number of rows of subplots
-        :*ncols*:      Number of columns of subplots
-        :*nsubplots*:  Number of subplots to add; if less than
-                       nrows*ncols (e.g. 2 cols and 2 rows but only
-                       three subplots)
-        :*sub_width*:  Width of subplot(s)
-        :*sub_height*: Height of subplot(s)
-        :*left*:       Margin between left side of figure and leftmost
-                       subplots
-        :*right*:      Margin between right side of figure and
-                       rightmost subplot
-        :*top*:        Margin between top of figure and highest subplot
-        :*bottom*:     Margin between bottom of figure and lowest
-                       subplot
-        :*wspace*:     Horizontal margin between adjacent subplots
-        :*hspace*:     Vertical margin between adjacent subplots
-        :*fig_width*:  Width of figure; may be determined from above
-        :*fig_height*: Height of figure, may be determined from above
-        :*figsize*:    Equivalent to [fig_width, fig_height]
-        :*figure_kw*:  Keyword arguments passed to figure()
-        :*subplot_kw*: Keyword arguments passed to Axes()
-        :*axes_kw*:    Alias to subplot_kw
-        :*verbose*:    Enable verbose output
-        :*debug*:      Enable debug output
+    Arguments:
+      figure (Figure, optional): Figure, if adding subplots to a preexisting
+        Figure
+      subplots (OrderedDict, optional): Subplots, if adding subplots to a
+        prevexisting Figure
+      nrows (int): Number of rows of subplots to add
+      ncols (int): Number of columns of subplots to add
+      nsubplots (int, optional): Number of subplots to add; if less than
+        nrows*ncols (e.g. 2 cols and 2 rows but only three subplots)
+      sub_width (float): Width of subplot(s)
+      sub_height (float): Height of subplot(s)
+      left (float): Margin between left side of figure and leftmost
+        subplot
+      right (float): Margin between right side of figure and rightmost
+        subplot
+      top (float): Margin between top of figure and topmost subplot
+      bottom (float): Margin between bottom of figure and bottommost
+        subplot
+      wspace (float): Horizontal margin between adjacent subplots
+      hspace (float): Vertical margin between adjacent subplots
+      fig_width (float): Width of figure; by default calculated from
+        left, sub_width, wspace, right, and ncols
+      fig_height (float): Height of figure, by default calculated from
+        bottom, sub_height, hspace, top, and nrows
+      figsize (list): Equivalent to [``fig_width``, ``fig_height``]
+      figure_kw (dict): Additional keyword arguments passed to figure()
+      subplot_kw (dict): Additional keyword arguments passed to Axes()
+      axes_kw (dict): Alias to ``subplot_kw``
+      verbose (bool): Enable verbose output
+      debug (bool): Enable debug output
 
-    **Returns:**
-        :*figure*:   <Figure>
-        :*subplots*: OrderedDict of subplots
+    Returns:
+      (*Figure*, *OrderedDict*): Figure and subplots
+
     """
     from collections import OrderedDict
     import matplotlib 
@@ -329,19 +337,27 @@ def get_figure_subplots(figure = None, subplots = None, nrows = None,
     from . import multi_kw
 
     # Manage margins
-    if ncols  is None:  ncols  = 1
-    if left   is None:  left   = matplotlib.rcParams["figure.subplot.left"]
-    if wspace is None:  wspace = matplotlib.rcParams["figure.subplot.wspace"]
-    if right  is None:  right  = matplotlib.rcParams["figure.subplot.right"]
-    if nrows  is None:  nrows  = 1
-    if top    is None:  top    = matplotlib.rcParams["figure.subplot.top"]
-    if hspace is None:  hspace = matplotlib.rcParams["figure.subplot.hspace"]
-    if bottom is None:  bottom = matplotlib.rcParams["figure.subplot.bottom"]
+    if ncols is None:
+        ncols = 1
+    if left is None:
+        left = matplotlib.rcParams["figure.subplot.left"]
+    if wspace is None:
+        wspace = matplotlib.rcParams["figure.subplot.wspace"]
+    if right is None:
+        right = matplotlib.rcParams["figure.subplot.right"]
+    if nrows is None:
+        nrows = 1
+    if top is None:
+        top = matplotlib.rcParams["figure.subplot.top"]
+    if hspace is None:
+        hspace = matplotlib.rcParams["figure.subplot.hspace"]
+    if bottom is None:
+        bottom = matplotlib.rcParams["figure.subplot.bottom"]
 
     # Manage figure and subplot dimensions
     if figure is not None:
         fig_height = figure.get_figheight()
-        fig_width  = figure.get_figwidth()
+        fig_width = figure.get_figwidth()
         figsize = [fig_width, fig_height]
     if  ((sub_width is None or sub_height is None)
     and ((fig_width is None or fig_height is None) and figsize is None)):
@@ -353,9 +369,9 @@ def get_figure_subplots(figure = None, subplots = None, nrows = None,
             fig_height = figsize[1]
         figsize = [fig_width, fig_height]
         if sub_width is None:
-            sub_width  = fig_width  - left - (wspace * (ncols - 1)) - right
+            sub_width = fig_width - left - (wspace * (ncols - 1)) - right
         if sub_height is None:
-            sub_height = fig_height - top  - (hspace * (nrows - 1)) - bottom
+            sub_height = fig_height - top - (hspace * (nrows - 1)) - bottom
     elif      ((sub_width is None or sub_height is None)
     and   not ((fig_width is None or fig_height is None) and figsize is None)):
         # Lack sublot dimensions, but have figure dimensions
@@ -363,17 +379,17 @@ def get_figure_subplots(figure = None, subplots = None, nrows = None,
             fig_width, fig_height = figsize
         figsize = [fig_width, fig_height]
         if sub_width is None:
-            sub_width  = fig_width  - left - (wspace * (ncols - 1)) - right
+            sub_width = fig_width - left - (wspace * (ncols - 1)) - right
         if sub_height is None:
             sub_height = fig_height - top  - (hspace * (nrows - 1)) - bottom
     elif (not (sub_width is None or sub_height is None)
     and      ((fig_width is None or fig_height is None) and figsize is None)):
         # Have subplot dimensions, but lack figure dimensions
         if fig_width is None:
-            fig_width  = left+(sub_width*ncols)+(wspace*(ncols-1))+right
+            fig_width = left+(sub_width*ncols)+(wspace*(ncols-1))+right
         if fig_height is None:
             fig_height = top+(sub_height*nrows)+(hspace*(nrows-1))+bottom
-        figsize    = [fig_width, fig_height]
+        figsize = [fig_width, fig_height]
     elif (not  (sub_width is None or sub_height is None)
     and   not ((fig_width is None or fig_height is None) and figsize is None)):
         # Have subplot and figure dimensions
@@ -399,16 +415,16 @@ def get_figure_subplots(figure = None, subplots = None, nrows = None,
     #   subplots if provided
     if nsubplots is None:
         nsubplots = ncols * nrows
-    i_max    = i + nsubplots
+    i_max = i + nsubplots
     breaking = False
     for j in range(nrows - 1, -1, -1):
         if breaking:
             break
         for k in range(0, ncols, 1):
             subplots[i] = matplotlib.axes.Axes(figure, rect = [
-              (left   + k * sub_width  + k * wspace) / fig_width,   # Left
+              (left + k * sub_width + k * wspace) / fig_width,      # Left
               (bottom + j * sub_height + j * hspace) / fig_height,  # Bottom
-              sub_width  / fig_width,                               # Width
+              sub_width / fig_width,                                # Width
               sub_height / fig_height],                             # Height
               **subplot_kw)
             figure.add_axes(subplots[i])
@@ -422,16 +438,3 @@ def get_figure_subplots(figure = None, subplots = None, nrows = None,
           figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots
 
-def identify(subplots, **kwargs):
-    """
-    Identifies key of each subplot with inset text
-
-    **Arguments:**
-        :*subplots*: OrderedDict of subplots
-
-    """
-    from .text import set_inset
-
-    for i, subplot in subplots.items():
-        set_inset(subplot, text = i, xpos = 0.5, ypos = 0.5, ha = "center",
-          va = "center", **kwargs)
