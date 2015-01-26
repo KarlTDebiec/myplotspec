@@ -20,14 +20,14 @@ changing code, such as for a lab notebook, printout, or presentation.
 Dependencies
 ------------
 
-myplotspec supports Python 2.7 and 3.4, and requires the following packages:
+MYPlotSpec supports Python 2.7 and 3.4, and requires the following packages:
 
 - matplotlib
 - numpy
 - six
 - yaml
 
-This package has been tested with Anaconda python 2.1.0 on Arch Linux, OSX
+MYPlotSpec has been tested with Anaconda python 2.1.0 on Arch Linux, OSX
 Yosemite, and Windows 8.1.
 
 Installation
