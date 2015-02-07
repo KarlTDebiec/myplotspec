@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>MYPlotSpec by KarlTDebiec</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/KarlTDebiec/myplotspec">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/KarlTDebiec/myplotspec/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/KarlTDebiec/myplotspec/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>MYPlotSpec</h1>
+          <p>Powerful plot configuration using matplotlib and YAML</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/KarlTDebiec">KarlTDebiec</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h1>
+
+<p>MYPlotSpec is a Python package used to design matplotlib-based figures using
+the simple text format YAML.</p>
+
+<p>MYPlotSpec may be used to rapidly write programs for plotting particular types
+of data while retaining detailed control over plot configuration. The minimal
+'quick &amp; dirty' code needed to plot a certain type of data should be very close
+to the polished code used to produce publication-quality figures featuring
+precisely chosen proportions, ticks, colors, and fonts. MYPlotSpec accomplishes
+this by offering a system for routing arguments provided in YAML format to
+matplotlib's existing formatting functions. Settings may be applied globally or
+routed to specific figures, subplots, and datasets. MYPlotSpec should have no
+conflict with existing matplotlibrc settings, instead offering a level of
+specific control on top of them. MyPlotSpec supports a system of defaults and
+presets that make it easy to prepare multiple versions of plots without
+changing code, such as for a lab notebook, printout, or presentation.</p>
+
+<h2>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<p>MYPlotSpec supports Python 2.7 and 3.4, and requires the following packages:</p>
+
+<ul>
+<li>matplotlib</li>
+<li>numpy</li>
+<li>six</li>
+<li>yaml</li>
+</ul>
+
+<p>MYPlotSpec has been tested with Anaconda python 2.1.0 on Arch Linux, OSX
+Yosemite, and Windows 8.1.</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Put in your <code>$PYTHONPATH</code>::</p>
+
+<pre><code>export PYTHONPATH=/path/to/my/python/modules:$PYTHONPATH
+</code></pre>
+
+<p>where <code>/path/to/my/python/modules</code> contains <code>myplotspec</code>.</p>
+
+<h2>
+<a id="authorship" class="anchor" href="#authorship" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authorship</h2>
+
+<p>MYPlotSpec is developed by Karl T. Debiec, a graduate student at the University
+of Pittsburgh advised by Professors Lillian T. Chong and Angela M. Gronenborn.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Released under a 3-clause BSD license.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
