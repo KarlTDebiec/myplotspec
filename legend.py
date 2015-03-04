@@ -26,7 +26,7 @@ Note:
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################## FUNCTIONS ##################################
-def set_legend(subplot, handles = None, legend_lw = None, legend_fp = None,
+def set_legend(subplot, handles=None, legend_lw=None, legend_fp=None,
     **kwargs):
     """
     Draws and formats a legend on a subplot.

@@ -73,52 +73,59 @@ class FigureManager(object):
     from .manage_output import manage_output
 
     defaults = """
-        draw_subplot:
-          lw:           1
-        draw_dataset:
-          lw:           1
+        function:
+          argument:     value
     """
-
-    presets  = """
+    presets = """
+      letter:
+        draw_figure:
+          left:         0.8
+          sub_width:    7.4
+          right:        0.8
+          top:          0.6
+          sub_height:   5.3
+          bottom:       0.6
+          title_fp:     16b
+          label_fp:     16b
+        draw_subplot:
+          title_fp:     16b
+          label_fp:     16b
+          tick_fp:      14r
+          legend_fp:    14r
+      notebook:
+        draw_figure:
+          left:         0.6
+          sub_width:    5.3
+          right:        0.6
+          top:          9.4
+          sub_height:   4.0
+          bottom:       0.5
+          title_fp:     10b
+          label_fp:     10b
+        draw_subplot:
+          title_fp:     10b
+          label_fp:     10b
+          tick_fp:      8r
+          legend_fp:    8r
       presentation:
         draw_figure:
-          title_fp:     24r
-          label_fp:     24r
+          left:         2.0
+          sub_width:    6.0
+          right:        2.0
+          top:          2.0
+          sub_height:   4.5
+          bottom:       1.0
+          title_fp:     24b
+          label_fp:     24b
         draw_subplot:
-          title_fp:     24r
-          label_fp:     24r
-          tick_fp:      18r
-          legend_fp:    18r
+          title_fp:     24b
+          label_fp:     24b
+          tick_fp:      16r
+          legend_fp:    16r
           lw:           2
         draw_dataset:
           plot_kw:
             lw:         2
-      notebook:
-        draw_figure:
-          title_fp:     10b
-          label_fp:     10b
-        draw_subplot:
-          title_fp:     10b
-          label_fp:     10b
-          tick_fp:      10r
-          legend_fp:    8r
-          lw:           1
-        draw_dataset:
-          plot_kw:
-            lw:         1
-      letter:
-        draw_figure:
-          title_fp:     18r
-          label_fp:     18r
-        draw_subplot:
-          title_fp:     18r
-          label_fp:     18r
-          tick_fp:      14r
-          legend_fp:    14r
-          lw:           1
-        draw_dataset:
-          plot_kw:
-            lw:         1
     """
 
     def __call__(self, *args, **kwargs):
@@ -438,6 +445,7 @@ class FigureManager(object):
         from . import get_color
         import numpy as np
 
+        # Configure plot settings
         plot_kw = kwargs.get("plot_kw", {})
         if "color" in plot_kw:
             plot_kw["color"] = get_color(plot_kw.pop("color"))
@@ -446,6 +454,7 @@ class FigureManager(object):
         if label is not None:
             plot_kw["label"] = label
 
+        # Load data
         dataset = np.loadtxt(infile)
         x = dataset[:,0]
         y = dataset[:,1]
@@ -472,6 +481,14 @@ class FigureManager(object):
           dest     = "yaml_dict",
           metavar  = "/PATH/TO/YAML.yaml",
           help     = "YAML configuration file")
+
+        parser.add_argument(
+          "-preset",
+          type     = str,
+          action   = "append",
+          metavar  = "PRESET",
+          default  = [],
+          help     = "Name of preset")
 
         parser.add_argument(
           "-v",

@@ -208,10 +208,12 @@ class manage_kwargs(object):
                             db_kv(key, in_presets[sel_preset][key], 3, "*")
                         else:
                             db_kv(key, in_presets[sel_preset][key], 3, "+")
-            for sel_preset in sel_presets:
-                if sel_preset not in in_presets:
-                    continue
-                out_kwargs = merge_dicts(out_kwargs, in_presets[sel_preset])
+            if sel_presets is not None:
+                for sel_preset in sel_presets:
+                    if sel_preset not in in_presets:
+                        continue
+                    out_kwargs = merge_dicts(out_kwargs,
+                      in_presets[sel_preset])
 
             # High priorty: Yaml
             if db:

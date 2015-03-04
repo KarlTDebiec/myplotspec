@@ -12,9 +12,7 @@ Functions for formatting axes.
 .. todo:
     - Figure out how to use multiple-keyword arguments (e.g. [x]tick[label]_fp
       with sphinx
-    - Check tick_pad
     - Reimplement set_multi and set_colorbar
-    - Reimplement support for second x and y axes
     - Figure out how to adjust the positions of specific ticks properly
       and automatically ('1' often looks bad)
 """
@@ -24,8 +22,8 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 def set_xaxis(subplot, xticks=None, xtick_kw=None, xticklabels=None,
     xtick_fp=None, tick_fp=None, xticklabel_fp=None, ticklabel_fp=None,
     xticklabel_kw=None, xlabel=None, xlabel_fp=None, label_fp=None,
-    xlabel_kw=None, xtick_params=None, tick_params=None, xtick_pad=None,
-    tick_pad=None, xlw=None, lw=None, **kwargs):
+    xlabel_kw=None, xtick_params=None, tick_params=None, xlw=None, lw=None,
+    **kwargs):
     """
     Formats the x axis of a subplot using provided keyword arguments.
 
@@ -44,7 +42,6 @@ def set_xaxis(subplot, xticks=None, xtick_kw=None, xticklabels=None,
       xlabel_kw (dict): Keyword arguments passed to subplot.set_xlabel()
       [x]tick_params (dict): Keyword arguments passed to
         subplot.set_tick_params(); only affect x axis
-      [x]tick_pad (float): Padding between ticks and labels
       [x]lw (float): Subplot top and bottom line width
       kwargs (dict): Additional keyword arguments
     """
@@ -74,10 +71,10 @@ def set_xaxis(subplot, xticks=None, xtick_kw=None, xticklabels=None,
         xticklabel_kw["fontproperties"] = get_font(xticklabel_fp_2)
     elif xtick_fp is not None:
         xticklabel_kw["fontproperties"] = get_font(xtick_fp)
-    elif tick_fp is not None:
-        xticklabel_kw["fontproperties"] = get_font(tick_fp)
     elif xticklabel_fp is not None:
         xticklabel_kw["fontproperties"] = get_font(xticklabel_fp)
+    elif tick_fp is not None:
+        xticklabel_kw["fontproperties"] = get_font(tick_fp)
     elif ticklabel_fp is not None:
         xticklabel_kw["fontproperties"] = get_font(ticklabel_fp)
 
@@ -108,24 +105,19 @@ def set_xaxis(subplot, xticks=None, xtick_kw=None, xticklabels=None,
         tick_params["axis"] = "x"
         subplot.tick_params(**tick_params)
 
-    # Additional settings
-    if xtick_pad is not None:
-        tick_pad = xtick_pad
-    if tick_pad is not None:
-        for tick in subplot.get_major_ticks():
-            tick.set_pad(tick_pad)
-
     if xlw is not None:
         lw = xlw
     if lw is not None:
         subplot.spines["top"].set_lw(lw)
         subplot.spines["bottom"].set_lw(lw)
 
-def set_yaxis(subplot, yticks=None, ytick_kw=None, yticklabels=None,
-    ytick_fp=None, tick_fp=None, yticklabel_fp=None, ticklabel_fp=None,
-    yticklabel_kw=None, ylabel=None, ylabel_fp=None, label_fp=None,
-    ylabel_kw=None, ytick_params=None, tick_params=None, ytick_pad=None,
-    tick_pad=None, ylw=None, lw=None, **kwargs):
+def set_yaxis(subplot, yticks=None, y2ticks=None, ytick_kw=None,
+    y2tick_kw=None, yticklabels=None, y2ticklabels=None, ytick_fp=None,
+    y2tick_fp=None, tick_fp=None, yticklabel_fp=None, y2ticklabel_fp=None,
+    ticklabel_fp=None, yticklabel_kw=None, y2ticklabel_kw=None, ylabel=None,
+    y2label=None, ylabel_fp=None, y2label_fp=None, label_fp=None,
+    ylabel_kw=None, y2label_kw=None, ytick_params=None, y2tick_params=None,
+    tick_params=None, ylw=None, lw=None, **kwargs):
     """
     Formats the y axis of a subplot using provided keyword arguments.
 
@@ -143,13 +135,27 @@ def set_yaxis(subplot, yticks=None, ytick_kw=None, yticklabels=None,
       ylabel_kw (dict): Keyword arguments passed to subplot.set_ylabel()
       [y]tick_params (dict): Keyword arguments passed to
         subplot.set_tick_params(); only affect y axis
-      [y]tick_pad (float): Padding between ticks and labels
       [y]lw (float): Subplot top and bottom line width
+      y2ticks (list or ndarray): Ticks for second y axis; first and last
+        are used as upper and lower boundaries; if this argument is
+        provided, a y2 axis is generated using subplot.twiny()
+      y2tick_kw (dict): Keyword arguments passed to subplot.set_yticks()
+        for second y axis
+      y2ticklabels (list): Tick label text for second y axis
+      [y2]tick[label]_fp (str, dict, FontProperties): Tick label font
+        for second y axis
+      y2ticklabel_kw (dict): Keyword arguments passed to
+        subplot.set_yticklabels() for second y axis
+      y2label (str): Label text for second y axis
+      [y2]label_fp (str, dict, FontProperties): Label font for second y
+        axis
+      y2label_kw (dict): Keyword arguments passed to subplot.set_ylabel()
+        for second y axis
       kwargs (dict): Additional keyword arguments
     """
     from . import FP_KEYS, get_font, multi_kw
 
-    # Ticks
+    # Y1 Ticks
     ytick_kw = kwargs.pop("ytick_kw", {})
     yticks_2 = multi_kw(["yticks", "ticks"], ytick_kw)
     if yticks_2 is not None:
@@ -159,7 +165,7 @@ def set_yaxis(subplot, yticks=None, ytick_kw=None, yticklabels=None,
             subplot.set_ybound(float(yticks[0]), float(yticks[-1]))
         subplot.set_yticks(yticks, **ytick_kw)
 
-    # Tick labels
+    # Y1 Tick labels
     yticklabel_kw = kwargs.pop("yticklabel_kw", {})
     yticklabels_2 = multi_kw(["yticklabels", "ticklabels"], yticklabel_kw)
     if yticklabels_2 is not None:
@@ -168,24 +174,24 @@ def set_yaxis(subplot, yticks=None, ytick_kw=None, yticklabels=None,
         yticklabels = yticks
 
     yticklabel_fp_2 = multi_kw(["ytick_fp", "tick_fp", "yticklabel_fp",
-                        "ticklabel_fp"] + FP_KEYS,yticklabel_kw)
+                        "ticklabel_fp"] + FP_KEYS, yticklabel_kw)
     if yticklabel_fp_2 is not None:
         yticklabel_kw["fontproperties"] = get_font(yticklabel_fp_2)
     elif ytick_fp is not None:
         yticklabel_kw["fontproperties"] = get_font(ytick_fp)
-    elif tick_fp is not None:
-        yticklabel_kw["fontproperties"] = get_font(tick_fp)
     elif yticklabel_fp is not None:
         yticklabel_kw["fontproperties"] = get_font(yticklabel_fp)
+    elif tick_fp is not None:
+        yticklabel_kw["fontproperties"] = get_font(tick_fp)
     elif ticklabel_fp is not None:
         yticklabel_kw["fontproperties"] = get_font(ticklabel_fp)
 
     if yticklabels is not None:
         subplot.set_yticklabels(yticklabels, **yticklabel_kw)
 
-    # Label
+    # Y1 Label
     ylabel_kw = kwargs.pop("ylabel_kw", {})
-    ylabel_2  = multi_kw(["ylabel", "label"], ylabel_kw)
+    ylabel_2 = multi_kw(["ylabel", "label"], ylabel_kw)
     if ylabel_2 is not None:
         ylabel = ylabel_2
 
@@ -200,25 +206,75 @@ def set_yaxis(subplot, yticks=None, ytick_kw=None, yticklabels=None,
     if ylabel is not None:
         subplot.set_ylabel(ylabel, **ylabel_kw)
 
-    # Tick parameters
+    # Y1 Tick parameters
     if ytick_params is not None:
         tick_params = ytick_params
     if tick_params is not None:
         tick_params["axis"] = "y"
         subplot.tick_params(**tick_params)
 
-    # Additional settings
-    if ytick_pad is not None:
-        tick_pad = ytick_pad
-    if tick_pad is not None:
-        for tick in subplot.get_major_ticks():
-            tick.set_pad(tick_pad)
-
     if ylw is not None:
         lw = ylw
     if lw is not None:
         subplot.spines["left"].set_lw(lw)
         subplot.spines["right"].set_lw(lw)
+
+    # Y2 Ticks, if applicable
+    y2tick_kw = kwargs.pop("y2tick_kw", {})
+    y2ticks_2 = multi_kw(["y2ticks", "ticks"], y2tick_kw)
+    if y2ticks_2 is not None:
+        y2ticks = y2ticks_2
+    if y2ticks is not None:
+        subplot_y2 = subplot.twinx()
+        subplot_y2.set_autoscale_on(False)
+        if y2ticks != []:
+            subplot_y2.set_ybound(float(y2ticks[0]), float(y2ticks[-1]))
+        subplot_y2.set_yticks(y2ticks, **y2tick_kw)
+
+    # Y2 Tick labels
+    y2ticklabel_kw = kwargs.pop("y2ticklabel_kw", {})
+    y2ticklabels_2 = multi_kw(["y2ticklabels", "ticklabels"], y2ticklabel_kw)
+    if y2ticklabels_2 is not None:
+        y2ticklabels = y2ticklabels_2
+    if y2ticklabels is None and y2ticks is not None:
+        y2ticklabels = y2ticks
+
+    y2ticklabel_fp_2 = multi_kw(["y2tick_fp", "tick_fp", "y2ticklabel_fp",
+                        "ticklabel_fp"] + FP_KEYS, y2ticklabel_kw)
+    if y2ticklabel_fp_2 is not None:
+        y2ticklabel_kw["fontproperties"] = get_font(y2ticklabel_fp_2)
+    elif y2tick_fp is not None:
+        y2ticklabel_kw["fontproperties"] = get_font(y2tick_fp)
+    elif y2ticklabel_fp is not None:
+        y2ticklabel_kw["fontproperties"] = get_font(y2ticklabel_fp)
+    elif ytick_fp is not None:
+        y2ticklabel_kw["fontproperties"] = get_font(ytick_fp)
+    elif yticklabel_fp is not None:
+        y2ticklabel_kw["fontproperties"] = get_font(yticklabel_fp)
+    elif tick_fp is not None:
+        y2ticklabel_kw["fontproperties"] = get_font(tick_fp)
+    elif ticklabel_fp is not None:
+        y2ticklabel_kw["fontproperties"] = get_font(ticklabel_fp)
+
+    if y2ticklabels is not None:
+        subplot_y2.set_yticklabels(y2ticklabels, **y2ticklabel_kw)
+
+    # Y2 Label
+    y2label_kw = kwargs.pop("y2label_kw", {})
+    y2label_2 = multi_kw(["y2label", "label"], y2label_kw)
+    if ylabel_2 is not None:
+        y2label = y2label_2
+
+    y2label_fp_2 = multi_kw(["y2label_fp", "label_fp"] + FP_KEYS, y2label_kw)
+    if y2label_fp_2 is not None:
+        y2label_kw["fontproperties"] = get_font(y2label_fp_2)
+    elif y2label_fp is not None:
+        y2label_kw["fontproperties"] = get_font(y2label_fp)
+    elif label_fp is not None:
+        y2label_kw["fontproperties"] = get_font(label_fp)
+
+    if y2label is not None:
+        subplot_y2.set_ylabel(y2label, **y2label_kw)
 
 ########################### TEMPORARILY DEPRECIATED ###########################
 #def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
