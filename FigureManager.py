@@ -416,7 +416,7 @@ class FigureManager(object):
               **out_kwargs)
 
         # Draw legend
-        if legend is not None:
+        if legend is not None and legend is not False:
             set_legend(subplot, handles = handles, **in_kwargs)
         if shared_handles is not None:
             for label, handle in handles.items():
