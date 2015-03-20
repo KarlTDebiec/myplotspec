@@ -124,7 +124,7 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
 
     Arguments:
       subplot (Axes): Axes to format
-      subplot_y2 (Axes, optional): Second y axes to format; if this is 
+      subplot_y2 (Axes, optional): Second y axes to format; if this is
         omitted, but y2ticks is included, the second y axis will be
         generated
       yticks (list or ndarray): Ticks; first and last are used as upper

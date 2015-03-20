@@ -332,7 +332,7 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
 
     """
     from collections import OrderedDict
-    import matplotlib 
+    import matplotlib
     import matplotlib.pyplot as pyplot
     from . import multi_kw
 
@@ -437,4 +437,3 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(
           figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots
-

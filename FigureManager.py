@@ -511,7 +511,7 @@ class FigureManager(object):
             db_s("Environment variables")
             for key in sorted(environ):
                 db_kv(key, environ[key], 1)
-            
+
             db_s("Command-line arguments")
             for key in sorted(arguments.keys()):
                 db_kv(key, arguments[key], 1)

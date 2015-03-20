@@ -66,7 +66,7 @@ class manage_output(object):
             Arguments:
               outfile (str, PdfPages): outfile path or PDFpages
                 object
-              outfiles (dict): Nascent dict of [outfile path]: PdfPages 
+              outfiles (dict): Nascent dict of [outfile path]: PdfPages
               savefig_kw (dict): Keyword arguments passed to savefig()
               args (tuple): Arguments passed to function
               kwargs (dict): Keyword arguments passed to function

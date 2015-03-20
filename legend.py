@@ -9,7 +9,7 @@
 """
 Functions for formatting legends.
 
-Note: 
+Note:
   Acceptable values of ``loc`` and their meanings, for reference::
 
     0 = Best

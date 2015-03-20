@@ -119,7 +119,7 @@ def set_shared_xlabel(figure_or_subplots, xlabel=None, xlabel_fp=None,
       (*Text*): X axis label
     """
     import matplotlib
-    from . import get_font, multi_kw, FP_KEYS
+    from . import get_edges, get_font, multi_kw, FP_KEYS
 
     label_kw = kwargs.pop("xlabel_kw", {})
 
@@ -199,7 +199,7 @@ def set_shared_ylabel(figure_or_subplots, ylabel=None, ylabel_fp=None,
       (*Text*): Y axis label
     """
     import matplotlib
-    from . import get_font, multi_kw, FP_KEYS
+    from . import get_edges, get_font, multi_kw, FP_KEYS
 
     label_kw = kwargs.pop("ylabel_kw", {})
 
@@ -224,7 +224,7 @@ def set_shared_ylabel(figure_or_subplots, ylabel=None, ylabel_fp=None,
     if isinstance(figure_or_subplots, matplotlib.figure.Figure):
         figure = figure_or_subplots
         edges  = get_edges(figure)
-    elif isinstance(figure_or_subplots, types.DictType):
+    elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots
         figure   = subplots.values()[0].get_figure()
         edges    = get_edges(subplots)
@@ -336,8 +336,8 @@ def set_text(figure_or_subplot, s=None, text=None, text_fp=None, *args,
     elif text_fp   is not None:
         text_kw["fontproperties"] = get_font(text_fp)
 
-    if "va" not in inset_kw:
-        inset_kw["va"] = "top"
+    if "va" not in text_kw:
+        text_kw["va"] = "top"
 
     text_2 = multi_kw(["text", "s"], text_kw)
     if text_2 is not None:

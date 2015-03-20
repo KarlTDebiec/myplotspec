@@ -99,8 +99,6 @@ class manage_kwargs(object):
       verbose (bool): Enable verbose output
       debug (bool): Enable debug output
     """
-    from . import get_yaml, merge_dicts
-    from .debug import db_s, db_kv
 
     def __init__(self, verbose=False, debug=False):
         """
@@ -128,6 +126,7 @@ class manage_kwargs(object):
         self.function = function
 
         decorator = self
+
         @wraps(function)
         def wrapped_function(*in_args, **in_kwargs):
             """
