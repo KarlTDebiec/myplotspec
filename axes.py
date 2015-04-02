@@ -19,11 +19,10 @@ Functions for formatting axes.
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################## FUNCTIONS ##################################
-def set_xaxis(subplot, xticks=None, xtick_kw=None, xticklabels=None,
-    xtick_fp=None, tick_fp=None, xticklabel_fp=None, ticklabel_fp=None,
-    xticklabel_kw=None, xlabel=None, xlabel_fp=None, label_fp=None,
-    xlabel_kw=None, xtick_params=None, tick_params=None, xlw=None, lw=None,
-    **kwargs):
+def set_xaxis(subplot, xticks=None, xticklabels=None, xtick_fp=None,
+    tick_fp=None, xticklabel_fp=None, ticklabel_fp=None, xlabel=None,
+    xlabel_fp=None, label_fp=None, xtick_params=None, tick_params=None,
+    xlw=None, lw=None, **kwargs):
     """
     Formats the x axis of a subplot using provided keyword arguments.
 
@@ -112,11 +111,9 @@ def set_xaxis(subplot, xticks=None, xtick_kw=None, xticklabels=None,
         subplot.spines["bottom"].set_lw(lw)
 
 def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
-    ytick_kw=None, y2tick_kw=None, yticklabels=None, y2ticklabels=None,
-    ytick_fp=None, y2tick_fp=None, tick_fp=None, yticklabel_fp=None,
-    y2ticklabel_fp=None, ticklabel_fp=None, yticklabel_kw=None,
-    y2ticklabel_kw=None, ylabel=None, y2label=None, ylabel_fp=None,
-    y2label_fp=None, label_fp=None, ylabel_kw=None, y2label_kw=None,
+    yticklabels=None, y2ticklabels=None, ytick_fp=None, y2tick_fp=None,
+    tick_fp=None, yticklabel_fp=None, y2ticklabel_fp=None, ticklabel_fp=None,
+    ylabel=None, y2label=None, ylabel_fp=None, y2label_fp=None, label_fp=None,
     ytick_params=None, y2tick_params=None, tick_params=None, ylw=None, lw=None,
     **kwargs):
     """

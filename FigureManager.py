@@ -117,6 +117,7 @@ class FigureManager(object):
           bottom:       1.0
           title_fp:     24b
           label_fp:     24b
+          legend_fp:    16r
         draw_subplot:
           title_fp:     24b
           label_fp:     24b
