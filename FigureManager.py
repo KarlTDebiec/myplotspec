@@ -302,9 +302,9 @@ class FigureManager(object):
         if title is not None:
             set_title(figure, title = title, **in_kwargs)
         if shared_xlabel is not None:
-            set_shared_xlabel(figure, label = shared_xlabel, **in_kwargs)
+            set_shared_xlabel(figure, xlabel=shared_xlabel, **in_kwargs)
         if shared_ylabel is not None:
-            set_shared_ylabel(figure, label = shared_ylabel, **in_kwargs)
+            set_shared_ylabel(figure, ylabel=shared_ylabel, **in_kwargs)
         if shared_legend is not None:
             shared_handles = OrderedDict()
 

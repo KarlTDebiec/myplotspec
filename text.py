@@ -149,23 +149,27 @@ def set_shared_xlabel(figure_or_subplots, xlabel=None, xlabel_fp=None,
         figure   = subplots.values()[0].get_figure()
         edges    = get_edges(subplots)
 
-    if "x" not in label_kw:
-        label_kw["x"] = (edges["min"] + edges["max"]) / 2.0
 
+    if "x" not in label_kw:
+        label_kw["x"] = (edges["left"] + edges["right"]) / 2.0
     if "y" not in label_kw:
         fig_height = figure.get_figheight()
         if "top" in label_kw:
             top = label_kw.pop("top")
-            if top < 0:
-                label_kw["y"] = (edges["top"] - top) / fig_height
-            else:
+            if top >= 0:
                 label_kw["y"] = (fig_height - top) / fig_height
-        else:
-            bottom = label_kw.pop("bottom", -0.5)
-            if bottom < 0:
-                label_kw["y"] = (edges["bottom"] + bottom) / fig_height
             else:
+                label_kw["y"] = (((edges["top"] * fig_height) + top)
+                              / fig_height)
+        elif "bottom" in label_kw:
+            bottom = label_kw.pop("bottom")
+            if bottom >= 0:
                 label_kw["y"] = bottom / fig_height
+            else:
+                label_kw["y"] = (((edges["bottom"] * fig_height) + bottom)
+                              / fig_height)
+        else:
+            label_kw["y"] = edges["bottom"] / 2
 
     return set_text(figure, text_kw = label_kw, **kwargs)
 
@@ -240,12 +244,12 @@ def set_shared_ylabel(figure_or_subplots, ylabel=None, ylabel_fp=None,
         else:
             left = label_kw.pop("left", -0.5)
             if left < 0:
-                label_kw["x"] = (edges["min"] + left) / fig_width
+                label_kw["x"] = (edges["left"] + left) / fig_width
             else:
                 label_kw["x"] = left / fig_width
 
     if "y" not in label_kw:
-        label_kw["y"] = (edges["min"] + edges["max"]) / 2.0
+        label_kw["y"] = (edges["bottom"] + edges["top"]) / 2.0
 
     return set_text(figure, text_kw = label_kw, **kwargs)
 
@@ -335,9 +339,6 @@ def set_text(figure_or_subplot, s=None, text=None, text_fp=None, *args,
         text_kw["fontproperties"] = get_font(text_fp_2)
     elif text_fp   is not None:
         text_kw["fontproperties"] = get_font(text_fp)
-
-    if "va" not in text_kw:
-        text_kw["va"] = "top"
 
     text_2 = multi_kw(["text", "s"], text_kw)
     if text_2 is not None:
