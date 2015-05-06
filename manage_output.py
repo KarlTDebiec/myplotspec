@@ -74,7 +74,7 @@ class manage_output(object):
             Returns:
               Return value of wrapped function
             """
-            from os.path import abspath
+            from os.path import abspath, expandvars
             import six
             import matplotlib
             from matplotlib.backends.backend_pdf import PdfPages
@@ -90,7 +90,7 @@ class manage_output(object):
             if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
                 outfile_name = abspath(outfile._file.fh.name)
             elif isinstance(outfile, six.string_types):
-                outfile_name = abspath(outfile)
+                outfile_name = abspath(expandvars(outfile))
 
             if outfile_name.endswith("pdf"):
                 savefig_kw["format"] = "pdf"
