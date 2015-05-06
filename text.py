@@ -312,15 +312,15 @@ def set_inset(subplot, inset=None, inset_fp=None, *args, **kwargs):
 
     return set_text(subplot, test_kw = inset_kw, **kwargs)
 
-def set_text(figure_or_subplot, s=None, text=None, text_fp=None, *args,
-    **kwargs):
+def set_text(figure_or_subplot, s=None, x=None, y=None, text=None,
+    fp=None, *args, **kwargs):
     """
     Prints text on a figure or subplot.
 
     Arguments:
       figure_or_subplot (Figure, Axes): Object on which to draw
       text (str): Text
-      text_fp (str, dict, FontProperties): Text font
+      fp (str, dict, FontProperties): Text font
       text_kw (dict): Keyword arguments passed to ``text()``
 
     Returns:
@@ -330,14 +330,11 @@ def set_text(figure_or_subplot, s=None, text=None, text_fp=None, *args,
 
     text_kw = kwargs.pop("text_kw", {})
 
-    text_fp_2 = multi_kw(["text_fp"] + FP_KEYS, text_kw)
-    if text_fp_2 is not None:
-        text_kw["fontproperties"] = get_font(text_fp_2)
-    elif text_fp   is not None:
-        text_kw["fontproperties"] = get_font(text_fp)
-
-    if "va" not in inset_kw:
-        inset_kw["va"] = "top"
+    fp_2 = multi_kw(["fp"] + FP_KEYS, text_kw)
+    if fp_2 is not None:
+        text_kw["fontproperties"] = get_font(fp_2)
+    elif fp   is not None:
+        text_kw["fontproperties"] = get_font(fp)
 
     text_2 = multi_kw(["text", "s"], text_kw)
     if text_2 is not None:
@@ -350,5 +347,9 @@ def set_text(figure_or_subplot, s=None, text=None, text_fp=None, *args,
         text_kw["s"] = args[0]
     else:
         return None
+    if x is not None and not "x" in text_kw:
+        text_kw["x"] = x
+    if y is not None and not "y" in text_kw:
+        text_kw["y"] = y
 
     return figure_or_subplot.text(**text_kw)
