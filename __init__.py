@@ -117,8 +117,9 @@ def get_color(color):
     If color is a str, may be of form 'pastel.red', 'dark.blue', etc.
     corresponding to a color set and color; if no set is specified the
     'default' set is used. If list or ndarray, should contain three floating
-    point numbers corresponding to red, green, and blue values If float, should
-    correspond to a grayscale shade.
+    point numbers corresponding to red, green, and blue values. If these
+    numbers are greater than 1, they will be divided by 255. If float, should
+    correspond to a grayscale shade, if greater than 1 will be divided by 255.
 
     Arguments:
       color (str, list, ndarray, float): color
@@ -130,8 +131,6 @@ def get_color(color):
         - Useful error messages
         - Support dict format to specify mode,
           e.g.: get_color(color = {RGB: [0.1, 0.2, 0.3]})
-        - For RGB, HSL, or alues, if values are greater than 1 divide by
-          255
     """
     import numpy as np
 
@@ -187,8 +186,14 @@ def get_color(color):
             return color
     elif (isinstance(color, list)
     or    isinstance(color, np.ndarray)):
+        color = np.array(color, dtype=np.float)
+        if np.any(color[0] > 1):
+            color /= 255
+        print(color)
         return color
     elif isinstance(color, float):
+        if color > 1:
+            color /= 255
         return [color, color, color]
 
 def multi_kw(keys, dictionary):
