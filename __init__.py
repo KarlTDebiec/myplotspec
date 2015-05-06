@@ -189,7 +189,6 @@ def get_color(color):
         color = np.array(color, dtype=np.float)
         if np.any(color[0] > 1):
             color /= 255
-        print(color)
         return color
     elif isinstance(color, float):
         if color > 1:
