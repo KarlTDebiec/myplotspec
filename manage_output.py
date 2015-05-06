@@ -66,7 +66,7 @@ class manage_output(object):
             Arguments:
               outfile (str, PdfPages): outfile path or PDFpages
                 object
-              outfiles (dict): Nascent dict of [outfile path]: PdfPages 
+              outfiles (dict): Nascent dict of [outfile path]: PdfPages
               savefig_kw (dict): Keyword arguments passed to savefig()
               args (tuple): Arguments passed to function
               kwargs (dict): Keyword arguments passed to function
@@ -79,12 +79,12 @@ class manage_output(object):
             import matplotlib
             from matplotlib.backends.backend_pdf import PdfPages
 
-            debug   = self.debug   or kwargs.get("debug",   False)
+            debug = self.debug or kwargs.get("debug", False)
             verbose = self.verbose or kwargs.get("verbose", False)
 
-            figure     = function(*args, **kwargs)
-            outfile    = kwargs.pop("outfile",    "outfile.pdf")
-            outfiles   = kwargs.pop("outfiles",   None)
+            figure = function(*args, **kwargs)
+            outfile = kwargs.pop("outfile", "outfile.pdf")
+            outfiles = kwargs.pop("outfiles", None)
             savefig_kw = kwargs.pop("savefig_kw", {})
 
             if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):

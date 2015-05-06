@@ -58,7 +58,15 @@ def get_yaml(input):
             with open_yaml(input, "r") as infile:
                 return yaml.load(infile)
         else:
-            return yaml.load(input)
+            output = yaml.load(input)
+            if isinstance(output, six.string_types):
+                raise OSError("yaml has loaded a simple string: "
+                  "'{0}'; ".format(input) +
+                  "if this was intended as an infile, it was not found; "
+                  "input to get_yaml() function may be a path to a yaml "
+                  "file, a string containing yaml-format data, or a "
+                  "dict")
+            return output
     else:
         raise TypeError("get_yaml does not understand input of type " +
           "{0}".format(type(input)))
@@ -332,7 +340,7 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
 
     """
     from collections import OrderedDict
-    import matplotlib 
+    import matplotlib
     import matplotlib.pyplot as pyplot
     from . import multi_kw
 
@@ -437,4 +445,3 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(
           figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots
-

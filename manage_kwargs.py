@@ -99,8 +99,6 @@ class manage_kwargs(object):
       verbose (bool): Enable verbose output
       debug (bool): Enable debug output
     """
-    from . import get_yaml, merge_dicts
-    from .debug import db_s, db_kv
 
     def __init__(self, verbose=False, debug=False):
         """
@@ -128,6 +126,7 @@ class manage_kwargs(object):
         self.function = function
 
         decorator = self
+
         @wraps(function)
         def wrapped_function(*in_args, **in_kwargs):
             """
@@ -208,10 +207,12 @@ class manage_kwargs(object):
                             db_kv(key, in_presets[sel_preset][key], 3, "*")
                         else:
                             db_kv(key, in_presets[sel_preset][key], 3, "+")
-            for sel_preset in sel_presets:
-                if sel_preset not in in_presets:
-                    continue
-                out_kwargs = merge_dicts(out_kwargs, in_presets[sel_preset])
+            if sel_presets is not None:
+                for sel_preset in sel_presets:
+                    if sel_preset not in in_presets:
+                        continue
+                    out_kwargs = merge_dicts(out_kwargs,
+                      in_presets[sel_preset])
 
             # High priorty: Yaml
             if db:

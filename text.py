@@ -119,7 +119,7 @@ def set_shared_xlabel(figure_or_subplots, xlabel=None, xlabel_fp=None,
       (*Text*): X axis label
     """
     import matplotlib
-    from . import get_font, multi_kw, FP_KEYS
+    from . import get_edges, get_font, multi_kw, FP_KEYS
 
     label_kw = kwargs.pop("xlabel_kw", {})
 
@@ -149,23 +149,27 @@ def set_shared_xlabel(figure_or_subplots, xlabel=None, xlabel_fp=None,
         figure   = subplots.values()[0].get_figure()
         edges    = get_edges(subplots)
 
-    if "x" not in label_kw:
-        label_kw["x"] = (edges["min"] + edges["max"]) / 2.0
 
+    if "x" not in label_kw:
+        label_kw["x"] = (edges["left"] + edges["right"]) / 2.0
     if "y" not in label_kw:
         fig_height = figure.get_figheight()
         if "top" in label_kw:
             top = label_kw.pop("top")
-            if top < 0:
-                label_kw["y"] = (edges["top"] - top) / fig_height
-            else:
+            if top >= 0:
                 label_kw["y"] = (fig_height - top) / fig_height
-        else:
-            bottom = label_kw.pop("bottom", -0.5)
-            if bottom < 0:
-                label_kw["y"] = (edges["bottom"] + bottom) / fig_height
             else:
+                label_kw["y"] = (((edges["top"] * fig_height) + top)
+                              / fig_height)
+        elif "bottom" in label_kw:
+            bottom = label_kw.pop("bottom")
+            if bottom >= 0:
                 label_kw["y"] = bottom / fig_height
+            else:
+                label_kw["y"] = (((edges["bottom"] * fig_height) + bottom)
+                              / fig_height)
+        else:
+            label_kw["y"] = edges["bottom"] / 2
 
     return set_text(figure, text_kw = label_kw, **kwargs)
 
@@ -199,7 +203,7 @@ def set_shared_ylabel(figure_or_subplots, ylabel=None, ylabel_fp=None,
       (*Text*): Y axis label
     """
     import matplotlib
-    from . import get_font, multi_kw, FP_KEYS
+    from . import get_edges, get_font, multi_kw, FP_KEYS
 
     label_kw = kwargs.pop("ylabel_kw", {})
 
@@ -224,7 +228,7 @@ def set_shared_ylabel(figure_or_subplots, ylabel=None, ylabel_fp=None,
     if isinstance(figure_or_subplots, matplotlib.figure.Figure):
         figure = figure_or_subplots
         edges  = get_edges(figure)
-    elif isinstance(figure_or_subplots, types.DictType):
+    elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots
         figure   = subplots.values()[0].get_figure()
         edges    = get_edges(subplots)
@@ -240,12 +244,12 @@ def set_shared_ylabel(figure_or_subplots, ylabel=None, ylabel_fp=None,
         else:
             left = label_kw.pop("left", -0.5)
             if left < 0:
-                label_kw["x"] = (edges["min"] + left) / fig_width
+                label_kw["x"] = (edges["left"] + left) / fig_width
             else:
                 label_kw["x"] = left / fig_width
 
     if "y" not in label_kw:
-        label_kw["y"] = (edges["min"] + edges["max"]) / 2.0
+        label_kw["y"] = (edges["bottom"] + edges["top"]) / 2.0
 
     return set_text(figure, text_kw = label_kw, **kwargs)
 

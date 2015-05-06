@@ -73,52 +73,60 @@ class FigureManager(object):
     from .manage_output import manage_output
 
     defaults = """
-        draw_subplot:
-          lw:           1
-        draw_dataset:
-          lw:           1
+        function:
+          argument:     value
     """
-
-    presets  = """
+    presets = """
+      letter:
+        draw_figure:
+          left:         0.8
+          sub_width:    7.4
+          right:        0.8
+          top:          0.6
+          sub_height:   5.3
+          bottom:       0.6
+          title_fp:     16b
+          label_fp:     16b
+        draw_subplot:
+          title_fp:     16b
+          label_fp:     16b
+          tick_fp:      14r
+          legend_fp:    14r
+      notebook:
+        draw_figure:
+          left:         0.6
+          sub_width:    5.3
+          right:        0.6
+          top:          9.4
+          sub_height:   4.0
+          bottom:       0.5
+          title_fp:     10b
+          label_fp:     10b
+        draw_subplot:
+          title_fp:     10b
+          label_fp:     10b
+          tick_fp:      8r
+          legend_fp:    8r
       presentation:
         draw_figure:
-          title_fp:     24r
-          label_fp:     24r
+          left:         2.0
+          sub_width:    6.0
+          right:        2.0
+          top:          2.0
+          sub_height:   4.5
+          bottom:       1.0
+          title_fp:     24b
+          label_fp:     24b
+          legend_fp:    16r
         draw_subplot:
-          title_fp:     24r
-          label_fp:     24r
-          tick_fp:      18r
-          legend_fp:    18r
+          title_fp:     24b
+          label_fp:     24b
+          tick_fp:      16r
+          legend_fp:    16r
           lw:           2
         draw_dataset:
           plot_kw:
             lw:         2
-      notebook:
-        draw_figure:
-          title_fp:     10b
-          label_fp:     10b
-        draw_subplot:
-          title_fp:     10b
-          label_fp:     10b
-          tick_fp:      10r
-          legend_fp:    8r
-          lw:           1
-        draw_dataset:
-          plot_kw:
-            lw:         1
-      letter:
-        draw_figure:
-          title_fp:     18r
-          label_fp:     18r
-        draw_subplot:
-          title_fp:     18r
-          label_fp:     18r
-          tick_fp:      14r
-          legend_fp:    14r
-          lw:           1
-        draw_dataset:
-          plot_kw:
-            lw:         1
     """
 
     def __call__(self, *args, **kwargs):
@@ -294,9 +302,9 @@ class FigureManager(object):
         if title is not None:
             set_title(figure, title = title, **in_kwargs)
         if shared_xlabel is not None:
-            set_shared_xlabel(figure, label = shared_xlabel, **in_kwargs)
+            set_shared_xlabel(figure, xlabel=shared_xlabel, **in_kwargs)
         if shared_ylabel is not None:
-            set_shared_ylabel(figure, label = shared_ylabel, **in_kwargs)
+            set_shared_ylabel(figure, ylabel=shared_ylabel, **in_kwargs)
         if shared_legend is not None:
             shared_handles = OrderedDict()
 
@@ -409,7 +417,7 @@ class FigureManager(object):
               **out_kwargs)
 
         # Draw legend
-        if legend is not None:
+        if legend is not None and legend is not False:
             set_legend(subplot, handles = handles, **in_kwargs)
         if shared_handles is not None:
             for label, handle in handles.items():
@@ -438,6 +446,7 @@ class FigureManager(object):
         from . import get_color
         import numpy as np
 
+        # Configure plot settings
         plot_kw = kwargs.get("plot_kw", {})
         if "color" in plot_kw:
             plot_kw["color"] = get_color(plot_kw.pop("color"))
@@ -446,6 +455,7 @@ class FigureManager(object):
         if label is not None:
             plot_kw["label"] = label
 
+        # Load data
         dataset = np.loadtxt(infile)
         x = dataset[:,0]
         y = dataset[:,1]
@@ -474,6 +484,14 @@ class FigureManager(object):
           help     = "YAML configuration file")
 
         parser.add_argument(
+          "-preset",
+          type     = str,
+          action   = "append",
+          metavar  = "PRESET",
+          default  = [],
+          help     = "Name of preset")
+
+        parser.add_argument(
           "-v",
           "--verbose",
           action   = "store_true",
@@ -494,7 +512,7 @@ class FigureManager(object):
             db_s("Environment variables")
             for key in sorted(environ):
                 db_kv(key, environ[key], 1)
-            
+
             db_s("Command-line arguments")
             for key in sorted(arguments.keys()):
                 db_kv(key, arguments[key], 1)

@@ -96,8 +96,6 @@ class manage_defaults_presets(object):
       verbose (bool): Enable verbose output
       debug (bool): Enable debug output
     """
-    from . import get_yaml
-    from .debug import db_s, db_kv
 
     def __init__(self, verbose=False, debug=False):
         """

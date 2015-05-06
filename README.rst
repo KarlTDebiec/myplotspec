@@ -1,21 +1,31 @@
 Introduction
 ============
 
-MYPlotSpec is a Python package used to design matplotlib-based figures using
-the simple text format YAML.
+MYPlotSpec is a Python package used to write matplotlib-based plotting tools
+that support powerful configuration options using the simple text format YAML.
 
-MYPlotSpec may be used to rapidly write programs for plotting particular types
-of data while retaining detailed control over plot configuration. The minimal
-'quick & dirty' code needed to plot a certain type of data should be very close
-to the polished code used to produce publication-quality figures featuring
-precisely chosen proportions, ticks, colors, and fonts. MYPlotSpec accomplishes
-this by offering a system for routing arguments provided in YAML format to
-matplotlib's existing formatting functions. Settings may be applied globally or
-routed to specific figures, subplots, and datasets. MYPlotSpec should have no
-conflict with existing matplotlibrc settings, instead offering a level of
-specific control on top of them. MyPlotSpec supports a system of defaults and
-presets that make it easy to prepare multiple versions of plots without
-changing code, such as for a lab notebook, printout, or presentation.
+The goal of MYPlotSpec is to make it possible to modify plot settings such as
+proportions, ticks, colors, or fonts with per-figure, per-subplot, and
+per-dataset specificity without needing to modify Python code or implement
+support for individual settings. MYPlotSpec accomplishes this by parsing
+arguments provided in YAML format and routing them to matplotlib's existing
+formatting functions. MYPlotSpec should have no conflict with existing
+matplotlibrc settings, instead offering a level of specific control on top of
+them. MyPlotSpec supports a system of defaults and presets that make it easy to
+prepare multiple versions of plots without modifying code, such as for a lab
+notebook, printout, or presentation.
+
+Sample applications of MYPlotSpec for plotting several types of data are
+available on GitHub:
+
+- `Dynamic Light Scattering
+  <https://github.com/KarlTDebiec/myplotspec_dls>`_
+- `Fast Protein Liquid Chromatography
+  <https://github.com/KarlTDebiec/myplotspec_fplc>`_
+- `Molecular Dynamics Simulation
+  <https://github.com/KarlTDebiec/myplotspec_sim>`_
+- `Nuclear Magnetic Resonance Spectroscopy
+  <https://github.com/KarlTDebiec/myplotspec_nmr>`_
 
 Dependencies
 ------------
