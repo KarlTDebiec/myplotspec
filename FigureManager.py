@@ -322,7 +322,8 @@ class FigureManager(object):
               for key  in key2]
             if shared_legend is not None:
                 out_kwargs["shared_handles"] = shared_handles
-            self.draw_subplot(subplot = subplots[i], **out_kwargs)
+            if i in subplots:
+                self.draw_subplot(subplot = subplots[i], **out_kwargs)
 
         # Draw legend
         if shared_legend is not None:
