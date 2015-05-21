@@ -145,7 +145,7 @@ class manage_kwargs(object):
 
             if hasattr(self, "debug"):
                 db = (decorator.debug or self.debug or in_kwargs.get("debug",
-                False))
+                  False))
             else:
                 db = decorator.debug or in_kwargs.get("debug", False)
 
@@ -242,6 +242,7 @@ class manage_kwargs(object):
                         db_kv(key, in_kwargs[key], 2, "+")
             out_kwargs           = merge_dicts(out_kwargs, in_kwargs)
             out_kwargs["preset"] = sel_presets
+            out_kwargs["yaml_dict"] = in_yaml
 
             # Run function
             return function(*out_args, **out_kwargs)
