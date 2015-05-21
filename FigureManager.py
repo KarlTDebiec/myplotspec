@@ -66,7 +66,8 @@ class FigureManager(object):
     .. todo:
       - Accept presets from file, e.g. --preset-file /path/to/file.yaml
       - Support mutual exclusivity between presets
-      - Set subplot's autoscale_on to false in draw_subplot
+      - Support nested preset extensions
+      - Set subplot's autoscale_on to false in draw_subplot?
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
@@ -78,13 +79,10 @@ class FigureManager(object):
     """
     presets = """
       letter:
+        help: Letter (width ≤ 6.5", height ≤ 8")
         draw_figure:
-          left:         0.8
-          sub_width:    7.4
-          right:        0.8
-          top:          0.6
-          sub_height:   5.3
-          bottom:       0.6
+          fig_width:     9.00
+          fig_height:    6.50
           title_fp:     16b
           label_fp:     16b
         draw_subplot:
@@ -93,41 +91,109 @@ class FigureManager(object):
           tick_fp:      14r
           legend_fp:    14r
       notebook:
+        help: Notebook (width ≤ 6.5", height ≤ 8")
         draw_figure:
-          left:         0.6
-          sub_width:    5.3
-          right:        0.6
-          top:          9.4
-          sub_height:   4.0
-          bottom:       0.5
           title_fp:     10b
           label_fp:     10b
+          legend_fp:    10b
         draw_subplot:
           title_fp:     10b
           label_fp:     10b
           tick_fp:      8r
           legend_fp:    8r
-      presentation:
-        draw_figure:
-          left:         2.0
-          sub_width:    6.0
-          right:        2.0
-          top:          2.0
-          sub_height:   4.5
-          bottom:       1.0
-          title_fp:     24b
-          label_fp:     24b
-          legend_fp:    16r
+      poster:
+        help: Poster
         draw_subplot:
-          title_fp:     24b
-          label_fp:     24b
-          tick_fp:      16r
-          legend_fp:    16r
+          title_fp:     36r
+          label_fp:     36r
+          tick_fp:      24r
+          tick_params:
+            length:     3
+            width:      1
+            pad:        10
           lw:           2
         draw_dataset:
           plot_kw:
             lw:         2
+      presentation:
+        help: 4:3 presentation (width = 10.24", height = 7.68")
+        draw_figure:
+          fig_width:    10.24
+          fig_height:    7.68
+          title_fp:     24b
+          label_fp:     24b
+          legend_fp:    16r
+        draw_subplot:
+          title_fp:     18r
+          label_fp:     18r
+          tick_fp:      14r
+          tick_params:
+            length:     3
+            width:      1
+            pad:        6
+          legend_fp:    14r
+          lw:           2
+        draw_dataset:
+          plot_kw:
+            lw:         2
+      presentation_wide:
+        help: 16:9 presentation (width = 19.20", height = 10.80")
+        draw_figure:
+          title_fp:     24b
+          label_fp:     24b
+          legend_fp:    24r
+        draw_subplot:
+          title_fp:     24b
+          label_fp:     24b
+          tick_fp:      16r
+          tick_params:
+            length:     3
+            width:      1
+            pad:        6
+          lw:           3
+        draw_dataset:
+          plot_kw:
+            lw:         3
     """
+
+    def __init__(self, *args, **kwargs):
+        """
+        """
+        from . import get_yaml
+
+        defaults = get_yaml(kwargs.get("defaults",
+          self.defaults if hasattr(self, "defaults") else {}))
+        self.defaults = defaults
+
+        presets = self.initialize_presets(*args, **kwargs)
+        self.presets = presets
+
+        super(FigureManager, self).__init__(*args, **kwargs)
+
+    def initialize_presets(self, *args, **kwargs):
+        """
+        """
+        from . import get_yaml, merge_dicts
+
+        presets = get_yaml(kwargs.get("presets",
+          self.presets if hasattr(self, "presets") else {}))
+        if hasattr(super(self.__class__, self), "presets"):
+            super_presets = get_yaml(super(self.__class__, self).presets)
+        else:
+            super_presets = {}
+        for preset_name, preset in presets.items():
+            if "inherits" in preset:
+                parent_name = preset["inherits"]
+                if parent_name in super_presets:
+                    presets[preset_name] = merge_dicts(
+                      super_presets[parent_name], preset)
+        for preset_name, preset in presets.items():
+            if "extends" in preset:
+                parent_name = preset["extends"]
+                if parent_name in presets:
+                    presets[preset_name] = merge_dicts(presets[parent_name],
+                    preset)
+        return presets
 
     def __call__(self, *args, **kwargs):
         """
@@ -471,10 +537,59 @@ class FigureManager(object):
         Provides command-line functionality.
         """
         import argparse
+        from textwrap import wrap
 
+        full_preset_names = sorted([k for k, v in self.presets.items()
+                              if "extends" not in v])
+        if len(full_preset_names) == 0:
+            epilog = None
+        else:
+            epilog = "available presets:\n"
+            for preset_name in full_preset_names:
+                preset = self.presets[preset_name]
+                extension_names = sorted([k for k, v in self.presets.items()
+                                    if "extends" in v
+                                    and v["extends"] == preset_name])
+                n_extensions = len(extension_names)
+                symbol = "│" if n_extensions > 0 else " "
+                if "help" in preset:
+                    wrapped = wrap(preset["help"], 54)
+                    if len(preset_name) > 20:
+                        epilog += "  {0}\n".format(preset_name)
+                        epilog += "   {0} {1:19}".format(symbol, " ")
+                    else:
+                        epilog += "  {0:22s}".format(preset_name)
+                    epilog += "{0}\n".format(wrapped.pop(0))
+                    for line in wrapped:
+                        epilog += "   {0} {1:21}{2}\n".format(symbol, " ",
+                                    line)
+                else:
+                    epilog += "  {0}\n".format(preset_name)
+                for i, extension_name in enumerate(extension_names, 1):
+                    symbol = "└" if i == n_extensions else "├"
+                    extension = self.presets[extension_name]
+                    if "help" in extension:
+                        wrapped = wrap(extension["help"], 52)
+                        if len(extension_name) > 18:
+                            epilog += "   {0} {1}\n".format(symbol,
+                                        extension_name)
+                            symbol = "│" if i != n_extensions else " "
+                            epilog += "   {0} {1:19}".format(symbol, " ")
+                        else:
+                            epilog += "   {0} {1:19}".format(symbol,
+                                         extension_name)
+                        epilog += "{0}\n".format(wrapped.pop(0))
+                        symbol = "│" if i != n_extensions else " "
+                        for line in wrapped:
+                            epilog += "   {0} {1:21}{2}\n".format(symbol, " ",
+                                        line)
+                    else:
+                        epilog += "   {0} {1}\n".format(symbol,
+                                    extension_name)
         parser = argparse.ArgumentParser(
           description     = __doc__,
-          formatter_class = argparse.RawTextHelpFormatter)
+          formatter_class = argparse.RawTextHelpFormatter,
+          epilog          = epilog)
 
         parser.add_argument(
           "-yaml",
@@ -490,19 +605,19 @@ class FigureManager(object):
           action   = "append",
           metavar  = "PRESET",
           default  = [],
-          help     = "Name of preset")
+          help     = "Selected preset(s)")
 
         parser.add_argument(
           "-v",
           "--verbose",
-          action   = "store_true",
-          help     = "Enable verbose output")
+          action   = "count",
+          help     = "Enable verbose output, may be specified more than once")
 
         parser.add_argument(
           "-d",
           "--debug",
-          action   = "store_true",
-          help     = "Enable debug output")
+          action   = "count",
+          help     = "Enable debug output, may be specified more than once")
 
         arguments = vars(parser.parse_args())
 

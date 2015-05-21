@@ -49,7 +49,7 @@ def set_legend(subplot, handles=None, legend_lw=None, legend_fp=None,
     from . import FP_KEYS, get_font, multi_kw
 
     # Manage arguments
-    legend_kw   = kwargs.pop("legend_kw", {})
+    legend_kw = kwargs.pop("legend_kw", {})
     legend_fp_2 = multi_kw(["legend_fp"] + FP_KEYS, legend_kw)
     if legend_fp_2 is not None:
         legend_kw["prop"] = get_font(legend_fp_2)

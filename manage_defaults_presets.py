@@ -161,7 +161,7 @@ class manage_defaults_presets(object):
                     out_defaults = in_defaults[method.__name__]
                 else:
                     if db:
-                        db_s("defaults unavailale for this method", 1)
+                        db_s("defaults unavailable for this method", 1)
             else:
                 if db:
                     db_s("defaults unavailable for this class", 1)
