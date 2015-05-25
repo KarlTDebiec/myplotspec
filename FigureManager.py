@@ -68,6 +68,8 @@ class FigureManager(object):
       - Support mutual exclusivity between presets
       - Support nested preset extensions
       - Set subplot's autoscale_on to false in draw_subplot?
+      - Support quiet argument in addition to verbose
+        (default verbose=1)
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
@@ -537,6 +539,7 @@ class FigureManager(object):
         Provides command-line functionality.
         """
         import argparse
+        from inspect import getmodule
         from textwrap import wrap
 
         full_preset_names = sorted([k for k, v in self.presets.items()
@@ -587,7 +590,7 @@ class FigureManager(object):
                         epilog += "   {0} {1}\n".format(symbol,
                                     extension_name)
         parser = argparse.ArgumentParser(
-          description     = __doc__,
+          description     = getmodule(self.__class__).__doc__,
           formatter_class = argparse.RawTextHelpFormatter,
           epilog          = epilog)
 
