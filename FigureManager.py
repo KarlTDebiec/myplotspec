@@ -103,6 +103,12 @@ class FigureManager(object):
           label_fp:     10b
           tick_fp:      8r
           legend_fp:    8r
+          tick_params:
+            length:     2
+            pad:        6
+        draw_dataset:
+          plot_kw:
+            lw:         1
       poster:
         help: Poster
         draw_subplot:
