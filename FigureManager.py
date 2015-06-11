@@ -147,6 +147,8 @@ class FigureManager(object):
       presentation_wide:
         help: 16:9 presentation (width = 19.20", height = 10.80")
         draw_figure:
+          fig_width:    19.20
+          fig_height:   10.80
           title_fp:     24b
           label_fp:     24b
           legend_fp:    24r
@@ -155,9 +157,9 @@ class FigureManager(object):
           label_fp:     24b
           tick_fp:      16r
           tick_params:
-            length:     3
-            width:      1
-            pad:        6
+            length:     6
+            width:      2
+            pad:        10
           lw:           3
         draw_dataset:
           plot_kw:
