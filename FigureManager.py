@@ -155,7 +155,7 @@ class FigureManager(object):
         draw_subplot:
           title_fp:     24b
           label_fp:     24b
-          tick_fp:      16r
+          tick_fp:      20r
           tick_params:
             length:     6
             width:      2
