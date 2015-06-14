@@ -290,6 +290,19 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
             tick_params["axis"] = "y"
             subplot_y2.tick_params(**tick_params)
 
+def add_secondary_plot(figure, subplots, **kwargs):
+    """
+    """
+    from . import get_figure_subplots, get_font
+    from .axes import set_xaxis, set_yaxis
+
+    # Add subplot to figure and format
+    figure, subplots = get_figure_subplots(figure=figure, subplots=subplots,
+      **kwargs)
+    subplot = subplots[len(subplots) - 1]
+
+    return subplot
+
 ########################### TEMPORARILY DEPRECIATED ###########################
 #def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
 #    ""
