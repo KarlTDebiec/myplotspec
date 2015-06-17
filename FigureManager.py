@@ -93,7 +93,7 @@ class FigureManager(object):
           tick_fp:      14r
           legend_fp:    14r
       notebook:
-        help: Notebook (width ≤ 6.5", height ≤ 8")
+        help: Notebook (width ≤ 6.5", height ≤ 9")
         draw_figure:
           title_fp:     10b
           label_fp:     10b
@@ -276,6 +276,7 @@ class FigureManager(object):
           objects as requested, or adds pages to existing ones. Once all
           figures have been drawn, this function closes each PdfPages.
         """
+        from copy import copy
         figure_specs = in_kwargs.pop("figures", {})
         figure_indexes = sorted([i for i in figure_specs.keys()
                            if str(i).isdigit()])
@@ -286,7 +287,7 @@ class FigureManager(object):
             out_kwargs = figure_specs[i].copy()
             out_kwargs["verbose"] = in_kwargs.get("verbose", False)
             out_kwargs["debug"] = in_kwargs.get("debug", False)
-            out_kwargs["preset"] = in_kwargs.get("preset", [])[:]
+            out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [["figures", "all"], ["figures", i]]
             out_kwargs["outfiles"] = outfiles
@@ -364,6 +365,7 @@ class FigureManager(object):
           (*Figure*): Figure
         """
         from collections import OrderedDict
+        from copy import copy
         from . import get_figure_subplots
         from .legend import set_shared_legend
         from .text import set_title, set_shared_xlabel, set_shared_ylabel
@@ -389,7 +391,7 @@ class FigureManager(object):
             out_kwargs = subplot_specs[i].copy()
             out_kwargs["verbose"] = in_kwargs.get("verbose", False)
             out_kwargs["debug"] = in_kwargs.get("debug", False)
-            out_kwargs["preset"] = in_kwargs.get("preset", [])[:]
+            out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["subplots", "all"],
@@ -464,6 +466,7 @@ class FigureManager(object):
           in_kwargs (dict): Additional keyword arguments
         """
         from collections import OrderedDict
+        from copy import copy
         from .axes import set_xaxis, set_yaxis
         from .legend import set_legend
         from .text import set_title
@@ -483,7 +486,7 @@ class FigureManager(object):
             out_kwargs = dataset_specs[i].copy()
             out_kwargs["verbose"] = in_kwargs.get("verbose", False)
             out_kwargs["debug"] = in_kwargs.get("debug", False)
-            out_kwargs["preset"] = in_kwargs.get("preset", [])[:]
+            out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["datasets", "all"],
@@ -622,12 +625,14 @@ class FigureManager(object):
           "-v",
           "--verbose",
           action   = "count",
+          default  = 1,
           help     = "Enable verbose output, may be specified more than once")
 
         parser.add_argument(
           "-d",
           "--debug",
           action   = "count",
+          default  = 0,
           help     = "Enable debug output, may be specified more than once")
 
         arguments = vars(parser.parse_args())

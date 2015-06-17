@@ -139,6 +139,7 @@ class manage_kwargs(object):
             Returns:
               Return value of wrapped function
             """
+            from copy import copy
             import six
             from . import get_yaml, merge_dicts
             from .debug import db_s, db_kv
@@ -155,7 +156,7 @@ class manage_kwargs(object):
                   function.__name__))
             in_defaults   = get_yaml(in_kwargs.pop("defaults", {}))
             in_presets    = get_yaml(in_kwargs.pop("presets", {}))
-            sel_presets   = in_kwargs.pop("preset", [])
+            sel_presets   = copy(in_kwargs.get("preset", []))
             if isinstance(sel_presets, six.string_types):
                 sel_presets = [sel_presets]
             in_yaml       = get_yaml(in_kwargs.get("yaml_dict", {}))
@@ -165,12 +166,12 @@ class manage_kwargs(object):
             out_kwargs    = {}
 
             # Prepare selected yaml keys and determine presets
-            sel_yaml  = {}
+            sel_yaml = {}
             for sel_yaml_key in sel_yaml_keys:
                 node = in_yaml.copy()
                 if sel_yaml_key != ("__complete_file__",):
                     for key in sel_yaml_key:
-                        if key  in node.keys():
+                        if key in node.keys():
                             node = node[key]
                         elif str(key) in map(str, node.keys()):
                             node = node[str(key)]
@@ -179,11 +180,14 @@ class manage_kwargs(object):
                             break
                 sel_yaml[sel_yaml_key] = node
                 if "preset" in node and not node["preset"] in sel_presets:
-                    add_presets = node.pop("preset")
+                    add_presets = copy(node.get("preset"))
                     if isinstance(add_presets, six.string_types):
                         sel_presets += [add_presets]
                     else:
                         sel_presets += add_presets
+            if db:
+                db_s("Selected presets that are available: '{0}'".format(
+                  sel_presets))
 
             # Lowest priority: Defaults
             if db:
