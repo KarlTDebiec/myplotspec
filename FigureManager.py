@@ -284,7 +284,9 @@ class FigureManager(object):
 
         # Configure and plot figures
         for i in figure_indexes:
-            out_kwargs = figure_specs[i].copy()
+            out_kwargs = copy(figure_specs.get(i, {}))
+            if out_kwargs is None:
+                out_kwargs = {}
             out_kwargs["verbose"] = in_kwargs.get("verbose", False)
             out_kwargs["debug"] = in_kwargs.get("debug", False)
             out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
@@ -388,7 +390,9 @@ class FigureManager(object):
 
         # Configure and plot subplots
         for i in subplot_indexes:
-            out_kwargs = subplot_specs[i].copy()
+            out_kwargs = copy(subplot_specs.get(i, {}))
+            if out_kwargs is None:
+                out_kwargs = {}
             out_kwargs["verbose"] = in_kwargs.get("verbose", False)
             out_kwargs["debug"] = in_kwargs.get("debug", False)
             out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
@@ -483,7 +487,9 @@ class FigureManager(object):
         dataset_indexes = sorted([i for i in dataset_specs.keys()
                             if str(i).isdigit()])
         for i in dataset_indexes:
-            out_kwargs = dataset_specs[i].copy()
+            out_kwargs = copy(dataset_specs.get(i, {}))
+            if out_kwargs is None:
+                out_kwargs = {}
             out_kwargs["verbose"] = in_kwargs.get("verbose", False)
             out_kwargs["debug"] = in_kwargs.get("debug", False)
             out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
