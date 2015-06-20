@@ -628,11 +628,30 @@ class FigureManager(object):
           help     = "Selected preset(s)")
 
         parser.add_argument(
+          "-s",
+          "--seaborn",
+          action   = "store_true",
+          help     = "Enable access to seaborn functions without overriding "
+                     "matplotlib defaults")
+
+        verbosity = parser.add_mutually_exclusive_group()
+
+        verbosity.add_argument(
           "-v",
           "--verbose",
           action   = "count",
           default  = 1,
           help     = "Enable verbose output, may be specified more than once")
+
+        verbosity.add_argument(
+          "-q",
+          "--quiet",
+          action   = "store_const",
+          const    = 0,
+          default  = 1,
+          dest     = "verbose",
+          help     = "Disable verbose output")
+
 
         parser.add_argument(
           "-d",
@@ -642,6 +661,9 @@ class FigureManager(object):
           help     = "Enable debug output, may be specified more than once")
 
         arguments = vars(parser.parse_args())
+
+        if arguments.get("seaborn", False):
+            import seaborn.apionly
 
         if arguments["debug"]:
             from os import environ
