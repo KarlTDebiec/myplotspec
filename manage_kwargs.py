@@ -96,11 +96,11 @@ class manage_kwargs(object):
     declaration itself.
 
     Attributes:
-      verbose (bool): Enable verbose output
-      debug (bool): Enable debug output
+      verbose (int): Enable verbose output
+      debug (int): Enable debug output
     """
 
-    def __init__(self, verbose=False, debug=False):
+    def __init__(self, verbose=0, debug=0):
         """
         Stores arguments provided at decoration.
 
@@ -146,12 +146,12 @@ class manage_kwargs(object):
 
             if hasattr(self, "debug"):
                 db = (decorator.debug or self.debug or in_kwargs.get("debug",
-                  False))
+                     0))
             else:
-                db = decorator.debug or in_kwargs.get("debug", False)
+                db = decorator.debug or in_kwargs.get("debug", 0)
 
             # Prepare inputs and outputs
-            if db:
+            if db >= 1:
                 db_s("Managing kwargs for function '{0}':".format(
                   function.__name__))
             in_defaults   = get_yaml(in_kwargs.pop("defaults", {}))
@@ -185,12 +185,12 @@ class manage_kwargs(object):
                         sel_presets += [add_presets]
                     else:
                         sel_presets += add_presets
-            if db:
+            if db >= 1:
                 db_s("Selected presets that are available: '{0}'".format(
                   sel_presets))
 
             # Lowest priority: Defaults
-            if db:
+            if db >= 1:
                 db_s("Low priority: Defaults", 1)
                 for key in sorted(in_defaults.keys()):
                     if key in out_kwargs:
@@ -200,7 +200,7 @@ class manage_kwargs(object):
             out_kwargs = merge_dicts(out_kwargs, in_defaults)
 
             # Low priority: Presets
-            if db:
+            if db >= 1:
                 db_s("Intermediate priority: Presets", 1)
                 for sel_preset in sel_presets:
                     db_s(sel_preset, 2)
@@ -219,7 +219,7 @@ class manage_kwargs(object):
                       in_presets[sel_preset])
 
             # High priorty: Yaml
-            if db:
+            if db >= 1:
                 db_s("High priority: Yaml", 1)
                 for sel_yaml_key in sel_yaml_keys:
                     db_s(sel_yaml_key, 2)
@@ -236,7 +236,7 @@ class manage_kwargs(object):
                 out_kwargs = merge_dicts(out_kwargs, sel_yaml[sel_yaml_key])
 
             # Highest priorty: Function call
-            if db:
+            if db >= 1:
                 db_s("Highest priority: Arguments provided at function or " +
                      "method call", 1)
                 for key in sorted(in_kwargs.keys()):
