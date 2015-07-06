@@ -159,6 +159,8 @@ class manage_kwargs(object):
             sel_presets   = copy(in_kwargs.get("preset", []))
             if isinstance(sel_presets, six.string_types):
                 sel_presets = [sel_presets]
+            elif sel_presets is None:
+                sel_presets = []
             in_yaml       = get_yaml(in_kwargs.get("yaml_dict", {}))
             sel_yaml_keys = list(map(tuple, in_kwargs.get("yaml_keys",
                               [["__complete_file__"]])))
@@ -179,6 +181,8 @@ class manage_kwargs(object):
                             node = {}
                             break
                 sel_yaml[sel_yaml_key] = node
+                if node is None:
+                    continue
                 if "preset" in node and not node["preset"] in sel_presets:
                     add_presets = copy(node.get("preset"))
                     if isinstance(add_presets, six.string_types):
@@ -223,7 +227,8 @@ class manage_kwargs(object):
                 db_s("High priority: Yaml", 1)
                 for sel_yaml_key in sel_yaml_keys:
                     db_s(sel_yaml_key, 2)
-                    if sel_yaml[sel_yaml_key] == {}:
+                    if (sel_yaml[sel_yaml_key] == {}
+                    or  sel_yaml[sel_yaml_key] is None):
                         continue
                     for key in sorted(sel_yaml[sel_yaml_key]):
                         if key in out_kwargs:
@@ -231,7 +236,8 @@ class manage_kwargs(object):
                         else:
                             db_kv(key, sel_yaml[sel_yaml_key][key], 3, "+")
             for sel_yaml_key in sel_yaml_keys:
-                if sel_yaml[sel_yaml_key] == {}:
+                if (sel_yaml[sel_yaml_key] == {}
+                or  sel_yaml[sel_yaml_key] is None):
                     continue
                 out_kwargs = merge_dicts(out_kwargs, sel_yaml[sel_yaml_key])
 
