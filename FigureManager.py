@@ -277,6 +277,7 @@ class FigureManager(object):
           figures have been drawn, this function closes each PdfPages.
         """
         from copy import copy
+        import six
         figure_specs = in_kwargs.pop("figures", {})
         figure_indexes = sorted([i for i in figure_specs.keys()
                            if str(i).isdigit()])
@@ -287,11 +288,29 @@ class FigureManager(object):
             out_kwargs = copy(figure_specs.get(i, {}))
             if out_kwargs is None:
                 out_kwargs = {}
-            out_kwargs["verbose"] = in_kwargs.get("verbose", False)
-            out_kwargs["debug"] = in_kwargs.get("debug", False)
-            out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
+
+            # Output settings from spec override inherited settings
+            if "verbose" not in out_kwargs:
+                out_kwargs["verbose"] = in_kwargs.get("verbose", 1)
+            if "debug" not in out_kwargs:
+                out_kwargs["debug"] = in_kwargs.get("debug", 0)
+
+            # Presets from spec added to inherited presets
+            if "preset" in out_kwargs:
+                if isinstance(out_kwargs["preset"], six.string_types):
+                    out_kwargs["preset"] = [out_kwargs["preset"]]
+            else:
+                out_kwargs["preset"] = []
+            if "preset" in in_kwargs:
+                if isinstance(in_kwargs["preset"], six.string_types):
+                    out_kwargs["preset"].append(in_kwargs["preset"])
+                else:
+                    out_kwargs["preset"] += in_kwargs["preset"]
+
+            # Build list of keys from which to load from spec dict
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [["figures", "all"], ["figures", i]]
+
             out_kwargs["outfiles"] = outfiles
             self.draw_figure(**out_kwargs)
 
@@ -368,6 +387,7 @@ class FigureManager(object):
         """
         from collections import OrderedDict
         from copy import copy
+        import six
         from . import get_figure_subplots
         from .legend import set_shared_legend
         from .text import set_title, set_shared_xlabel, set_shared_ylabel
@@ -393,17 +413,37 @@ class FigureManager(object):
             out_kwargs = copy(subplot_specs.get(i, {}))
             if out_kwargs is None:
                 out_kwargs = {}
-            out_kwargs["verbose"] = in_kwargs.get("verbose", False)
-            out_kwargs["debug"] = in_kwargs.get("debug", False)
-            out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
+
+            # Output settings from spec override inherited settings
+            if "verbose" not in out_kwargs:
+                out_kwargs["verbose"] = in_kwargs.get("verbose", 1)
+            if "debug" not in out_kwargs:
+                out_kwargs["debug"] = in_kwargs.get("debug", 0)
+
+            # Presets from spec added to inherited presets
+            if "preset" in out_kwargs:
+                if isinstance(out_kwargs["preset"], six.string_types):
+                    out_kwargs["preset"] = [out_kwargs["preset"]]
+            else:
+                out_kwargs["preset"] = []
+            if "preset" in in_kwargs:
+                if isinstance(in_kwargs["preset"], six.string_types):
+                    out_kwargs["preset"].append(in_kwargs["preset"])
+                else:
+                    out_kwargs["preset"] += in_kwargs["preset"]
+
+            # Build list of keys from which to load from spec dict
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["subplots", "all"],
                             key3 + ["subplots", i]]
               for key3 in in_kwargs.get("yaml_keys")]
               for key  in key2]
+
+            # Specific handling of shared legend
             if shared_legend is not None:
                 out_kwargs["shared_handles"] = shared_handles
+
             if i in subplots:
                 self.draw_subplot(subplot = subplots[i], **out_kwargs)
 
@@ -471,6 +511,7 @@ class FigureManager(object):
         """
         from collections import OrderedDict
         from copy import copy
+        import six
         from .axes import set_xaxis, set_yaxis
         from .legend import set_legend
         from .text import set_title
@@ -490,21 +531,39 @@ class FigureManager(object):
             out_kwargs = copy(dataset_specs.get(i, {}))
             if out_kwargs is None:
                 out_kwargs = {}
-            out_kwargs["verbose"] = in_kwargs.get("verbose", False)
-            out_kwargs["debug"] = in_kwargs.get("debug", False)
-            out_kwargs["preset"] = copy(in_kwargs.get("preset", []))
+
+            # Output settings from spec override inherited settings
+            if "verbose" not in out_kwargs:
+                out_kwargs["verbose"] = in_kwargs.get("verbose", 1)
+            if "debug" not in out_kwargs:
+                out_kwargs["debug"] = in_kwargs.get("debug", 0)
+
+            # Presets from spec added to inherited presets
+            if "preset" in out_kwargs:
+                if isinstance(out_kwargs["preset"], six.string_types):
+                    out_kwargs["preset"] = [out_kwargs["preset"]]
+            else:
+                out_kwargs["preset"] = []
+            if "preset" in in_kwargs:
+                if isinstance(in_kwargs["preset"], six.string_types):
+                    out_kwargs["preset"].append(in_kwargs["preset"])
+                else:
+                    out_kwargs["preset"] += in_kwargs["preset"]
+
+            # Build list of keys from which to load from spec dict
             out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["datasets", "all"],
                             key3 + ["datasets", i]]
               for key3 in in_kwargs.get("yaml_keys")]
               for key  in key2]
+
             self.draw_dataset(subplot = subplot, handles = handles,
               **out_kwargs)
 
         # Draw legend
         if legend is not None and legend is not False:
-            set_legend(subplot, handles = handles, **in_kwargs)
+            set_legend(subplot, handles=handles, **in_kwargs)
         if shared_handles is not None:
             for label, handle in handles.items():
                 if label not in shared_handles:
