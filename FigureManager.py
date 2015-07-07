@@ -445,11 +445,11 @@ class FigureManager(object):
                 out_kwargs["shared_handles"] = shared_handles
 
             if i in subplots:
-                self.draw_subplot(subplot = subplots[i], **out_kwargs)
+                self.draw_subplot(subplot=subplots[i], **out_kwargs)
 
         # Draw legend
-        if shared_legend is not None:
-            set_shared_legend(figure, subplots, handles = shared_handles,
+        if shared_legend is not None and shared_legend is not False:
+            set_shared_legend(figure, subplots, handles=shared_handles,
               **shared_legend)
 
         # Return results
@@ -558,12 +558,14 @@ class FigureManager(object):
               for key3 in in_kwargs.get("yaml_keys")]
               for key  in key2]
 
-            self.draw_dataset(subplot = subplot, handles = handles,
+            self.draw_dataset(subplot=subplot, handles=handles,
               **out_kwargs)
 
-        # Draw legend
+        # Draw subplot legend
         if legend is not None and legend is not False:
             set_legend(subplot, handles=handles, **in_kwargs)
+
+        # Manage shared legend
         if shared_handles is not None:
             for label, handle in handles.items():
                 if label not in shared_handles:
