@@ -96,8 +96,8 @@ class manage_kwargs(object):
     declaration itself.
 
     Attributes:
-      verbose (int): Enable verbose output
-      debug (int): Enable debug output
+      verbose (int): Level of verbose output
+      debug (int): Level of debug output
     """
 
     def __init__(self, verbose=0, debug=0):
@@ -105,8 +105,8 @@ class manage_kwargs(object):
         Stores arguments provided at decoration.
 
         Arguments:
-          verbose (bool): Enable verbose output
-          debug (bool): Enable debug output
+          verbose (int): Level of verbose output
+          debug (int): Level of debug output
         """
         self.verbose = verbose
         self.debug = debug

@@ -20,7 +20,8 @@ if __name__ == "__main__":
 ################################### CLASSES ###################################
 class FigureManager(object):
     """
-    Manages the generation of figures using matplotlib.
+    Generates one or more figures to specifications provided in a YAML
+    file.
 
     Attributes:
       defaults (str, dict): Default arguments to :func:`draw_report`,
@@ -63,111 +64,120 @@ class FigureManager(object):
                 method_2_arg_2: efghij
           \"\"\"
 
+        presets may additionally contain the keys 'help', 'extends' and
+        'inherits'. 'help' may contain a short help message displayed
+        with the help text of the script. 'extends' may contain the
+        name of another preset from which the preset will inherit (and
+        optionally override) all arguments. Subclasses of this base
+        FigureManager class may also include the keyword 'inherits'
+        which may contain the name of a preset of FigureManager (listed
+        below) which which it will inherit (and optionally override) all
+        arguments.
+
     .. todo:
       - Accept presets from file, e.g. --preset-file /path/to/file.yaml
       - Support mutual exclusivity between presets
-      - Support nested preset extensions
-      - Set subplot's autoscale_on to false in draw_subplot?
-      - Support quiet argument in addition to verbose
-        (default verbose=1)
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
     from .manage_output import manage_output
 
-    defaults = """
-        function:
-          argument:     value
-    """
     presets = """
       letter:
-        help: Letter (width ≤ 6.5", height ≤ 8")
+        help: Letter (width ≤ 6.5", height ≤ 9.0")
         draw_figure:
-          fig_width:     9.00
-          fig_height:    6.50
-          title_fp:     16b
-          label_fp:     16b
+          fig_width:  9.00
+          fig_height: 6.50
+          title_fp: 16b
+          label_fp: 16b
         draw_subplot:
-          title_fp:     16b
-          label_fp:     16b
-          tick_fp:      14r
-          legend_fp:    14r
+          title_fp:  16b
+          label_fp:  16b
+          tick_fp:   14r
+          legend_fp: 14r
       notebook:
-        help: Notebook (width ≤ 6.5", height ≤ 9")
+        help: Notebook (width ≤ 6.5", height ≤ 9.0")
         draw_figure:
-          title_fp:     10b
-          label_fp:     10b
-          legend_fp:    10b
+          title_fp:  10b
+          label_fp:  10b
+          legend_fp: 10b
         draw_subplot:
-          title_fp:     10b
-          label_fp:     10b
-          tick_fp:      8r
-          legend_fp:    8r
+          title_fp: 10b
+          label_fp: 10b
+          tick_fp:   8r
+          legend_fp: 8r
           tick_params:
-            length:     2
-            pad:        6
+            length: 2
+            pad: 6
         draw_dataset:
           plot_kw:
-            lw:         1
+            lw: 1
       poster:
         help: Poster
         draw_subplot:
-          title_fp:     36r
-          label_fp:     36r
-          tick_fp:      24r
+          title_fp: 36r
+          label_fp: 36r
+          tick_fp:  24r
           tick_params:
-            length:     3
-            width:      1
-            pad:        10
-          lw:           2
+            length: 3
+            width: 1
+            pad: 10
+          lw: 2
         draw_dataset:
           plot_kw:
-            lw:         2
+            lw: 2
       presentation:
         help: 4:3 presentation (width = 10.24", height = 7.68")
         draw_figure:
-          fig_width:    10.24
-          fig_height:    7.68
-          title_fp:     24b
-          label_fp:     24b
-          legend_fp:    16r
+          fig_width:  10.24
+          fig_height:  7.68
+          title_fp:  24b
+          label_fp:  24b
+          legend_fp: 16r
         draw_subplot:
-          title_fp:     18r
-          label_fp:     18r
-          tick_fp:      14r
+          title_fp: 18r
+          label_fp: 18r
+          tick_fp:  14r
           tick_params:
-            length:     3
-            width:      1
-            pad:        6
-          legend_fp:    14r
-          lw:           2
+            length: 3
+            width: 1
+            pad: 6
+          legend_fp: 14r
+          lw: 2
         draw_dataset:
           plot_kw:
-            lw:         2
+            lw:  2
       presentation_wide:
         help: 16:9 presentation (width = 19.20", height = 10.80")
         draw_figure:
-          fig_width:    19.20
-          fig_height:   10.80
-          title_fp:     24b
-          label_fp:     24b
-          legend_fp:    24r
+          fig_width:  19.20
+          fig_height: 10.80
+          title_fp:  24b
+          label_fp:  24b
+          legend_fp: 24r
         draw_subplot:
-          title_fp:     24b
-          label_fp:     24b
-          tick_fp:      20r
+          title_fp: 24b
+          label_fp: 24b
+          tick_fp:  20r
           tick_params:
-            length:     6
-            width:      2
-            pad:        10
-          lw:           3
+            length: 6
+            width: 2
+            pad: 10
+          lw: 3
         draw_dataset:
           plot_kw:
-            lw:         3
+            lw: 3
     """
 
     def __init__(self, *args, **kwargs):
         """
+        Initializes.
+
+        Arguments:
+          defaults (string, dict): Default arguments; may be a yaml
+            string, path to a yaml file, or a dictionary
+          args (tuple): Additional positional arguments
+          kwargs (dict): Additional keyword arguments
         """
         from . import get_yaml
 
@@ -182,6 +192,13 @@ class FigureManager(object):
 
     def initialize_presets(self, *args, **kwargs):
         """
+        Initializes presets.
+
+        Arguments:
+          presets (string, dict): Available presets; may be a yaml
+            string, path to a yaml file, or a dictionary
+          args (tuple): Additional positional arguments
+          kwargs (dict): Additional keyword arguments
         """
         from . import get_yaml, merge_dicts
 
@@ -210,14 +227,15 @@ class FigureManager(object):
         When called as function, calls :func:`draw_report`.
 
         Arguments:
-          args (tuple): Passed to :func:`draw_report`
-          kwargs (dict): Passed to :func:`draw_report`
+          args (tuple): Positional arguments passed to
+            :func:`draw_report`
+          kwargs (dict): Keyword arguments passed to :func:`draw_report`
         """
         self.draw_report(*args, **kwargs)
 
     @manage_defaults_presets()
     @manage_kwargs()
-    def draw_report(self, **in_kwargs):
+    def draw_report(self, verbose=1, debug=0, **in_kwargs):
         """
         Draws a series of figures based on provided specifications.
 
@@ -262,6 +280,11 @@ class FigureManager(object):
 
         Arguments:
           figures (dict): Figure specifications
+          preset (str, list): Selected preset(s)
+          yaml_dict (str, dict): Argument data structure; may be yaml
+            string, path to yaml file, or dict
+          verbose (int): Level of verbose output
+          debug (int): Level of debug output
           in_kwargs (dict): Additional keyword arguments
 
         Note:
@@ -291,9 +314,9 @@ class FigureManager(object):
 
             # Output settings from spec override inherited settings
             if "verbose" not in out_kwargs:
-                out_kwargs["verbose"] = in_kwargs.get("verbose", 1)
+                out_kwargs["verbose"] = verbose
             if "debug" not in out_kwargs:
-                out_kwargs["debug"] = in_kwargs.get("debug", 0)
+                out_kwargs["debug"] = debug
 
             # Presets from spec added to inherited presets
             if "preset" in out_kwargs:
@@ -322,7 +345,8 @@ class FigureManager(object):
     @manage_kwargs()
     @manage_output()
     def draw_figure(self, title=None, shared_xlabel=None,
-        shared_ylabel=None, shared_legend=None, **in_kwargs):
+      shared_ylabel=None, shared_legend=None, verbose=1, debug=0,
+      **in_kwargs):
         """
         Draws a figure.
 
@@ -373,13 +397,18 @@ class FigureManager(object):
         Arguments:
           outfile (str): Output filename
           subplots (dict): Subplot specifications
+          preset (str, list): Selected preset(s)
           title (str, optional): Figure title
           shared_xlabel (str, optional): X label to be shared among
             subplots
           shared_ylabel (str, optional): Y label to be shared among
             subplots
-          shared_legend (dict, optional): Keyword arguments used to
-            generate a legend shared among subplots, if provided
+          shared_legend (bool, optional): Generate a legend shared 
+            between subplots
+          shared_legend_kw (dict, optional): Keyword arguments to be
+            used to generate shared legend
+          verbose (int): Level of verbose output
+          debug (int): Level of debug output
           in_kwargs (dict): Additional keyword arguments
 
         Returns:
@@ -396,11 +425,12 @@ class FigureManager(object):
         subplot_specs = in_kwargs.pop("subplots", {})
         subplot_indexes = sorted([i for i in subplot_specs.keys()
                             if str(i).isdigit()])
-        figure, subplots = get_figure_subplots(**in_kwargs)
+        figure, subplots = get_figure_subplots(verbose=verbose,
+          debug=debug, **in_kwargs)
 
         # Format Figure
         if title is not None:
-            set_title(figure, title = title, **in_kwargs)
+            set_title(figure, title=title, **in_kwargs)
         if shared_xlabel is not None:
             set_shared_xlabel(figure, xlabel=shared_xlabel, **in_kwargs)
         if shared_ylabel is not None:
@@ -416,9 +446,9 @@ class FigureManager(object):
 
             # Output settings from spec override inherited settings
             if "verbose" not in out_kwargs:
-                out_kwargs["verbose"] = in_kwargs.get("verbose", 1)
+                out_kwargs["verbose"] = verbose
             if "debug" not in out_kwargs:
-                out_kwargs["debug"] = in_kwargs.get("debug", 0)
+                out_kwargs["debug"] = debug
 
             # Presets from spec added to inherited presets
             if "preset" in out_kwargs:
@@ -458,7 +488,7 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_subplot(self, subplot, title=None, legend=None,
-        shared_handles=None, **in_kwargs):
+        shared_handles=None, verbose=1, debug=0, **in_kwargs):
         """
         Draws a subplot.
 
@@ -502,11 +532,14 @@ class FigureManager(object):
         Arguments:
           subplot (Axes): Axes on which to act
           datasets (dict): Dataset specifications
+          preset (str, list): Selected preset(s)
           title (str, optional): Subplot title
           legend (bool, optional): Draw legend on subplot
           shared_handles (OrderedDict, optional): Nascent OrderedDict of
             [labels]:handles shared among subplots of host figure; used
             to draw shared legend
+          verbose (int): Level of verbose output
+          debug (int): Level of debug output
           in_kwargs (dict): Additional keyword arguments
         """
         from collections import OrderedDict
@@ -520,7 +553,7 @@ class FigureManager(object):
         set_xaxis(subplot, **in_kwargs)
         set_yaxis(subplot, **in_kwargs)
         if title is not None:
-            set_title(subplot, title = title, **in_kwargs)
+            set_title(subplot, title=title, **in_kwargs)
 
         # Configure and plot datasets
         handles = OrderedDict()
@@ -534,9 +567,9 @@ class FigureManager(object):
 
             # Output settings from spec override inherited settings
             if "verbose" not in out_kwargs:
-                out_kwargs["verbose"] = in_kwargs.get("verbose", 1)
+                out_kwargs["verbose"] = verbose
             if "debug" not in out_kwargs:
-                out_kwargs["debug"] = in_kwargs.get("debug", 0)
+                out_kwargs["debug"] = debug
 
             # Presets from spec added to inherited presets
             if "preset" in out_kwargs:
@@ -574,7 +607,7 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_dataset(self, subplot, infile, label=None, handles=None,
-        **kwargs):
+        verbose=1, debug=0, **kwargs):
         """
         Draws a dataset.
 
@@ -588,6 +621,8 @@ class FigureManager(object):
             to subplot.plot()
           handles (OrderedDict, optional): Nascent OrderedDict of
             [labels]: handles on subplot
+          verbose (int): Level of verbose output
+          debug (int): Level of debug output
           kwargs (dict): Additional keyword arguments
         """
         from . import get_color
