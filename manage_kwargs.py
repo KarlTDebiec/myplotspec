@@ -96,17 +96,17 @@ class manage_kwargs(object):
     declaration itself.
 
     Attributes:
-      verbose (bool): Enable verbose output
-      debug (bool): Enable debug output
+      verbose (int): Level of verbose output
+      debug (int): Level of debug output
     """
 
-    def __init__(self, verbose=False, debug=False):
+    def __init__(self, verbose=0, debug=0):
         """
         Stores arguments provided at decoration.
 
         Arguments:
-          verbose (bool): Enable verbose output
-          debug (bool): Enable debug output
+          verbose (int): Level of verbose output
+          debug (int): Level of debug output
         """
         self.verbose = verbose
         self.debug = debug
@@ -146,12 +146,12 @@ class manage_kwargs(object):
 
             if hasattr(self, "debug"):
                 db = (decorator.debug or self.debug or in_kwargs.get("debug",
-                  False))
+                     0))
             else:
-                db = decorator.debug or in_kwargs.get("debug", False)
+                db = decorator.debug or in_kwargs.get("debug", 0)
 
             # Prepare inputs and outputs
-            if db:
+            if db >= 1:
                 db_s("Managing kwargs for function '{0}':".format(
                   function.__name__))
             in_defaults   = get_yaml(in_kwargs.pop("defaults", {}))
@@ -159,6 +159,8 @@ class manage_kwargs(object):
             sel_presets   = copy(in_kwargs.get("preset", []))
             if isinstance(sel_presets, six.string_types):
                 sel_presets = [sel_presets]
+            elif sel_presets is None:
+                sel_presets = []
             in_yaml       = get_yaml(in_kwargs.get("yaml_dict", {}))
             sel_yaml_keys = list(map(tuple, in_kwargs.get("yaml_keys",
                               [["__complete_file__"]])))
@@ -179,18 +181,20 @@ class manage_kwargs(object):
                             node = {}
                             break
                 sel_yaml[sel_yaml_key] = node
+                if node is None:
+                    continue
                 if "preset" in node and not node["preset"] in sel_presets:
                     add_presets = copy(node.get("preset"))
                     if isinstance(add_presets, six.string_types):
                         sel_presets += [add_presets]
                     else:
                         sel_presets += add_presets
-            if db:
+            if db >= 1:
                 db_s("Selected presets that are available: '{0}'".format(
                   sel_presets))
 
             # Lowest priority: Defaults
-            if db:
+            if db >= 1:
                 db_s("Low priority: Defaults", 1)
                 for key in sorted(in_defaults.keys()):
                     if key in out_kwargs:
@@ -200,7 +204,7 @@ class manage_kwargs(object):
             out_kwargs = merge_dicts(out_kwargs, in_defaults)
 
             # Low priority: Presets
-            if db:
+            if db >= 1:
                 db_s("Intermediate priority: Presets", 1)
                 for sel_preset in sel_presets:
                     db_s(sel_preset, 2)
@@ -219,11 +223,12 @@ class manage_kwargs(object):
                       in_presets[sel_preset])
 
             # High priorty: Yaml
-            if db:
+            if db >= 1:
                 db_s("High priority: Yaml", 1)
                 for sel_yaml_key in sel_yaml_keys:
                     db_s(sel_yaml_key, 2)
-                    if sel_yaml[sel_yaml_key] == {}:
+                    if (sel_yaml[sel_yaml_key] == {}
+                    or  sel_yaml[sel_yaml_key] is None):
                         continue
                     for key in sorted(sel_yaml[sel_yaml_key]):
                         if key in out_kwargs:
@@ -231,12 +236,13 @@ class manage_kwargs(object):
                         else:
                             db_kv(key, sel_yaml[sel_yaml_key][key], 3, "+")
             for sel_yaml_key in sel_yaml_keys:
-                if sel_yaml[sel_yaml_key] == {}:
+                if (sel_yaml[sel_yaml_key] == {}
+                or  sel_yaml[sel_yaml_key] is None):
                     continue
                 out_kwargs = merge_dicts(out_kwargs, sel_yaml[sel_yaml_key])
 
             # Highest priorty: Function call
-            if db:
+            if db >= 1:
                 db_s("Highest priority: Arguments provided at function or " +
                      "method call", 1)
                 for key in sorted(in_kwargs.keys()):

@@ -24,10 +24,10 @@ def get_yaml(input):
     """
     Generates a data structure from YAML input.
 
-    If ``input`` is a string, tests whether or not it is a path to a YAML file.
-    If it is, the file is loaded using yaml; if it is not, the string itself is
-    loaded using YAML. If ``input`` is a dict, it is returned without
-    modification.
+    If ``input`` is a string, tests whether or not it is a path to a
+    YAML file. If it is, the file is loaded using yaml; if it is not,
+    the string itself is loaded using YAML. If ``input`` is a dict, it
+    is returned without modification.
 
     Arguments:
       input (str, dict): YAML input
@@ -113,10 +113,11 @@ def get_color(color):
 
     If color is a str, may be of form 'pastel.red', 'dark.blue', etc.
     corresponding to a color set and color; if no set is specified the
-    'default' set is used. If list or ndarray, should contain three floating
-    point numbers corresponding to red, green, and blue values. If these
-    numbers are greater than 1, they will be divided by 255. If float, should
-    correspond to a grayscale shade, if greater than 1 will be divided by 255.
+    'default' set is used. If list or ndarray, should contain three
+    floating point numbers corresponding to red, green, and blue values.
+    If these numbers are greater than 1, they will be divided by 255. If
+    float, should correspond to a grayscale shade, if greater than 1
+    will be divided by 255.
 
     Arguments:
       color (str, list, ndarray, float): color
@@ -217,11 +218,12 @@ def pad_zero(ticks, digits=None, **kwargs):
 
     Arguments:
       ticks (list, ndarray): ticks
-      digits (int, optional): Precision; by default uses largest provided
+      digits (int, optional): Precision; by default uses largest
+        provided
 
     Returns:
-      (*list*): Tick labels, each with the same number of digits after the
-        decimal
+      (*list*): Tick labels, each with the same number of digits after
+        the decimal
     """
     if digits is None:
         digits = 0
@@ -261,9 +263,9 @@ def get_font(fp=None, **kwargs):
     """
     Generates font based on provided specification.
 
-    fp may be a string of form '##L' in which '##' is the font size and L
-    is 'r' for regular or 'b' for bold. fp may also be a dict of keyword
-    arguments to pass to FontProperties. fp may also be a
+    *fp* may be a string of form '##L' in which '##' is the font size
+    and L is 'r' for regular or 'b' for bold. fp may also be a dict of
+    keyword arguments to pass to FontProperties. fp may also be a
     FontProperties, in which case it is returned without modification
 
     Arguments:
@@ -291,8 +293,8 @@ def get_font(fp=None, **kwargs):
 def get_figure_subplots(figure=None, subplots=None, nrows=None,
     ncols=None, nsubplots=None, left=None, sub_width=None, wspace=None,
     right=None, bottom=None, sub_height=None, hspace=None, top=None,
-    fig_width=None, fig_height=None, figsize=None, verbose=False,
-    debug=False, **kwargs):
+    fig_width=None, fig_height=None, figsize=None, verbose=1,
+    debug=0, **kwargs):
     """
     Generates a figure and subplots to provided specifications.
 
@@ -333,8 +335,9 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
       figure_kw (dict): Additional keyword arguments passed to figure()
       subplot_kw (dict): Additional keyword arguments passed to Axes()
       axes_kw (dict): Alias to ``subplot_kw``
-      verbose (bool): Enable verbose output
-      debug (bool): Enable debug output
+      verbose (int): Level of verbose output
+      debug (int): Level of debug output
+      kwargs (dict): Additional keyword arguments
 
     Returns:
       (*Figure*, *OrderedDict*): Figure and subplots
@@ -442,7 +445,7 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
                 breaking = True
                 break
 
-    if verbose:
+    if verbose >= 1:
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(
           figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots

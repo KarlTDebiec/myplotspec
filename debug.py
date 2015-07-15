@@ -24,7 +24,8 @@ def db_s(string, indent=0):
       string (str): Content of debug output
       indent (int, optional): Indentation level; multiple of 4
     """
-    output = "DEBUG: {0}{1}".format("    " * indent, string)
+    output = "DEBUG: {0}{1}".format("    " * indent,
+               str(string).replace("\n", "\\n"))
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
@@ -40,7 +41,8 @@ def db_kv(key, value, indent=0, flag=" "):
       flag (str, optional): Single-character flag describing pair
     """
     output = "DEBUG: {0}  {1} {2}:{3}".format("    " * max(indent - 1, 0),
-               flag, key, value)
+               flag, str(key).replace("\n", "\\n"),
+               str(value).replace("\n", "\\n"))
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
