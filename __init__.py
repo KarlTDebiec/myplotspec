@@ -12,11 +12,8 @@ General functions.
 .. todo:
   - Decide how to manage the specification of sizes, positions, etc. in
     real-world units (inches or centimeters)
-  - Support setting rcParams in YAML file
-  - Check compatibility with seaborn
   - Consider supporting figure and subplot specs as lists rather than
     exclusively an integer indexed dictionary
-  - Make 'debug' and 'verbose' more useful
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -449,3 +446,41 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(
           figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots
+
+################################### CLASSES ###################################
+class memoized(object):
+    """
+    Decorator to cache the return values of a function each time it is
+    called and return cached values if subsequently called with the same
+    arguments.
+
+    Arguments:
+      cached_args (tuple): Names of arguments to consider in caching;
+        useful for disregarding arguments such as *verbose*, *debug*,
+        and *kwargs*
+    """
+    def __init__(self, func):
+        """
+        """
+        self.func = func
+        self.cache = {}
+    def __call__(self, *args):
+        """
+        """
+        if not isinstance(args, collections.Hashable):
+            # uncacheable. a list, for instance.
+            # better to not cache than blow up.
+            return self.func(*args)
+        if args in self.cache:
+            return self.cache[args]
+        else:
+            value = self.func(*args)
+            self.cache[args] = value
+            return value
+    def __repr__(self):
+        '''Return the function's docstring.'''
+        return self.func.__doc__
+    def __get__(self, obj, objtype):
+        '''Support instance methods.'''
+        return functools.partial(self.__call__, obj)
+

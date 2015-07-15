@@ -66,15 +66,15 @@ class debug_arguments(object):
     function call
 
     Attributes:
-      debug (bool): Enable debug output
+      debug (int): Level of debug output
     """
 
-    def __init__(self, debug=False):
+    def __init__(self, debug=0):
         """
         Stores arguments provided at decoration.
 
         Arguments:
-          debug (bool): Enable debug output
+          debug (int): Level of debug output
         """
         self.debug = debug
 
@@ -105,9 +105,9 @@ class debug_arguments(object):
               Return value of wrapped function
 
             """
-            debug = self.debug or kwargs.get("debug", False)
+            debug = self.debug or kwargs.get("debug", 0)
 
-            if debug:
+            if debug >= 1:
                 db_s("Arguments passed to function/method '{0}':".format(
                   function.__name__))
                 if len(args) > 0:

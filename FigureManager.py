@@ -665,7 +665,7 @@ class FigureManager(object):
         if arguments.get("seaborn", False):
             import seaborn.apionly
 
-        if arguments["debug"]:
+        if arguments["debug"] >= 1:
             from os import environ
             from .debug import db_s, db_kv
 
