@@ -56,6 +56,7 @@ class manage_output(object):
         """
         from functools import wraps
 
+        decorator = self
         self.function = function
 
         @wraps(function)

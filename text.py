@@ -332,12 +332,12 @@ def set_text(figure_or_subplot, s=None, x=None, y=None, text=None,
     """
     from . import get_font, multi_kw, FP_KEYS
 
-    text_kw = kwargs.pop("text_kw", {})
+    text_kw = kwargs.pop("text_kw", {}).copy()
 
     fp_2 = multi_kw(["fp"] + FP_KEYS, text_kw)
     if fp_2 is not None:
         text_kw["fontproperties"] = get_font(fp_2)
-    elif fp   is not None:
+    elif fp is not None:
         text_kw["fontproperties"] = get_font(fp)
 
     text_2 = multi_kw(["text", "s"], text_kw)
