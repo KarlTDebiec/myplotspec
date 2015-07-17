@@ -123,9 +123,8 @@ class manage_kwargs(object):
         """
         from functools import wraps
 
-        self.function = function
-
         decorator = self
+        self.function = function
 
         @wraps(function)
         def wrapped_function(*in_args, **in_kwargs):

@@ -22,10 +22,13 @@ def db_s(string, indent=0):
 
     Arguments:
       string (str): Content of debug output
-      indent (int, optional): Indentation level; multiple of 4
+      indent (int, optional): Indentation level; multiplied by 4
     """
-    output = "DEBUG: {0}{1}".format("    " * indent,
-               str(string).replace("\n", "\\n"))
+    try:
+        output = "DEBUG: {0}{1}".format("    " * indent,
+                   str(string).replace("\n", "\\n"))
+    except UnicodeEncodeError:
+        output = "DEBUG: {0}{1}".format("    " * indent, string)
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
@@ -37,12 +40,16 @@ def db_kv(key, value, indent=0, flag=" "):
     Arguments:
       key (str): key
       value (str): value
-      indent (int, optional): Indentation level; multiple of 4
+      indent (int, optional): Indentation level; multiplied by 4
       flag (str, optional): Single-character flag describing pair
     """
-    output = "DEBUG: {0}  {1} {2}:{3}".format("    " * max(indent - 1, 0),
-               flag, str(key).replace("\n", "\\n"),
-               str(value).replace("\n", "\\n"))
+    try:
+        output = "DEBUG: {0}  {1} {2}:{3}".format("    " * max(indent - 1, 0),
+                   flag, str(key).replace("\n", "\\n"),
+                   str(value).replace("\n", "\\n"))
+    except UnicodeEncodeError:
+        output = "DEBUG: {0}  {1} {2}:{3}".format("    " * max(indent - 1, 0),
+                   flag, key, value)
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
@@ -92,6 +99,7 @@ class debug_arguments(object):
         """
         from functools import wraps
 
+        decorator = self
         self.function = function
 
         @wraps(function)
@@ -105,7 +113,6 @@ class debug_arguments(object):
 
             Returns:
               Return value of wrapped function
-
             """
             debug = self.debug or kwargs.get("debug", 0)
 

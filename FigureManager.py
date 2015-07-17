@@ -188,6 +188,8 @@ class FigureManager(object):
         presets = self.initialize_presets(*args, **kwargs)
         self.presets = presets
 
+        self.dataset_cache = {}
+
         super(FigureManager, self).__init__(*args, **kwargs)
 
     def initialize_presets(self, *args, **kwargs):
@@ -392,7 +394,7 @@ class FigureManager(object):
         labels are (by default) centered on all subplots present on the
         figure, Shared legend is drawn on an additional subplot created
         after those specified in subplots, using the arguments provided
-        in ``shared_legend``.
+        in 'shared_legend'.
 
         Arguments:
           outfile (str): Output filename
@@ -609,7 +611,7 @@ class FigureManager(object):
     def draw_dataset(self, subplot, infile, label=None, handles=None,
         verbose=1, debug=0, **kwargs):
         """
-        Draws a dataset.
+        Draws a dataset on a subplot.
 
         Arguments:
           subplot (Axes): Axes on which to draw
@@ -646,6 +648,57 @@ class FigureManager(object):
         handle = subplot.plot(x, y, **plot_kw)[0]
         if handles is not None and label is not None:
             handles[label] = handle
+
+    def load_dataset(self, cls, *args, **kwargs):
+        """
+        Loads a dataset, or reloads a previously-loaded dataset.
+
+        Datasets are stored in FigureManager's dataset_cache instance
+        variable, a dictionary containing copies of previously
+        loaded datasets keyed by tuples containing the class and
+        arguments used to instantiate the dataset.
+
+        In order to support caching, a class must implement the static
+        method 'get_cache_key', which generates the tuple key. Only
+        arguments that affect the resulting dataset should be included
+        in the key (e.g. 'infile' should be included, but 'verbose' and
+        'debug' should not).
+
+        Cachable dataset classes may also implement the method
+        'get_cache_message' which returns a message to display when the
+        dataset is loaded from the cache.
+
+        Arguments:
+          cls (class): Dataset class
+          args (tuple): Positional arguments passed to
+            cls.get_cache_key() and cls()
+          kwargs (dict): Keyword arguments passed to cls.get_cache_key()
+            and cls()
+
+        Returns:
+          dataset (cls): Dataset, either initialized new or copied from
+            cache
+        """
+        verbose = kwargs.get("verbose", 1)
+        debug = kwargs.get("debug", 0)
+
+        if hasattr(cls, "get_cache_key"):
+            cache_key = cls.get_cache_key(*args, **kwargs)
+            if cache_key is None:
+                return cls(*args, **kwargs)
+            if cache_key in self.dataset_cache:
+                if verbose >= 1:
+                    if hasattr(cls, "get_cache_message"):
+                        print(cls.get_cache_message(cache_key))
+                    else:
+                        print("previously loaded")
+                return self.dataset_cache[cache_key]
+            else:
+                self.dataset_cache[cache_key] = cls(
+                  dataset_cache=self.dataset_cache, *args, **kwargs)
+                return self.dataset_cache[cache_key]
+        else:
+            return cls(*args, **kwargs)
 
     def main(self):
         """
