@@ -776,12 +776,24 @@ class FigureManager(object):
           default  = [],
           help     = "Selected preset(s)")
 
-        parser.add_argument(
-          "-s",
+        seaborn = parser.add_mutually_exclusive_group()
+
+        seaborn.add_argument(
+          "-S",
           "--seaborn",
-          action   = "store_true",
-          help     = "Enable access to seaborn functions without overriding "
-                     "matplotlib defaults")
+          action   = "store_const",
+          const    = 2,
+          default  = 0,
+          help     = "Enable seaborn, overriding matplotlib defaults")
+
+        seaborn.add_argument(
+          "-s",
+          "--seaborn-apionly",
+          action   = "store_const",
+          const    = 1,
+          default  = 0,
+          dest     = "seaborn",
+          help     = "Enable seaborn without overriding matplotlib defaults")
 
         verbosity = parser.add_mutually_exclusive_group()
 
@@ -801,7 +813,6 @@ class FigureManager(object):
           dest     = "verbose",
           help     = "Disable verbose output")
 
-
         parser.add_argument(
           "-d",
           "--debug",
@@ -811,7 +822,9 @@ class FigureManager(object):
 
         arguments = vars(parser.parse_args())
 
-        if arguments.get("seaborn", False):
+        if arguments["seaborn"] == 2:
+            import seaborn
+        elif arguments["seaborn"] == 1:
             import seaborn.apionly
 
         if arguments["debug"] >= 1:
