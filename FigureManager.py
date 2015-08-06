@@ -700,9 +700,13 @@ class FigureManager(object):
         else:
             return cls(*args, **kwargs)
 
-    def main(self):
+    def main(self, parser=None):
         """
         Provides command-line functionality.
+
+        Arguments:
+          parser (ArgumentParser): Argparse argument parser; allos
+            sublass to instantiate parser and add arguments (optional)
         """
         import argparse
         from inspect import getmodule
@@ -755,10 +759,13 @@ class FigureManager(object):
                     else:
                         epilog += "   {0} {1}\n".format(symbol,
                                     extension_name)
-        parser = argparse.ArgumentParser(
-          description     = getmodule(self.__class__).__doc__,
-          formatter_class = argparse.RawTextHelpFormatter,
-          epilog          = epilog)
+        if parser is None:
+            parser = argparse.ArgumentParser(
+              description     = getmodule(self.__class__).__doc__,
+              formatter_class = argparse.RawTextHelpFormatter,
+              epilog          = epilog)
+        else:
+            parser.epilog = epilog
 
         parser.add_argument(
           "-yaml",
