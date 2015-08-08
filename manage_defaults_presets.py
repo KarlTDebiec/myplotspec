@@ -7,21 +7,23 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Decorator to manage the passage of defaults and presets to a method.
+Decorator to manage the passage of defaults and available presets to a
+method.
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################### CLASSES ###################################
 class manage_defaults_presets(object):
     """
-    Decorator to manage the passage of defaults and presets to a method.
+    Decorator to manage the passage of defaults and available presets to
+    a method.
 
     This decorator is a partner to
     :class:`~.manage_kwargs.manage_kwargs`, desiged to allows its use
-    for methods of objects containg central ``defaults`` and ``presets``
-    attributes. It obtains available defaults and presets for the
-    wrapped method from their central location in the host object, and
-    passes on those applicable to the wrapped method.
+    for methods of objects containg central ``defaults`` and
+    `available_presets`` attributes. It obtains available defaults and
+    presets for the wrapped method from their central location in the
+    host object, and passes on those applicable to the wrapped method.
     :class:`~.manage_kwargs.manage_kwargs` then selects arguments to
     pass from among the provided defaults, available and selected
     presets, YAML file, and arguments provided at call time.
@@ -43,11 +45,11 @@ class manage_defaults_presets(object):
         \"\"\"
 
     Presets are accessed from the host objects's instance (or class)
-    variable ``self.presets``, in formats analagous to
+    variable ``self.available_presets``, in the same formats as
     ``self.defaults``. Presets contain an outer level of keys providing
     the names of available presets::
 
-        presets = \"\"\"
+        available_presets = \"\"\"
             preset_1:
                 method_1:
                     method_1_arg_1: 1001
@@ -66,8 +68,8 @@ class manage_defaults_presets(object):
 
     When this decorator is used to wrap a method of a class, it adds to
     the arguments being passed ``defaults``, containing the defaults
-    specified for the method, and ``presets``, containing only the
-    presets applicable to the method::
+    specified for the method, and ``available_presets``, containing only
+    the presets applicable to the method::
 
         @manage_defaults_presets()
         def method_1(*args, **kwargs):
@@ -93,17 +95,17 @@ class manage_defaults_presets(object):
         }
 
     Attributes:
-      verbose (bool): Enable verbose output
-      debug (bool): Enable debug output
+      verbose (int): Level of verbose output
+      debug (int): Level of debug output
     """
 
-    def __init__(self, verbose=False, debug=False):
+    def __init__(self, verbose=1, debug=0):
         """
         Stores arguments provided at decoration.
 
         Arguments:
-          verbose (bool): Enable verbose output
-          debug (bool): Enable debug output
+          verbose (int): Level of verbose output
+          debug (int): Level of debug output
         """
         self.verbose = verbose
         self.debug = debug
@@ -135,56 +137,53 @@ class manage_defaults_presets(object):
             Returns:
               Return value of wrapped function
             """
+            from copy import copy
             from . import get_yaml
             from .debug import db_s
 
-            if hasattr(self, "debug"):
-                db = (decorator.debug or self.debug or in_kwargs.get("debug",
-                False))
-            else:
-                db = decorator.debug or in_kwargs.get("debug", False)
-            if db:
+            db = max(in_kwargs.get("debug", 0), decorator.debug,
+                  self.debug if hasattr(self, "debug") else 0)
+            if db >= 1:
                 db_s("Managing defaults and presets for method " +
                   "'{0}' ".format(method.__name__,
                   "of class '{0}':".format(type(self).__name__)))
 
-            out_args   = in_args
-            out_kwargs = in_kwargs.copy()
+            out_args   = copy(in_args)
+            out_kwargs = copy(in_kwargs)
 
             # Manage defaults
-            out_defaults = {}
             if hasattr(self, "defaults"):
                 in_defaults = get_yaml(self.defaults)
                 if method.__name__ in in_defaults:
-                    if db:
+                    if db >= 1:
                         db_s("defaults available", 1)
-                    out_defaults = in_defaults[method.__name__]
+                    out_kwargs["defaults"] = in_defaults[method.__name__]
                 else:
-                    if db:
+                    if db >= 1:
                         db_s("defaults unavailable for this method", 1)
             else:
-                if db:
+                if db >= 1:
                     db_s("defaults unavailable for this class", 1)
-            out_kwargs["defaults"] = out_defaults
 
             # Manage presets
             out_presets = {}
-            if hasattr(self, "presets"):
-                in_presets = get_yaml(self.presets)
-                for preset_key, preset_value in in_presets.items():
-                    if method.__name__ in preset_value:
-                        if db:
-                            db_s("preset '{0}'".format(preset_key) +
+            if hasattr(self, "available_presets"):
+                available_presets = get_yaml(self.available_presets)
+                for preset_name in sorted(available_presets):
+                    preset = available_presets[preset_name]
+                    if method.__name__ in preset:
+                        if db >= 1:
+                            db_s("preset '{0}'".format(preset_name) +
                                  " available", 1)
-                        out_presets[preset_key] = preset_value[method.__name__]
+                        out_presets[preset_name] = preset[method.__name__]
                     else:
-                        if db:
-                            db_s("preset '{0}'".format(preset_key) +
+                        if db >= 1:
+                            db_s("preset '{0}'".format(preset_name) +
                                  " unavailable for this method", 1)
             else:
-                if db:
+                if db >= 1:
                     db_s("presets unavailable for this class", 1)
-            out_kwargs["presets"] = out_presets
+            out_kwargs["available_presets"] = out_presets
 
             return method(self, *out_args, **out_kwargs)
 

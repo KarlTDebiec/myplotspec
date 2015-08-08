@@ -40,14 +40,14 @@ class FigureManager(object):
               ...
           \"\"\"
 
-      presets (str, dict): Available sets of preset arguments to
+      available_presets (str, dict): Available sets of preset arguments to
         :func:`draw_report`, :func:`draw_figure`, :func:`draw_subplot`,
         and :func:`draw_dataset` functions, in yaml format. Outer level
         (of indentation or keys) provides preset names, middle level
         provides function names, and inner level provides arguments to
         pass to each function when preset is active::
 
-          presets = \"\"\"
+          availabe_presets = \"\"\"
             preset_1:
               method_1:
                 method_1_arg_1: 1001
@@ -64,25 +64,26 @@ class FigureManager(object):
                 method_2_arg_2: efghij
           \"\"\"
 
-        presets may additionally contain the keys 'help', 'extends' and
-        'inherits'. 'help' may contain a short help message displayed
-        with the help text of the script. 'extends' may contain the
-        name of another preset from which the preset will inherit (and
-        optionally override) all arguments. Subclasses of this base
-        FigureManager class may also include the keyword 'inherits'
-        which may contain the name of a preset of FigureManager (listed
-        below) which which it will inherit (and optionally override) all
-        arguments.
+        Each preset may additionally contain the keys 'help', 'extends'
+        and 'inherits'. 'help' may contain a short help message
+        displayed with the help text of the script. 'extends' may
+        contain the name of another preset within the class from which
+        the preset will inherit (and optionally override) all arguments.
+        Subclasses of this base FigureManager class may also include the
+        keyword 'inherits' which may contain the name of a preset of
+        FigureManager (listed below) from which it will inherit (and
+        optionally override) all arguments.
 
     .. todo:
       - Accept presets from file, e.g. --preset-file /path/to/file.yaml
       - Support mutual exclusivity between presets
+      - More advanced preset and overall specification help
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
     from .manage_output import manage_output
 
-    presets = """
+    available_presets = """
       letter:
         help: Letter (width ≤ 6.5", height ≤ 9.0")
         draw_figure:
@@ -185,8 +186,8 @@ class FigureManager(object):
           self.defaults if hasattr(self, "defaults") else {}))
         self.defaults = defaults
 
-        presets = self.initialize_presets(*args, **kwargs)
-        self.presets = presets
+        available_presets = self.initialize_presets(*args, **kwargs)
+        self.available_presets = available_presets
 
         self.dataset_cache = {}
 
@@ -197,41 +198,42 @@ class FigureManager(object):
         Initializes presets.
 
         Arguments:
-          presets (string, dict): Available presets; may be a yaml
-            string, path to a yaml file, or a dictionary
+          available_presets (string, dict): Available presets; may be a
+            yaml string, path to a yaml file, or a dictionary
           args (tuple): Additional positional arguments
           kwargs (dict): Additional keyword arguments
+
+        .. todo:
+            - Debug output
         """
         from . import get_yaml, merge_dicts
 
-        presets = get_yaml(kwargs.get("presets",
-          self.presets if hasattr(self, "presets") else {}))
-        if hasattr(super(self.__class__, self), "presets"):
-            super_presets = get_yaml(super(self.__class__, self).presets)
-        else:
-            super_presets = {}
-        for preset_name, preset in presets.items():
+        available_presets = get_yaml(kwargs.get("available_presets",
+          self.available_presets if hasattr(self, "available_presets")
+          else {}))
+        super_presets = get_yaml(super(self.__class__, self).available_presets
+          if hasattr(super(self.__class__, self), "available_presets") else {})
+        for preset_name, preset in available_presets.items():
             if "inherits" in preset:
                 parent_name = preset["inherits"]
                 if parent_name in super_presets:
-                    presets[preset_name] = merge_dicts(
+                    available_presets[preset_name] = merge_dicts(
                       super_presets[parent_name], preset)
-        for preset_name, preset in presets.items():
+        for preset_name, preset in available_presets.items():
             if "extends" in preset:
                 parent_name = preset["extends"]
-                if parent_name in presets:
-                    presets[preset_name] = merge_dicts(presets[parent_name],
-                    preset)
-        return presets
+                if parent_name in available_presets:
+                    available_presets[preset_name] = merge_dicts(
+                      available_presets[parent_name], preset)
+        return available_presets
 
     def __call__(self, *args, **kwargs):
         """
-        When called as function, calls :func:`draw_report`.
+        When called as a function, calls :func:`draw_report`.
 
         Arguments:
-          args (tuple): Positional arguments passed to
-            :func:`draw_report`
-          kwargs (dict): Keyword arguments passed to :func:`draw_report`
+          args (tuple): Passed to :func:`draw_report`
+          kwargs (dict): Passed to :func:`draw_report`
         """
         self.draw_report(*args, **kwargs)
 
@@ -283,7 +285,7 @@ class FigureManager(object):
         Arguments:
           figures (dict): Figure specifications
           preset (str, list): Selected preset(s)
-          yaml_dict (str, dict): Argument data structure; may be yaml
+          yaml_spec (str, dict): Argument data structure; may be yaml
             string, path to yaml file, or dict
           verbose (int): Level of verbose output
           debug (int): Level of debug output
@@ -303,16 +305,23 @@ class FigureManager(object):
         """
         from copy import copy
         import six
-        figure_specs = in_kwargs.pop("figures", {})
-        figure_indexes = sorted([i for i in figure_specs.keys()
+        from . import multi_kw
+
+        # Load spec and prepare outfiles
+        figure_specs = multi_kw(["figures", "figure"], in_kwargs, {})
+        figure_indexes = sorted([int(i) for i in figure_specs.keys()
                            if str(i).isdigit()])
         outfiles = {}
 
         # Configure and plot figures
         for i in figure_indexes:
-            out_kwargs = copy(figure_specs.get(i, {}))
-            if out_kwargs is None:
+            # Load the spec for this figure
+            if isinstance(figure_specs[i], dict):
+                out_kwargs = copy(figure_specs[i])
+            elif figure_specs[i] is None:
                 out_kwargs = {}
+            else:
+                raise TypeError()
 
             # Output settings from spec override inherited settings
             if "verbose" not in out_kwargs:
@@ -320,20 +329,24 @@ class FigureManager(object):
             if "debug" not in out_kwargs:
                 out_kwargs["debug"] = debug
 
-            # Presets from spec added to inherited presets
-            if "preset" in out_kwargs:
-                if isinstance(out_kwargs["preset"], six.string_types):
-                    out_kwargs["preset"] = [out_kwargs["preset"]]
-            else:
-                out_kwargs["preset"] = []
-            if "preset" in in_kwargs:
-                if isinstance(in_kwargs["preset"], six.string_types):
-                    out_kwargs["preset"].append(in_kwargs["preset"])
-                else:
-                    out_kwargs["preset"] += in_kwargs["preset"]
+            # Presets from spec have priority over inherited presets
+            out_presets = multi_kw(["presets", "preset"], out_kwargs, [])
+            if isinstance(out_presets, six.string_types):
+                out_presets = [out_presets]
+            elif out_presets is None:
+                out_presets = []
+            in_presets = multi_kw(["presets", "preset"], copy(in_kwargs), [])
+            if isinstance(in_presets, six.string_types):
+                in_presets = [in_presets]
+            elif in_presets is None:
+                in_presets = []
+            for in_preset in reversed(in_presets):
+                if not in_preset in out_presets:
+                    out_presets.insert(0, in_preset)
+            out_kwargs["presets"] = out_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
+            out_kwargs["yaml_spec"] = in_kwargs.get("yaml_spec", {})
             out_kwargs["yaml_keys"] = [["figures", "all"], ["figures", i]]
 
             out_kwargs["outfiles"] = outfiles
@@ -419,13 +432,13 @@ class FigureManager(object):
         from collections import OrderedDict
         from copy import copy
         import six
-        from . import get_figure_subplots
+        from . import get_figure_subplots, multi_kw
         from .legend import set_shared_legend
         from .text import set_title, set_shared_xlabel, set_shared_ylabel
 
-        # Prepare figure and subplots with specified dimensions
-        subplot_specs = in_kwargs.pop("subplots", {})
-        subplot_indexes = sorted([i for i in subplot_specs.keys()
+        # Load spec and prepare figure and subplots
+        subplot_specs = multi_kw(["subplots", "subplot"], in_kwargs, {})
+        subplot_indexes = sorted([int(i) for i in subplot_specs.keys()
                             if str(i).isdigit()])
         figure, subplots = get_figure_subplots(verbose=verbose,
           debug=debug, **in_kwargs)
@@ -442,9 +455,15 @@ class FigureManager(object):
 
         # Configure and plot subplots
         for i in subplot_indexes:
-            out_kwargs = copy(subplot_specs.get(i, {}))
-            if out_kwargs is None:
+            if i not in subplots:
+                continue
+            # Load the spec for this subplot
+            if isinstance(subplot_specs[i], dict):
+                out_kwargs = copy(subplot_specs[i])
+            elif subplot_specs[i] is None:
                 out_kwargs = {}
+            else:
+                raise TypeError()
 
             # Output settings from spec override inherited settings
             if "verbose" not in out_kwargs:
@@ -452,32 +471,33 @@ class FigureManager(object):
             if "debug" not in out_kwargs:
                 out_kwargs["debug"] = debug
 
-            # Presets from spec added to inherited presets
-            if "preset" in out_kwargs:
-                if isinstance(out_kwargs["preset"], six.string_types):
-                    out_kwargs["preset"] = [out_kwargs["preset"]]
-            else:
-                out_kwargs["preset"] = []
-            if "preset" in in_kwargs:
-                if isinstance(in_kwargs["preset"], six.string_types):
-                    out_kwargs["preset"].append(in_kwargs["preset"])
-                else:
-                    out_kwargs["preset"] += in_kwargs["preset"]
+            # Presets from spec have priority over inherited presets
+            out_presets = multi_kw(["presets", "preset"], out_kwargs, [])
+            if isinstance(out_presets, six.string_types):
+                out_presets = [out_presets]
+            elif out_presets is None:
+                out_presets = []
+            in_presets = multi_kw(["presets", "preset"], copy(in_kwargs), [])
+            if isinstance(in_presets, six.string_types):
+                in_presets = [in_presets]
+            elif in_presets is None:
+                in_presets = []
+            for in_preset in reversed(in_presets):
+                if not in_preset in out_presets:
+                    out_presets.insert(0, in_preset)
+            out_kwargs["presets"] = out_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
+            out_kwargs["yaml_spec"] = in_kwargs.get("yaml_spec", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["subplots", "all"],
                             key3 + ["subplots", i]]
               for key3 in in_kwargs.get("yaml_keys")]
               for key  in key2]
 
-            # Specific handling of shared legend
             if shared_legend is not None:
                 out_kwargs["shared_handles"] = shared_handles
-
-            if i in subplots:
-                self.draw_subplot(subplot=subplots[i], **out_kwargs)
+            self.draw_subplot(subplot=subplots[i], **out_kwargs)
 
         # Draw legend
         if shared_legend is not None and shared_legend is not False:
@@ -547,6 +567,7 @@ class FigureManager(object):
         from collections import OrderedDict
         from copy import copy
         import six
+        from . import multi_kw
         from .axes import set_xaxis, set_yaxis
         from .legend import set_legend
         from .text import set_title
@@ -559,13 +580,19 @@ class FigureManager(object):
 
         # Configure and plot datasets
         handles = OrderedDict()
-        dataset_specs = in_kwargs.pop("datasets", {})
-        dataset_indexes = sorted([i for i in dataset_specs.keys()
-                            if str(i).isdigit()])
+        dataset_specs = multi_kw(["datasets", "dataset"], in_kwargs, {})
+        dataset_indexes = sorted([int(i) for i in dataset_specs.keys()
+                           if str(i).isdigit()])
+
+        # Configure and plot datasets
         for i in dataset_indexes:
-            out_kwargs = copy(dataset_specs.get(i, {}))
-            if out_kwargs is None:
+            # Load the spec for this dataset
+            if isinstance(dataset_specs[i], dict):
+                out_kwargs = copy(dataset_specs[i])
+            elif dataset_specs[i] is None:
                 out_kwargs = {}
+            else:
+                raise TypeError()
 
             # Output settings from spec override inherited settings
             if "verbose" not in out_kwargs:
@@ -573,20 +600,24 @@ class FigureManager(object):
             if "debug" not in out_kwargs:
                 out_kwargs["debug"] = debug
 
-            # Presets from spec added to inherited presets
-            if "preset" in out_kwargs:
-                if isinstance(out_kwargs["preset"], six.string_types):
-                    out_kwargs["preset"] = [out_kwargs["preset"]]
-            else:
-                out_kwargs["preset"] = []
-            if "preset" in in_kwargs:
-                if isinstance(in_kwargs["preset"], six.string_types):
-                    out_kwargs["preset"].append(in_kwargs["preset"])
-                else:
-                    out_kwargs["preset"] += in_kwargs["preset"]
+            # Presets from spec have priority over inherited presets
+            out_presets = multi_kw(["presets", "preset"], out_kwargs, [])
+            if isinstance(out_presets, six.string_types):
+                out_presets = [out_presets]
+            elif out_presets is None:
+                out_presets = []
+            in_presets = multi_kw(["presets", "preset"], in_kwargs, [])
+            if isinstance(in_presets, six.string_types):
+                in_presets = [in_presets]
+            elif in_presets is None:
+                in_presets = []
+            for in_preset in reversed(in_presets):
+                if not in_preset in out_presets:
+                    out_presets.insert(0, in_preset)
+            out_kwargs["presets"] = out_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_dict"] = in_kwargs.get("yaml_dict", {})
+            out_kwargs["yaml_spec"] = in_kwargs.get("yaml_spec", {})
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["datasets", "all"],
                             key3 + ["datasets", i]]
@@ -712,17 +743,17 @@ class FigureManager(object):
         from inspect import getmodule
         from textwrap import wrap
 
-        full_preset_names = sorted([k for k, v in self.presets.items()
-                              if "extends" not in v])
+        full_preset_names = sorted(
+          [k for k, v in self.available_presets.items() if "extends" not in v])
         if len(full_preset_names) == 0:
             epilog = None
         else:
             epilog = "available presets:\n"
             for preset_name in full_preset_names:
-                preset = self.presets[preset_name]
-                extension_names = sorted([k for k, v in self.presets.items()
-                                    if "extends" in v
-                                    and v["extends"] == preset_name])
+                preset = self.available_presets[preset_name]
+                extension_names = sorted(
+                  [k for k, v in self.available_presets.items()
+                    if "extends" in v and v["extends"] == preset_name])
                 n_extensions = len(extension_names)
                 symbol = "│" if n_extensions > 0 else " "
                 if "help" in preset:
@@ -740,7 +771,7 @@ class FigureManager(object):
                     epilog += "  {0}\n".format(preset_name)
                 for i, extension_name in enumerate(extension_names, 1):
                     symbol = "└" if i == n_extensions else "├"
-                    extension = self.presets[extension_name]
+                    extension = self.available_presets[extension_name]
                     if "help" in extension:
                         wrapped = wrap(extension["help"], 52)
                         if len(extension_name) > 18:
@@ -771,12 +802,12 @@ class FigureManager(object):
           "-yaml",
           type     = str,
           required = True,
-          dest     = "yaml_dict",
-          metavar  = "/PATH/TO/YAML.yaml",
+          dest     = "yaml_spec",
+          metavar  = "/PATH/TO/YAML.yml",
           help     = "YAML configuration file")
 
         parser.add_argument(
-          "-preset",
+          "-preset", "-presets",
           type     = str,
           action   = "append",
           metavar  = "PRESET",

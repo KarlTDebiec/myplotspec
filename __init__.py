@@ -58,11 +58,10 @@ def get_yaml(input):
             output = yaml.load(input)
             if isinstance(output, six.string_types):
                 raise OSError("yaml has loaded a simple string: "
-                  "'{0}'; ".format(input) +
-                  "if this was intended as an infile, it was not found; "
-                  "input to get_yaml() function may be a path to a yaml "
-                  "file, a string containing yaml-format data, or a "
-                  "dict")
+                  "'{0}'; if this was intended as an ".format(input) +
+                  "infile, it was not found; input to get_yaml() "
+                  "function may be a path to a yaml file, a string "
+                  "containing yaml-format data, or a dict.")
             return output
     else:
         raise TypeError("get_yaml does not understand input of type " +
@@ -193,21 +192,23 @@ def get_color(color):
             color /= 255
         return [color, color, color]
 
-def multi_kw(keys, dictionary):
+def multi_kw(keys, dictionary, value=None):
     """
     Scans dict for keys; returns first value and deletes others.
 
     Arguments:
       keys (list): Acceptable keys in order of decreasing priority
       dictionary (dict): dict to be tested
+      value: Default to be returned if not found
 
     Returns:
       Value from first matching key; or None if not found
     """
-    value = None
+    found = False
     for key in [key for key in keys if key in dictionary]:
-        if value is None:
+        if not found:
             value = dictionary.pop(key)
+            found = True
         else:
             del dictionary[key]
     return value

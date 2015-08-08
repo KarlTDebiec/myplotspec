@@ -26,6 +26,8 @@ available on GitHub:
   <https://github.com/KarlTDebiec/myplotspec_sim>`_
 - `Nuclear Magnetic Resonance Spectroscopy
   <https://github.com/KarlTDebiec/myplotspec_nmr>`_
+- `Ramachandran Plots
+  <https://github.com/KarlTDebiec/Ramaplot>`_
 
 Dependencies
 ------------
@@ -37,7 +39,7 @@ MYPlotSpec supports Python 2.7 and 3.4, and requires the following packages:
 - six
 - yaml
 
-MYPlotSpec has been tested with Anaconda python 2.1.0 on Arch Linux, OSX
+MYPlotSpec has been tested with Anaconda python 2.2.0 on Arch Linux, OSX
 Yosemite, and Windows 8.1.
 
 Installation
