@@ -104,6 +104,7 @@ def set_xaxis(subplot, xticks=None, xticklabels=None, xtick_fp=None,
         tick_params["axis"] = "x"
         subplot.tick_params(**tick_params)
 
+    # Line width
     if xlw is not None:
         lw = xlw
     if lw is not None:
@@ -207,13 +208,14 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
     if ylabel is not None:
         subplot.set_ylabel(ylabel, **ylabel_kw)
 
-    # Y1 Tick parameters
+    # Y1 tick parameters
     if ytick_params is not None:
         tick_params = ytick_params
     if tick_params is not None:
         tick_params["axis"] = "y"
         subplot.tick_params(**tick_params)
 
+    # Line width
     if ylw is not None:
         lw = ylw
     if lw is not None:
