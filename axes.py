@@ -292,115 +292,109 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
             tick_params["axis"] = "y"
             subplot_y2.tick_params(**tick_params)
 
-def add_secondary_plot(figure, subplots, **kwargs):
-    """
-    """
-    from . import get_figure_subplots, get_font
-    from .axes import set_xaxis, set_yaxis
+def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
+    **kwargs):
+    from copy import copy
+    import numpy as np
+    from . import get_figure_subplots
 
-    # Add subplot to figure and format
-    figure, subplots = get_figure_subplots(figure=figure, subplots=subplots,
-      **kwargs)
-    subplot = subplots[len(subplots) - 1]
+    # Get figure and host subplot dimensions in inches
+    fig_size = np.array(figure.get_size_inches())
+    fig_width, fig_height = fig_size
+    host_width, host_height = np.array(subplot.get_position().size) * fig_size
+    host_left, host_bottom = np.array(subplot.get_position().min) * fig_size
+    host_right, host_top = (fig_size - np.array(subplot.get_position().max)
+      * fig_size)
 
-    return subplot
+    # Determine partner dimensions in inches
+    partner_kw = copy(kwargs.pop("partner_kw", {}))
+    position = partner_kw.pop("position", "top")
+    if position == "top":
+        partner_kw["left"] = partner_kw.get("left", host_left)
+        partner_kw["right"] = partner_kw.get("right", host_right)
+        partner_kw["hspace"] = partner_kw.pop("hspace", 0.05)
+        partner_kw["sub_height"] = partner_kw.get("sub_height", 0.1)
+        partner_kw["bottom"] = partner_kw.get("bottom",
+          host_bottom + host_height + partner_kw["hspace"])
+        partner_kw["top"] = partner_kw.get("top",
+          host_top - partner_kw["hspace"] - partner_kw["sub_height"])
+    else:
+        raise
+    get_figure_subplots(figure=figure, subplots=subplots, **partner_kw)
+    partner = subplots[subplots.keys()[-1]]
 
-########################### TEMPORARILY DEPRECIATED ###########################
-#def set_multi(subplots, first, nrows, ncols, xaxis_kw, yaxis_kw, **kwargs):
-#    ""
-#    Formats a set of multiple plots
-#
-#    Arguments:
-#        subplots: OrderedDict of <Axes> on which at act
-#        first:    Index of first plot in multiple
-#        nrows:    Number of rows of plots in multiple
-#        ncols:    Number of columns of plots in multiple
-#        xaxis_kw:  Keyword arguments to be passed to set_xaxis
-#        yaxis_kw:  Keyword arguments to be passed to set_yaxis
-#
-#    .. todo:
-#        - Smooth passage of keyword arguments from x/yaxis_kw and kwargs
-#          to set_bigx/ylabel
-#    """
-#    xticks      = xaxis_kw.pop("ticks")
-#    xticklabels = xaxis_kw.pop("ticklabels", xticks)
-#
-#    xlabel_kw = dict(xlabel = xaxis_kw.pop("label", kwargs.pop("xlabel", "")))
-#    for kw in ["label_fp", "bottom", "top"]:
-#        if kw in  kwargs: xlabel_kw[kw] =  kwargs.get(kw)
-#    for kw in ["label_fp", "bottom", "top", "x", "y", "ha", "va", "rotation"]:
-#        if kw in xaxis_kw: xlabel_kw[kw] = xaxis_kw.pop(kw)
-#    if "xlabel_kw" in xaxis_kw: xlabel_kw.update(xaxis_kw.pop("xlabel_kw"))
-#
-#    yticks      = yaxis_kw.pop("ticks")
-#    yticklabels = yaxis_kw.pop("ticklabels", yticks)
-#
-#    ylabel_kw = dict(ylabel = yaxis_kw.pop("label", kwargs.pop("ylabel", "")))
-#    for kw in ["label_fp", "left", "right"]:
-#        if kw in  kwargs: ylabel_kw[kw] =  kwargs.get(kw)
-#    for kw in ["label_fp", "left", "right", "x", "y", "ha", "va", "rotation"]:
-#        if kw in yaxis_kw: ylabel_kw[kw] = yaxis_kw.pop(kw)
-#    if "ylabel_kw" in yaxis_kw: ylabel_kw.update(yaxis_kw.pop("ylabel_kw"))
-#
-#    xaxis_kw.update(kwargs)
-#    yaxis_kw.update(kwargs)
-#
-#    # Loop over subplots
-#    for i in range(first, first + (nrows * ncols), 1):
-#
-#        # Format x axes
-#        if   (i == first + (nrows * ncols) - 1):
-#            set_xaxis(subplots[i], ticks = xticks,
-#              ticklabels = xticklabels, **xaxis_kw)
-#        elif (i in range(first + ((nrows - 1) * ncols),
-#           first + (nrows * ncols) - 1, 1)):
-#            set_xaxis(subplots[i], ticks = xticks,
-#              ticklabels = xticklabels[:-1], **xaxis_kw)
-#        else:
-#            set_xaxis(subplots[i], ticks = xticks,
-#              ticklabels = [], **xaxis_kw)
-#
-#        # Format y axes
-#        if   (i == first):
-#            set_yaxis(subplots[i], ticks = yticks, ticklabels = yticklabels,
-#              **yaxis_kw)
-#        elif (i in range(first + nrows, first + (nrows * ncols), nrows)):
-#            set_yaxis(subplots[i], ticks = yticks,
-#              ticklabels = yticklabels[:-1], **yaxis_kw)
-#        else:
-#            set_yaxis(subplots[i], ticks = yticks,
-#              ticklabels = [], **yaxis_kw)
-#    set_bigxlabel(dict((j, subplots[j])
-#      for j in range(first, first + (nrows * ncols), 1)), **xlabel_kw)
-#    set_bigylabel(dict((j, subplots[j])
-#      for j in range(first, first + (nrows * ncols), 1)), **ylabel_kw)
-#
-#def set_colorbar(cbar, ticks, ticklabels=None, label="", label_fp="11b",
-#    **kwargs):
-#    """
-#    Formats a colorbar
-#
-#    Arguments:
-#        cbar:       <ColorBar> to act on
-#        ticks:      Ticks
-#        ticklabels: Tick labels
-#        tick_fp:    Tick label font; passed to get_font(...)
-#        label:      Label text
-#        label_fp:   Label font; passed to get_font(...)
-#    """
-#    import warnings
-#
-#    if ticklabels is None:
-#        ticklabels = ticks
-#    zticks  = numpy.array(ticks, numpy.float32)
-#    zticks  = (zticks - zticks[0]) / (zticks[-1] - zticks[0])
-#    cbar.ax.tick_params(bottom = "off", top = "off", left = "off",
-#      right = "off")
-#    cbar.set_ticks(ticks)
-#    with warnings.catch_warnings():
-#        warnings.simplefilter("ignore")
-#        set_xaxis(cbar.ax, ticks = [0,1],  ticklabels = [])
-#        set_yaxis(cbar.ax, ticks = zticks, ticklabels = ticklabels,
-#          tick_fp = tick_fp)
-#    for y in zticks: cbar.ax.axhline(y = y, linewidth = 1.0, color = "black")
-#    cbar.set_label(label, fontproperties = get_font(label_fp))
+    partner.tick_params(bottom="off", top="off", left="off", right="off")
+    partner.set_xticklabels([])
+    partner.set_yticklabels([])
+    subplot._mps_partner_subplot= partner
+
+def set_colorbar(subplot, mappable, **kwargs):
+    from matplotlib.pyplot import colorbar
+    from . import FP_KEYS, get_font, multi_kw
+
+    colorbar_kw = kwargs.get("colorbar_kw", {"orientation": "horizontal"})
+    subplot._mps_colorbar = colorbar(mappable,
+             cax=subplot._mps_partner_subplot, **colorbar_kw)
+    subplot._mps_partner_subplot.xaxis.tick_top()
+    subplot._mps_partner_subplot.xaxis.set_label_position("top")
+
+    # Ticks
+    tick_kw = multi_kw(["ztick_kw", "ctick_kw", "tick_kw"], kwargs, {})
+    ticks = multi_kw(["zticks", "cticks", "ticks"], kwargs)
+    ticks_2 = multi_kw(["zticks", "cticks", "ticks"], tick_kw)
+    if ticks_2 is not None:
+        subplot._mps_colorbar.set_ticks(ticks)
+    elif ticks is not None:
+        subplot._mps_colorbar.set_ticks(ticks)
+#        for tick in ticks:
+#            tick_x = (tick - min(ticks)) / (max(ticks) - min(ticks))
+#            subplot._mps_partner_subplot.axvline(x=tick_x, lw=0.5, color="k")
+
+    # Tick labels
+    ticklabel_kw = multi_kw(
+      ["zticklabel_kw", "cticklabel_kw", "ticklabel_kw"], kwargs, {})
+    ticklabels = multi_kw(["zticklabels", "cticklabels", "ticklabels"], kwargs)
+    ticklabels_2 = multi_kw(["zticklabels", "cticklabels", "ticklabels"],
+      ticklabel_kw)
+    if ticklabels_2 is not None:
+        ticklabels = ticklabels_2
+    elif ticklabels is None and ticks is not None:
+        ticklabels = ticks
+
+    ticklabel_fp = multi_kw(["ztick_fp", "ctick_fp", "tick_fp",
+      "zticklabel_fp", "cticklabel_fp", "ticklabel_fp"] + FP_KEYS, kwargs)
+    ticklabel_fp_2 = multi_kw(["ztick_fp", "ctick_fp", "tick_fp",
+      "zticklabel_fp", "cticklabel_fp", "ticklabel_fp"] + FP_KEYS,
+      ticklabel_kw)
+    if ticklabel_fp_2 is not None:
+        ticklabel_kw["fontproperties"] = get_font(ticklabel_fp_2)
+    elif ticklabel_fp is not None:
+        ticklabel_kw["fontproperties"] = get_font(ticklabel_fp)
+
+    if ticklabels is not None:
+        subplot._mps_colorbar.ax.set_xticklabels(ticklabels, **ticklabel_kw)
+
+    # Label
+    label_kw = multi_kw(["zlabel_kw", "clabel_kw"], kwargs, {})
+    label = multi_kw(["zlabel", "clabel", "label"], kwargs)
+    label_2 = multi_kw(["zlabel", "clabel", "label"], label_kw)
+    if label_2 is not None:
+        label = label_2
+
+    label_fp = multi_kw(["zlabel_fp", "clabel_fp", "label_fp"] + FP_KEYS,
+      kwargs)
+    label_fp_2 = multi_kw(["zlabel_fp", "clabel_fp", "label_fp"] + FP_KEYS,
+      label_kw)
+    if label_fp_2 is not None:
+        label_kw["fontproperties"] = get_font(label_fp_2)
+    elif label_fp is not None:
+        label_kw["fontproperties"] = get_font(label_fp)
+
+    if label is not None:
+        subplot._mps_colorbar.set_label(label, **label_kw)
+
+    # Tick parameters
+    tick_params = multi_kw(["ztick_params", "ctick_params", "tick_params"],
+      kwargs)
+    if tick_params is not None:
+        subplot._mps_partner_subplot.tick_params(**tick_params)

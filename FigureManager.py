@@ -360,8 +360,8 @@ class FigureManager(object):
     @manage_kwargs()
     @manage_output()
     def draw_figure(self, title=None, shared_xlabel=None,
-      shared_ylabel=None, shared_legend=None, verbose=1, debug=0,
-      **in_kwargs):
+        shared_ylabel=None, shared_legend=None, verbose=1, debug=0,
+        **in_kwargs):
         """
         Draws a figure.
 
@@ -465,6 +465,10 @@ class FigureManager(object):
             else:
                 raise TypeError()
 
+            # Include reference to figure and subplots
+            out_kwargs["figure"] = figure
+            out_kwargs["subplots"] = subplots
+
             # Output settings from spec override inherited settings
             if "verbose" not in out_kwargs:
                 out_kwargs["verbose"] = verbose
@@ -510,7 +514,8 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_subplot(self, subplot, title=None, legend=None,
-        shared_handles=None, verbose=1, debug=0, **in_kwargs):
+        partner_subplot=False, shared_handles=None, verbose=1, debug=0,
+        **in_kwargs):
         """
         Draws a subplot.
 
@@ -568,7 +573,7 @@ class FigureManager(object):
         from copy import copy
         import six
         from . import multi_kw
-        from .axes import set_xaxis, set_yaxis
+        from .axes import set_xaxis, set_yaxis, add_partner_subplot
         from .legend import set_legend
         from .text import set_title
 
@@ -577,6 +582,8 @@ class FigureManager(object):
         set_yaxis(subplot, **in_kwargs)
         if title is not None:
             set_title(subplot, title=title, **in_kwargs)
+        if partner_subplot:
+            add_partner_subplot(subplot, **in_kwargs)
 
         # Configure and plot datasets
         handles = OrderedDict()
@@ -593,6 +600,10 @@ class FigureManager(object):
                 out_kwargs = {}
             else:
                 raise TypeError()
+
+            # Include reference to figure and subplots
+            out_kwargs["figure"] = in_kwargs["figure"]
+            out_kwargs["subplots"] = in_kwargs["subplots"]
 
             # Output settings from spec override inherited settings
             if "verbose" not in out_kwargs:
