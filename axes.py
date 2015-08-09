@@ -229,7 +229,7 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
         y2ticks = y2ticks_2
     if y2ticks is not None:
         if subplot_y2 is None:
-            subplot_y2 = subplot.twinx()
+            subplot_y2 = subplot._mps_y2 = subplot.twinx()
             subplot_y2.set_autoscale_on(False)
         if y2ticks != []:
             subplot_y2.set_ybound(float(y2ticks[0]), float(y2ticks[-1]))
@@ -342,8 +342,6 @@ def set_colorbar(subplot, mappable, **kwargs):
     tick_kw = multi_kw(["ztick_kw", "ctick_kw", "tick_kw"], kwargs, {})
     ticks = multi_kw(["zticks", "cticks", "ticks"], kwargs)
     ticks_2 = multi_kw(["zticks", "cticks", "ticks"], tick_kw)
-    print(subplot._mps_colorbar.vmin)
-    print(subplot._mps_colorbar.vmax)
     if ticks_2 is not None:
         subplot._mps_colorbar.set_ticks(ticks)
     elif ticks is not None:

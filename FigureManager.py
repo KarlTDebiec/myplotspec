@@ -514,8 +514,8 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_subplot(self, subplot, title=None, legend=None,
-        partner_subplot=False, shared_handles=None, verbose=1, debug=0,
-        **in_kwargs):
+        partner_subplot=False, shared_handles=None, visible=True,verbose=1,
+        debug=0, **in_kwargs):
         """
         Draws a subplot.
 
@@ -647,6 +647,12 @@ class FigureManager(object):
             for label, handle in handles.items():
                 if label not in shared_handles:
                     shared_handles[label] = handle
+
+        if not visible:
+            subplot.set_visible(False)
+            subplot.set_frame_on(False)
+            if hasattr(subplot, "_mps_y2"):
+                subplot._mps_y2.set_visible(False)
 
     @manage_defaults_presets()
     @manage_kwargs()
