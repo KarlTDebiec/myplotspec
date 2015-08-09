@@ -360,8 +360,8 @@ class FigureManager(object):
     @manage_kwargs()
     @manage_output()
     def draw_figure(self, title=None, shared_xlabel=None,
-        shared_ylabel=None, shared_legend=None, verbose=1, debug=0,
-        **in_kwargs):
+        shared_ylabel=None, shared_legend=None, multiplot=False, verbose=1,
+        debug=0, **in_kwargs):
         """
         Draws a figure.
 
@@ -453,6 +453,13 @@ class FigureManager(object):
         if shared_legend is not None:
             shared_handles = OrderedDict()
 
+        if multiplot:
+            nrows = in_kwargs.get("nrows", 1)
+            ncols = in_kwargs.get("ncols", 1)
+            nsubplots = in_kwargs.get("nsubplots", nrows * ncols)
+            multi_xticklabels = in_kwargs.get("multi_xticklabels")
+            multi_yticklabels = in_kwargs.get("multi_yticklabels")
+
         # Configure and plot subplots
         for i in subplot_indexes:
             if i not in subplots:
@@ -501,6 +508,21 @@ class FigureManager(object):
 
             if shared_legend is not None:
                 out_kwargs["shared_handles"] = shared_handles
+
+            if multiplot:
+                if multi_xticklabels is not None:
+                    if (nrows - 1) * ncols - 1 < i < nsubplots - 1:
+                        out_kwargs["xticklabels"] = multi_xticklabels[:-1]
+                    elif i != nsubplots - 1:
+                        out_kwargs["xticklabels"] = []
+                        out_kwargs["xlabel"] = None
+                if multi_yticklabels is not None:
+                    if i % ncols == 0 and i != 0:
+                        out_kwargs["yticklabels"] = multi_yticklabels[:-1]
+                    elif i != 0:
+                        out_kwargs["yticklabels"] = []
+                        out_kwargs["ylabel"] = None
+
             self.draw_subplot(subplot=subplots[i], **out_kwargs)
 
         # Draw legend

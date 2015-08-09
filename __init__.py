@@ -427,7 +427,7 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
     # Generate figure and subplots, or add to existing figure and
     #   subplots if provided
     if nsubplots is None:
-        nsubplots = ncols * nrows
+        nsubplots = nrows * ncols
     i_max = i + nsubplots
     breaking = False
     for j in range(nrows - 1, -1, -1):

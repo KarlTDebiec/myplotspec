@@ -12,7 +12,6 @@ Functions for formatting axes.
 .. todo:
     - Figure out how to use multiple-keyword arguments (e.g. [x]tick[label]_fp
       with sphinx
-    - Reimplement set_multi and set_colorbar
     - Figure out how to adjust the positions of specific ticks properly
       and automatically ('1' often looks bad)
 """
