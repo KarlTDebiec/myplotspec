@@ -342,13 +342,16 @@ def set_colorbar(subplot, mappable, **kwargs):
     tick_kw = multi_kw(["ztick_kw", "ctick_kw", "tick_kw"], kwargs, {})
     ticks = multi_kw(["zticks", "cticks", "ticks"], kwargs)
     ticks_2 = multi_kw(["zticks", "cticks", "ticks"], tick_kw)
+    print(subplot._mps_colorbar.vmin)
+    print(subplot._mps_colorbar.vmax)
     if ticks_2 is not None:
         subplot._mps_colorbar.set_ticks(ticks)
     elif ticks is not None:
         subplot._mps_colorbar.set_ticks(ticks)
-#        for tick in ticks:
-#            tick_x = (tick - min(ticks)) / (max(ticks) - min(ticks))
-#            subplot._mps_partner_subplot.axvline(x=tick_x, lw=0.5, color="k")
+        for tick in ticks:
+            tick_x = ((tick - subplot._mps_colorbar.vmin) /
+              (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
+            subplot._mps_partner_subplot.axvline(x=tick_x, lw=0.5, color="k")
 
     # Tick labels
     ticklabel_kw = multi_kw(
