@@ -140,7 +140,7 @@ class manage_kwargs(object):
             Returns:
               Return value of wrapped function
             """
-            from copy import copy
+            from copy import copy, deepcopy
             import six
             from . import get_yaml, merge_dicts, multi_kw
             from .debug import db_s, db_kv
@@ -155,22 +155,21 @@ class manage_kwargs(object):
             defaults = get_yaml(in_kwargs.pop("defaults", {}))
             available_presets = get_yaml(in_kwargs.pop("available_presets",
                                   {}))
-            selected_presets = copy(multi_kw(["presets", "preset"],
-                                   in_kwargs, []))
+            selected_presets = multi_kw(["presets", "preset"], in_kwargs, [])
             if isinstance(selected_presets, six.string_types):
                 selected_presets = [selected_presets]
             elif selected_presets is None:
                 selected_presets = []
-            available_yaml = copy(get_yaml(in_kwargs.get("yaml_spec", {})))
+            yaml_spec = get_yaml(in_kwargs.get("yaml_spec", {}))
             selected_yaml_keys = list(map(tuple, in_kwargs.get("yaml_keys",
                                    [["__complete_file__"]])))
-            out_args = copy(in_args)
+            out_args = in_args
             out_kwargs = {}
 
             # Prepare selected yaml keys and determine presets
             selected_yaml = {}
             for selected_yaml_key in selected_yaml_keys:
-                node = available_yaml
+                node = yaml_spec
                 if selected_yaml_key != ("__complete_file__",):
                     for key in selected_yaml_key:
                         if key in node.keys():
@@ -182,10 +181,10 @@ class manage_kwargs(object):
                             break
                 if node is None:
                     node = {}
+                node = deepcopy(node)
                 selected_yaml[selected_yaml_key] = node
                 if "presets" in node or "preset" in node:
-                    additional_presets = copy(multi_kw(["presets", "preset"],
-                                     node, []))
+                    additional_presets = multi_kw(["presets","preset"],node,[])
                     if isinstance(additional_presets, six.string_types):
                         additional_presets = [additional_presets]
                     elif additional_presets is None:
@@ -254,7 +253,7 @@ class manage_kwargs(object):
                         db_kv(key, in_kwargs[key], 2, "+")
             out_kwargs = merge_dicts(out_kwargs, in_kwargs)
             out_kwargs["presets"] = selected_presets
-            out_kwargs["yaml_spec"] = available_yaml
+            out_kwargs["yaml_spec"] = yaml_spec
 
             # Run function
             return function(*out_args, **out_kwargs)

@@ -346,7 +346,7 @@ class FigureManager(object):
             out_kwargs["presets"] = out_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_spec"] = in_kwargs.get("yaml_spec", {})
+            out_kwargs["yaml_spec"] = copy(in_kwargs.get("yaml_spec", {}))
             out_kwargs["yaml_keys"] = [["figures", "all"], ["figures", i]]
 
             out_kwargs["outfiles"] = outfiles
@@ -430,7 +430,7 @@ class FigureManager(object):
           (*Figure*): Figure
         """
         from collections import OrderedDict
-        from copy import copy
+        from copy import copy, deepcopy
         import six
         from . import get_figure_subplots, multi_kw
         from .legend import set_shared_legend
@@ -499,7 +499,7 @@ class FigureManager(object):
             out_kwargs["presets"] = out_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_spec"] = in_kwargs.get("yaml_spec", {})
+            out_kwargs["yaml_spec"] = copy(in_kwargs.get("yaml_spec", {}))
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["subplots", "all"],
                             key3 + ["subplots", i]]
@@ -639,7 +639,7 @@ class FigureManager(object):
                 out_presets = [out_presets]
             elif out_presets is None:
                 out_presets = []
-            in_presets = multi_kw(["presets", "preset"], in_kwargs, [])
+            in_presets = multi_kw(["presets", "preset"], copy(in_kwargs), [])
             if isinstance(in_presets, six.string_types):
                 in_presets = [in_presets]
             elif in_presets is None:
@@ -650,7 +650,7 @@ class FigureManager(object):
             out_kwargs["presets"] = out_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_spec"] = in_kwargs.get("yaml_spec", {})
+            out_kwargs["yaml_spec"] = copy(in_kwargs.get("yaml_spec", {}))
             out_kwargs["yaml_keys"] = [key
               for key2 in [[key3 + ["datasets", "all"],
                             key3 + ["datasets", i]]
