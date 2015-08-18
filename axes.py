@@ -293,6 +293,8 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
 
 def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     **kwargs):
+    """
+    """
     from copy import copy
     import numpy as np
     from . import get_figure_subplots
@@ -306,8 +308,8 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
       * fig_size)
 
     # Determine partner dimensions in inches
-    partner_kw = copy(kwargs.pop("partner_kw", {}))
-    position = partner_kw.pop("position", "top")
+    partner_kw = copy(kwargs.get("partner_kw", {}))
+    position = partner_kw.get("position", "right")
     if position == "top":
         partner_kw["left"] = partner_kw.get("left", host_left)
         partner_kw["right"] = partner_kw.get("right", host_right)
@@ -317,43 +319,66 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
           host_bottom + host_height + partner_kw["hspace"])
         partner_kw["top"] = partner_kw.get("top",
           host_top - partner_kw["hspace"] - partner_kw["sub_height"])
+    elif position == "right":
+        partner_kw["bottom"] = partner_kw.get("bottom", host_bottom)
+        partner_kw["top"] = partner_kw.get("top", host_top)
+        partner_kw["wspace"] = partner_kw.pop("wspace", 0.1)
+        partner_kw["sub_width"] = partner_kw.get("sub_width", 0.1)
+        partner_kw["left"] = partner_kw.get("left",
+          host_left + host_width + partner_kw["wspace"])
+        partner_kw["right"] = partner_kw.get("right",
+          host_right - partner_kw["wspace"] - partner_kw["sub_width"])
     else:
         raise
     get_figure_subplots(figure=figure, subplots=subplots, **partner_kw)
     partner = subplots[subplots.keys()[-1]]
 
-    partner.tick_params(bottom="off", top="off", left="off", right="off")
-    partner.set_xticklabels([])
-    partner.set_yticklabels([])
-    subplot._mps_partner_subplot= partner
+    subplot._mps_partner_subplot = partner
+    return partner
 
 def set_colorbar(subplot, mappable, **kwargs):
+    """
+    """
     from matplotlib.pyplot import colorbar
     from . import FP_KEYS, get_font, multi_kw
 
-    colorbar_kw = kwargs.get("colorbar_kw", {"orientation": "horizontal"})
+    colorbar_kw = kwargs.get("colorbar_kw", {})
+    position = colorbar_kw.get("position", "right")
+
+    orientation = colorbar_kw.get("orientation", "vertical"
+      if position in ["left", "right"] else "horizontal")
     subplot._mps_colorbar = colorbar(mappable,
-             cax=subplot._mps_partner_subplot, **colorbar_kw)
-    subplot._mps_partner_subplot.xaxis.tick_top()
-    subplot._mps_partner_subplot.xaxis.set_label_position("top")
+      cax=subplot._mps_partner_subplot, orientation=orientation)
+    if position == "top":
+        subplot._mps_partner_subplot.xaxis.set_label_position("top")
 
     # Ticks
-    tick_kw = multi_kw(["ztick_kw", "ctick_kw", "tick_kw"], kwargs, {})
-    ticks = multi_kw(["zticks", "cticks", "ticks"], kwargs)
+    tick_kw = multi_kw(["ztick_kw", "ctick_kw", "tick_kw"], colorbar_kw, {})
+    ticks = multi_kw(["zticks", "cticks", "ticks"], colorbar_kw)
     ticks_2 = multi_kw(["zticks", "cticks", "ticks"], tick_kw)
     if ticks_2 is not None:
+        ticks = ticks_2
+    if ticks is not None:
         subplot._mps_colorbar.set_ticks(ticks)
-    elif ticks is not None:
-        subplot._mps_colorbar.set_ticks(ticks)
-        for tick in ticks:
-            tick_x = ((tick - subplot._mps_colorbar.vmin) /
-              (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
-            subplot._mps_partner_subplot.axvline(x=tick_x, lw=0.5, color="k")
+        if position in ["left", "right"]:
+            for tick in ticks:
+                tick_y = ((tick - subplot._mps_colorbar.vmin) /
+                  (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
+                subplot._mps_partner_subplot.axhline(y=tick_y, lw=0.5,
+                  color="k")
+        if position == "top":
+            subplot._mps_partner_subplot.xaxis.tick_top()
+            for tick in ticks:
+                tick_x = ((tick - subplot._mps_colorbar.vmin) /
+                  (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
+                subplot._mps_partner_subplot.axvline(x=tick_x, lw=0.5,
+                  color="k")
 
     # Tick labels
     ticklabel_kw = multi_kw(
-      ["zticklabel_kw", "cticklabel_kw", "ticklabel_kw"], kwargs, {})
-    ticklabels = multi_kw(["zticklabels", "cticklabels", "ticklabels"], kwargs)
+      ["zticklabel_kw", "cticklabel_kw", "ticklabel_kw"], colorbar_kw, {})
+    ticklabels = multi_kw(["zticklabels", "cticklabels", "ticklabels"],
+      colorbar_kw)
     ticklabels_2 = multi_kw(["zticklabels", "cticklabels", "ticklabels"],
       ticklabel_kw)
     if ticklabels_2 is not None:
@@ -362,7 +387,7 @@ def set_colorbar(subplot, mappable, **kwargs):
         ticklabels = ticks
 
     ticklabel_fp = multi_kw(["ztick_fp", "ctick_fp", "tick_fp",
-      "zticklabel_fp", "cticklabel_fp", "ticklabel_fp"] + FP_KEYS, kwargs)
+      "zticklabel_fp", "cticklabel_fp", "ticklabel_fp"] + FP_KEYS, colorbar_kw)
     ticklabel_fp_2 = multi_kw(["ztick_fp", "ctick_fp", "tick_fp",
       "zticklabel_fp", "cticklabel_fp", "ticklabel_fp"] + FP_KEYS,
       ticklabel_kw)
@@ -375,14 +400,14 @@ def set_colorbar(subplot, mappable, **kwargs):
         subplot._mps_colorbar.ax.set_xticklabels(ticklabels, **ticklabel_kw)
 
     # Label
-    label_kw = multi_kw(["zlabel_kw", "clabel_kw"], kwargs, {})
-    label = multi_kw(["zlabel", "clabel", "label"], kwargs)
+    label_kw = multi_kw(["zlabel_kw", "clabel_kw"], colorbar_kw, {})
+    label = multi_kw(["zlabel", "clabel", "label"], colorbar_kw)
     label_2 = multi_kw(["zlabel", "clabel", "label"], label_kw)
     if label_2 is not None:
         label = label_2
 
     label_fp = multi_kw(["zlabel_fp", "clabel_fp", "label_fp"] + FP_KEYS,
-      kwargs)
+      colorbar_kw)
     label_fp_2 = multi_kw(["zlabel_fp", "clabel_fp", "label_fp"] + FP_KEYS,
       label_kw)
     if label_fp_2 is not None:
@@ -395,6 +420,6 @@ def set_colorbar(subplot, mappable, **kwargs):
 
     # Tick parameters
     tick_params = multi_kw(["ztick_params", "ctick_params", "tick_params"],
-      kwargs)
+      colorbar_kw)
     if tick_params is not None:
         subplot._mps_partner_subplot.tick_params(**tick_params)
