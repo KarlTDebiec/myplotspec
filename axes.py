@@ -395,9 +395,13 @@ def set_colorbar(subplot, mappable, **kwargs):
         ticklabel_kw["fontproperties"] = get_font(ticklabel_fp_2)
     elif ticklabel_fp is not None:
         ticklabel_kw["fontproperties"] = get_font(ticklabel_fp)
-
     if ticklabels is not None:
-        subplot._mps_colorbar.ax.set_xticklabels(ticklabels, **ticklabel_kw)
+        if position in ["left", "right"]:
+            subplot._mps_colorbar.ax.set_yticklabels(ticklabels,
+              **ticklabel_kw)
+        else:
+            subplot._mps_colorbar.ax.set_xticklabels(ticklabels,
+              **ticklabel_kw)
 
     # Label
     label_kw = multi_kw(["zlabel_kw", "clabel_kw"], colorbar_kw, {})
