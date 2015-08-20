@@ -418,7 +418,6 @@ def set_colorbar(subplot, mappable, **kwargs):
         label_kw["fontproperties"] = get_font(label_fp_2)
     elif label_fp is not None:
         label_kw["fontproperties"] = get_font(label_fp)
-
     if label is not None:
         subplot._mps_colorbar.set_label(label, **label_kw)
 
