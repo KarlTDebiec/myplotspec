@@ -39,7 +39,7 @@ def set_xaxis(subplot, xticks=None, xticklabels=None, xtick_fp=None,
       [x]label_fp (str, dict, FontProperties): Label font
       xlabel_kw (dict): Keyword arguments passed to subplot.set_xlabel()
       [x]tick_params (dict): Keyword arguments passed to
-        subplot.set_tick_params(); only affect x axis
+        subplot.tick_params(); only affect x axis
       [x]lw (float): Subplot top and bottom line width
       kwargs (dict): Additional keyword arguments
     """
@@ -135,7 +135,7 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
       [y]label_fp (str, dict, FontProperties): Label font
       ylabel_kw (dict): Keyword arguments passed to subplot.set_ylabel()
       [y]tick_params (dict): Keyword arguments passed to
-        subplot.set_tick_params(); only affect y axis
+        subplot.tick_params(); only affect y axis
       [y]lw (float): Subplot top and bottom line width
       y2ticks (list or ndarray): Ticks for second y axis; first and last
         are used as upper and lower boundaries; if this argument is
@@ -294,6 +294,25 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
 def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     **kwargs):
     """
+    Adds a subplot to the side 
+
+    Typically used for colorbars
+
+    Arguments:
+      subplot (Axes): Host subplot to which partner will be added
+      figure (Figure): Figure on which subplot and partner are located
+      subplots (OrderedDict): subplots
+      partner_kw (dict): Keyword arguments passed to
+        :func:`get_figure_subplots` to add partner subplot; 'position'
+        key is used to control position relative to host subplot
+      verbose (int): Level of verbose output
+      debug (int): Level of debug output
+
+    Returns:
+      partner (Axes): Parter subplot
+
+    .. todo:
+      - implement 'left' and 'bottom'
     """
     from copy import copy
     import numpy as np
@@ -338,6 +357,29 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
 
 def set_colorbar(subplot, mappable, **kwargs):
     """
+    Configures a colorbar.
+
+    Arguments:
+      subplot (Axes): axes on which 
+      mappable (?): Object used to generate colorbar; typically returned
+        by matplotlib's imshow or pcolormesh
+      colorbar_kw (dict): Keyword arguments used to configure colorbar;
+        'position' key is used to control orientation
+      [z|c]ticks (list or ndarray): Ticks; first and last are used as
+        upper and lower boundaries
+      [z|c]tick_kw (dict): Keyword arguments passed to
+        subplot.set_ticks
+      [z|c]ticklabels (list): Tick label text
+      [z|c]tick[label]_fp (str, dict, FontProperties): Tick label
+        font
+      [z|c]ticklabel_kw (dict): Keyword arguments passed to
+        subplot.set_[x|y]ticklabels()
+      [z|c]label (str): Label text
+      [z|c]label_fp (str, dict, FontProperties): Label font
+      zlabel_kw (dict): Keyword arguments passed to subplot.set_label
+      [z|c]tick_params (dict): Keyword arguments passed to
+        subplot.tick_params()
+      kwargs (dict): Additional keyword arguments
     """
     from matplotlib.pyplot import colorbar
     from . import FP_KEYS, get_font, multi_kw
