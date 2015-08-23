@@ -172,7 +172,10 @@ class manage_kwargs(object):
                 node = yaml_spec
                 if selected_yaml_key != ("__complete_file__",):
                     for key in selected_yaml_key:
-                        if key in node.keys():
+                        if node is None:
+                            node = {}
+                            break
+                        elif key in node.keys():
                             node = node[key]
                         elif str(key) in map(str, node.keys()):
                             node = node[str(key)]
