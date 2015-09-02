@@ -610,6 +610,8 @@ class FigureManager(object):
         # Configure and plot datasets
         handles = OrderedDict()
         dataset_specs = multi_kw(["datasets", "dataset"], in_kwargs, {})
+        if dataset_specs is None:
+            dataset_specs = {}
         dataset_indexes = sorted([int(i) for i in dataset_specs.keys()
                            if str(i).isdigit()])
 
