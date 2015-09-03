@@ -755,7 +755,10 @@ class FigureManager(object):
         debug = kwargs.get("debug", 0)
 
         if hasattr(cls, "get_cache_key"):
-            cache_key = cls.get_cache_key(*args, **kwargs)
+            try:
+                cache_key = cls.get_cache_key(*args, **kwargs)
+            except TypeError:
+                return None
             if cache_key is None:
                 return cls(*args, **kwargs)
             if cache_key in self.dataset_cache:
