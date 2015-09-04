@@ -316,8 +316,8 @@ def set_inset(subplot, inset=None, inset_fp=None, *args, **kwargs):
 
     return set_text(subplot, test_kw = inset_kw, **kwargs)
 
-def set_text(figure_or_subplot, s=None, x=None, y=None, text=None,
-    fp=None, *args, **kwargs):
+def set_text(figure_or_subplot, s=None, x=None, y=None, text=None, fp=None,
+    border_lw=None, *args, **kwargs):
     """
     Prints text on a figure or subplot.
 
@@ -330,6 +330,7 @@ def set_text(figure_or_subplot, s=None, x=None, y=None, text=None,
     Returns:
       (*Text*): Text
     """
+    from  matplotlib import patheffects
     from . import get_font, multi_kw, FP_KEYS
 
     text_kw = kwargs.pop("text_kw", {}).copy()
@@ -356,4 +357,9 @@ def set_text(figure_or_subplot, s=None, x=None, y=None, text=None,
     if y is not None and not "y" in text_kw:
         text_kw["y"] = y
 
-    return figure_or_subplot.text(**text_kw)
+    
+    text = figure_or_subplot.text(**text_kw)
+    if border_lw is not None:
+        text.set_path_effects([patheffects.Stroke(linewidth=border_lw,
+          foreground="w"), patheffects.Normal()])
+    return text
