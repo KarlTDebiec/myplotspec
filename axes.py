@@ -382,6 +382,7 @@ def set_colorbar(subplot, mappable, **kwargs):
       kwargs (dict): Additional keyword arguments
     """
     from matplotlib.pyplot import colorbar
+    import numpy as np
     from . import FP_KEYS, get_font, multi_kw
 
     colorbar_kw = kwargs.get("colorbar_kw", {})
@@ -398,6 +399,7 @@ def set_colorbar(subplot, mappable, **kwargs):
     tick_kw = multi_kw(["ztick_kw", "ctick_kw", "tick_kw"], colorbar_kw, {})
     ticks = multi_kw(["zticks", "cticks", "ticks"], colorbar_kw)
     ticks_2 = multi_kw(["zticks", "cticks", "ticks"], tick_kw)
+    lw = multi_kw(["zlw", "clw", "lw"], colorbar_kw, 1.0)
     if ticks_2 is not None:
         ticks = ticks_2
     if ticks is not None:
@@ -406,14 +408,14 @@ def set_colorbar(subplot, mappable, **kwargs):
             for tick in ticks:
                 tick_y = ((tick - subplot._mps_colorbar.vmin) /
                   (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
-                subplot._mps_partner_subplot.axhline(y=tick_y, lw=0.5,
+                subplot._mps_partner_subplot.axhline(y=tick_y, lw=lw,
                   color="k")
         if position == "top":
             subplot._mps_partner_subplot.xaxis.tick_top()
             for tick in ticks:
                 tick_x = ((tick - subplot._mps_colorbar.vmin) /
                   (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
-                subplot._mps_partner_subplot.axvline(x=tick_x, lw=0.5,
+                subplot._mps_partner_subplot.axvline(x=tick_x, lw=lw,
                   color="k")
 
     # Tick labels
@@ -446,7 +448,8 @@ def set_colorbar(subplot, mappable, **kwargs):
               **ticklabel_kw)
 
     # Label
-    label_kw = multi_kw(["zlabel_kw", "clabel_kw"], colorbar_kw, {})
+    label_kw = multi_kw(["zlabel_kw", "clabel_kw", "label_kw", ], colorbar_kw,
+                 {})
     label = multi_kw(["zlabel", "clabel", "label"], colorbar_kw)
     label_2 = multi_kw(["zlabel", "clabel", "label"], label_kw)
     if label_2 is not None:
@@ -468,3 +471,12 @@ def set_colorbar(subplot, mappable, **kwargs):
       colorbar_kw)
     if tick_params is not None:
         subplot._mps_partner_subplot.tick_params(**tick_params)
+
+    # Line width
+    if lw is not None:
+        subplot._mps_colorbar.outline.set_lw(lw)
+        outline_path = subplot._mps_colorbar.outline.get_path()
+        outline_path.vertices = np.append(outline_path.vertices,
+          [[0.0, 0.00390625]], axis=0)
+        outline_path.codes = np.array(np.append(outline_path.codes[:-1],
+          [2, 2]), dtype=np.uint8)
