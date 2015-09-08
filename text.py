@@ -67,7 +67,7 @@ def set_title(figure_or_subplot, title=None, title_fp=None, *args,
             return None
 
         if "top" in title_kw:
-            top           = title_kw.pop
+            top           = title_kw.pop("top")
             fig_height    = figure.get_figheight()
             title_kw["y"] = (fig_height - top) / fig_height
 
