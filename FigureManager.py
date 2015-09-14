@@ -442,6 +442,8 @@ class FigureManager(object):
                             if str(i).isdigit()])
         figure, subplots = get_figure_subplots(verbose=verbose,
           debug=debug, **in_kwargs)
+        self.figure = figure
+        self.subplots = subplots
 
         # Format Figure
         if title is not None:
