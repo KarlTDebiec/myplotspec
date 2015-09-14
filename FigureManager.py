@@ -512,16 +512,22 @@ class FigureManager(object):
             if multiplot:
                 if multi_xticklabels is not None:
                     if (nrows - 1) * ncols - 1 < i < nsubplots - 1:
-                        out_kwargs["xticklabels"] = multi_xticklabels[:-1]
+                        if not "xticklabels" in out_kwargs:
+                            out_kwargs["xticklabels"] = multi_xticklabels[:-1]
                     elif i != nsubplots - 1:
-                        out_kwargs["xticklabels"] = []
-                        out_kwargs["xlabel"] = None
+                        if not "xticklabels" in out_kwargs:
+                            out_kwargs["xticklabels"] = []
+                        if not "xlabel" in out_kwargs:
+                            out_kwargs["xlabel"] = None
                 if multi_yticklabels is not None:
                     if i % ncols == 0 and i != 0:
-                        out_kwargs["yticklabels"] = multi_yticklabels[:-1]
+                        if not "yticklabels" in out_kwargs:
+                            out_kwargs["yticklabels"] = multi_yticklabels[:-1]
                     elif i != 0:
-                        out_kwargs["yticklabels"] = []
-                        out_kwargs["ylabel"] = None
+                        if not "yticklabels" in out_kwargs:
+                            out_kwargs["yticklabels"] = []
+                        if not "ylabel" in out_kwargs:
+                            out_kwargs["ylabel"] = None
 
             self.draw_subplot(subplot=subplots[i], **out_kwargs)
 
