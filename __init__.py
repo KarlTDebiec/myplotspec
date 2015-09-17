@@ -262,7 +262,7 @@ def multi_pop(*args, **kwargs):
     Returns:
       value: Value from first matching key; or None if not found
     """
-    _multi_get_pop(pop=True, *args, **kwargs)
+    return _multi_get_pop(pop=True, *args, **kwargs)
 
 def _multi_get_pop(keys, dictionary, value=None, pop=False, copy=False):
     """

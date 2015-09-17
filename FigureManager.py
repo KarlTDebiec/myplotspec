@@ -94,6 +94,8 @@ class FigureManager(object):
       - Improve support for seaborn colors
       - Clean up docstring return values
       - Double-check verbose and debug support
+      - Figure out how to write loose arguments (e.g. [x]tick[s]) in
+        sphinx-compatible way
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
@@ -299,10 +301,12 @@ class FigureManager(object):
         figure, but overridden by values specific to that figure.
 
         Arguments:
-          figures (dict): Figure specifications
-          preset (str, list): Selected preset(s)
-          yaml_spec (str, dict): Argument data structure; may be yaml
-            string, path to yaml file, or dict
+          figure[s] (dict): Figure specifications
+          preset[s] (str, list, optional): Selected preset(s); presets loaded
+            from figure specification will take precedence over those passed as
+            arguments
+          yaml_spec (str, dict, optional): Argument data structure; may be
+            string path to yaml file, yaml-format string, or dictionary
           verbose (int): Level of verbose output
           debug (int): Level of debug output
           kwargs (dict): Additional keyword arguments
@@ -329,13 +333,14 @@ class FigureManager(object):
         from . import multi_get, multi_get_copy, multi_pop
 
         # Load spec and prepare outfiles
-        figure_specs = multi_get(["figures", "figure"], kwargs, {})
+        figure_specs = multi_pop(["figures", "figure"], kwargs, {})
         figure_indexes = sorted([int(i) for i in figure_specs.keys()
                            if str(i).isdigit()])
         outfiles = {}
 
         # Configure and plot figures
         for i in figure_indexes:
+
             # Load the spec for this figure
             if isinstance(figure_specs[i], dict):
                 figure_spec = deepcopy(figure_specs[i])
@@ -344,7 +349,7 @@ class FigureManager(object):
             else:
                 raise TypeError("Figure {0} specification".format(i) +
                   "loaded as {0} ".format(figure_spec.__class__.__name__) +
-                  "rather than expected dictionary.")
+                  "rather than expected dict.")
 
             # Output settings from spec override inherited settings
             if "verbose" not in figure_spec:
@@ -384,7 +389,7 @@ class FigureManager(object):
     @manage_output()
     def draw_figure(self, title=None, shared_xlabel=None,
         shared_ylabel=None, shared_legend=None, multiplot=False, verbose=1,
-        debug=0, **in_kwargs):
+        debug=0, **kwargs):
         """
         Draws a figure.
 
@@ -434,8 +439,10 @@ class FigureManager(object):
 
         Arguments:
           outfile (str): Output filename
-          subplots (dict): Subplot specifications
-          preset (str, list): Selected preset(s)
+          subplot[s] (dict): Subplot specifications
+          preset[s] (str, list, optional): Selected preset(s); presets loaded
+            from figure specification will take precedence over those passed as
+            arguments
           title (str, optional): Figure title
           shared_xlabel (str, optional): X label to be shared among
             subplots
@@ -443,123 +450,140 @@ class FigureManager(object):
             subplots
           shared_legend (bool, optional): Generate a legend shared 
             between subplots
-          shared_legend_kw (dict, optional): Keyword arguments to be
-            used to generate shared legend
+          multiplot (bool, optional): 
+          nrows (int, optional):
+          ncols (int, optional):
+          nsubplots (int, optional): 
+          multi_xticklabels (list, optional): 
+          multi_yticklabels (list, optional): 
           verbose (int): Level of verbose output
           debug (int): Level of debug output
-          in_kwargs (dict): Additional keyword arguments
+          kwargs (dict): Additional keyword arguments
 
         Returns:
-          (*Figure*): Figure
+          (figure): Figure
         """
         from collections import OrderedDict
-        from copy import copy, deepcopy
+        from copy import deepcopy
+        from warnings import warn
         import six
-        from . import get_figure_subplots, multi_kw
+        from . import (get_figure_subplots, multi_get, multi_get_copy,
+                       multi_pop)
         from .legend import set_shared_legend
         from .text import set_title, set_shared_xlabel, set_shared_ylabel
 
         # Load spec and prepare figure and subplots
-        subplot_specs = multi_kw(["subplots", "subplot"], in_kwargs, {})
+        subplot_specs = multi_pop(["subplots", "subplot"], kwargs, {})
+        if subplot_specs is None:
+            subplot_specs = {}
         subplot_indexes = sorted([int(i) for i in subplot_specs.keys()
                             if str(i).isdigit()])
-        figure, subplots = get_figure_subplots(verbose=verbose,
-          debug=debug, **in_kwargs)
-        self.figure = figure
-        self.subplots = subplots
+        figure, subplots = get_figure_subplots(verbose=verbose, debug=debug,
+                             **kwargs)
 
         # Format Figure
         if title is not None:
-            set_title(figure, title=title, **in_kwargs)
+            set_title(figure, title=title, **kwargs)
         if shared_xlabel is not None:
-            set_shared_xlabel(figure, xlabel=shared_xlabel, **in_kwargs)
+            set_shared_xlabel(figure, xlabel=shared_xlabel, **kwargs)
         if shared_ylabel is not None:
-            set_shared_ylabel(figure, ylabel=shared_ylabel, **in_kwargs)
-        if shared_legend is not None:
+            set_shared_ylabel(figure, ylabel=shared_ylabel, **kwargs)
+        if shared_legend is not None and shared_legend is not False:
             shared_handles = OrderedDict()
 
+        # Load multiplot variables
         if multiplot:
-            nrows = in_kwargs.get("nrows", 1)
-            ncols = in_kwargs.get("ncols", 1)
-            nsubplots = in_kwargs.get("nsubplots", nrows * ncols)
-            multi_xticklabels = in_kwargs.get("multi_xticklabels")
-            multi_yticklabels = in_kwargs.get("multi_yticklabels")
+            nrows = kwargs.get("nrows", 1)
+            ncols = kwargs.get("ncols", 1)
+            nsubplots = kwargs.get("nsubplots", nrows * ncols)
+            multi_xticklabels = kwargs.get("multi_xticklabels")
+            multi_yticklabels = kwargs.get("multi_yticklabels")
 
         # Configure and plot subplots
         for i in subplot_indexes:
-            if i not in subplots:
-                continue
-            # Load the spec for this subplot
-            if isinstance(subplot_specs[i], dict):
-                out_kwargs = copy(subplot_specs[i])
-            elif subplot_specs[i] is None:
-                out_kwargs = {}
+
+            # Load the subplot and spec
+            if i in subplots:
+                subplot = subplots[i]
             else:
-                raise TypeError()
+                warn("Specs provided for subplot {0}, ".format(i) +
+                  "but only subplot indexes {0} ".format(subplots.keys()) +
+                  "were created; check that nrows, ncols, and nsubplots "
+                  "are appropriate; skipping subplots {0}.".format(i))
+                continue
+            if isinstance(subplot_specs[i], dict):
+                subplot_spec = deepcopy(subplot_specs[i])
+            elif subplot_specs[i] is None:
+                subplot_spec = {}
+            else:
+                raise TypeError("Subplot {0} specification".format(i) +
+                  "loaded as {0} ".format(subplot_spec.__class__.__name__) +
+                  "rather than expected dict.")
 
             # Include reference to figure and subplots
-            out_kwargs["figure"] = figure
-            out_kwargs["subplots"] = subplots
+            subplot_spec["figure"] = figure
+            subplot_spec["subplots"] = subplots
 
             # Output settings from spec override inherited settings
-            if "verbose" not in out_kwargs:
-                out_kwargs["verbose"] = verbose
-            if "debug" not in out_kwargs:
-                out_kwargs["debug"] = debug
+            if "verbose" not in subplot_spec:
+                subplot_spec["verbose"] = verbose
+            if "debug" not in subplot_spec:
+                subplot_spec["debug"] = debug
 
             # Presets from spec have priority over inherited presets
-            out_presets = multi_kw(["presets", "preset"], out_kwargs, [])
-            if isinstance(out_presets, six.string_types):
-                out_presets = [out_presets]
-            elif out_presets is None:
-                out_presets = []
-            in_presets = multi_kw(["presets", "preset"], copy(in_kwargs), [])
-            if isinstance(in_presets, six.string_types):
-                in_presets = [in_presets]
-            elif in_presets is None:
-                in_presets = []
-            for in_preset in reversed(in_presets):
-                if not in_preset in out_presets:
-                    out_presets.insert(0, in_preset)
-            out_kwargs["presets"] = out_presets
+            spec_presets = multi_pop(["presets", "preset"], subplot_spec, [])
+            if isinstance(spec_presets, six.string_types):
+                spec_presets = [spec_presets]
+            elif spec_presets is None:
+                spec_presets = []
+            arg_presets = multi_get_copy(["presets", "preset"], kwargs, [])
+            if isinstance(arg_presets, six.string_types):
+                arg_presets = [arg_presets]
+            elif arg_presets is None:
+                arg_presets = []
+            for arg_preset in reversed(arg_presets):
+                if not arg_preset in spec_presets:
+                    spec_presets.insert(0, arg_preset)
+            subplot_spec["presets"] = spec_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_spec"] = copy(in_kwargs.get("yaml_spec", {}))
-            out_kwargs["yaml_keys"] = [key
+            subplot_spec["yaml_spec"] = kwargs.get("yaml_spec", {})
+            subplot_spec["yaml_keys"] = [key
               for key2 in [[key3 + ["subplots", "all"],
                             key3 + ["subplots", i]]
-              for key3 in in_kwargs.get("yaml_keys")]
+              for key3 in kwargs.get("yaml_keys")]
               for key  in key2]
 
-            if shared_legend is not None:
-                out_kwargs["shared_handles"] = shared_handles
+            if shared_legend is not None and shared_legend is not False:
+                subplot_spec["shared_handles"] = shared_handles
 
+            # Manage multiplot x and y labels
             if multiplot:
                 if multi_xticklabels is not None:
                     if (nrows - 1) * ncols - 1 < i < nsubplots - 1:
-                        if not "xticklabels" in out_kwargs:
-                            out_kwargs["xticklabels"] = multi_xticklabels[:-1]
+                        if not "xticklabels" in subplot_spec:
+                            subplot_spec["xticklabels"] = multi_xticklabels[:-1]
                     elif i != nsubplots - 1:
-                        if not "xticklabels" in out_kwargs:
-                            out_kwargs["xticklabels"] = []
-                        if not "xlabel" in out_kwargs:
-                            out_kwargs["xlabel"] = None
+                        if not "xticklabels" in subplot_spec:
+                            subplot_spec["xticklabels"] = []
+                        if not "xlabel" in subplot_spec:
+                            subplot_spec["xlabel"] = None
                 if multi_yticklabels is not None:
                     if i % ncols == 0 and i != 0:
-                        if not "yticklabels" in out_kwargs:
-                            out_kwargs["yticklabels"] = multi_yticklabels[:-1]
+                        if not "yticklabels" in subplot_spec:
+                            subplot_spec["yticklabels"] = multi_yticklabels[:-1]
                     elif i != 0:
-                        if not "yticklabels" in out_kwargs:
-                            out_kwargs["yticklabels"] = []
-                        if not "ylabel" in out_kwargs:
-                            out_kwargs["ylabel"] = None
+                        if not "yticklabels" in subplot_spec:
+                            subplot_spec["yticklabels"] = []
+                        if not "ylabel" in subplot_spec:
+                            subplot_spec["ylabel"] = None
 
-            self.draw_subplot(subplot=subplots[i], **out_kwargs)
+            self.draw_subplot(subplot, **subplot_spec)
 
         # Draw legend
         if shared_legend is not None and shared_legend is not False:
             set_shared_legend(figure, subplots, handles=shared_handles,
-              **shared_legend)
+              **kwargs)
 
         # Return results
         return figure
@@ -567,8 +591,8 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_subplot(self, subplot, title=None, legend=None,
-        partner_subplot=False, shared_handles=None, visible=True,verbose=1,
-        debug=0, **in_kwargs):
+        partner_subplot=False, shared_handles=None, visible=True, verbose=1,
+        debug=0, **kwargs):
         """
         Draws a subplot.
 
@@ -611,91 +635,98 @@ class FigureManager(object):
 
         Arguments:
           subplot (Axes): Axes on which to act
-          datasets (dict): Dataset specifications
-          preset (str, list): Selected preset(s)
+          dataset[s] (dict): Dataset specifications
+          preset[s] (str, list, optional): Selected preset(s); presets loaded
+            from figure specification will take precedence over those passed as
+            arguments
           title (str, optional): Subplot title
           legend (bool, optional): Draw legend on subplot
+          partner_subplot (bool, optional): Add a parter subplot
           shared_handles (OrderedDict, optional): Nascent OrderedDict of
             [labels]:handles shared among subplots of host figure; used
-            to draw shared legend
+            to draw shared legend on figure
+          visible (bool, optional): Subplot visibility
           verbose (int): Level of verbose output
           debug (int): Level of debug output
-          in_kwargs (dict): Additional keyword arguments
+          kwargs (dict): Additional keyword arguments
         """
         from collections import OrderedDict
-        from copy import copy
+        from copy import deepcopy
         import six
-        from . import multi_kw
+        from . import multi_get, multi_get_copy, multi_pop
         from .axes import set_xaxis, set_yaxis, add_partner_subplot
         from .legend import set_legend
         from .text import set_title
 
-        # Format
-        set_xaxis(subplot, **in_kwargs)
-        set_yaxis(subplot, **in_kwargs)
+        # Format subplot
+        set_xaxis(subplot, **kwargs)
+        set_yaxis(subplot, **kwargs)
         if title is not None:
-            set_title(subplot, title=title, **in_kwargs)
+            set_title(subplot, title=title, **kwargs)
         if partner_subplot:
-            add_partner_subplot(subplot, **in_kwargs)
+            add_partner_subplot(subplot, **kwargs)
 
-        # Configure and plot datasets
-        handles = OrderedDict()
-        dataset_specs = multi_kw(["datasets", "dataset"], in_kwargs, {})
+        # Load spec
+        dataset_specs = multi_get(["datasets", "dataset"], kwargs, {})
         if dataset_specs is None:
             dataset_specs = {}
         dataset_indexes = sorted([int(i) for i in dataset_specs.keys()
                            if str(i).isdigit()])
+        handles = OrderedDict()
 
         # Configure and plot datasets
         for i in dataset_indexes:
+
             # Load the spec for this dataset
             if isinstance(dataset_specs[i], dict):
-                out_kwargs = copy(dataset_specs[i])
+                dataset_spec = deepcopy(dataset_specs[i])
             elif dataset_specs[i] is None:
-                out_kwargs = {}
+                dataset_spec = {}
             else:
-                raise TypeError()
+                raise TypeError("Dataset {0} specification".format(i) +
+                  "loaded as {0} ".format(subplot_spec.__class__.__name__) +
+                  "rather than expected dict.")
 
             # Include reference to figure and subplots
-            out_kwargs["figure"] = in_kwargs["figure"]
-            out_kwargs["subplots"] = in_kwargs["subplots"]
+            dataset_spec["figure"] = kwargs["figure"]
+            dataset_spec["subplots"] = kwargs["subplots"]
 
             # Output settings from spec override inherited settings
-            if "verbose" not in out_kwargs:
-                out_kwargs["verbose"] = verbose
-            if "debug" not in out_kwargs:
-                out_kwargs["debug"] = debug
+            if "verbose" not in dataset_spec:
+                dataset_spec["verbose"] = verbose
+            if "debug" not in dataset_spec:
+                dataset_spec["debug"] = debug
 
             # Presets from spec have priority over inherited presets
-            out_presets = multi_kw(["presets", "preset"], out_kwargs, [])
-            if isinstance(out_presets, six.string_types):
-                out_presets = [out_presets]
-            elif out_presets is None:
-                out_presets = []
-            in_presets = multi_kw(["presets", "preset"], copy(in_kwargs), [])
-            if isinstance(in_presets, six.string_types):
-                in_presets = [in_presets]
-            elif in_presets is None:
-                in_presets = []
-            for in_preset in reversed(in_presets):
-                if not in_preset in out_presets:
-                    out_presets.insert(0, in_preset)
-            out_kwargs["presets"] = out_presets
+            spec_presets = multi_pop(["presets", "preset"], dataset_spec, [])
+            if isinstance(spec_presets, six.string_types):
+                spec_presets = [spec_presets]
+            elif spec_presets is None:
+                spec_presets = []
+            arg_presets = multi_get_copy(["presets", "preset"], kwargs, [])
+            if isinstance(arg_presets, six.string_types):
+                arg_presets = [arg_presets]
+            elif arg_presets is None:
+                arg_presets = []
+            for arg_preset in reversed(arg_presets):
+                if not arg_preset in spec_presets:
+                    spec_presets.insert(0, arg_preset)
+            dataset_spec["presets"] = spec_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_spec"] = copy(in_kwargs.get("yaml_spec", {}))
-            out_kwargs["yaml_keys"] = [key
+            dataset_spec["yaml_spec"] = kwargs.get("yaml_spec", {})
+            dataset_spec["yaml_keys"] = [key
               for key2 in [[key3 + ["datasets", "all"],
                             key3 + ["datasets", i]]
-              for key3 in in_kwargs.get("yaml_keys")]
+              for key3 in kwargs.get("yaml_keys")]
               for key  in key2]
 
             self.draw_dataset(subplot=subplot, handles=handles,
-              **out_kwargs)
+              **dataset_spec)
 
         # Draw subplot legend
         if legend is not None and legend is not False:
-            set_legend(subplot, handles=handles, **in_kwargs)
+            set_legend(subplot, handles=handles, **kwargs)
 
         # Manage shared legend
         if shared_handles is not None:
