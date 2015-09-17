@@ -22,13 +22,17 @@ def get_yaml(input):
       input (str, dict): yaml input; if str, tests whether or not it is
         a path to a yaml file. If it is, the file is loaded using yaml;
         if it is not a file, the string itself is loaded using yaml. If
-        dict, returned without modification.
+        dict, returned without modification
 
     Returns:
-      (*dict*): Data structure specified by input
+      output: Data structure specified by input
+
+    Warns:
+      UserWarning: Loaded data structure is a string; occurs if input
+        file is a path to a yaml file that is not found
 
     Raises:
-      TypeError: Input file type not understood.
+      TypeError: Input is not str or dict
     """
     from os.path import isfile
     from re import findall
@@ -44,7 +48,6 @@ def get_yaml(input):
     if isinstance(input, dict):
         return input
     elif isinstance(input, six.string_types):
-
         if isfile(input):
             with open_yaml(input, "r") as infile:
                 return yaml.load(infile)
@@ -72,7 +75,11 @@ def merge_dicts(dict_1, dict_2):
         dictionaries are drawn from dict_2
 
     Returns:
-      (*dict*): Merged dictionary
+      (dict): Merged dictionary
+
+    .. todo:
+      - Consider options to override, concatenate, or merge list
+        values within dictionaries
     """
     def merge(dict_1, dict_2):
         """
@@ -84,8 +91,7 @@ def merge_dicts(dict_1, dict_2):
             both dictionaries are drawn from dict_2
 
         Yields:
-          (*tuple*): Merged (key, value) pair
-
+          (tuple): Merged (key, value) pair
         """
         for key in set(dict_1.keys()).union(dict_2.keys()):
             if key in dict_1 and key in dict_2:
@@ -117,12 +123,14 @@ def get_color(color):
       color (str, list, ndarray, float): color
 
     Returns:
-      (*list*): [red, green, blue] on interval 0.0-1.0
+      (list): [red, green, blue] on interval 0.0-1.0
 
     .. todo:
         - Useful error messages
         - Support dict format to specify mode,
           e.g.: get_color(color = {RGB: [0.1, 0.2, 0.3]})
+        - Probably just use seaborn now that it is known to be
+          compatible and easy to use
     """
     import numpy as np
 
@@ -197,7 +205,7 @@ def multi_kw(keys, dictionary, value=None):
       value: Default to be returned if not found
 
     Returns:
-      Value from first matching key; or None if not found
+      value: Value from first matching key; or None if not found
     """
     found = False
     for key in [key for key in keys if key in dictionary]:
@@ -218,8 +226,8 @@ def pad_zero(ticks, digits=None, **kwargs):
         provided
 
     Returns:
-      (*list*): Tick labels, each with the same number of digits after
-        the decimal
+      (list): Tick labels, each with the same number of digits after
+        the decimal point
     """
     if digits is None:
         digits = 0
@@ -241,7 +249,11 @@ def get_edges(figure_or_subplots, **kwargs):
         get; if Figure, use all Axes
 
     Returns:
-      (*dict*): Edges; keys are 'left', 'right', 'top', and 'bottom'
+      (dict): Edges; keys are 'left', 'right', 'top', and 'bottom'
+
+    .. todo:
+      - What are the units here? Probably relative but should be
+        documented or possible an option
     """
     import matplotlib
 
@@ -261,14 +273,14 @@ def get_font(fp=None, **kwargs):
 
     *fp* may be a string of form '##L' in which '##' is the font size
     and L is 'r' for regular or 'b' for bold. fp may also be a dict of
-    keyword arguments to pass to FontProperties. fp may also be a
-    FontProperties, in which case it is returned without modification
+    keyword arguments to pass to FontProperties. *fp* may also be a
+    FontProperties, in which case it is returned without modification.
 
     Arguments:
         fp (str, dict, FontProperties): Font specifications
 
     Returns:
-        (*FontProperties*): Font with given specifications
+        (FontProperties): Font with given specifications
     """
     import six
     from matplotlib.font_manager import FontProperties

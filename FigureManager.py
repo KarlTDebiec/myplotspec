@@ -20,8 +20,7 @@ if __name__ == "__main__":
 ################################### CLASSES ###################################
 class FigureManager(object):
     """
-    Generates one or more figures to specifications provided in a YAML
-    file.
+    Manages the generation of figures.
 
     Attributes:
       defaults (str, dict): Default arguments to :func:`draw_report`,
@@ -92,6 +91,8 @@ class FigureManager(object):
       - Be more careful (less wasteful) about use of copy()
       - Decide how to manage the specification of sizes, positions, etc.
         in real-world units (inches or centimeters)
+      - Improve support for seaborn colors
+      - Clean up docstring return values
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
