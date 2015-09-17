@@ -76,8 +76,22 @@ class FigureManager(object):
 
     .. todo:
       - Accept presets from file, e.g. --preset-file /path/to/file.yaml
-      - Support mutual exclusivity between presets
+      - Support mutually exclusive presets that may smoothly and
+        verbosely override one another
       - More advanced preset and overall specification help
+      - Intermediate level of debug output
+      - Bring documentation up to date
+      - Better examples
+      - Improved dataset caching
+      - Dataset base class with caching support
+      - 2D indexing of subplots
+      - Support slicing for passage of arguments to multiple figures,
+        subplots, or datasets
+      - Clean up multi_kw or come up with reasonable alternative
+      - Consider making spec keys case-insensitive
+      - Be more careful (less wasteful) about use of copy()
+      - Decide how to manage the specification of sizes, positions, etc.
+        in real-world units (inches or centimeters)
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
@@ -205,6 +219,7 @@ class FigureManager(object):
 
         .. todo:
             - Debug output
+            - Mutual exclusivity (does this go here?)
         """
         from . import get_yaml, merge_dicts
 
@@ -241,10 +256,9 @@ class FigureManager(object):
     @manage_kwargs()
     def draw_report(self, verbose=1, debug=0, **in_kwargs):
         """
-        Draws a series of figures based on provided specifications.
+        Draws one or more figures based on provided specifications.
 
-        Figure specifications are provided in a dict structured as
-        follows::
+        Figure specs are provided in a dict structured as follows::
 
             figures = {
                 'all': {

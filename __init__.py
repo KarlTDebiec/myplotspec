@@ -8,12 +8,6 @@
 #   BSD license. See the LICENSE file for details.
 """
 General functions.
-
-.. todo:
-  - Decide how to manage the specification of sizes, positions, etc. in
-    real-world units (inches or centimeters)
-  - Consider supporting figure and subplot specs as lists rather than
-    exclusively an integer indexed dictionary
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -22,15 +16,13 @@ FP_KEYS = ["fp", "font_properties", "fontproperties", "prop"]
 ################################## FUNCTIONS ##################################
 def get_yaml(input):
     """
-    Generates a data structure from YAML input.
-
-    If ``input`` is a string, tests whether or not it is a path to a
-    YAML file. If it is, the file is loaded using yaml; if it is not,
-    the string itself is loaded using YAML. If ``input`` is a dict, it
-    is returned without modification.
+    Generates a data structure from yaml input. 
 
     Arguments:
-      input (str, dict): YAML input
+      input (str, dict): yaml input; if str, tests whether or not it is
+        a path to a yaml file. If it is, the file is loaded using yaml;
+        if it is not a file, the string itself is loaded using yaml. If
+        dict, returned without modification.
 
     Returns:
       (*dict*): Data structure specified by input
@@ -38,6 +30,10 @@ def get_yaml(input):
     Raises:
       TypeError: Input file type not understood.
     """
+    from os.path import isfile
+    from re import findall
+    from warnings import warn
+    import yaml
     import six
 
     if six.PY2:
@@ -48,24 +44,23 @@ def get_yaml(input):
     if isinstance(input, dict):
         return input
     elif isinstance(input, six.string_types):
-        from os.path import isfile
-        import yaml
 
         if isfile(input):
             with open_yaml(input, "r") as infile:
                 return yaml.load(infile)
         else:
             output = yaml.load(input)
-            if isinstance(output, six.string_types):
-                raise OSError("yaml has loaded a simple string: "
-                  "'{0}'; if this was intended as an ".format(input) +
-                  "infile, it was not found; input to get_yaml() "
-                  "function may be a path to a yaml file, a string "
-                  "containing yaml-format data, or a dict.")
+            if isinstance(output, str):
+                warn("myplotspec.get_yaml() has loaded input "
+                "'{0}' as a string rather than a dictionary or ".format(input)
+                "other data structure; if input was intended as an infile it "
+                "was not found.")
             return output
     else:
-        raise TypeError("get_yaml does not understand input of type " +
-          "{0}".format(type(input)))
+        raise TypeError("myplotspec.get_yaml() does not support input of type "
+          "{0}; ".format(findall("'([^']*)'", type(input))[0])
+          "input may be a string path to a yaml file, a yaml-format string, "
+          "or a dictionary.")
 
 def merge_dicts(dict_1, dict_2):
     """
