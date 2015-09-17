@@ -33,9 +33,12 @@ def get_yaml(input):
 
     Raises:
       TypeError: Input is not str or dict
+
+    .. todo:
+      - Should this bounce back other input types (e.g. list) as it does
+        dict?
     """
     from os.path import isfile
-    from re import findall
     from warnings import warn
     import yaml
     import six
@@ -55,13 +58,13 @@ def get_yaml(input):
             output = yaml.load(input)
             if isinstance(output, str):
                 warn("myplotspec.get_yaml() has loaded input "
-                "'{0}' as a string rather than a dictionary or ".format(input)
-                "other data structure; if input was intended as an infile it "
-                "was not found.")
+                "'{0}' as a string rather than a dictionary ".format(input) +
+                "or other data structure; if input was intended as an infile "
+                "it was not found.")
             return output
     else:
         raise TypeError("myplotspec.get_yaml() does not support input of type "
-          "{0}; ".format(findall("'([^']*)'", type(input))[0])
+          "{0}; ".format(input.__class__.__name__) +
           "input may be a string path to a yaml file, a yaml-format string, "
           "or a dictionary.")
 
@@ -213,6 +216,99 @@ def multi_kw(keys, dictionary, value=None):
             value = dictionary.pop(key)
             found = True
         else:
+            del dictionary[key]
+    return value
+
+def multi_get(*args, **kwargs):
+    """
+    Scans dict for keys; returns first value.
+
+    Arguments:
+      keys (str, list): Acceptable key(s) in order of decreasing
+        priority
+      dictionary (dict): dict to be tested
+      value: Default to be returned if not found
+
+    Returns:
+      value: Value from first matching key; or None if not found
+    """
+    return _multi_get_pop(pop=False, *args, **kwargs)
+
+def multi_get_copy(*args, **kwargs):
+    """
+    Scans dict for keys; returns copy of first value.
+
+    Arguments:
+      keys (str, list): Acceptable key(s) in order of decreasing
+        priority
+      dictionary (dict): dict to be tested
+      value: Default to be returned if not found
+
+    Returns:
+      value: Value from first matching key; or None if not found
+    """
+    return _multi_get_pop(pop=False, copy=True, *args, **kwargs)
+
+def multi_pop(*args, **kwargs):
+    """
+    Scans dict for keys; returns first value and deletes others.
+
+    Arguments:
+      keys (str, list): Acceptable key(s) in order of decreasing
+        priority
+      dictionary (dict): dict to be tested
+      value: Default to be returned if not found
+
+    Returns:
+      value: Value from first matching key; or None if not found
+    """
+    _multi_get_pop(pop=True, *args, **kwargs)
+
+def _multi_get_pop(keys, dictionary, value=None, pop=False, copy=False):
+    """
+    Scans dict for keys; returns first value and optionally deletes
+    others.
+
+    Arguments:
+      keys (str, list): Acceptable key(s) in order of decreasing
+        priority
+      dictionary (dict): dict to be tested
+      value: Default to be returned if not found
+      pop (bool): Delete all matching *keys* from *dictionary*; may not
+        be used with *copy*
+      copy (bool): Return copy of value; may not be used with *pop*
+
+    Returns:
+      value: Value from first matching key; or None if not found
+
+    .. todo:
+      - Error messages
+      - Smoothly support optional plurality
+      - Support merging of dict or list values
+    """
+    from copy import deepcopy
+    import six
+
+    if isinstance(keys, six.string_types):
+        keys = [keys]
+    elif not hasattr(keys, "__iter__"):
+        raise TypeError()
+
+    if not isinstance(dictionary, dict):
+        raise TypeError()
+
+    if pop and copy:
+        raise TypeError()
+
+    found = False
+    for key in [key for key in keys if key in dictionary]:
+        if not found:
+            if copy:
+                value = deepcopy(dictionary.get(key))
+            else:
+                value = dictionary.get(key)
+            found = True
+        if pop:
             del dictionary[key]
     return value
 

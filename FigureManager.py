@@ -93,6 +93,7 @@ class FigureManager(object):
         in real-world units (inches or centimeters)
       - Improve support for seaborn colors
       - Clean up docstring return values
+      - Double-check verbose and debug support
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
@@ -255,7 +256,7 @@ class FigureManager(object):
 
     @manage_defaults_presets()
     @manage_kwargs()
-    def draw_report(self, verbose=1, debug=0, **in_kwargs):
+    def draw_report(self, verbose=1, debug=0, **kwargs):
         """
         Draws one or more figures based on provided specifications.
 
@@ -304,7 +305,7 @@ class FigureManager(object):
             string, path to yaml file, or dict
           verbose (int): Level of verbose output
           debug (int): Level of debug output
-          in_kwargs (dict): Additional keyword arguments
+          kwargs (dict): Additional keyword arguments
 
         Note:
           This function is one of two responsible for managing the
@@ -317,13 +318,18 @@ class FigureManager(object):
           :class:`~.manage_output.manage_output` adds new PdfPages
           objects as requested, or adds pages to existing ones. Once all
           figures have been drawn, this function closes each PdfPages.
+
+        .. todo:
+          - Support slicing for passage of arguments to multiple figures
+          - Move preset handling to another function, alongside support for
+            mutual exclusivity
         """
-        from copy import copy
+        from copy import deepcopy
         import six
-        from . import multi_kw
+        from . import multi_get, multi_get_copy, multi_pop
 
         # Load spec and prepare outfiles
-        figure_specs = multi_kw(["figures", "figure"], in_kwargs, {})
+        figure_specs = multi_get(["figures", "figure"], kwargs, {})
         figure_indexes = sorted([int(i) for i in figure_specs.keys()
                            if str(i).isdigit()])
         outfiles = {}
@@ -332,40 +338,42 @@ class FigureManager(object):
         for i in figure_indexes:
             # Load the spec for this figure
             if isinstance(figure_specs[i], dict):
-                out_kwargs = copy(figure_specs[i])
+                figure_spec = deepcopy(figure_specs[i])
             elif figure_specs[i] is None:
-                out_kwargs = {}
+                figure_spec = {}
             else:
-                raise TypeError()
+                raise TypeError("Figure {0} specification".format(i) +
+                  "loaded as {0} ".format(figure_spec.__class__.__name__) +
+                  "rather than expected dictionary.")
 
             # Output settings from spec override inherited settings
-            if "verbose" not in out_kwargs:
-                out_kwargs["verbose"] = verbose
-            if "debug" not in out_kwargs:
-                out_kwargs["debug"] = debug
+            if "verbose" not in figure_spec:
+                figure_spec["verbose"] = verbose
+            if "debug" not in figure_spec:
+                figure_spec["debug"] = debug
 
-            # Presets from spec have priority over inherited presets
-            out_presets = multi_kw(["presets", "preset"], out_kwargs, [])
-            if isinstance(out_presets, six.string_types):
-                out_presets = [out_presets]
-            elif out_presets is None:
-                out_presets = []
-            in_presets = multi_kw(["presets", "preset"], copy(in_kwargs), [])
-            if isinstance(in_presets, six.string_types):
-                in_presets = [in_presets]
-            elif in_presets is None:
-                in_presets = []
-            for in_preset in reversed(in_presets):
-                if not in_preset in out_presets:
-                    out_presets.insert(0, in_preset)
-            out_kwargs["presets"] = out_presets
+            # Presets from spec have priority over presets from args
+            spec_presets = multi_pop(["presets", "preset"], figure_spec, [])
+            if isinstance(spec_presets, six.string_types):
+                spec_presets = [spec_presets]
+            elif spec_presets is None:
+                spec_presets = []
+            arg_presets = multi_get_copy(["presets", "preset"], kwargs, [])
+            if isinstance(arg_presets, six.string_types):
+                arg_presets = [arg_presets]
+            elif arg_presets is None:
+                arg_presets = []
+            for arg_preset in reversed(arg_presets):
+                if not arg_preset in spec_presets:
+                    spec_presets.insert(0, arg_preset)
+            figure_spec["presets"] = spec_presets
 
             # Build list of keys from which to load from spec dict
-            out_kwargs["yaml_spec"] = copy(in_kwargs.get("yaml_spec", {}))
-            out_kwargs["yaml_keys"] = [["figures", "all"], ["figures", i]]
+            figure_spec["yaml_spec"] = kwargs.get("yaml_spec", {})
+            figure_spec["yaml_keys"] = [["figures", "all"], ["figures", i]]
 
-            out_kwargs["outfiles"] = outfiles
-            self.draw_figure(**out_kwargs)
+            figure_spec["outfiles"] = outfiles
+            self.draw_figure(**figure_spec)
 
         # Clean up
         for outfile in outfiles.values():
