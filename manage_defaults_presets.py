@@ -21,7 +21,7 @@ class manage_defaults_presets(object):
     This decorator is a partner to
     :class:`~.manage_kwargs.manage_kwargs`, desiged to allows its use
     for methods of objects containg central ``defaults`` and
-    `available_presets`` attributes. It obtains available defaults and
+    ``available_presets`` attributes. It obtains available defaults and
     presets for the wrapped method from their central location in the
     host object, and passes on those applicable to the wrapped method.
     :class:`~.manage_kwargs.manage_kwargs` then selects arguments to

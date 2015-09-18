@@ -77,6 +77,8 @@ class FigureManager(object):
       - Accept presets from file, e.g. --preset-file /path/to/file.yaml
       - Support mutually exclusive presets that may smoothly and
         verbosely override one another
+      - Support multiple inheritance/extension for presets
+      - Preset classes, such as 'target', 'content', 'appearance', etc.
       - More advanced preset and overall specification help
       - Intermediate level of debug output
       - Bring documentation up to date
@@ -193,8 +195,9 @@ class FigureManager(object):
         Initializes.
 
         Arguments:
-          defaults (string, dict): Default arguments; may be a yaml
-            string, path to a yaml file, or a dictionary
+          defaults (string, dict, optional): Default arguments; may be a
+            yaml string, path to a yaml file, or a dictionary; if not
+            provided pulled from self.defaults
           args (tuple): Additional positional arguments
           kwargs (dict): Additional keyword arguments
         """
@@ -217,7 +220,8 @@ class FigureManager(object):
 
         Arguments:
           available_presets (string, dict): Available presets; may be a
-            yaml string, path to a yaml file, or a dictionary
+            yaml string, path to a yaml file, or a dictionary; if not
+            provided pulled from self.available_presets
           args (tuple): Additional positional arguments
           kwargs (dict): Additional keyword arguments
 
