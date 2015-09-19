@@ -553,3 +553,83 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(
           figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots
+
+################################### CLASSES ###################################
+class OrderedSet(object):
+    """
+    """
+    def __init__(self, iterable=None):
+        self.items = []
+        if iterable is not None:
+            for item in iterable:
+                if item not in self.items:
+                    self.items.append(item)
+    def __len__(self):
+        return len(self.items)
+    def __contains__(self, key):
+        return key in self.items
+    def __getitem__(self, index):
+        """
+        .. todo:
+          - implement slicing
+        """
+        import six
+
+        if not isinstance(index, six.integer_types):
+            raise TypeError("OrderedSet index must be integer, "
+              "not {0}".format(index.__class__.__name__))
+        if index < len(self.items):
+            return self.items[index]
+        else:
+            raise IndexError("OrderedSet index out of range")
+    def __repr__(self):
+        if not self:
+            return "{0}()".format(self.__class__.__name__)
+        return "{0}({1})".format(self.__class__.__name__, list(self))
+    def __eq__(self, other):
+        if isinstance(other, OrderedSet):
+            return len(self) == len(other) and list(self) == list(other)
+        return set(self) == set(other)
+
+    def add(self, key):
+        if key not in self.items:
+            self.items.append(key)
+
+    def append(self, key):
+        if key in self.items:
+            self.items.remove(key)
+        if key not in self.items:
+            self.items.append(key)
+
+    def insert(self, index, key):
+        if key in self.items:
+            self.items.remove(key)
+        self.items.insert(index,key)
+
+    def remove(self, key):
+        if key in self.items:
+            self.items.remove(key)
+        else:
+            raise ValueError("OrderedSet.remove(x): x not in OrderedSet")
+
+    def index(self, key):
+        if key in self.items:
+            return self.items.index(key)
+        else:
+            raise ValueError("{0} is not in OrderedSet".format(key))
+
+    def pop(self, index=None):
+        import six
+
+        if len(self.items) == 0:
+            raise KeyError("pop from an empty OrderedSet")
+        elif not (isinstance(index, six.integer_types) or index is None):
+            raise TypeError("OrderedSet index must be integer, "
+              "not {0}".format(index.__class__.__name__))
+        if index is None:
+            index = len(self.items) - 1
+
+        if index < len(self.items):
+            return self.items.pop(index)
+        else:
+            raise IndexError("OrderedSet index out of range")

@@ -45,7 +45,7 @@ class FigureManager(object):
         provides function names, and inner level provides arguments to
         pass to each function when preset is active::
 
-          availabe_presets = \"\"\"
+          available_presets = \"\"\"
             preset_1:
               method_1:
                 method_1_arg_1: 1001
@@ -853,56 +853,71 @@ class FigureManager(object):
             sublass to instantiate parser and add arguments (optional)
         """
         import argparse
+        from collections import OrderedDict
         from inspect import getmodule
         from textwrap import wrap
+        from . import OrderedSet
 
-        full_preset_names = sorted(
-          [k for k, v in self.available_presets.items() if "extends" not in v])
-        if len(full_preset_names) == 0:
+        # Determine names of full presets and their classes
+        full_presets = OrderedDict(sorted([(k, v)
+          for k, v in self.available_presets.items() if "extends" not in v]))
+        preset_classes = OrderedSet(sorted([full_preset.get("class", "other")
+           for full_preset in full_presets.values()]))
+        for preset_class in reversed(["content", "appearance", "target"]):
+            if preset_class in preset_classes:
+                preset_classes.insert(0, preset_class)
+        for preset_class in ["other"]:
+            if preset_class in preset_classes:
+                preset_classes.append("other")
+
+        # Write preset list
+        if len(full_presets) == 0:
             epilog = None
         else:
             epilog = "available presets:\n"
-            for preset_name in full_preset_names:
-                preset = self.available_presets[preset_name]
-                extension_names = sorted(
-                  [k for k, v in self.available_presets.items()
-                    if "extends" in v and v["extends"] == preset_name])
-                n_extensions = len(extension_names)
-                symbol = "│" if n_extensions > 0 else " "
-                if "help" in preset:
-                    wrapped = wrap(preset["help"], 54)
-                    if len(preset_name) > 20:
-                        epilog += "  {0}\n".format(preset_name)
-                        epilog += "   {0} {1:19}".format(symbol, " ")
+            for preset_class in preset_classes:
+                epilog += "  {0}:\n".format(preset_class)
+                presets = sorted([(k, v) for k, v in full_presets.items()
+                            if v.get("class", "other") == preset_class])
+                for preset_name, preset in presets:
+                    extensions = sorted([(k, v)
+                                   for k, v in self.available_presets.items()
+                                   if v.get("extends") == preset_name])
+                    symbol = "│" if len(extensions) > 0 else " "
+                    if "help" in preset:
+                        wrapped = wrap(preset["help"], 54)
+                        if len(preset_name) > 20:
+                            epilog += "    {0}\n".format(preset_name)
+                            epilog += "    {0} {1:19}".format(symbol, " ")
+                        else:
+                            epilog += "    {0:18s}".format(preset_name)
+                        epilog += "  {0}\n".format(wrapped.pop(0))
+                        for line in wrapped:
+                            epilog += "     {0} {1:19}{2}\n".format(symbol,
+                                      " ", line)
                     else:
-                        epilog += "  {0:22s}".format(preset_name)
-                    epilog += "{0}\n".format(wrapped.pop(0))
-                    for line in wrapped:
-                        epilog += "   {0} {1:21}{2}\n".format(symbol, " ",
-                                    line)
-                else:
-                    epilog += "  {0}\n".format(preset_name)
-                for i, extension_name in enumerate(extension_names, 1):
-                    symbol = "└" if i == n_extensions else "├"
-                    extension = self.available_presets[extension_name]
-                    if "help" in extension:
-                        wrapped = wrap(extension["help"], 52)
-                        if len(extension_name) > 18:
+                        epilog += "    {0}\n".format(preset_name)
+                    for i, (extension_name, extension) in enumerate(extensions,
+                                                            1):
+                        symbol = "└" if i == len(extensions) else "├"
+                        if "help" in extension:
+                            wrapped = wrap(extension["help"], 51)
+                            if len(extension_name) > 16:
+                                epilog += "     {0} {1}\n".format(symbol,
+                                            extension_name)
+                                symbol = "│" if i != len(extensions) else " "
+                                epilog += "     {0} {1:17}".format(symbol, " ")
+                            else:
+                                epilog += "     {0} {1:17}".format(symbol,
+                                            extension_name)
+                            epilog += "{0}\n".format(wrapped.pop(0))
+                            symbol = "│" if i != len(extensions) else " "
+                            for line in wrapped:
+                                epilog += "     {0} {1:19}{2}\n".format(symbol,
+                                          " ", line)
+                        else:
                             epilog += "   {0} {1}\n".format(symbol,
                                         extension_name)
-                            symbol = "│" if i != n_extensions else " "
-                            epilog += "   {0} {1:19}".format(symbol, " ")
-                        else:
-                            epilog += "   {0} {1:19}".format(symbol,
-                                         extension_name)
-                        epilog += "{0}\n".format(wrapped.pop(0))
-                        symbol = "│" if i != n_extensions else " "
-                        for line in wrapped:
-                            epilog += "   {0} {1:21}{2}\n".format(symbol, " ",
-                                        line)
-                    else:
-                        epilog += "   {0} {1}\n".format(symbol,
-                                    extension_name)
         if parser is None:
             parser = argparse.ArgumentParser(
               description     = getmodule(self.__class__).__doc__,
