@@ -266,8 +266,8 @@ def multi_pop(*args, **kwargs):
 
 def _multi_get_pop(keys, dictionary, value=None, pop=False, copy=False):
     """
-    Scans dict for keys; returns first value and optionally deletes
-    others.
+    Scans dict for keys; returns first value or a copy of first value,
+    and optionally deletes others.
 
     Arguments:
       keys (str, list): Acceptable key(s) in order of decreasing

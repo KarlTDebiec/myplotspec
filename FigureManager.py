@@ -13,7 +13,6 @@ Generates one or more figures to specifications provided in a YAML file.
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 import matplotlib
-matplotlib.use("agg")
 if __name__ == "__main__":
     __package__ = str("myplotspec")
     import myplotspec
@@ -105,6 +104,7 @@ class FigureManager(object):
 
     available_presets = """
       letter:
+        class: target
         help: Letter (width ≤ 6.5", height ≤ 9.0")
         draw_figure:
           fig_width:  9.00
@@ -117,6 +117,7 @@ class FigureManager(object):
           tick_fp:   14r
           legend_fp: 14r
       notebook:
+        class: target
         help: Notebook (width ≤ 6.5", height ≤ 9.0")
         draw_figure:
           title_fp:  10b
@@ -134,6 +135,7 @@ class FigureManager(object):
           plot_kw:
             lw: 1
       poster:
+        class: target
         help: Poster
         draw_subplot:
           title_fp: 36r
@@ -148,6 +150,7 @@ class FigureManager(object):
           plot_kw:
             lw: 2
       presentation:
+        class: target
         help: 4:3 presentation (width = 10.24", height = 7.68")
         draw_figure:
           fig_width:  10.24
@@ -169,6 +172,7 @@ class FigureManager(object):
           plot_kw:
             lw:  2
       presentation_wide:
+        class: target
         help: 16:9 presentation (width = 19.20", height = 10.80")
         draw_figure:
           fig_width:  19.20
@@ -383,7 +387,6 @@ class FigureManager(object):
 
             figure_spec["outfiles"] = outfiles
             self.draw_figure(**figure_spec)
-
         # Clean up
         for outfile in outfiles.values():
             outfile.close()
@@ -846,7 +849,7 @@ class FigureManager(object):
         Provides command-line functionality.
 
         Arguments:
-          parser (ArgumentParser): Argparse argument parser; allos
+          parser (ArgumentParser): Argparse argument parser; enables
             sublass to instantiate parser and add arguments (optional)
         """
         import argparse

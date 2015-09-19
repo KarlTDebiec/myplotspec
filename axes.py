@@ -350,7 +350,7 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     else:
         raise
     get_figure_subplots(figure=figure, subplots=subplots, **partner_kw)
-    partner = subplots[subplots.keys()[-1]]
+    partner = subplots[list(subplots)[-1]]
 
     subplot._mps_partner_subplot = partner
     return partner
