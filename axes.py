@@ -296,7 +296,7 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     """
     Adds a subplot to the side 
 
-    Typically used for colorbars
+    Typically used for colorbars.
 
     Arguments:
       subplot (Axes): Host subplot to which partner will be added
@@ -312,7 +312,10 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
       partner (Axes): Parter subplot
 
     .. todo:
-      - implement 'left' and 'bottom'
+      - implement 'left'
+      - store position somewhere (e.g. _position) so that later functions don't
+        need their own position argument
+      - Error text
     """
     from copy import copy
     import numpy as np
@@ -338,6 +341,15 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
           host_bottom + host_height + partner_kw["hspace"])
         partner_kw["top"] = partner_kw.get("top",
           host_top - partner_kw["hspace"] - partner_kw["sub_height"])
+    if position == "bottom":
+        partner_kw["left"] = partner_kw.get("left", host_left)
+        partner_kw["right"] = partner_kw.get("right", host_right)
+        partner_kw["hspace"] = partner_kw.pop("hspace", 0.05)
+        partner_kw["sub_height"] = partner_kw.get("sub_height", 0.1)
+        partner_kw["bottom"] = partner_kw.get("bottom",
+          host_bottom - partner_kw["hspace"] - partner_kw["sub_height"])
+        partner_kw["top"] = partner_kw.get("top",
+          host_top - partner_kw["hspace"] - partner_kw["sub_height"])
     elif position == "right":
         partner_kw["bottom"] = partner_kw.get("bottom", host_bottom)
         partner_kw["top"] = partner_kw.get("top", host_top)
@@ -348,9 +360,10 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
         partner_kw["right"] = partner_kw.get("right",
           host_right - partner_kw["wspace"] - partner_kw["sub_width"])
     else:
-        raise
+        raise()
     get_figure_subplots(figure=figure, subplots=subplots, **partner_kw)
     partner = subplots[list(subplots)[-1]]
+    partner._mps_position = position
 
     subplot._mps_partner_subplot = partner
     return partner
@@ -386,7 +399,12 @@ def set_colorbar(subplot, mappable, **kwargs):
     from . import FP_KEYS, get_font, multi_kw
 
     colorbar_kw = kwargs.get("colorbar_kw", {})
-    position = colorbar_kw.get("position", "right")
+    if "position" in colorbar_kw:
+        position = colorbar_kw.get("position")
+    elif hasattr(subplot._mps_partner_subplot, "_mps_position"):
+        position = subplot._mps_partner_subplot._mps_position
+    else:
+        position = "right"
 
     orientation = colorbar_kw.get("orientation", "vertical"
       if position in ["left", "right"] else "horizontal")
@@ -412,6 +430,7 @@ def set_colorbar(subplot, mappable, **kwargs):
                   color="k")
         if position == "top":
             subplot._mps_partner_subplot.xaxis.tick_top()
+        if position in ["top", "bottom"]:
             for tick in ticks:
                 tick_x = ((tick - subplot._mps_colorbar.vmin) /
                   (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))

@@ -26,7 +26,7 @@ exclude_patterns = ['_build']
 pygments_style = "sphinx"
 # modindex_common_prefix = []
 
-html_theme = "default"
+html_theme = "alabaster"
 # html_theme_options = {}
 # html_theme_path = []
 # html_title = None

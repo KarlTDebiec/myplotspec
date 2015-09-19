@@ -77,7 +77,6 @@ class FigureManager(object):
       - Support mutually exclusive presets that may smoothly and
         verbosely override one another
       - Support multiple inheritance/extension for presets
-      - Preset classes, such as 'target', 'content', 'appearance', etc.
       - More advanced preset and overall specification help
       - Intermediate level of debug output
       - Bring documentation up to date
@@ -87,15 +86,15 @@ class FigureManager(object):
       - 2D indexing of subplots
       - Support slicing for passage of arguments to multiple figures,
         subplots, or datasets
-      - Clean up multi_kw or come up with reasonable alternative
-      - Consider making spec keys case-insensitive
+      - Replace all instances of multi_kw
       - Be more careful (less wasteful) about use of copy()
+      - Consider making spec keys case-insensitive
       - Decide how to manage the specification of sizes, positions, etc.
         in real-world units (inches or centimeters)
       - Improve support for seaborn colors
       - Clean up docstring return values
       - Double-check verbose and debug support
-      - Figure out how to write loose arguments (e.g. [x]tick[s]) in
+      - Figure out how to write permissive arguments (e.g. [x]tick[s]) in
         sphinx-compatible way
     """
     from .manage_defaults_presets import manage_defaults_presets
