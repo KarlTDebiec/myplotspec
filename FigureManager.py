@@ -22,9 +22,9 @@ class FigureManager(object):
     Manages the generation of figures.
 
     Attributes:
-      defaults (str, dict): Default arguments to :func:`draw_report`,
-        :func:`draw_figure`, :func:`draw_subplot`, and
-        :func:`draw_dataset` functions, in yaml format. Outer level (of
+      defaults (str, dict): Default arguments to :meth:`draw_report`,
+        :meth:`draw_figure`, :meth:`draw_subplot`, and
+        :meth:`draw_dataset` functions, in yaml format. Outer level (of
         indentation or keys) provides function names, and inner level
         provides default arguments to each function::
 
@@ -38,12 +38,13 @@ class FigureManager(object):
               ...
           \"\"\"
 
-      available_presets (str, dict): Available sets of preset arguments to
-        :func:`draw_report`, :func:`draw_figure`, :func:`draw_subplot`,
-        and :func:`draw_dataset` functions, in yaml format. Outer level
-        (of indentation or keys) provides preset names, middle level
-        provides function names, and inner level provides arguments to
-        pass to each function when preset is active::
+      available_presets (str, dict): Available sets of preset arguments
+        to :meth:`draw_report`, :meth:`draw_figure`,
+        :meth:`draw_subplot`, and :meth:`draw_dataset` functions, in
+        yaml format. Outer level (of indentation or keys) provides
+        preset names, middle level provides function names, and inner
+        level provides arguments to pass to each function when preset is
+        active::
 
           available_presets = \"\"\"
             preset_1:
@@ -62,15 +63,21 @@ class FigureManager(object):
                 method_2_arg_2: efghij
           \"\"\"
 
-        Each preset may additionally contain the keys 'help', 'extends'
-        and 'inherits'. 'help' may contain a short help message
-        displayed with the help text of the script. 'extends' may
-        contain the name of another preset within the class from which
-        the preset will inherit (and optionally override) all arguments.
-        Subclasses of this base FigureManager class may also include the
+        Each preset may additionally contain the keys 'help', 'class',
+        'extends' and 'inherits'. 'help' may contain a short help
+        message displayed with the help text of the script, while
+        'class' is the name of the category in which the preset is
+        classified; built-in categories include 'content', for presets
+        related to the type of data being used, 'appearance', for
+        presets related to modifications to formatting, and 'target',
+        for presets specifying the target destination of the figure,
+        such as 'notebook' or 'presetnation'. 'extends' may contain the
+        name of another preset within the class from which the preset
+        will inherit (and optionally override) all arguments. Subclasses
+        of this base :class:`FigureManager` class may also include the
         keyword 'inherits' which may contain the name of a preset of
-        FigureManager (listed below) from which it will inherit (and
-        optionally override) all arguments.
+        :class:`FigureManager` (listed below) from which it will inherit
+        (and optionally override) all arguments.
 
     .. todo:
       - Accept presets from file, e.g. --preset-file /path/to/file.yaml
@@ -82,7 +89,7 @@ class FigureManager(object):
       - Bring documentation up to date
       - Better examples
       - Improved dataset caching
-      - Dataset base class with caching support
+      - Dataset base class with caching support?
       - 2D indexing of subplots
       - Support slicing for passage of arguments to multiple figures,
         subplots, or datasets
@@ -91,11 +98,11 @@ class FigureManager(object):
       - Consider making spec keys case-insensitive
       - Decide how to manage the specification of sizes, positions, etc.
         in real-world units (inches or centimeters)
-      - Improve support for seaborn colors
+      - Improve usage seaborn colors (possibly only if -s used?)
       - Clean up docstring return values
       - Double-check verbose and debug support
-      - Figure out how to write permissive arguments (e.g. [x]tick[s]) in
-        sphinx-compatible way
+      - Figure out how to write permissive arguments (e.g. [x]tick[s])
+        in sphinx-compatible way
     """
     from .manage_defaults_presets import manage_defaults_presets
     from .manage_kwargs import manage_kwargs
@@ -224,7 +231,7 @@ class FigureManager(object):
         Arguments:
           available_presets (string, dict): Available presets; may be a
             yaml string, path to a yaml file, or a dictionary; if not
-            provided pulled from self.available_presets
+            provided pulled from :attr:`available_presets`
           args (tuple): Additional positional arguments
           kwargs (dict): Additional keyword arguments
 
@@ -255,11 +262,11 @@ class FigureManager(object):
 
     def __call__(self, *args, **kwargs):
         """
-        When called as a function, calls :func:`draw_report`.
+        When called as a function, calls :meth:`draw_report`.
 
         Arguments:
-          args (tuple): Passed to :func:`draw_report`
-          kwargs (dict): Passed to :func:`draw_report`
+          args (tuple): Passed to :meth:`draw_report`
+          kwargs (dict): Passed to :meth:`draw_report`
         """
         self.draw_report(*args, **kwargs)
 
@@ -303,17 +310,18 @@ class FigureManager(object):
             }
 
         The values stored at each (0-indexed) integer key provide the
-        arguments to be passed to :func:`draw_figure` for each of a
+        arguments to be passed to :meth:`draw_figure` for each of a
         series of figures. Values stored at 'all' are passed to each
         figure, but overridden by values specific to that figure.
 
         Arguments:
           figure[s] (dict): Figure specifications
-          preset[s] (str, list, optional): Selected preset(s); presets loaded
-            from figure specification will take precedence over those passed as
-            arguments
-          yaml_spec (str, dict, optional): Argument data structure; may be
-            string path to yaml file, yaml-format string, or dictionary
+          preset[s] (str, list, optional): Selected preset(s); presets
+            loaded from figure specification will take precedence over
+            those passed as arguments
+          yaml_spec (str, dict, optional): Argument data structure; may
+            be string path to yaml file, yaml-format string, or
+            dictionary
           verbose (int): Level of verbose output
           debug (int): Level of debug output
           kwargs (dict): Additional keyword arguments
@@ -325,15 +333,15 @@ class FigureManager(object):
           In order to allow multiple figures to be output to multiple
           pdfs, this function maintains a dict outfiles containing
           references to a PdfPages object for each specified pdf
-          outfile. :func:`draw_figure`'s decorator
+          outfile. :meth:`draw_figure`'s decorator
           :class:`~.manage_output.manage_output` adds new PdfPages
           objects as requested, or adds pages to existing ones. Once all
           figures have been drawn, this function closes each PdfPages.
 
         .. todo:
           - Support slicing for passage of arguments to multiple figures
-          - Move preset handling to another function, alongside support for
-            mutual exclusivity
+          - Move preset handling to another function, alongside support
+            for mutual exclusivity
         """
         from copy import deepcopy
         import six
@@ -432,7 +440,7 @@ class FigureManager(object):
             }
 
         The values stored at each integer key (0-indexed) provide the
-        arguments to be passed to :func:`draw_subplot` for each of a
+        arguments to be passed to :meth:`draw_subplot` for each of a
         series of subplots. Values stored at 'all' are passed to each
         subplot, but overridden by values specific to that subplot.
 
@@ -446,9 +454,9 @@ class FigureManager(object):
         Arguments:
           outfile (str): Output filename
           subplot[s] (dict): Subplot specifications
-          preset[s] (str, list, optional): Selected preset(s); presets loaded
-            from figure specification will take precedence over those passed as
-            arguments
+          preset[s] (str, list, optional): Selected preset(s); presets
+            loaded from figure specification will take precedence over
+            those passed as arguments
           title (str, optional): Figure title
           shared_xlabel (str, optional): X label to be shared among
             subplots
@@ -456,12 +464,22 @@ class FigureManager(object):
             subplots
           shared_legend (bool, optional): Generate a legend shared 
             between subplots
-          multiplot (bool, optional): 
-          nrows (int, optional):
-          ncols (int, optional):
-          nsubplots (int, optional): 
-          multi_xticklabels (list, optional): 
-          multi_yticklabels (list, optional): 
+          multiplot (bool, optional): Subplots in specification are a
+            small multiple set; x and y labels and ticklabels are
+            omitted for plots other than those along the left side and
+            bottom
+          nrows (int, optional): Number of rows; only necessary with
+            multiplot
+          ncols (int, optional): Number of columns, only necessary with
+            multiplot
+          nsubplots (int, optional): Number of subplots; only necessary
+            with multiplot
+          multi_xticklabels (list, optional): x tick labels to be
+            assigned to subplots along bottom; only necessary with
+            multiplot
+          multi_yticklabels (list, optional): y tick labels to be
+            assigned to subplots along left side; only necessary with
+            multiplot
           verbose (int): Level of verbose output
           debug (int): Level of debug output
           kwargs (dict): Additional keyword arguments
@@ -632,7 +650,7 @@ class FigureManager(object):
             }
 
         The values stored at each integer key (0-indexed) provide the
-        arguments to be passed to :func:`draw_dataset` for each of a
+        arguments to be passed to :meth:`draw_dataset` for each of a
         series of datasets. Values stored at 'all' are passed to each
         dataset, but overridden by values specific to that dataset.
 
@@ -642,9 +660,9 @@ class FigureManager(object):
         Arguments:
           subplot (Axes): Axes on which to act
           dataset[s] (dict): Dataset specifications
-          preset[s] (str, list, optional): Selected preset(s); presets loaded
-            from figure specification will take precedence over those passed as
-            arguments
+          preset[s] (str, list, optional): Selected preset(s); presets
+            loaded from figure specification will take precedence over
+            those passed as arguments
           title (str, optional): Subplot title
           legend (bool, optional): Draw legend on subplot
           partner_subplot (bool, optional): Add a parter subplot
@@ -793,8 +811,8 @@ class FigureManager(object):
         """
         Loads a dataset, or reloads a previously-loaded dataset.
 
-        Datasets are stored in FigureManager's dataset_cache instance
-        variable, a dictionary containing copies of previously
+        Datasets are stored in :class:`FigureManager`'s dataset_cache
+        instance variable, a dictionary containing copies of previously
         loaded datasets keyed by tuples containing the class and
         arguments used to instantiate the dataset.
 

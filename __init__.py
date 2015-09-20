@@ -322,8 +322,8 @@ def pad_zero(ticks, digits=None, **kwargs):
         provided
 
     Returns:
-      (list): Tick labels, each with the same number of digits after
-        the decimal point
+      tick_labels (list): Tick labels, each with the same number of
+      digits after the decimal point
     """
     if digits is None:
         digits = 0
@@ -333,7 +333,6 @@ def pad_zero(ticks, digits=None, **kwargs):
     if digits == 0:
         return ["{0:d}".format(tick) for tick in map(int, ticks)]
     else:
-
         return ["{0:.{1}f}".format(tick, digits) for tick in ticks]
 
 def get_edges(figure_or_subplots, **kwargs):
