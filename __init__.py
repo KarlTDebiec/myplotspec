@@ -251,7 +251,7 @@ def multi_get_copy(*args, **kwargs):
 
 def multi_pop(*args, **kwargs):
     """
-    Scans dict for keys; returns first value and deletes others.
+    Scans dict for keys; returns first value and deletes it and others.
 
     Arguments:
       keys (str, list): Acceptable key(s) in order of decreasing

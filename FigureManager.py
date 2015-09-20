@@ -835,7 +835,7 @@ class FigureManager(object):
 
         Returns:
           dataset (cls): Dataset, either initialized new or copied from
-            cache
+          cache
         """
         verbose = kwargs.get("verbose", 1)
         debug = kwargs.get("debug", 0)

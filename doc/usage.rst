@@ -228,6 +228,19 @@ Subclassing FigureManager
 Once the examples above are understood, the next step towards using MYPlotSpec
 is typically to write a subclass of :class:`~.FigureManager.FigureManager` for
 the specific type of dataset in use. Generally, only the function
-:func:`~.FigureManager.FigureManager.draw_dataset` needs to be overridden, in
-addition to the attributes ``defaults`` and ``presets``. Example subclasses of 
-:class:`~.FigureManager.FigureManager` will be available soon.
+:meth:`~.FigureManager.FigureManager.draw_dataset` needs to be overridden, in
+addition to the attributes :attr:`~.FigureManager.FigureManager.defaults` and
+:attr:`~.FigureManager.FigureManager.presets`. Example subclasses of
+:class:`~.FigureManager.FigureManager` for plotting several types of data are
+available on GitHub:
+
+- `Dynamic Light Scattering
+  <https://github.com/KarlTDebiec/myplotspec_dls>`_
+- `Fast Protein Liquid Chromatography
+  <https://github.com/KarlTDebiec/myplotspec_fplc>`_
+- `Molecular Dynamics Simulation
+  <https://github.com/KarlTDebiec/myplotspec_sim>`_
+- `Nuclear Magnetic Resonance Spectroscopy
+  <https://github.com/KarlTDebiec/myplotspec_nmr>`_
+- `Ramachandran Plots
+  <https://github.com/KarlTDebiec/Ramaplot>`_

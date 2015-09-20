@@ -9,6 +9,9 @@ FigureManager
 .. automethod:: myplotspec.FigureManager.FigureManager.draw_figure(...)
 .. automethod:: myplotspec.FigureManager.FigureManager.draw_subplot(...)
 .. automethod:: myplotspec.FigureManager.FigureManager.draw_dataset(...)
+.. automethod:: myplotspec.FigureManager.FigureManager.load_dataset(...)
+.. automethod:: myplotspec.FigureManager.FigureManager.initialize_presets(...)
+.. automethod:: myplotspec.FigureManager.FigureManager.main(...)
 
 Decorators
 ==========
@@ -61,7 +64,9 @@ General
 .. automodule:: myplotspec
 .. autofunction:: myplotspec.get_yaml
 .. autofunction:: myplotspec.merge_dicts
-.. autofunction:: myplotspec.multi_kw
+.. autofunction:: myplotspec.multi_get
+.. autofunction:: myplotspec.multi_get_copy
+.. autofunction:: myplotspec.multi_pop
 .. autofunction:: myplotspec.pad_zero
 
 matplotlib
