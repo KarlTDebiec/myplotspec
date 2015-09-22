@@ -866,8 +866,8 @@ class FigureManager(object):
         Provides command-line functionality.
 
         Arguments:
-          parser (ArgumentParser): Argparse argument parser; enables
-            sublass to instantiate parser and add arguments (optional)
+          parser (ArgumentParser, optional): argparse argument parser;
+            enables sublass to instantiate parser and add arguments
         """
         import argparse
         from collections import OrderedDict
