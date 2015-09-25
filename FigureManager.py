@@ -401,8 +401,7 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     @manage_output()
-    def draw_figure(self, title=None, shared_xlabel=None,
-        shared_ylabel=None, shared_legend=None, multiplot=False, verbose=1,
+    def draw_figure(self, shared_legend=None, multiplot=False, verbose=1,
         debug=0, **kwargs):
         """
         Draws a figure.
@@ -458,9 +457,9 @@ class FigureManager(object):
             loaded from figure specification will take precedence over
             those passed as arguments
           title (str, optional): Figure title
-          shared_xlabel (str, optional): X label to be shared among
+          [shared_][x]label (str, optional): X label to be shared among
             subplots
-          shared_ylabel (str, optional): Y label to be shared among
+          [shared_][y]label (str, optional): Y label to be shared among
             subplots
           shared_legend (bool, optional): Generate a legend shared 
             between subplots
@@ -494,7 +493,8 @@ class FigureManager(object):
         from . import (get_figure_subplots, multi_get, multi_get_copy,
                        multi_pop)
         from .legend import set_shared_legend
-        from .text import set_title, set_shared_xlabel, set_shared_ylabel
+        from .text import (set_title, set_shared_xlabel,
+                           set_shared_ylabel)
 
         # Load spec and prepare figure and subplots
         subplot_specs = multi_pop(["subplots", "subplot"], kwargs, {})
@@ -506,12 +506,9 @@ class FigureManager(object):
                              **kwargs)
 
         # Format Figure
-        if title is not None:
-            set_title(figure, title=title, **kwargs)
-        if shared_xlabel is not None:
-            set_shared_xlabel(figure, xlabel=shared_xlabel, **kwargs)
-        if shared_ylabel is not None:
-            set_shared_ylabel(figure, ylabel=shared_ylabel, **kwargs)
+        set_title(figure, **kwargs)
+        set_shared_xlabel(figure, **kwargs)
+        set_shared_ylabel(figure, **kwargs)
         if shared_legend is not None and shared_legend is not False:
             shared_handles = OrderedDict()
 

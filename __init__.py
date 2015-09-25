@@ -292,13 +292,15 @@ def _multi_get_pop(keys, dictionary, value=None, pop=False, copy=False):
     if isinstance(keys, six.string_types):
         keys = [keys]
     elif not hasattr(keys, "__iter__"):
-        raise TypeError()
+        raise TypeError("Argument 'keys' must be a string or iterable")
 
     if not isinstance(dictionary, dict):
-        raise TypeError()
+        raise TypeError("Argument 'dictionary' must be a dict")
 
     if pop and copy:
-        raise TypeError()
+        raise TypeError("Argument seetings 'pop' and 'copy' may not be used "
+          "simultaneously; if the value is to be removed from the source "
+          "dictionary making a copy of it is not appropriate.")
 
     found = False
     for key in [key for key in keys if key in dictionary]:
