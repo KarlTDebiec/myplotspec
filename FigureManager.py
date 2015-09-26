@@ -744,6 +744,10 @@ class FigureManager(object):
 
             self.draw_dataset(subplot=subplot, handles=handles,
               **dataset_spec)
+        # Draw grid
+        if kwargs.get("grid", False):
+            grid_kw = multi_get_copy("grid_kw", kwargs, {})
+            subplot.grid(**grid_kw)
 
         # Draw subplot legend
         if legend is not None and legend is not False:

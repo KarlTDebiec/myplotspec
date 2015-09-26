@@ -43,7 +43,9 @@ def set_xaxis(subplot, xticks=None, xticklabels=None, xtick_fp=None,
       [x]lw (float): Subplot top and bottom line width
       kwargs (dict): Additional keyword arguments
     """
-    from . import FP_KEYS, get_font, multi_kw
+    from . import (FP_KEYS, get_font, multi_get,
+                   multi_get_copy, multi_pop)
+    from . import multi_kw
 
     # Ticks
     xtick_kw = kwargs.pop("xtick_kw", {})
@@ -154,6 +156,8 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
         for second y axis
       kwargs (dict): Additional keyword arguments
     """
+    from . import (FP_KEYS, get_font, multi_get,
+                   multi_get_copy, multi_pop)
     from . import FP_KEYS, get_font, multi_kw
 
     # Y1 Ticks
