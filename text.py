@@ -393,7 +393,7 @@ def set_text(figure_or_subplot, *args, **kwargs):
         return None
 
     # Determine font and other settings
-    text_fp = multi_get_copy("text_fp", kwargs)
+    text_fp = multi_get_copy(["text_fp"] + FP_KEYS, kwargs)
     text_fp_2 = multi_pop(["text_fp"] + FP_KEYS, text_kw)
     if text_fp_2 is not None:
         text_kw["fontproperties"] = get_font(text_fp_2)

@@ -290,10 +290,11 @@ def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
     # Y2 Tick parameters
     if subplot_y2 is not None:
         if y2tick_params is not None:
-            tick_params = y2tick_params
+            y2tick_params["axis"] = "y"
+            subplot_y2.tick_params(**y2tick_params)
+        # Must reset y1 tick parameters; nobody knows why
         if tick_params is not None:
-            tick_params["axis"] = "y"
-            subplot_y2.tick_params(**tick_params)
+            subplot.tick_params(**tick_params)
 
 def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     **kwargs):

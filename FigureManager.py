@@ -456,6 +456,9 @@ class FigureManager(object):
           preset[s] (str, list, optional): Selected preset(s); presets
             loaded from figure specification will take precedence over
             those passed as arguments
+          nrows (int, optional): Number of rows of subplots
+          ncols (int, optional): Number of columns of subplots
+          nsubplots (int, optional): Number of subplots
           title (str, optional): Figure title
           [shared_][x]label (str, optional): X label to be shared among
             subplots
@@ -467,18 +470,14 @@ class FigureManager(object):
             small multiple set; x and y labels and ticklabels are
             omitted for plots other than those along the left side and
             bottom
-          nrows (int, optional): Number of rows; only necessary with
-            multiplot
-          ncols (int, optional): Number of columns, only necessary with
-            multiplot
-          nsubplots (int, optional): Number of subplots; only necessary
-            with multiplot
           multi_xticklabels (list, optional): x tick labels to be
             assigned to subplots along bottom; only necessary with
             multiplot
           multi_yticklabels (list, optional): y tick labels to be
             assigned to subplots along left side; only necessary with
             multiplot
+          multi_tick_kw (dict, optional): tick params to be assigned to
+            multiple subplots
           verbose (int): Level of verbose output
           debug (int): Level of debug output
           kwargs (dict): Additional keyword arguments
@@ -519,6 +518,7 @@ class FigureManager(object):
             nsubplots = kwargs.get("nsubplots", nrows * ncols)
             multi_xticklabels = kwargs.get("multi_xticklabels")
             multi_yticklabels = kwargs.get("multi_yticklabels")
+            multi_tick_params = kwargs.get("multi_tick_params")
 
         # Configure and plot subplots
         for i in subplot_indexes:
@@ -583,7 +583,7 @@ class FigureManager(object):
                 if multi_xticklabels is not None:
                     if (nrows - 1) * ncols - 1 < i < nsubplots - 1:
                         if not "xticklabels" in subplot_spec:
-                            subplot_spec["xticklabels"] = multi_xticklabels[:-1]
+                            subplot_spec["xticklabels"]=multi_xticklabels[:-1]
                     elif i != nsubplots - 1:
                         if not "xticklabels" in subplot_spec:
                             subplot_spec["xticklabels"] = []
@@ -592,12 +592,50 @@ class FigureManager(object):
                 if multi_yticklabels is not None:
                     if i % ncols == 0 and i != 0:
                         if not "yticklabels" in subplot_spec:
-                            subplot_spec["yticklabels"] = multi_yticklabels[:-1]
+                            subplot_spec["yticklabels"]=multi_yticklabels[:-1]
                     elif i != 0:
                         if not "yticklabels" in subplot_spec:
                             subplot_spec["yticklabels"] = []
                         if not "ylabel" in subplot_spec:
                             subplot_spec["ylabel"] = None
+                if multi_tick_params is not None:
+                    bottom = multi_tick_params.get("bottom")
+                    top = multi_tick_params.get("top")
+                    left = multi_tick_params.get("left")
+                    right = multi_tick_params.get("right")
+                    inner = multi_tick_params.get("inner")
+
+                    if "xtick_params" in subplot_spec:
+                        xtick_params = subplot_spec["xtick_params"]
+                    elif "tick_params" in subplot_spec:
+                        xtick_params = subplot_spec["tick_params"]
+                    else:
+                        xtick_params = subplot_spec["tick_params"] = {}
+                    if "ytick_params" in subplot_spec:
+                        ytick_params = subplot_spec["ytick_params"]
+                    elif "tick_params" in subplot_spec:
+                        ytick_params = subplot_spec["tick_params"]
+
+                    if not "left" in xtick_params:
+                        if i % ncols == 0:
+                            xtick_params["left"] = left
+                        else:
+                            xtick_params["left"] = inner
+                    if not "right" in xtick_params:
+                        if i == (ncols -1):
+                            xtick_params["right"] = right
+                        else:
+                            xtick_params["right"] = inner
+                    if not "bottom" in ytick_params:
+                        if (nrows - 1) * ncols - 1 < i:
+                            ytick_params["bottom"] = bottom
+                        else:
+                            ytick_params["bottom"] = inner
+                    if not "top" in ytick_params:
+                        if i < nrows:
+                            ytick_params["top"] = top
+                        else:
+                            ytick_params["top"] = inner
 
             self.draw_subplot(subplot, **subplot_spec)
 
