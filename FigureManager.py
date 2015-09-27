@@ -129,14 +129,20 @@ class FigureManager(object):
           title_fp:  10b
           label_fp:  10b
           legend_fp: 10b
+          shared_legend_kw:
+            legend_kw:
+              legend_fp: 8r
+              frameon: False
         draw_subplot:
           title_fp: 10b
           label_fp: 10b
           tick_fp:   8r
-          legend_fp: 8r
           tick_params:
             length: 2
             pad: 6
+          legend_kw:
+            legend_fp: 8r
+            frameon: False
         draw_dataset:
           plot_kw:
             lw: 1
@@ -401,7 +407,7 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     @manage_output()
-    def draw_figure(self, shared_legend=None, multiplot=False, verbose=1,
+    def draw_figure(self, shared_legend=False, multiplot=False, verbose=1,
         debug=0, **kwargs):
         """
         Draws a figure.
@@ -508,8 +514,8 @@ class FigureManager(object):
         set_title(figure, **kwargs)
         set_shared_xlabel(figure, **kwargs)
         set_shared_ylabel(figure, **kwargs)
-        if shared_legend is not None and shared_legend is not False:
-            shared_handles = OrderedDict()
+        if shared_legend:
+            handles = OrderedDict()
 
         # Load multiplot variables
         if multiplot:
@@ -575,8 +581,8 @@ class FigureManager(object):
               for key3 in kwargs.get("yaml_keys")]
               for key  in key2]
 
-            if shared_legend is not None and shared_legend is not False:
-                subplot_spec["shared_handles"] = shared_handles
+            if shared_legend:
+                subplot_spec["handles"] = handles
 
             # Manage multiplot x and y labels
             if multiplot:
@@ -640,8 +646,8 @@ class FigureManager(object):
             self.draw_subplot(subplot, **subplot_spec)
 
         # Draw legend
-        if shared_legend is not None and shared_legend is not False:
-            set_shared_legend(figure, subplots, handles=shared_handles,
+        if shared_legend:
+            set_shared_legend(figure, subplots, handles=handles,
               **kwargs)
 
         # Return results
@@ -650,7 +656,7 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_subplot(self, subplot, title=None, legend=None,
-        partner_subplot=False, shared_handles=None, visible=True, verbose=1,
+        partner_subplot=False, handles=None, visible=True, verbose=1,
         debug=0, **kwargs):
         """
         Draws a subplot.
@@ -701,7 +707,7 @@ class FigureManager(object):
           title (str, optional): Subplot title
           legend (bool, optional): Draw legend on subplot
           partner_subplot (bool, optional): Add a parter subplot
-          shared_handles (OrderedDict, optional): Nascent OrderedDict of
+          handles (OrderedDict, optional): Nascent OrderedDict of
             [labels]:handles shared among subplots of host figure; used
             to draw shared legend on figure
           visible (bool, optional): Subplot visibility
@@ -729,7 +735,8 @@ class FigureManager(object):
             dataset_specs = {}
         dataset_indexes = sorted([int(i) for i in dataset_specs.keys()
                            if str(i).isdigit()])
-        handles = OrderedDict()
+        if handles is None:
+            handles = OrderedDict()
 
         # Configure and plot datasets
         for i in dataset_indexes:
@@ -789,14 +796,8 @@ class FigureManager(object):
             subplot.grid(**grid_kw)
 
         # Draw subplot legend
-        if legend is not None and legend is not False:
+        if legend:
             set_legend(subplot, handles=handles, **kwargs)
-
-        # Manage shared legend
-        if shared_handles is not None:
-            for label, handle in handles.items():
-                if label not in shared_handles:
-                    shared_handles[label] = handle
 
         if not visible:
             subplot.set_visible(False)

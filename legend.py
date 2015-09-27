@@ -26,8 +26,7 @@ Note:
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################## FUNCTIONS ##################################
-def set_legend(subplot, handles=None, legend_lw=None, legend_fp=None,
-    **kwargs):
+def set_legend(subplot, handles=None, **kwargs):
     """
     Draws and formats a legend on a subplot.
 
@@ -41,16 +40,17 @@ def set_legend(subplot, handles=None, legend_lw=None, legend_fp=None,
       legend_kw (dict): Keyword arguments passed to subplot.legend()
 
     Returns:
-      (*Legend*): Legend
+      (Legend): Legend
 
     .. todo:
       - Test legend title and accept font properties setting
     """
-    from . import FP_KEYS, get_font, multi_kw
+    from . import FP_KEYS, get_font, multi_get_copy, multi_pop
 
     # Manage arguments
-    legend_kw = kwargs.pop("legend_kw", {})
-    legend_fp_2 = multi_kw(["legend_fp"] + FP_KEYS, legend_kw)
+    legend_kw = multi_get_copy("legend_kw", kwargs, {})
+    legend_fp = multi_get_copy(["legend_fp"] + FP_KEYS, kwargs)
+    legend_fp_2 = multi_pop(["legend_fp"] + FP_KEYS, legend_kw)
     if legend_fp_2 is not None:
         legend_kw["prop"] = get_font(legend_fp_2)
     elif legend_fp is not None:
@@ -61,9 +61,9 @@ def set_legend(subplot, handles=None, legend_lw=None, legend_fp=None,
         legend = subplot.legend(handles.values(), handles.keys(), **legend_kw)
     else:
         legend = subplot.legend(**legend_kw)
-    if legend_lw is not None:
-        for handle in legend.legendHandles:
-            handle.set_linewidth(legend_lw)
+#    if legend_lw is not None:
+#        for handle in legend.legendHandles:
+#            handle.set_linewidth(legend_lw)
     return legend
 
 def set_shared_legend(figure, subplots, **kwargs):
@@ -79,20 +79,23 @@ def set_shared_legend(figure, subplots, **kwargs):
         new subplot for shared legend
 
     Returns:
-      (*Legend*): Legend
+      (Legend): Legend
     """
-    from . import get_figure_subplots, get_font
+    from . import get_figure_subplots, get_font, multi_get_copy, multi_get
     from .axes import set_xaxis, set_yaxis
+
+    shared_legend_kw = multi_get_copy("shared_legend_kw", kwargs, {})
+    handles = multi_get(["shared_handles", "handles"], kwargs)
 
     # Add subplot to figure, draw and format legend
     figure, subplots = get_figure_subplots(figure=figure, subplots=subplots,
-      **kwargs)
+      **shared_legend_kw)
     subplot = subplots[len(subplots) - 1]
-    legend  = set_legend(subplot, **kwargs)
+    legend = set_legend(subplot, handles=handles, **shared_legend_kw)
 
     # Hide subplot borders
-    set_xaxis(subplot, xticks = [])
-    set_yaxis(subplot, yticks = [])
+    set_xaxis(subplot, xticks=[])
+    set_yaxis(subplot, yticks=[])
     for spine in subplot.spines.values():
         spine.set_visible(False)
 
