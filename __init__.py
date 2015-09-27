@@ -58,10 +58,14 @@ def get_yaml(input):
             output = yaml.load(input)
             if isinstance(output, str):
                 warn("myplotspec.get_yaml() has loaded input "
-                "'{0}' as a string rather than a dictionary ".format(input) +
-                "or other data structure; if input was intended as an infile "
-                "it was not found.")
+                  "'{0}' as a string rather than a dictionary ".format(input) +
+                  "or other data structure; if input was intended as an "
+                  "infile it was not found.")
             return output
+    elif input is None:
+        warn("myplotspec.get_yaml() has been asked to load input 'None', and "
+          "will return an empty dictionary.")
+        return {}
     else:
         raise TypeError("myplotspec.get_yaml() does not support input of type "
           "{0}; ".format(input.__class__.__name__) +
