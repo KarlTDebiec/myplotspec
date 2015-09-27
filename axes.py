@@ -252,20 +252,20 @@ def set_yaxis(subplot, **kwargs):
               "y2ticklabel_fp", "ticklabel_fp"] + FP_KEYS, kwargs)
             y2ticklabel_fp_2 = multi_pop(["y2tick_fp", "tick_fp",
               "y2ticklabel_fp", "ticklabel_fp"] + FP_KEYS, y2ticklabel_kw)
-            if yticklabel_fp_2 is not None:
+            if y2ticklabel_fp_2 is not None:
                 y2ticklabel_kw["fontproperties"] = get_font(y2ticklabel_fp_2)
-            elif yticklabel_fp is not None:
+            elif y2ticklabel_fp is not None:
                 y2ticklabel_kw["fontproperties"] = get_font(y2ticklabel_fp)
             subplot._mps_y2.set_yticklabels(y2ticklabels, **y2ticklabel_kw)
         if y2label is not None:
-            ylabel_fp = multi_get_copy(["y2label_fp", "label_fp"] + FP_KEYS,
+            y2label_fp = multi_get_copy(["y2label_fp", "label_fp"] + FP_KEYS,
               kwargs)
-            ylabel_fp_2 = multi_pop(["y2label_fp", "ylabel_fp", "label_fp"] 
+            y2label_fp_2 = multi_pop(["y2label_fp", "ylabel_fp", "label_fp"] 
               + FP_KEYS, ylabel_kw)
-            if ylabel_fp_2 is not None:
-                ylabel_kw["fontproperties"] = get_font(ylabel_fp_2)
+            if y2label_fp_2 is not None:
+                y2label_kw["fontproperties"] = get_font(y2label_fp_2)
             elif ylabel_fp is not None:
-                ylabel_kw["fontproperties"] = get_font(ylabel_fp)
+                y2label_kw["fontproperties"] = get_font(y2label_fp)
             subplot._mps_y2.set_ylabel(y2label, **y2label_kw)
 
         # Must reset Y1 tick parameters; nobody knows why
