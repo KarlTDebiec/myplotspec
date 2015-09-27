@@ -718,8 +718,6 @@ class FigureManager(object):
         from .text import set_title
 
         # Format subplot
-        set_xaxis(subplot, **kwargs)
-        set_yaxis(subplot, **kwargs)
         if title is not None:
             set_title(subplot, title=title, **kwargs)
         if partner_subplot:
@@ -782,7 +780,10 @@ class FigureManager(object):
 
             self.draw_dataset(subplot=subplot, handles=handles,
               **dataset_spec)
-        # Draw grid
+
+        # Format subplot
+        set_xaxis(subplot, **kwargs)
+        set_yaxis(subplot, **kwargs)
         if kwargs.get("grid", False):
             grid_kw = multi_get_copy("grid_kw", kwargs, {})
             subplot.grid(**grid_kw)

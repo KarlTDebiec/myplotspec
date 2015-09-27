@@ -18,26 +18,25 @@ Functions for formatting axes.
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################## FUNCTIONS ##################################
-def set_xaxis(subplot, xticks=None, xticklabels=None, xtick_fp=None,
-    tick_fp=None, xticklabel_fp=None, ticklabel_fp=None, xlabel=None,
-    xlabel_fp=None, label_fp=None, xtick_params=None, tick_params=None,
-    xlw=None, lw=None, **kwargs):
+def set_xaxis(subplot, **kwargs):
     """
     Formats the x axis of a subplot using provided keyword arguments.
 
     Arguments:
       subplot (Axes): Axes to format
-      xticks (list or ndarray): Ticks; first and last are used as upper
+      [x]ticks (list, ndarray): Ticks; first and last are used as upper
         and lower boundaries
-      xtick_kw (dict): Keyword arguments passed to subplot.set_xticks()
-      xticklabels (list): Tick label text
+      [x]tick_kw (dict): Keyword arguments passed to
+        subplot.set_xticks()
+      [x]ticklabels (list): Tick label text
       [x]tick[label]_fp (str, dict, FontProperties): Tick label
         font
-      xticklabel_kw (dict): Keyword arguments passed to
+      [x]ticklabel_kw (dict): Keyword arguments passed to
         subplot.set_xticklabels()
-      xlabel (str): Label text
+      [x]label (str): Label text
       [x]label_fp (str, dict, FontProperties): Label font
-      xlabel_kw (dict): Keyword arguments passed to subplot.set_xlabel()
+      [x]label_kw (dict): Keyword arguments passed to
+        subplot.set_xlabel()
       [x]tick_params (dict): Keyword arguments passed to
         subplot.tick_params(); only affect x axis
       [x]lw (float): Subplot top and bottom line width
@@ -47,70 +46,61 @@ def set_xaxis(subplot, xticks=None, xticklabels=None, xtick_fp=None,
                    multi_get_copy, multi_pop)
     from . import multi_kw
 
-    # Ticks
-    xtick_kw = kwargs.pop("xtick_kw", {})
-    xticks_2 = multi_kw(["xticks", "ticks"], xtick_kw)
+    # Determine tick and keyword arguments; set ticks
+    xtick_kw = multi_get_copy(["xtick_kw", "tick_kw"], kwargs, {})
+    xticks = multi_get_copy(["xticks", "ticks"], kwargs)
+    xticks_2 = multi_pop(["xticks", "ticks"], xtick_kw)
     if xticks_2 is not None:
         xticks = xticks_2
-    if xticks is not None:
-        if xticks != []:
-            subplot.set_xbound(float(xticks[0]), float(xticks[-1]))
-        subplot.set_xticks(xticks, **xtick_kw)
+    elif xticks is None:
+        xticks = subplot.get_xticks()
+    subplot.set_xbound(float(xticks[0]), float(xticks[-1]))
+    subplot.set_xticks(xticks, **xtick_kw)
 
-    # Tick labels
-    xticklabel_kw = kwargs.pop("xticklabel_kw", {})
-    xticklabels_2 = multi_kw(["xticklabels", "ticklabels"], xticklabel_kw)
+    # Determine tick labels and keyword arguments; set tick labels
+    xticklabel_kw = multi_get_copy(["xticklabel_kw", "ticklabel_kw"], kwargs, {})
+    xticklabels = multi_get_copy(["xticklabels", "ticklabels"], kwargs)
+    xticklabels_2 = multi_pop(["xticklabels", "ticklabels"], xticklabel_kw)
     if xticklabels_2 is not None:
         xticklabels = xticklabels_2
-    if xticklabels is None and xticks is not None:
+    elif xticklabels is None:
         xticklabels = xticks
-
-    xticklabel_fp_2 = multi_kw(["xtick_fp", "tick_fp", "xticklabel_fp",
-                        "ticklabel_fp"] + FP_KEYS, xticklabel_kw)
+    xticklabel_fp = multi_get_copy(["xtick_fp", "tick_fp", "xticklabel_fp",
+      "ticklabel_fp"] + FP_KEYS, kwargs)
+    xticklabel_fp_2 = multi_pop(["xtick_fp", "tick_fp", "xticklabel_fp",
+      "ticklabel_fp"] + FP_KEYS, xticklabel_kw)
     if xticklabel_fp_2 is not None:
         xticklabel_kw["fontproperties"] = get_font(xticklabel_fp_2)
-    elif xtick_fp is not None:
-        xticklabel_kw["fontproperties"] = get_font(xtick_fp)
     elif xticklabel_fp is not None:
         xticklabel_kw["fontproperties"] = get_font(xticklabel_fp)
-    elif tick_fp is not None:
-        xticklabel_kw["fontproperties"] = get_font(tick_fp)
-    elif ticklabel_fp is not None:
-        xticklabel_kw["fontproperties"] = get_font(ticklabel_fp)
+    subplot.set_xticklabels(xticklabels, **xticklabel_kw)
 
-    if xticklabels is not None:
-        subplot.set_xticklabels(xticklabels, **xticklabel_kw)
-
-    # Label
-    xlabel_kw = kwargs.pop("xlabel_kw", {})
-    xlabel_2  = multi_kw(["xlabel", "label"], xlabel_kw)
+    # Determine label and keyword arguments; set label
+    xlabel_kw = multi_get_copy(["xlabel_kw", "label_kw"], kwargs, {})
+    xlabel = multi_pop(["xlabel", "label"], kwargs)
+    xlabel_2 = multi_pop(["xlabel", "label"], xlabel_kw)
     if xlabel_2 is not None:
         xlabel = xlabel_2
-
-    xlabel_fp_2 = multi_kw(["xlabel_fp", "label_fp"] + FP_KEYS, xlabel_kw)
+    xlabel_fp = multi_get_copy(["xlabel_fp", "label_fp"] + FP_KEYS, kwargs)
+    xlabel_fp_2 = multi_pop(["xlabel_fp", "label_fp"] + FP_KEYS, xlabel_kw)
     if xlabel_fp_2 is not None:
         xlabel_kw["fontproperties"] = get_font(xlabel_fp_2)
     elif xlabel_fp is not None:
         xlabel_kw["fontproperties"] = get_font(xlabel_fp)
-    elif label_fp is not None:
-        xlabel_kw["fontproperties"] = get_font(label_fp)
-
     if xlabel is not None:
         subplot.set_xlabel(xlabel, **xlabel_kw)
 
     # Tick parameters
+    xtick_params = multi_get_copy(["xtick_params", "tick_params"], kwargs, {})
     if xtick_params is not None:
-        tick_params = xtick_params
-    if tick_params is not None:
-        tick_params["axis"] = "x"
-        subplot.tick_params(**tick_params)
+        xtick_params["axis"] = "x"
+        subplot.tick_params(**xtick_params)
 
     # Line width
+    xlw = multi_get_copy(["xlw", "lw"], kwargs)
     if xlw is not None:
-        lw = xlw
-    if lw is not None:
-        subplot.spines["top"].set_lw(lw)
-        subplot.spines["bottom"].set_lw(lw)
+        subplot.spines["top"].set_lw(xlw)
+        subplot.spines["bottom"].set_lw(xlw)
 
 def set_yaxis(subplot, subplot_y2=None, yticks=None, y2ticks=None,
     yticklabels=None, y2ticklabels=None, ytick_fp=None, y2tick_fp=None,
