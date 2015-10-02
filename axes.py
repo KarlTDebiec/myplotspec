@@ -268,8 +268,10 @@ def set_yaxis(subplot, **kwargs):
                 y2label_kw["fontproperties"] = get_font(y2label_fp)
             subplot._mps_y2.set_ylabel(y2label, **y2label_kw)
 
-        # Must reset Y1 tick parameters; nobody knows why
+        # Set tick parameters, must reset Y1 tick parameters,
+        #   Nobody know why
         if ytick_params is not None:
+            subplot._mps_y2.tick_params(**ytick_params)
             subplot.tick_params(**ytick_params)
 
 
