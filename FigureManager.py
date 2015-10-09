@@ -78,9 +78,16 @@ class FigureManager(object):
         keyword 'inherits' which may contain the name of a preset of
         :class:`FigureManager` (listed below) from which it will inherit
         (and optionally override) all arguments.
+      dataset_cache (dict): Cache of previously-loaded datasets. Keys
+        are the return values of the method 'get_cache_key' from the
+        class of each dataset, and values are the datasets themselves.
+        This may be passed on from :meth:`draw_dataset` to the dataset
+        classes' __init__ methods, which may in turn add their own
+        datasets to it.
 
     .. todo:
-      - Accept presets from file, e.g. --preset-file /path/to/file.yaml
+      - Accept additional presets from file, e.g. --preset-file
+        /path/to/file.yaml
       - Support mutually exclusive presets that may smoothly and
         verbosely override one another
       - Support multiple inheritance/extension for presets
@@ -92,13 +99,13 @@ class FigureManager(object):
       - Support slicing for passage of arguments to multiple figures,
         subplots, or datasets
       - Replace all instances of multi_kw
-      - Be more careful (less wasteful) about use of copy()
+      - Be more careful (less wasteful) about use of copy and deepcopy
       - Consider making spec keys case-insensitive
       - Decide how to manage the specification of sizes, positions, etc.
         in real-world units (inches or centimeters)
       - Improve usage seaborn colors (possibly only if -s used?)
       - Clean up docstring return values
-      - Double-check verbose and debug support
+      - Extend verbose and debug support
       - Figure out how to write permissive arguments (e.g. [x]tick[s])
         in sphinx-compatible way
     """

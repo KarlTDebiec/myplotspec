@@ -19,7 +19,6 @@ class Dataset(object):
     Some support for memoization.
 
     .. todo:
-      - Update documentation
       - Support smooth reading of other pandas formats (e.g. hdf5)
     """
 
