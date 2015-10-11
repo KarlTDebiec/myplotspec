@@ -893,7 +893,14 @@ class FigureManager(object):
         debug   = kwargs.get("debug",   0)
 
         if hasattr(cls, "get_cache_key"):
-            cache_key = cls.get_cache_key(**kwargs)
+            try:
+                cache_key = cls.get_cache_key(**kwargs)
+            except TypeError:
+                from warnings import warn
+                warn("{0}.get_cache_key(...) has ".format(cls.__name__) +
+                  "raised an error; attempting to load dataset without " +
+                  "checking dataset cache.")
+                cache_key = None
             if cache_key is None:
                 return cls(**kwargs)
             elif cache_key in self.dataset_cache:
