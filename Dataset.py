@@ -7,16 +7,14 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Manages datasets.
+Manages datasets and implements caching.
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################### CLASSES ###################################
 class Dataset(object):
     """
-    Manages datasets.
-
-    Some support for memoization.
+    Manages datasets and implements caching.
 
     .. todo:
       - Support smooth reading of other pandas formats (e.g. hdf5)
@@ -30,8 +28,8 @@ class Dataset(object):
 
         .. todo:
           - Verify that keyword arguments passed to pandas may be safely
-            converted to hashable tuple, and if they cannot throw a warning
-            and load dataset without memoization
+            converted to hashable tuple, and if they cannot throw a
+            warning and load dataset without memoization
         """
         from os.path import expandvars
 
@@ -78,21 +76,23 @@ class Dataset(object):
 
         Arguments:
           cls (class): Dataset class
+          dataset_cache (dict, optional): Cache of previously-loaded
+            datasets
           verbose (int): Level of verbose output
           debug (int): Level of debug output
           kwargs (dict): Keyword arguments passed to cls.get_cache_key()
             and cls.__init__()
 
         Returns:
-          dataset (cls): Dataset, either initialized new or copied from
-          cache
+          dataset (cls): Dataset, either newly initialized or copied
+          from cache
         """
         if cls is None:
             cls = Dataset
         verbose = kwargs.get("verbose", 1)
         debug   = kwargs.get("debug",   0)
 
-        if "dataset_cache" is not None and hasattr(cls, "get_cache_key"):
+        if dataset_cache is not None and hasattr(cls, "get_cache_key"):
             try:
                 cache_key = cls.get_cache_key(**kwargs)
             except TypeError:
@@ -103,7 +103,7 @@ class Dataset(object):
                 cache_key = None
             if cache_key is None:
                 return cls(**kwargs)
-            if cache_key in dataset_cache:
+            elif cache_key in dataset_cache:
                 if verbose >= 1:
                     if hasattr(cls, "get_cache_message"):
                         print(cls.get_cache_message(cache_key))
