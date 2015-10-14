@@ -347,7 +347,10 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
         raise()
     get_figure_subplots(figure=figure, subplots=subplots, **partner_kw)
     partner = subplots[list(subplots)[-1]]
+    set_xaxis(partner, **partner_kw)
+    set_yaxis(partner, **partner_kw)
     partner._mps_position = position
+    partner.set_autoscale_on(False)
 
     subplot._mps_partner_subplot = partner
     return partner
