@@ -33,8 +33,12 @@ class Dataset(object):
         """
         from os.path import expandvars
 
-        read_csv_kw = tuple(kwargs.get("read_csv_kw", {}).items())
-        return (cls, expandvars(infile), read_csv_kw)
+        read_csv_kw = []
+        for key, value in kwargs.get("read_csv_kw", {}).items():
+            if isinstance(value, list):
+                value = tuple(value)
+            read_csv_kw.append((key, value))
+        return (cls, expandvars(infile), tuple(read_csv_kw))
 
     @staticmethod
     def get_cache_message(cache_key):
