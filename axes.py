@@ -102,6 +102,8 @@ def set_xaxis(subplot, **kwargs):
     if xlw is not None:
         subplot.spines["top"].set_lw(xlw)
         subplot.spines["bottom"].set_lw(xlw)
+    subplot.spines["top"].set_zorder(100)
+    subplot.spines["bottom"].set_zorder(100)
 
 def set_yaxis(subplot, **kwargs):
     """
@@ -200,8 +202,10 @@ def set_yaxis(subplot, **kwargs):
     # Line width
     ylw = multi_get_copy(["ylw", "lw"], kwargs)
     if ylw is not None:
-        subplot.spines["top"].set_lw(ylw)
-        subplot.spines["bottom"].set_lw(ylw)
+        subplot.spines["left"].set_lw(ylw)
+        subplot.spines["right"].set_lw(ylw)
+    subplot.spines["left"].set_zorder(100)
+    subplot.spines["right"].set_zorder(100)
 
     # For Y2 axis, check all keyword arguments first, if any are
     # provided, add y2 axis if not already present
@@ -303,7 +307,7 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     """
     from copy import copy
     import numpy as np
-    from . import get_figure_subplots
+    from . import get_figure_subplots, multi_get_copy
 
     # Get figure and host subplot dimensions in inches
     fig_size = np.array(figure.get_size_inches())
@@ -349,6 +353,9 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     partner = subplots[list(subplots)[-1]]
     set_xaxis(partner, **partner_kw)
     set_yaxis(partner, **partner_kw)
+    if partner_kw.get("grid", False):
+        grid_kw = multi_get_copy("grid_kw", partner_kw, {})
+        partner.grid(**grid_kw)
     partner._mps_position = position
     partner.set_autoscale_on(False)
 
