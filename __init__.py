@@ -84,6 +84,9 @@ def merge_dicts(dict_1, dict_2):
     Returns:
       (dict): Merged dictionary
 
+    Raises:
+      AttributeError: Either `dict_1` or `dict_2` lacks 'keys' function
+
     .. todo:
       - Consider options to override, concatenate, or merge list
         values within dictionaries
@@ -111,6 +114,12 @@ def merge_dicts(dict_1, dict_2):
                 yield (key, dict_1[key])
             else:
                 yield (key, dict_2[key])
+    if not isinstance(dict_1, dict) or not isinstance(dict_2, dict):
+        raise AttributeError("Function myplotspec.merge_dict() requires " +
+          "arguments 'dict_1' and 'dict_2' to be dictionaries; " +
+          "arguments of types " +
+          "'{0}' and '{1}' provided".format(dict_1.__class__.__name__,
+          dict_2.__class__.__name__))
 
     return dict(merge(dict_1, dict_2))
 
@@ -395,8 +404,8 @@ def get_font(fp=None, **kwargs):
     elif isinstance(fp, dict):
         kwargs.update(fp)
     else:
-        raise TypeError("get_font does not understand input of type " +
-          "{0}".format(type(fp)))
+        raise TypeError("Function myplotspec.get_font() does not support" +
+          "input of type {0}".format(fp.__class__.__name__))
     return FontProperties(**kwargs)
 
 def get_figure_subplots(figure=None, subplots=None, nrows=None,
