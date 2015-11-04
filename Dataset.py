@@ -140,6 +140,6 @@ class Dataset(object):
 
         # Load dataset
         read_csv_kw = kwargs.get("read_csv_kw", {})
-        if verbose > 0:
+        if verbose >= 1:
             print("loading from '{0}'".format(expandvars(infile)))
         self.data = pd.read_csv(expandvars(infile), **read_csv_kw)
