@@ -106,8 +106,11 @@ class Dataset(object):
                   "checking dataset cache.")
                 cache_key = None
             if cache_key is None:
-                return cls(**kwargs)
-            elif cache_key in dataset_cache:
+                return cls(dataset_cache=dataset_cache, **kwargs)
+            if debug >= 1:
+                from .debug import db_s
+                db_s(cache_key)
+            if cache_key in dataset_cache:
                 if verbose >= 1:
                     if hasattr(cls, "get_cache_message"):
                         print(cls.get_cache_message(cache_key))
