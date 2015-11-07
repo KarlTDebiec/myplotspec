@@ -886,6 +886,10 @@ class FigureManager(object):
           dataset (cls): Dataset, either initialized new or copied from
           cache
         """
+        from inspect import getargspec
+        from warnings import warn
+        from .debug import db_s
+
         if cls is None:
             from .Dataset import Dataset
             cls = Dataset
@@ -895,27 +899,64 @@ class FigureManager(object):
         if hasattr(cls, "get_cache_key"):
             try:
                 cache_key = cls.get_cache_key(**kwargs)
-            except TypeError:
-                from warnings import warn
-                warn("{0}.get_cache_key(...) has ".format(cls.__name__) +
-                  "raised an error; attempting to load dataset without " +
-                  "checking dataset cache.")
+            except TypeError as e:
+                argspec = getargspec(cls.get_cache_key)
+                args    = [a for a in argspec.args
+                             if  a != "cls"][:-1*len(argspec.defaults)]
+                given   = [a for a in args if a     in kwargs]
+                missing = [a for a in args if a not in kwargs]
+                type_error_text = ("__init__() takes at least " +
+                  "{0} arguments (".format(len(args)) +
+                  "{0} given, ".format(len(given)) +
+                  "{0} missing)".format(missing))
+                warn("{0}.get_cache_key() has ".format(cls.__name__) +
+                  "raised an error: {0}; attempting ".format(type_error_text) +
+                  "to load dataset without checking dataset cache.")
                 cache_key = None
             if cache_key is None:
-                return cls(dataset_cache=self.dataset_cache, **kwargs)
-            if debug >= 1:
-                from .debug import db_s
-                db_s(cache_key)
+                try:
+                    return cls(dataset_cache=self.dataset_cache, **kwargs)
+                except TypeError as e:
+                    argspec = getargspec(cls.__init__)
+                    args    = [a for a in argspec.args
+                                 if  a != "self"][:-1*len(argspec.defaults)]
+                    given   = [a for a in args if a     in kwargs]
+                    missing = [a for a in args if a not in kwargs]
+                    type_error_text = ("__init__() takes at least " +
+                      "{0} arguments (".format(len(args)) +
+                      "{0} given, ".format(len(given)) +
+                      "{0} missing)".format(missing))
+                    print("FIGUREMANAGER.PY: {0}".format(cls))
+                    print("FIGUREMANAGER.PY: {0}".format(args))
+                    print("FIGUREMANAGER.PY: {0}".format(given))
+                    print("FIGUREMANAGER.PY: {0}".format(missing))
+                    print("FIGUREMANAGER.PY: {0}".format(e))
+                    import sys
+                    print("FIGUREMANAGER.PY: {0}".format(
+                      sys.exc_info()[-1].tb_lineno))
+                    raise TypeError(type_error_text)
             if cache_key in self.dataset_cache:
                 if verbose >= 1:
                     if hasattr(cls, "get_cache_message"):
                         print(cls.get_cache_message(cache_key))
                     else:
-                        print("previously loaded")
+                        print("Previously loaded")
                 return self.dataset_cache[cache_key]
             else:
-                self.dataset_cache[cache_key] = cls(
-                  dataset_cache=self.dataset_cache, **kwargs)
+                try:
+                    self.dataset_cache[cache_key] = cls(
+                      dataset_cache=self.dataset_cache, **kwargs)
+                except TypeError as e:
+                    argspec = getargspec(cls.__init__)
+                    args    = [a for a in argspec.args
+                                 if  a != "self"][:-1*len(argspec.defaults)]
+                    given   = [a for a in args if a     in kwargs]
+                    missing = [a for a in args if a not in kwargs]
+                    type_error_text = ("__init__() takes at least " +
+                      "{0} arguments (".format(len(args)) +
+                      "{0} given, ".format(len(given)) +
+                      "{0} missing)".format(missing))
+                    raise TypeError(type_error_text)
                 return self.dataset_cache[cache_key]
         else:
             return cls(**kwargs)

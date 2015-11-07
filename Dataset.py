@@ -91,35 +91,75 @@ class Dataset(object):
           dataset (cls): Dataset, either newly initialized or copied
           from cache
         """
+        from inspect import getargspec
+        from warnings import warn
+        from .debug import db_s
+
         if cls is None:
             cls = Dataset
         verbose = kwargs.get("verbose", 1)
         debug   = kwargs.get("debug",   0)
 
+        print("FUCK")
+
         if dataset_cache is not None and hasattr(cls, "get_cache_key"):
             try:
                 cache_key = cls.get_cache_key(**kwargs)
-            except TypeError:
-                from warnings import warn
-                warn("{0}.get_cache_key(...) has ".format(cls.__name__) +
-                  "raised an error; attempting to load dataset without " +
-                  "checking dataset cache.")
+            except TypeError as e:
+                argspec = getargspec(cls.get_cache_key)
+                args    = [a for a in argspec.args
+                             if  a != "cls"][:-1*len(argspec.defaults)]
+                given   = [a for a in args if a     in kwargs]
+                missing = [a for a in args if a not in kwargs]
+                type_error_text = ("__init__() takes at least " +
+                  "{0} arguments (".format(len(args)) +
+                  "{0} given, ".format(len(given)) +
+                  "{0} missing)".format(missing))
+                warn("{0}.get_cache_key() has ".format(cls.__name__) +
+                  "raised an error: {0}; attempting ".format(type_error_text) +
+                  "to load dataset without checking dataset cache.")
                 cache_key = None
             if cache_key is None:
-                return cls(dataset_cache=dataset_cache, **kwargs)
-            if debug >= 1:
-                from .debug import db_s
-                db_s(cache_key)
+                try:
+                    return cls(dataset_cache=dataset_cache, **kwargs)
+                except TypeError as e:
+                    argspec = getargspec(cls.__init__)
+                    args    = [a for a in argspec.args
+                                 if  a != "self"][:-1*len(argspec.defaults)]
+                    given   = [a for a in args if a     in kwargs]
+                    missing = [a for a in args if a not in kwargs]
+                    type_error_text = ("__init__() takes at least " +
+                      "{0} arguments (".format(len(args)) +
+                      "{0} given, ".format(len(given)) +
+                      "{0} missing)".format(missing))
+                    print("DATASET.PY: {0}".format(cls))
+                    print("DATASET.PY: {0}".format(args))
+                    print("DATASET.PY: {0}".format(given))
+                    print("DATASET.PY: {0}".format(missing))
+                    print("DATASET.PY: {0}".format(e))
+                    raise TypeError(type_error_text)
             if cache_key in dataset_cache:
                 if verbose >= 1:
                     if hasattr(cls, "get_cache_message"):
                         print(cls.get_cache_message(cache_key))
                     else:
-                        print("previously loaded")
+                        print("Previously loaded")
                 return dataset_cache[cache_key]
             else:
-                dataset_cache[cache_key] = cls(
-                  dataset_cache=dataset_cache, **kwargs)
+                try:
+                    dataset_cache[cache_key] = cls(
+                      dataset_cache=dataset_cache, **kwargs)
+                except TypeError as e:
+                    argspec = getargspec(cls.__init__)
+                    args    = [a for a in argspec.args
+                                 if  a != "self"][:-1*len(argspec.defaults)]
+                    given   = [a for a in args if a     in kwargs]
+                    missing = [a for a in args if a not in kwargs]
+                    type_error_text = ("__init__() takes at least " +
+                      "{0} arguments (".format(len(args)) +
+                      "{0} given, ".format(len(given)) +
+                      "{0} missing)".format(missing))
+                    raise TypeError(type_error_text)
                 return dataset_cache[cache_key]
         else:
             return cls(**kwargs)
