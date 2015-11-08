@@ -889,6 +889,8 @@ class FigureManager(object):
         from inspect import getargspec
         from warnings import warn
         from .debug import db_s
+        from .error import (is_argument_error, MPSArgumentError,
+                            MPSDatasetError, MPSDatasetCacheError)
 
         if cls is None:
             from .Dataset import Dataset
@@ -899,42 +901,19 @@ class FigureManager(object):
         if hasattr(cls, "get_cache_key"):
             try:
                 cache_key = cls.get_cache_key(**kwargs)
-            except TypeError as e:
-                argspec = getargspec(cls.get_cache_key)
-                args    = [a for a in argspec.args
-                             if  a != "cls"][:-1*len(argspec.defaults)]
-                given   = [a for a in args if a     in kwargs]
-                missing = [a for a in args if a not in kwargs]
-                type_error_text = ("__init__() takes at least " +
-                  "{0} arguments (".format(len(args)) +
-                  "{0} given, ".format(len(given)) +
-                  "{0} missing)".format(missing))
-                warn("{0}.get_cache_key() has ".format(cls.__name__) +
-                  "raised an error: {0}; attempting ".format(type_error_text) +
-                  "to load dataset without checking dataset cache.")
-                cache_key = None
+            except TypeError as error:
+                if is_argument_error(error):
+                    error = MPSArgumentError(error, cls.get_cache_key,
+                      kwargs, cls, "cls")
+                raise MPSDatasetCacheError(error)
             if cache_key is None:
                 try:
                     return cls(dataset_cache=self.dataset_cache, **kwargs)
-                except TypeError as e:
-                    argspec = getargspec(cls.__init__)
-                    args    = [a for a in argspec.args
-                                 if  a != "self"][:-1*len(argspec.defaults)]
-                    given   = [a for a in args if a     in kwargs]
-                    missing = [a for a in args if a not in kwargs]
-                    type_error_text = ("__init__() takes at least " +
-                      "{0} arguments (".format(len(args)) +
-                      "{0} given, ".format(len(given)) +
-                      "{0} missing)".format(missing))
-                    print("FIGUREMANAGER.PY: {0}".format(cls))
-                    print("FIGUREMANAGER.PY: {0}".format(args))
-                    print("FIGUREMANAGER.PY: {0}".format(given))
-                    print("FIGUREMANAGER.PY: {0}".format(missing))
-                    print("FIGUREMANAGER.PY: {0}".format(e))
-                    import sys
-                    print("FIGUREMANAGER.PY: {0}".format(
-                      sys.exc_info()[-1].tb_lineno))
-                    raise TypeError(type_error_text)
+                except TypeError as error:
+                    if is_argument_error(error):
+                        error = MPSArgumentError(error, cls.get_cache_key,
+                          kwargs, cls, "cls")
+                    raise MPSDatasetError(error)
             if cache_key in self.dataset_cache:
                 if verbose >= 1:
                     if hasattr(cls, "get_cache_message"):
@@ -946,17 +925,11 @@ class FigureManager(object):
                 try:
                     self.dataset_cache[cache_key] = cls(
                       dataset_cache=self.dataset_cache, **kwargs)
-                except TypeError as e:
-                    argspec = getargspec(cls.__init__)
-                    args    = [a for a in argspec.args
-                                 if  a != "self"][:-1*len(argspec.defaults)]
-                    given   = [a for a in args if a     in kwargs]
-                    missing = [a for a in args if a not in kwargs]
-                    type_error_text = ("__init__() takes at least " +
-                      "{0} arguments (".format(len(args)) +
-                      "{0} given, ".format(len(given)) +
-                      "{0} missing)".format(missing))
-                    raise TypeError(type_error_text)
+                except TypeError as error:
+                    if is_argument_error(error):
+                        error = MPSArgumentError(error, cls.get_cache_key,
+                          kwargs, cls, "cls")
+                    raise MPSDatasetError(error)
                 return self.dataset_cache[cache_key]
         else:
             return cls(**kwargs)
