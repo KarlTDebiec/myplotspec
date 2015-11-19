@@ -174,7 +174,9 @@ class FigureManager(object):
           fig_height:  7.68
           title_fp:  24b
           label_fp:  24b
-          legend_fp: 16r
+          shared_legend_kw:
+            legend_kw:
+              legend_fp: 16r
         draw_subplot:
           title_fp: 18r
           label_fp: 18r
