@@ -145,9 +145,14 @@ class FigureManager(object):
           tick_params:
             length: 2
             pad: 6
+            width: 1
           legend_kw:
             legend_fp: 8r
             frameon: False
+          y2tick_params:
+            length: 2
+            pad: 3
+            width: 1
         draw_dataset:
           plot_kw:
             lw: 1
