@@ -91,6 +91,12 @@ class Dataset(object):
           dataset (cls): Dataset, either newly initialized or copied
           from cache
         """
+        from inspect import getargspec
+        from warnings import warn
+        from .debug import db_s
+        from .error import (is_argument_error, MPSArgumentError,
+                            MPSDatasetError, MPSDatasetCacheError)
+
         if cls is None:
             cls = Dataset
         verbose = kwargs.get("verbose", 1)
@@ -99,24 +105,35 @@ class Dataset(object):
         if dataset_cache is not None and hasattr(cls, "get_cache_key"):
             try:
                 cache_key = cls.get_cache_key(**kwargs)
-            except TypeError:
-                from warnings import warn
-                warn("{0}.get_cache_key(...) has ".format(cls.__name__) +
-                  "raised an error; attempting to load dataset without " +
-                  "checking dataset cache.")
-                cache_key = None
+            except TypeError as error:
+                if is_argument_error(error):
+                    error = MPSArgumentError(error, cls.get_cache_key,
+                      kwargs, cls, "cls")
+                raise MPSDatasetCacheError(error)
             if cache_key is None:
-                return cls(**kwargs)
-            elif cache_key in dataset_cache:
+                try:
+                    return cls(dataset_cache=dataset_cache, **kwargs)
+                except TypeError as error:
+                    if is_argument_error(error):
+                        error = MPSArgumentError(error, cls.get_cache_key,
+                          kwargs, cls, "cls")
+                    raise MPSDatasetError(error)
+            if cache_key in dataset_cache:
                 if verbose >= 1:
                     if hasattr(cls, "get_cache_message"):
                         print(cls.get_cache_message(cache_key))
                     else:
-                        print("previously loaded")
+                        print("Previously loaded")
                 return dataset_cache[cache_key]
             else:
-                dataset_cache[cache_key] = cls(
-                  dataset_cache=dataset_cache, **kwargs)
+                try:
+                    dataset_cache[cache_key] = cls(
+                      dataset_cache=dataset_cache, **kwargs)
+                except TypeError as error:
+                    if is_argument_error(error):
+                        error = MPSArgumentError(error, cls.get_cache_key,
+                          kwargs, cls, "cls")
+                    raise MPSDatasetError(error)
                 return dataset_cache[cache_key]
         else:
             return cls(**kwargs)
@@ -137,6 +154,6 @@ class Dataset(object):
 
         # Load dataset
         read_csv_kw = kwargs.get("read_csv_kw", {})
-        if verbose > 0:
+        if verbose >= 1:
             print("loading from '{0}'".format(expandvars(infile)))
         self.data = pd.read_csv(expandvars(infile), **read_csv_kw)

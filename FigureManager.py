@@ -145,9 +145,14 @@ class FigureManager(object):
           tick_params:
             length: 2
             pad: 6
+            width: 1
           legend_kw:
             legend_fp: 8r
             frameon: False
+          y2tick_params:
+            length: 2
+            pad: 3
+            width: 1
         draw_dataset:
           plot_kw:
             lw: 1
@@ -888,6 +893,12 @@ class FigureManager(object):
           dataset (cls): Dataset, either initialized new or copied from
           cache
         """
+        from inspect import getargspec
+        from warnings import warn
+        from .debug import db_s
+        from .error import (is_argument_error, MPSArgumentError,
+                            MPSDatasetError, MPSDatasetCacheError)
+
         if cls is None:
             from .Dataset import Dataset
             cls = Dataset
@@ -897,24 +908,35 @@ class FigureManager(object):
         if hasattr(cls, "get_cache_key"):
             try:
                 cache_key = cls.get_cache_key(**kwargs)
-            except TypeError:
-                from warnings import warn
-                warn("{0}.get_cache_key(...) has ".format(cls.__name__) +
-                  "raised an error; attempting to load dataset without " +
-                  "checking dataset cache.")
-                cache_key = None
+            except TypeError as error:
+                if is_argument_error(error):
+                    error = MPSArgumentError(error, cls.get_cache_key,
+                      kwargs, cls, "cls")
+                raise MPSDatasetCacheError(error)
             if cache_key is None:
-                return cls(**kwargs)
-            elif cache_key in self.dataset_cache:
+                try:
+                    return cls(dataset_cache=self.dataset_cache, **kwargs)
+                except TypeError as error:
+                    if is_argument_error(error):
+                        error = MPSArgumentError(error, cls.get_cache_key,
+                          kwargs, cls, "cls")
+                    raise MPSDatasetError(error)
+            if cache_key in self.dataset_cache:
                 if verbose >= 1:
                     if hasattr(cls, "get_cache_message"):
                         print(cls.get_cache_message(cache_key))
                     else:
-                        print("previously loaded")
+                        print("Previously loaded")
                 return self.dataset_cache[cache_key]
             else:
-                self.dataset_cache[cache_key] = cls(
-                  dataset_cache=self.dataset_cache, **kwargs)
+                try:
+                    self.dataset_cache[cache_key] = cls(
+                      dataset_cache=self.dataset_cache, **kwargs)
+                except TypeError as error:
+                    if is_argument_error(error):
+                        error = MPSArgumentError(error, cls.get_cache_key,
+                          kwargs, cls, "cls")
+                    raise MPSDatasetError(error)
                 return self.dataset_cache[cache_key]
         else:
             return cls(**kwargs)

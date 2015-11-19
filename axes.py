@@ -216,7 +216,7 @@ def set_yaxis(subplot, **kwargs):
     y2ticks_2 = multi_pop(["y2ticks", "yticks", "ticks"], y2tick_kw)
     if y2ticks_2 is not None:
         y2ticks = y2ticks_2
-    elif hasattr(subplot, "_mps_y2"):
+    elif yticks is None and hasattr(subplot, "_mps_y2"):
         y2ticks = subplot._mps_y2.get_yticks()
 
     # Y2 tick labels
@@ -236,14 +236,20 @@ def set_yaxis(subplot, **kwargs):
     if ylabel_2 is not None:
         ylabel = ylabel_2
 
+    # Y2 tick parameters
+    y2tick_params = multi_get_copy("y2tick_params", kwargs, {})
+    if y2tick_params is not None:
+        y2tick_params["axis"] = "y"
+
     # Now check if Y2 settings have been specified
     if y2ticks is not None or y2ticklabels is not None or y2label is not None:
-        if not hasattr("subplot", "_mps_y2"):
+        if not hasattr(subplot, "_mps_y2"):
             subplot._mps_y2 = subplot.twinx()
             if y2ticks is None:
                 y2ticks = subplot._mps_y2.get_yticks()
             if y2ticklabels is None:
                 y2ticklabels = y2ticks
+        subplot._mps_y2.set_zorder(subplot.get_zorder() - 1)
 
         # Set ticks, ticklabels, and label
         if y2ticks is not None:
@@ -274,9 +280,14 @@ def set_yaxis(subplot, **kwargs):
 
         # Set tick parameters, must reset Y1 tick parameters,
         #   Nobody know why
+        if y2tick_params is not None:
+            subplot._mps_y2.tick_params(**y2tick_params)
         if ytick_params is not None:
-            subplot._mps_y2.tick_params(**ytick_params)
             subplot.tick_params(**ytick_params)
+
+        # Set zorder
+        subplot._mps_y2.spines["left"].set_zorder(100)
+        subplot._mps_y2.spines["right"].set_zorder(100)
 
 
 def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
