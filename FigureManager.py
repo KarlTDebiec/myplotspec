@@ -133,7 +133,6 @@ class FigureManager(object):
         draw_figure:
           title_fp:  10b
           label_fp:  10b
-          legend_fp: 10b
           shared_legend_kw:
             legend_kw:
               legend_fp: 8r
@@ -149,6 +148,7 @@ class FigureManager(object):
           legend_kw:
             legend_fp: 8r
             frameon: False
+          lw: 1
           y2tick_params:
             length: 2
             pad: 3
@@ -182,16 +182,23 @@ class FigureManager(object):
           shared_legend_kw:
             legend_kw:
               legend_fp: 16r
+              frameon: False
         draw_subplot:
           title_fp: 18r
           label_fp: 18r
           tick_fp:  14r
           tick_params:
             length: 3
-            width: 1
             pad: 6
-          legend_fp: 14r
+            width: 2
+          legend_kw:
+            legend_fp: 14r
+            frameon: False
           lw: 2
+          y2tick_params:
+            length: 3
+            pad: 3
+            width: 2
         draw_dataset:
           plot_kw:
             lw:  2
