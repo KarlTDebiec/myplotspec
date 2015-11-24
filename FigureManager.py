@@ -71,7 +71,7 @@ class FigureManager(object):
         related to the type of data being used, 'appearance', for
         presets related to modifications to formatting, and 'target',
         for presets specifying the target destination of the figure,
-        such as 'notebook' or 'presetnation'. 'extends' may contain the
+        such as 'notebook' or 'presentation'. 'extends' may contain the
         name of another preset within the class from which the preset
         will inherit (and optionally override) all arguments. Subclasses
         of this base :class:`FigureManager` class may also include the
