@@ -216,7 +216,7 @@ def set_yaxis(subplot, **kwargs):
     y2ticks_2 = multi_pop(["y2ticks", "yticks", "ticks"], y2tick_kw)
     if y2ticks_2 is not None:
         y2ticks = y2ticks_2
-    elif hasattr(subplot, "_mps_y2"):
+    elif yticks is None and hasattr(subplot, "_mps_y2"):
         y2ticks = subplot._mps_y2.get_yticks()
 
     # Y2 tick labels
