@@ -122,17 +122,30 @@ class FigureManager(object):
           fig_height: 6.50
           title_fp: 16b
           label_fp: 16b
+          shared_legend_kw:
+            legend_kw:
+              legend_fp: 14r
         draw_subplot:
-          title_fp:  16b
-          label_fp:  16b
-          tick_fp:   14r
+          title_fp: 16b
+          label_fp: 16b
+          tick_fp: 14r
           legend_fp: 14r
+          tick_params:
+            length: 3
+            width: 2
+            pad: 6
+          legend_kw:
+            legend_fp: 14r
+          lw: 2
+        draw_dataset:
+          plot_kw:
+            lw: 2
       notebook:
         class: target
         help: Notebook (width ≤ 6.5", height ≤ 9.0")
         draw_figure:
-          title_fp:  10b
-          label_fp:  10b
+          title_fp: 10b
+          label_fp: 10b
           legend_fp: 10b
           shared_legend_kw:
             legend_kw:
@@ -141,7 +154,7 @@ class FigureManager(object):
         draw_subplot:
           title_fp: 10b
           label_fp: 10b
-          tick_fp:   8r
+          tick_fp: 8r
           tick_params:
             length: 2
             pad: 6
@@ -181,7 +194,7 @@ class FigureManager(object):
           tick_fp:  14r
           tick_params:
             length: 3
-            width: 1
+            width: 2
             pad: 6
           legend_fp: 14r
           lw: 2
