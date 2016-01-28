@@ -348,7 +348,7 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
         partner_kw["bottom"] = partner_kw.get("bottom",
           host_bottom - partner_kw["hspace"] - partner_kw["sub_height"])
         partner_kw["top"] = partner_kw.get("top",
-          host_top - partner_kw["hspace"] - partner_kw["sub_height"])
+          host_bottom - partner_kw["hspace"])
     elif position == "right":
         partner_kw["bottom"] = partner_kw.get("bottom", host_bottom)
         partner_kw["top"] = partner_kw.get("top", host_top)

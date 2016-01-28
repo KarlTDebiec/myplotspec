@@ -502,8 +502,8 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
             sub_width = fig_width - left - (wspace * (ncols - 1)) - right
         if sub_height is None:
             sub_height = fig_height - top - (hspace * (nrows - 1)) - bottom
-    elif      ((sub_width is None or sub_height is None)
-    and   not ((fig_width is None or fig_height is None) and figsize is None)):
+    elif    ((sub_width is None or sub_height is None)
+    and not ((fig_width is None or fig_height is None) and figsize is None)):
         # Lack sublot dimensions, but have figure dimensions
         if figsize is not None:
             fig_width, fig_height = figsize
