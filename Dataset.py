@@ -156,4 +156,13 @@ class Dataset(object):
         read_csv_kw = kwargs.get("read_csv_kw", {})
         if verbose >= 1:
             print("loading from '{0}'".format(expandvars(infile)))
-        self.data = pd.read_csv(expandvars(infile), **read_csv_kw)
+        if infile.endswith("h5") or infile.endswith("hdf5"):
+            import h5py
+            import numpy as np
+            h5_file = h5py.File(expandvars(infile))
+            address = h5_file.keys()[0]
+            data = np.array(h5_file[address])
+            fields = list(dict(h5_file[address].attrs)["fields"])
+            self.data = pd.DataFrame(data=data, columns=fields)
+        else:
+            self.data = pd.read_csv(expandvars(infile), **read_csv_kw)
