@@ -140,12 +140,41 @@ class FigureManager(object):
         draw_dataset:
           plot_kw:
             lw: 2
+      manuscript:
+        class: target
+        help: Manuscript (width ≤ 7.0", height ≤ 9.167")
+        draw_figure:
+          title_fp: 8b
+          label_fp: 8b
+          shared_legend_kw:
+            legend_kw:
+              legend_fp: 6r
+        draw_subplot:
+          title_fp: 8b
+          label_fp: 8b
+          tick_fp: 6r
+          tick_params:
+            direction: out
+            length: 2
+            pad: 3
+            width: 1
+          legend_kw:
+            legend_fp: 6r
+          lw: 1
+          y2tick_params:
+            direction: out
+            length: 2
+            pad: 3
+            width: 1
+        draw_dataset:
+          plot_kw:
+            lw: 1
       notebook:
         class: target
         help: Notebook (width ≤ 6.5", height ≤ 9.0")
         draw_figure:
-          title_fp:  10b
-          label_fp:  10b
+          title_fp: 10b
+          label_fp: 10b
           shared_legend_kw:
             legend_kw:
               legend_fp: 8r
@@ -618,21 +647,27 @@ class FigureManager(object):
                 if multi_xticklabels is not None:
                     if (nrows - 1) * ncols - 1 < i < nsubplots - 1:
                         if not "xticklabels" in subplot_spec:
-                            subplot_spec["xticklabels"]=multi_xticklabels[:-1]
+                            subplot_spec["xticklabels"] = multi_xticklabels[:-1]
                     elif i != nsubplots - 1:
                         if not "xticklabels" in subplot_spec:
                             subplot_spec["xticklabels"] = []
                         if not "xlabel" in subplot_spec:
                             subplot_spec["xlabel"] = None
+                    else:
+                        if not "xticklabels" in subplot_spec:
+                            subplot_spec["xticklabels"] = multi_xticklabels
                 if multi_yticklabels is not None:
                     if i % ncols == 0 and i != 0:
                         if not "yticklabels" in subplot_spec:
-                            subplot_spec["yticklabels"]=multi_yticklabels[:-1]
+                            subplot_spec["yticklabels"] = multi_yticklabels[:-1]
                     elif i != 0:
                         if not "yticklabels" in subplot_spec:
                             subplot_spec["yticklabels"] = []
                         if not "ylabel" in subplot_spec:
                             subplot_spec["ylabel"] = None
+                    else:
+                        if not "yticklabels" in subplot_spec:
+                            subplot_spec["yticklabels"] = multi_yticklabels
                 if multi_tick_params is not None:
                     bottom = multi_tick_params.get("bottom")
                     top = multi_tick_params.get("top")
