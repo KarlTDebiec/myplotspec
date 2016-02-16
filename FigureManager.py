@@ -86,6 +86,10 @@ class FigureManager(object):
         datasets to it.
 
     .. todo:
+      - Major rewrite; after which specification will be stored in an
+        instance variable (probably of a custom class), generated
+        completely from defaults, presets, and yaml input before any
+        figures are generated
       - Accept additional presets from file, e.g. --preset-file
         /path/to/file.yaml
       - Support mutually exclusive presets that may smoothly and
@@ -103,10 +107,10 @@ class FigureManager(object):
       - Consider making spec keys case-insensitive
       - Decide how to manage the specification of sizes, positions, etc.
         in real-world units (inches or centimeters)
-      - Improve usage seaborn colors (possibly only if -s used?)
+      - Improve usage of seaborn colors (possibly only if -s used?)
       - Clean up docstring return values
       - Extend verbose and debug support
-      - Figure out how to write permissive arguments (e.g. [x]tick[s])
+      - Figure out how to document permissive arguments (e.g. [x]tick[s])
         in sphinx-compatible way
     """
     from .manage_defaults_presets import manage_defaults_presets
