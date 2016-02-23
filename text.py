@@ -166,6 +166,7 @@ def set_shared_xlabel(figure_or_subplots, *args, **kwargs):
       "va"], label_kw, "center")
 
     # x and y are specified in relative figure coordinates
+    # top and bottom are specified in inches
     if isinstance(figure_or_subplots, matplotlib.figure.Figure):
         figure = figure_or_subplots
         edges  = get_edges(figure)
@@ -270,20 +271,23 @@ def set_shared_ylabel(figure_or_subplots, *args, **kwargs):
         edges = get_edges(subplots)
 
     # x and y are specified in relative figure coordinates
+    # left and right are specified in inches
     if "x" not in label_kw:
         fig_width = figure.get_figwidth()
-        if "right" in label_kw:
-            right = label_kw.pop("right")
-            if right < 0:
-                label_kw["x"] = (edges["right"] - right) / fig_width
-            else:
-                label_kw["x"] = (fig_width - right) / fig_width
-        elif "left" in label_kw:
+        if "left" in label_kw:
             left = label_kw.pop("left")
             if left < 0:
-                label_kw["x"] = (edges["left"] + left) / fig_width
+                label_kw["x"] = (((edges["left"] * fig_width) + left)
+                              / fig_width)
             else:
                 label_kw["x"] = left / fig_width
+        elif "right" in label_kw:
+            right = label_kw.pop("right")
+            if right < 0:
+                label_kw["x"] = (((edges["right"] * fig_width) - right)
+                              / fig_width)
+            else:
+                label_kw["x"] = (fig_width - right) / fig_width
         else:
             label_kw["x"] = edges["left"] / 2
 
