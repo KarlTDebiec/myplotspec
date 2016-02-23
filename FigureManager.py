@@ -809,10 +809,10 @@ class FigureManager(object):
             if isinstance(dataset_specs[i], dict):
                 dataset_spec = deepcopy(dataset_specs[i])
             elif dataset_specs[i] is None:
-                dataset_spec = {}
+                continue
             else:
                 raise TypeError("Dataset {0} specification".format(i) +
-                  "loaded as {0} ".format(subplot_spec.__class__.__name__) +
+                  "loaded as {0} ".format(dataset_specs[i].__class__.__name__) +
                   "rather than expected dict.")
 
             # Include reference to figure and subplots
