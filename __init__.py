@@ -408,7 +408,7 @@ def get_font(fp=None, **kwargs):
           "input of type {0}".format(fp.__class__.__name__))
     return FontProperties(**kwargs)
 
-def get_figure_subplots(figure=None, subplots=None, nrows=None,
+def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
     ncols=None, nsubplots=None, left=None, sub_width=None, wspace=None,
     right=None, bottom=None, sub_height=None, hspace=None, top=None,
     fig_width=None, fig_height=None, figsize=None, verbose=1,
@@ -535,6 +535,8 @@ def get_figure_subplots(figure=None, subplots=None, nrows=None,
     if subplots is not None:
         if len(subplots) == 0:
             i = 0
+        elif index is not None:
+            i = index
         else:
             i = max([i for i in subplots.keys() if str(i).isdigit()]) + 1
     else:
