@@ -125,7 +125,8 @@ def merge_dicts(dict_1, dict_2):
 
 def get_color(color):
     """
-    Generates a color.
+    Converts color from a format understood by myplotspec to a format
+    understood by matplotlib
 
     If color is a str, may be of form 'pastel.red', 'dark.blue', etc.
     corresponding to a color set and color; if no set is specified the
@@ -210,6 +211,37 @@ def get_color(color):
         if color > 1:
             color /= 255
         return [color, color, color]
+
+def get_colors(dict_1, *args, **kwargs):
+    """
+    Convers color variables in a dict from formats understood by
+    myplotspec to formats understood by matplotlib
+
+    This function is intended to process dictionaries of keyword
+    arguments including colors  before passing them on to matplotlib's
+    plotting functions. 
+    For each name of color argument provided in  *color_keys*, the
+    function searches through *dict_1* and processes each using
+    :func:`get_color`. If the argument is not found in *dict_1*, it then
+    searches through each additional dictionary provided in *args*.
+
+    Arguments:
+      dict_1 (dict): Target and first source of keys
+      color_keys (list): Names of keys
+      *args (tuple): Additional dictionary sources of keys
+      **kwargs (additional keyword arguments
+      keys (list): Acceptable keys in order of decreasing priority
+    """
+    from . import get_color
+
+    color_keys = kwargs.get("color_keys", ["color", "mec", "mfc"])
+    for color_key in color_keys:
+        if color_key in dict_1:
+            dict_1[color_key] = get_color(dict_1[color_key])
+        else:
+            for arg in args:
+                if color_key in arg:
+                    dict_1[color_key] = get_color(arg[color_key])
 
 def multi_kw(keys, dictionary, value=None):
     """
