@@ -86,9 +86,8 @@ class FigureManager(object):
         datasets to it.
 
     .. todo:
-      - Major rewrite; after which specification will be stored in an
-        instance variable (probably of a custom class), generated
-        completely from defaults, presets, and yaml input before any
+      - MAJOR REWRITE: specification will be stored in an instance variable and
+        generated completely from defaults, presets, and yaml input before any
         figures are generated
       - Accept additional presets from file, e.g. --preset-file
         /path/to/file.yaml
@@ -104,7 +103,7 @@ class FigureManager(object):
         subplots, or datasets
       - Replace all instances of multi_kw
       - Be more careful (less wasteful) about use of copy and deepcopy
-      - Consider making spec keys case-insensitive
+      - Consider making spec keys case- and plurality-insensitive
       - Decide how to manage the specification of sizes, positions, etc.
         in real-world units (inches or centimeters)
       - Improve usage of seaborn colors (possibly only if -s used?)
