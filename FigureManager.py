@@ -157,18 +157,16 @@ class FigureManager(object):
           label_fp: 8b
           tick_fp: 6r
           tick_params:
-            direction: out
             length: 2
             pad: 3
             width: 1
           legend_kw:
             legend_fp: 6r
-          lw: 1
           y2tick_params:
-            direction: out
             length: 2
             pad: 3
             width: 1
+          lw: 1
         draw_dataset:
           plot_kw:
             lw: 1
@@ -950,6 +948,7 @@ class FigureManager(object):
         """
         from inspect import getargspec
         from warnings import warn
+        import six
         from .debug import db_s
         from .error import (is_argument_error, MPSArgumentError,
                             MPSDatasetError, MPSDatasetCacheError)
@@ -957,17 +956,22 @@ class FigureManager(object):
         if cls is None:
             from .Dataset import Dataset
             cls = Dataset
+        elif isinstance(cls, six.string_types):
+            mod_name = ".".join(cls.split(".")[:-1])
+            cls_name   = cls.split(".")[-1]
+            mod = __import__(mod_name, fromlist=[cls_name])
+            cls = getattr(mod, cls_name)
         verbose = kwargs.get("verbose", 1)
         debug   = kwargs.get("debug",   0)
 
         if hasattr(cls, "get_cache_key"):
-            try:
-                cache_key = cls.get_cache_key(**kwargs)
-            except TypeError as error:
-                if is_argument_error(error):
-                    error = MPSArgumentError(error, cls.get_cache_key,
-                      kwargs, cls, "cls")
-                raise MPSDatasetCacheError(error)
+#            try:
+            cache_key = cls.get_cache_key(**kwargs)
+#            except TypeError as error:
+#                if is_argument_error(error):
+#                    error = MPSArgumentError(error, cls.get_cache_key,
+#                      kwargs, cls, "cls")
+#                raise MPSDatasetCacheError(error)
             if cache_key is None:
                 try:
                     return cls(dataset_cache=self.dataset_cache, **kwargs)
@@ -984,14 +988,14 @@ class FigureManager(object):
                         print("Previously loaded")
                 return self.dataset_cache[cache_key]
             else:
-                try:
-                    self.dataset_cache[cache_key] = cls(
-                      dataset_cache=self.dataset_cache, **kwargs)
-                except TypeError as error:
-                    if is_argument_error(error):
-                        error = MPSArgumentError(error, cls.get_cache_key,
-                          kwargs, cls, "cls")
-                    raise MPSDatasetError(error)
+#                try:
+                self.dataset_cache[cache_key] = cls(
+                  dataset_cache=self.dataset_cache, **kwargs)
+#                except TypeError as error:
+#                    if is_argument_error(error):
+#                        error = MPSArgumentError(error, cls.get_cache_key,
+#                          kwargs, cls, "cls")
+#                    raise MPSDatasetError(error)
                 return self.dataset_cache[cache_key]
         else:
             return cls(**kwargs)

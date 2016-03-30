@@ -93,12 +93,18 @@ class Dataset(object):
         """
         from inspect import getargspec
         from warnings import warn
+        import six
         from .debug import db_s
         from .error import (is_argument_error, MPSArgumentError,
                             MPSDatasetError, MPSDatasetCacheError)
 
         if cls is None:
             cls = Dataset
+        elif isinstance(cls, six.string_types):
+            mod_name = ".".join(cls.split(".")[:-1])
+            cls_name   = cls.split(".")[-1]
+            mod = __import__(mod_name, fromlist=[cls_name])
+            cls = getattr(mod, cls_name)
         verbose = kwargs.get("verbose", 1)
         debug   = kwargs.get("debug",   0)
 
@@ -150,19 +156,35 @@ class Dataset(object):
           kwargs (dict): Additional keyword arguments
         """
         from os.path import expandvars
-        import pandas as pd
 
         # Load dataset
-        read_csv_kw = kwargs.get("read_csv_kw", {})
         if verbose >= 1:
             print("loading from '{0}'".format(expandvars(infile)))
-        if infile.endswith("h5") or infile.endswith("hdf5"):
-            import h5py
-            import numpy as np
-            h5_file = h5py.File(expandvars(infile))
-            address = h5_file.keys()[0]
-            data = np.array(h5_file[address])
-            fields = list(dict(h5_file[address].attrs)["fields"])
-            self.data = pd.DataFrame(data=data, columns=fields)
-        else:
-            self.data = pd.read_csv(expandvars(infile), **read_csv_kw)
+        target = "pandas"
+        if target == "pandas":
+            import pandas as pd
+
+            if infile.endswith("h5") or infile.endswith("hdf5"):
+                    h5_mode = "h5py"
+                    if h5_mode == "h5py":
+                        import h5py
+                        import numpy as np
+
+                        dataframe_kw = kwargs.get("dataframe_kw", {})
+                        with h5py.File(expandvars(infile)) as h5_file:
+                            address = kwargs.get("address",
+                              sorted(list(h5_file.keys()))[0])
+                            data = np.array(h5_file[address])
+                            attrs = dict(h5_file[address].attrs)
+                            if "fields" in attrs:
+                                dataframe_kw["columns"] = list(attrs["fields"])
+                            self.dataframe = pd.DataFrame(data=data,
+                              **dataframe_kw)
+                    else:
+                        raise()
+            else:
+                read_csv_kw = kwargs.get("read_csv_kw", {})
+                self.dataframe = pd.read_csv(expandvars(infile), **read_csv_kw)
+                if (self.dataframe.index.name is not None
+                and self.dataframe.index.name.startswith("#")):
+                    self.dataframe.index.name = self.dataframe.index.name.lstrip("#")
