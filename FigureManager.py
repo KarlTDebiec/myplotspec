@@ -184,6 +184,7 @@ class FigureManager(object):
           label_fp: 10b
           tick_fp: 8r
           tick_params:
+            direction: out
             length: 2
             pad: 6
             width: 1
@@ -191,6 +192,7 @@ class FigureManager(object):
             legend_fp: 8r
           lw: 1
           y2tick_params:
+            direction: out
             length: 2
             pad: 3
             width: 1
