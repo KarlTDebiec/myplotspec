@@ -57,7 +57,7 @@ class Dataset(object):
         return "Dataset previously loaded from '{0}'".format(cache_key[1])
 
     @staticmethod
-    def load_dataset(cls=None, dataset_cache=None, **kwargs):
+    def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
         """
         Loads a dataset, or reloads a previously-loaded dataset.
 
@@ -98,6 +98,18 @@ class Dataset(object):
         from .error import (is_argument_error, MPSArgumentError,
                             MPSDatasetError, MPSDatasetCacheError)
 
+        verbose = kwargs.get("verbose", 1)
+        debug   = kwargs.get("debug",   0)
+
+        # Enable 'loose' loading of previously-loaded datasets using
+        #   infile path only
+        if loose:
+            if dataset_cache is not None:
+                loose_keys = {key[1]:key for key in dataset_cache.keys()}
+                infile = kwargs.get("infile")
+                if infile is not None and infile in loose_keys:
+                    return dataset_cache[loose_keys[infile]]
+
         if cls is None:
             cls = Dataset
         elif isinstance(cls, six.string_types):
@@ -105,8 +117,6 @@ class Dataset(object):
             cls_name   = cls.split(".")[-1]
             mod = __import__(mod_name, fromlist=[cls_name])
             cls = getattr(mod, cls_name)
-        verbose = kwargs.get("verbose", 1)
-        debug   = kwargs.get("debug",   0)
 
         if dataset_cache is not None and hasattr(cls, "get_cache_key"):
             try:
