@@ -56,14 +56,23 @@ def set_legend(subplot, handles=None, **kwargs):
     elif legend_fp is not None:
         legend_kw["prop"] = get_font(legend_fp)
 
+    title_fp = multi_get_copy(["legend_title_fp"] + FP_KEYS, kwargs)
+    title_fp_2 = multi_pop(["legend_title_fp", "title_fp"],legend_kw)
+    if title_fp_2 is not None:
+        title_fp = get_font(title_fp_2)
+    elif title_fp is not None:
+        title_fp = get_font(title_fp)
+    elif "prop" in legend_kw:
+        title_fp = legend_kw["prop"]
+
     # Draw and format legend
     if handles is not None:
         legend = subplot.legend(handles.values(), handles.keys(), **legend_kw)
     else:
         legend = subplot.legend(**legend_kw)
-#    if legend_lw is not None:
-#        for handle in legend.legendHandles:
-#            handle.set_linewidth(legend_lw)
+
+    legend.get_title().set_fontproperties(title_fp)
+
     return legend
 
 def set_shared_legend(figure, subplots, **kwargs):
@@ -86,6 +95,7 @@ def set_shared_legend(figure, subplots, **kwargs):
 
     shared_legend_kw = multi_get_copy("shared_legend_kw", kwargs, {})
     handles = multi_get(["shared_handles", "handles"], kwargs)
+
 
     # Add subplot to figure, draw and format legend
     figure, subplots = get_figure_subplots(figure=figure, subplots=subplots,
