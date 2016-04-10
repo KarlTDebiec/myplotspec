@@ -33,17 +33,6 @@ class manage_output(object):
         - Support show()
     """
 
-    def __init__(self, verbose=False, debug=False):
-        """
-        Stores arguments provided at decoration.
-
-        Arguments:
-          verbose (bool): Enable verbose output
-          debug (bool): Enable debug output
-        """
-        self.verbose = verbose
-        self.debug = debug
-
     def __call__(self, function):
         """
         Wraps function or method.
@@ -80,37 +69,39 @@ class manage_output(object):
             import matplotlib
             from matplotlib.backends.backend_pdf import PdfPages
 
-            debug = self.debug or kwargs.get("debug", False)
-            verbose = self.verbose or kwargs.get("verbose", False)
-
+            verbose = kwargs.get("verbose", 1)
+            debug = kwargs.get("debug", 0)
             figure = function(*args, **kwargs)
             outfile = kwargs.pop("outfile", "outfile.pdf")
             outfiles = kwargs.pop("outfiles", None)
             savefig_kw = kwargs.pop("savefig_kw", {})
 
-            if isinstance(outfile, matplotlib.backends.backend_pdf.PdfPages):
-                outfile_name = abspath(outfile._file.fh.name)
-            elif isinstance(outfile, six.string_types):
-                outfile_name = abspath(expandvars(outfile))
+            if not isinstance(outfile, list):
+                outfile = [outfile]
+            for of in outfile:
+                sf_kw = savefig_kw.copy()
+                if isinstance(of, matplotlib.backends.backend_pdf.PdfPages):
+                    of_path = abspath(of._file.fh.name)
+                elif isinstance(of, six.string_types):
+                    of_path = abspath(expandvars(of))
 
-            if outfile_name.endswith("pdf"):
-                savefig_kw["format"] = "pdf"
-                if outfiles is None:
-                    outfile_pdf = PdfPages(outfile_name)
-                    figure.savefig(outfile_pdf, **savefig_kw)
-                    outfile_pdf.close()
-                elif outfile_name in outfiles:
-                    outfile_pdf = outfiles[outfile_name]
-                    figure.savefig(outfile_pdf, **savefig_kw)
+                if of_path.endswith("pdf"):
+                    sf_kw["format"] = "pdf"
+                    if outfiles is None:
+                        of_pdf = PdfPages(of_path)
+                        figure.savefig(of_pdf, **sf_kw)
+                        of_pdf.close()
+                    elif of_path in outfiles:
+                        of_pdf = outfiles[of_path]
+                        figure.savefig(of_pdf, **sf_kw)
+                    else:
+                        of_pdf = outfiles[of_path] = PdfPages(of_path)
+                        figure.savefig(of_pdf, **sf_kw)
                 else:
-                    outfile_pdf = outfiles[outfile_name] = PdfPages(
-                      outfile_name)
-                    figure.savefig(outfile_pdf, **savefig_kw)
-            else:
-                figure.savefig(outfile, **savefig_kw)
+                    figure.savefig(of_path, **sf_kw)
 
-            if verbose:
-                print("Figure saved to '{0}'.".format(outfile_name))
+                if verbose:
+                    print("Figure saved to '{0}'.".format(of_path))
 
             return figure
 
