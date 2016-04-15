@@ -202,7 +202,8 @@ def get_color(color):
         else:
             return color
     elif (isinstance(color, list)
-    or    isinstance(color, np.ndarray)):
+    or    isinstance(color, np.ndarray)
+    or    isinstance(color, tuple)):
         color = np.array(color, dtype=np.float)
         if np.any(color[0] > 1):
             color /= 255
