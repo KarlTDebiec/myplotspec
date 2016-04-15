@@ -75,7 +75,7 @@ def set_legend(subplot, handles=None, **kwargs):
 
     return legend
 
-def set_shared_legend(figure, subplots, **kwargs):
+def set_shared_legend(figure, subplots, handles, spines=False, **kwargs):
     """
     Draws a legend on a figure, shared by multiple subplots.
 
@@ -90,23 +90,30 @@ def set_shared_legend(figure, subplots, **kwargs):
     Returns:
       (Legend): Legend
     """
-    from . import get_figure_subplots, get_font, multi_get_copy, multi_get
+    from . import (get_colors, get_figure_subplots, get_font, multi_get_copy,
+                   multi_get)
     from .axes import set_xaxis, set_yaxis
-
-    shared_legend_kw = multi_get_copy("shared_legend_kw", kwargs, {})
-    handles = multi_get(["shared_handles", "handles"], kwargs)
-
 
     # Add subplot to figure, draw and format legend
     figure, subplots = get_figure_subplots(figure=figure, subplots=subplots,
-      **shared_legend_kw)
+      verbose=0, **kwargs)
     subplot = subplots[len(subplots) - 1]
-    legend = set_legend(subplot, handles=handles, **shared_legend_kw)
+
+    handle_kw = kwargs.get("handle_kw", {})
+    get_colors(handle_kw)
+    for label, handle in handles.items():
+        if isinstance(handle, dict):
+            get_colors(handle)
+            h_kw = handle_kw.copy()
+            h_kw.update(handle)
+            handles[label] = subplot.plot((-1),(-1), **h_kw)[0]
+
+    legend = set_legend(subplot, handles=handles, **kwargs)
 
     # Hide subplot borders
-    set_xaxis(subplot, xticks=[])
-    set_yaxis(subplot, yticks=[])
-    for spine in subplot.spines.values():
-        spine.set_visible(False)
-
+    set_xaxis(subplot, xbound=[0,1], xticks=[])
+    set_yaxis(subplot, ybound=[0,1], yticks=[])
+    if not spines:
+        for spine in subplot.spines.values():
+            spine.set_visible(False)
     return legend
