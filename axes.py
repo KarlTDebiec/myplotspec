@@ -47,6 +47,7 @@ def set_xaxis(subplot, **kwargs):
     from . import multi_kw
 
     # Ticks
+    xbound = multi_get_copy(["xbound", "bound"], kwargs)
     xtick_kw = multi_get_copy(["xtick_kw", "tick_kw"], kwargs, {})
     xticks = multi_get_copy(["xticks", "ticks"], kwargs)
     xticks_2 = multi_pop(["xticks", "ticks"], xtick_kw)
@@ -54,7 +55,9 @@ def set_xaxis(subplot, **kwargs):
         xticks = xticks_2
     elif xticks is None:
         xticks = subplot.get_xticks()
-    if xticks != []:
+    if xbound is not None:
+        subplot.set_xbound(float(xbound[0]), float(xbound[1]))
+    elif xticks != []:
         subplot.set_xbound(float(xticks[0]), float(xticks[-1]))
     subplot.set_xticks(xticks, **xtick_kw)
 
@@ -149,6 +152,7 @@ def set_yaxis(subplot, **kwargs):
     from . import FP_KEYS, get_font, multi_kw
 
     # Ticks
+    ybound = multi_get_copy(["ybound", "bound"], kwargs)
     ytick_kw = multi_get_copy(["ytick_kw", "tick_kw"], kwargs, {})
     yticks = multi_get_copy(["yticks", "ticks"], kwargs)
     yticks_2 = multi_pop(["yticks", "ticks"], ytick_kw)
@@ -156,7 +160,9 @@ def set_yaxis(subplot, **kwargs):
         yticks = yticks_2
     elif yticks is None:
         yticks = subplot.get_yticks()
-    if yticks != []:
+    if ybound is not None:
+        subplot.set_ybound(float(ybound[0]), float(ybound[1]))
+    elif yticks != []:
         subplot.set_ybound(float(yticks[0]), float(yticks[-1]))
     subplot.set_yticks(yticks, **ytick_kw)
 
