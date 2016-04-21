@@ -576,7 +576,8 @@ class FigureManager(object):
         set_shared_xlabel(figure, **kwargs)
         set_shared_ylabel(figure, **kwargs)
         if shared_legend:
-            handles = OrderedDict()
+            shared_legend_kw = multi_get_copy("shared_legend_kw", kwargs, {})
+            handles = shared_legend_kw.pop("handles", OrderedDict())
 
         # Load multiplot variables
         if multiplot:
@@ -642,6 +643,7 @@ class FigureManager(object):
               for key3 in kwargs.get("yaml_keys")]
               for key  in key2]
 
+            # Pass dict of handles for shared legend
             if shared_legend:
                 subplot_spec["handles"] = handles
 
@@ -715,7 +717,7 @@ class FigureManager(object):
         # Draw legend
         if shared_legend:
             set_shared_legend(figure, subplots, handles=handles,
-              **kwargs)
+              **shared_legend_kw)
 
         # Return results
         return figure
@@ -723,8 +725,8 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_subplot(self, subplot, title=None, legend=None,
-        partner_subplot=False, handles=None, visible=True, verbose=1,
-        debug=0, **kwargs):
+        partner_subplot=False, handles=None, visible=True,
+        verbose=1, debug=0, **kwargs):
         """
         Draws a subplot.
 

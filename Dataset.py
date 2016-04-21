@@ -188,6 +188,9 @@ class Dataset(object):
                             attrs = dict(h5_file[address].attrs)
                             if "fields" in attrs:
                                 dataframe_kw["columns"] = list(attrs["fields"])
+                            elif "columns" in attrs:
+                                dataframe_kw["columns"] = \
+                                  list( attrs["columns"])
                             self.dataframe = pd.DataFrame(data=data,
                               **dataframe_kw)
                     else:
@@ -197,4 +200,5 @@ class Dataset(object):
                 self.dataframe = pd.read_csv(expandvars(infile), **read_csv_kw)
                 if (self.dataframe.index.name is not None
                 and self.dataframe.index.name.startswith("#")):
-                    self.dataframe.index.name = self.dataframe.index.name.lstrip("#")
+                    self.dataframe.index.name = \
+                      self.dataframe.index.name.lstrip("#")
