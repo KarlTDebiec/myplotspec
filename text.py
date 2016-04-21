@@ -41,6 +41,7 @@ def set_title(figure_or_subplot, *args, **kwargs):
     .. todo:
         - If top is negative, use distance from highest subplot
     """
+    from warnings import warn
     import matplotlib
     from . import (FP_KEYS, get_edges, get_font, multi_get,
                    multi_get_copy, multi_pop)
@@ -56,10 +57,10 @@ def set_title(figure_or_subplot, *args, **kwargs):
         title_kw["fontproperties"] = get_font(title_fp_2)
     elif title_fp is not None:
         title_kw["fontproperties"] = get_font(title_fp)
-    title_kw["horizontalalignment"] = multi_pop(["horizontalalignment",
-      "ha"], title_kw, "center")
-    title_kw["verticalalignment"] = multi_pop(["verticalalignment",
-      "va"], title_kw, "center")
+    title_kw["horizontalalignment"] = multi_pop(["horizontalalignment", "ha"],
+      title_kw, "center")
+    title_kw["verticalalignment"] = multi_pop(["verticalalignment", "va"],
+      title_kw, "center")
 
     # Determine drawing target and title
     if isinstance(figure_or_subplot, matplotlib.figure.Figure):
@@ -77,6 +78,9 @@ def set_title(figure_or_subplot, *args, **kwargs):
         else:
             return None
 
+        if "x" not in title_kw:
+            title_kw["x"] = (edges["left"] + edges["right"]) / 2
+
         if "top" in title_kw:
             top = title_kw.pop("top")
             if top > 0:
@@ -84,6 +88,14 @@ def set_title(figure_or_subplot, *args, **kwargs):
             else:
                 title_kw["y"] = ((edges["top"] * fig_height)
                   - top) / fig_height
+
+        if "fontproperties" in title_kw:
+            warn("matplotlib's figure.suptitle method currently supports "
+                 "setting only only font size and weight, other font "
+                 "settings may be lost.")
+            fontproperties = title_kw.pop("fontproperties")
+            title_kw["size"] = fontproperties.get_size()
+            title_kw["weight"] = fontproperties.get_weight()
 
         return figure.suptitle(**title_kw)
 
