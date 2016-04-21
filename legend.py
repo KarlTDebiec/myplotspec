@@ -90,6 +90,7 @@ def set_shared_legend(figure, subplots, handles, spines=False, **kwargs):
     Returns:
       (Legend): Legend
     """
+    from collections import OrderedDict
     from . import (get_colors, get_figure_subplots, get_font, multi_get_copy,
                    multi_get)
     from .axes import set_xaxis, set_yaxis
@@ -101,6 +102,8 @@ def set_shared_legend(figure, subplots, handles, spines=False, **kwargs):
 
     handle_kw = kwargs.get("handle_kw", {})
     get_colors(handle_kw)
+    if not isinstance(handles, OrderedDict):
+        handles = OrderedDict(handles)
     for label, handle in handles.items():
         if isinstance(handle, dict):
             get_colors(handle)
