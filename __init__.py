@@ -8,6 +8,9 @@
 #   BSD license. See the LICENSE file for details.
 """
 General functions.
+
+.. todo:
+    - Implement multi_get_merged and multi_pop_merged
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -235,7 +238,7 @@ def get_colors(dict_1, *args, **kwargs):
     """
     from . import get_color
 
-    color_keys = kwargs.get("color_keys", ["color", "mec", "mfc"])
+    color_keys = kwargs.get("color_keys", ["c", "color", "mec", "mfc"])
     for color_key in color_keys:
         if color_key in dict_1:
             dict_1[color_key] = get_color(dict_1[color_key])
