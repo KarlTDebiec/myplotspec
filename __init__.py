@@ -238,7 +238,8 @@ def get_colors(dict_1, *args, **kwargs):
     """
     from . import get_color
 
-    color_keys = kwargs.get("color_keys", ["c", "color", "mec", "mfc"])
+    color_keys = kwargs.get("color_keys",
+      ["c", "color", "mec", "markeredgecolor", "mfc", "markerfacecolor"])
     for color_key in color_keys:
         if color_key in dict_1:
             dict_1[color_key] = get_color(dict_1[color_key])
