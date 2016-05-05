@@ -392,11 +392,12 @@ def set_text(figure_or_subplot, *args, **kwargs):
       (Text): Text
     """
     from  matplotlib import patheffects
-    from . import (FP_KEYS, get_font, multi_get, multi_get_copy,
+    from . import (FP_KEYS, get_colors, get_font, multi_get, multi_get_copy,
                    multi_pop)
 
     # Determine text and keyword arguments
     text_kw = multi_get_copy("text_kw", kwargs, {})
+    get_colors(text_kw)
     text = multi_get_copy(["text", "s"], kwargs)
     text_2 = multi_pop(["text", "s"], text_kw)
     if text_2 is not None:
