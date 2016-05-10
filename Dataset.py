@@ -186,11 +186,16 @@ class Dataset(object):
                               sorted(list(h5_file.keys()))[0])
                             data = np.array(h5_file[address])
                             attrs = dict(h5_file[address].attrs)
-                            if "fields" in attrs:
+                            if   "fields"  in dataframe_kw:
+                                dataframe_kw["columns"] = \
+                                  dataframe_kw.pop("fields")
+                            elif "columns" in dataframe_kw:
+                                pass
+                            elif "fields" in attrs:
                                 dataframe_kw["columns"] = list(attrs["fields"])
                             elif "columns" in attrs:
                                 dataframe_kw["columns"] = \
-                                  list( attrs["columns"])
+                                  list(attrs["columns"])
                             self.dataframe = pd.DataFrame(data=data,
                               **dataframe_kw)
                     else:
