@@ -151,6 +151,7 @@ class FigureManager(object):
           label_fp: 8b
           shared_legend_kw:
             legend_kw:
+              title_fp:  8b
               legend_fp: 6r
         draw_subplot:
           title_fp: 8b
