@@ -724,8 +724,9 @@ class FigureManager(object):
 
     @manage_defaults_presets()
     @manage_kwargs()
-    def draw_subplot(self, subplot, title=None, legend=None,
+    def draw_subplot(self, subplot, title=None,
         partner_subplot=False, handles=None, visible=True,
+        legend=None, draw_label=False,
         verbose=1, debug=0, **kwargs):
         """
         Draws a subplot.
@@ -867,6 +868,10 @@ class FigureManager(object):
         # Draw subplot legend
         if legend:
             set_legend(subplot, handles=handles, **kwargs)
+
+        if draw_label:
+            from .text import set_label
+            set_label(subplot, **kwargs)
 
         if not visible:
             subplot.set_visible(False)

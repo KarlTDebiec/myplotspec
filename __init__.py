@@ -387,7 +387,7 @@ def pad_zero(ticks, digits=None, **kwargs):
     else:
         return ["{0:.{1}f}".format(tick, digits) for tick in ticks]
 
-def get_edges(figure_or_subplots, **kwargs):
+def get_edges(figure_or_subplots, absolute=False, **kwargs):
     """
     Finds the outermost edges of a set of subplots on a figure.
 
@@ -400,19 +400,48 @@ def get_edges(figure_or_subplots, **kwargs):
 
     .. todo:
       - What are the units here? Probably relative but should be
-        documented or possible an option
+        documented or possibly an option
     """
     import matplotlib
 
     if isinstance(figure_or_subplots, matplotlib.figure.Figure):
-        subplots = figure_or_subplots.axes
+        figure   = figure_or_subplots
+        subplots = figure.axes
+        edges = dict(
+          left   = min([subplot.get_position().xmin for subplot in subplots]),
+          right  = max([subplot.get_position().xmax for subplot in subplots]),
+          top    = max([subplot.get_position().ymax for subplot in subplots]),
+          bottom = min([subplot.get_position().ymin for subplot in subplots]))
     elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots.values()
-    return dict(
-      left   = min([subplot.get_position().xmin for subplot in subplots]),
-      right  = max([subplot.get_position().xmax for subplot in subplots]),
-      top    = max([subplot.get_position().ymax for subplot in subplots]),
-      bottom = min([subplot.get_position().ymin for subplot in subplots]))
+        figure   = subplots[0].get_figure()
+        edges = dict(
+          left   = min([subplot.get_position().xmin for subplot in subplots]),
+          right  = max([subplot.get_position().xmax for subplot in subplots]),
+          top    = max([subplot.get_position().ymax for subplot in subplots]),
+          bottom = min([subplot.get_position().ymin for subplot in subplots]))
+    elif isinstance(figure_or_subplots, matplotlib.axes.Axes):
+        subplot = figure_or_subplots
+        figure  = subplot.get_figure()
+        edges = dict(
+          left   = subplot.get_position().xmin,
+          right  = subplot.get_position().xmax,
+          top    = subplot.get_position().ymax,
+          bottom = subplot.get_position().ymin)
+    edges["width"]  = edges["right"] - edges["left"]
+    edges["height"] = edges["top"]   - edges["bottom"]
+
+    if absolute:
+        fig_height = figure.get_figheight()
+        fig_width  = figure.get_figwidth()
+        edges["left"]   *= fig_width
+        edges["right"]  *= fig_width
+        edges["width"]  *= fig_width
+        edges["top"]    *= fig_height
+        edges["bottom"] *= fig_height
+        edges["height"] *= fig_height
+
+    return edges
 
 def get_font(fp=None, **kwargs):
     """

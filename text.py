@@ -308,75 +308,55 @@ def set_shared_ylabel(figure_or_subplots, *args, **kwargs):
 
     return set_text(figure, text_kw=label_kw, **kwargs)
 
-def set_inset(subplot, *args, **kwargs):
-    """
-    Draws a text inset on a subplot.
+def set_label(subplot, *args, **kwargs):
+    from . import (FP_KEYS, get_edges, get_font, multi_get, multi_get_copy,
+                   multi_pop)
 
-    Arguments:
-      subplot (Axes): Subplot on which to draw inset
-      inset (str): Inset text
-      inset_fp (str, dict, FontProperties): Inset font
-      inset_kw (dict): Keyword arguments passed to :func:`set_text`
-      xpro (float): X position within subplot (proportion 0.0-1.0)
-      ypro (float): Y position within subplot (proportion 0.0-1.0)
-      x (float): X position within subplot (subplot coordinate);
-        overrides ``xpro``
-      y (float): Y position within subplot (subplot coordinate),
-        overrides ``ypro``
-
-    Returns:
-      (Text): Inset text
-
-    .. todo:
-      - Implement support for xabs and yabs arguments accepting x and y
-        positions in inches relative to subplot origin
-    """
-    from . import (FP_KEYS, get_edges, get_font, multi_get,
-                   multi_get_copy, multi_pop)
-
-    # Determine inset and keyword arguments
-    inset_kw = multi_get_copy("inset_kw", kwargs, {})
-    inset = multi_get_copy("inset", kwargs)
-    inset_2 = multi_pop(["inset", "s"], inset_kw)
-    if inset_2 is not None:
-        inset_kw["s"] = inset_2
-    elif inset is not None:
-        inset_kw["s"] = inset
+    # Determine label and keyword arguments
+    label_kw = multi_get_copy("label_kw", kwargs, {})
+    label = multi_get_copy("label", kwargs)
+    label_2 = multi_pop(["label", "s"], label_kw)
+    if label_2 is not None:
+        label_kw["s"] = label_2
+    elif label is not None:
+        label_kw["s"] = label
     elif len(args) >= 1:
-        inset_kw["s"] = args[0]
+        label_kw["s"] = args[0]
     else:
         return None
 
     # Determine font and other settings
-    inset_fp = multi_get_copy("inset_fp", kwargs)
-    inset_fp_2 = multi_pop(["inset_fp"] + FP_KEYS, inset_kw)
-    if inset_fp_2 is not None:
-        inset_kw["fontproperties"] = get_font(inset_fp_2)
-    elif inset_fp is not None:
-        inset_kw["fontproperties"] = get_font(inset_fp)
-    inset_kw["horizontalalignment"] = multi_pop(["horizontalalignment",
-      "ha"], inset_kw, "left")
-    inset_kw["verticalalignment"] = multi_pop(["verticalalignment",
-      "va"], inset_kw, "top")
+    label_fp = multi_get_copy("label_fp", kwargs)
+    label_fp_2 = multi_pop(["label_fp"] + FP_KEYS, label_kw)
+    if label_fp_2 is not None:
+        label_kw["fontproperties"] = get_font(label_fp_2)
+    elif label_fp is not None:
+        label_kw["fontproperties"] = get_font(label_fp)
 
-    # x and y are specified in relative figure coordinates
-    if "x" not in inset_kw:
-        xmin, xmax = subplot.get_xbound()
-        xpro = inset_kw.pop("xpro", 0.05)
-        if subplot.xaxis_inverted():
-            inset_kw["x"] = xmin + (1 - xpro) * (xmax - xmin)
+    # x and y are specified in data, proportional, or absolute coordinates
+    if "x" in label_kw and "y" in label_kw:
+        pass
+    elif "xpro" in label_kw and "ypro" in label_kw:
+        label_kw["x"] = label_kw.pop("xpro")
+        label_kw["y"] = label_kw.pop("ypro")
+        kwargs["transform"] = subplot.transAxes
+    elif "xabs" in label_kw and "yabs" in label_kw:
+        edges = get_edges(subplot, absolute=True)
+        xabs = label_kw.pop("xabs")
+        yabs = label_kw.pop("yabs")
+        if xabs > 0:
+            label_kw["x"] = xabs / edges["width"]
         else:
-            inset_kw["x"] = xmin +      xpro  * (xmax - xmin)
-
-    if "y" not in inset_kw:
-        ymin, ymax = subplot.get_ybound()
-        ypro = inset_kw.pop("ypro", 0.95)
-        if subplot.yaxis_inverted():
-            inset_kw["y"] = ymin + (1 - ypro) * (ymax - ymin)
+            label_kw["x"] = (edges["width"] + xabs) / edges["width"]
+        if yabs > 0:
+            label_kw["y"] = yabs / edges["height"]
         else:
-            inset_kw["y"] = ymax +      ypro  * (ymax - ymin)
+            label_kw["y"] = (edges["height"] + yabs) / edges["height"]
+        kwargs["transform"] = subplot.transAxes
 
-    return set_text(subplot, test_kw=inset_kw, **kwargs)
+    if "border_lw" in label_kw:
+        kwargs["border_lw"] = label_kw.pop("border_lw")
+    return set_text(subplot, text_kw=label_kw, **kwargs)
 
 def set_text(figure_or_subplot, *args, **kwargs):
     """
@@ -426,7 +406,14 @@ def set_text(figure_or_subplot, *args, **kwargs):
     if y is not None and not "y" in text_kw:
         text_kw["y"] = y
 
+    # Transform
+    if "transform" in kwargs:
+        text_kw["transform"] = kwargs.pop("transform")
+
+    # Draw text
     text = figure_or_subplot.text(**text_kw)
+
+    # Draw border
     border_lw = multi_get_copy("border_lw", kwargs)
     if border_lw is not None:
         text.set_path_effects(
