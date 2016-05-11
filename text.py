@@ -391,6 +391,7 @@ def set_text(figure_or_subplot, *args, **kwargs):
     Returns:
       (Text): Text
     """
+    import matplotlib
     from  matplotlib import patheffects
     from . import (FP_KEYS, get_colors, get_font, multi_get, multi_get_copy,
                    multi_pop)
@@ -409,7 +410,7 @@ def set_text(figure_or_subplot, *args, **kwargs):
     else:
         return None
 
-    # Determine font and other settings
+    # Determine font settings
     text_fp = multi_get_copy(["text_fp"] + FP_KEYS, kwargs)
     text_fp_2 = multi_pop(["text_fp"] + FP_KEYS, text_kw)
     if text_fp_2 is not None:

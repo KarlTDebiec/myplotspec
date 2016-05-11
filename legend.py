@@ -75,7 +75,8 @@ def set_legend(subplot, handles=None, **kwargs):
 
     return legend
 
-def set_shared_legend(figure, subplots, handles, spines=False, **kwargs):
+def set_shared_legend(figure, subplots, handles, mode="manual", spines=False,
+    **kwargs):
     """
     Draws a legend on a figure, shared by multiple subplots.
 
@@ -96,9 +97,14 @@ def set_shared_legend(figure, subplots, handles, spines=False, **kwargs):
     from .axes import set_xaxis, set_yaxis
 
     # Add subplot to figure, draw and format legend
-    figure, subplots = get_figure_subplots(figure=figure, subplots=subplots,
-      verbose=0, **kwargs)
-    subplot = subplots[len(subplots) - 1]
+    if mode == "manual":
+        figure, subplots = get_figure_subplots(figure=figure, subplots=subplots,
+          verbose=0, **kwargs)
+        subplot = subplots[len(subplots) - 1]
+    elif mode == "partner":
+        from .axes import add_partner_subplot
+
+        subplot = add_partner_subplot(subplots[0], figure, subplots, **kwargs)
 
     handle_kw = kwargs.get("handle_kw", {})
     get_colors(handle_kw)
