@@ -865,6 +865,14 @@ class FigureManager(object):
         if kwargs.get("grid", False):
             grid_kw = multi_get_copy("grid_kw", kwargs, {})
             subplot.grid(**grid_kw)
+        if kwargs.get("draw_hline", False):
+            from collections import Iterable
+            hline_kw = multi_get_copy("hline_kw", kwargs, {})
+            hline_y  = multi_pop(["hline_y", "y"], hline_kw)
+            if not isinstance(hline_y, Iterable):
+                hline_y = [hline_y]
+            for y in hline_y:
+                subplot.axhline(y, **hline_kw)
 
         # Draw subplot legend
         if legend:
