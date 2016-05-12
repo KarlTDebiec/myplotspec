@@ -334,13 +334,16 @@ def set_label(subplot, *args, **kwargs):
         label_kw["fontproperties"] = get_font(label_fp)
 
     # x and y are specified in data, proportional, or absolute coordinates
-    if "x" in label_kw and "y" in label_kw:
+    if ("x" in label_kw and "y" in label_kw
+    and label_kw["x"] is not None and label_kw["y"] is not None):
         pass
-    elif "xpro" in label_kw and "ypro" in label_kw:
+    elif ("xpro" in label_kw and "ypro" in label_kw
+    and label_kw["xpro"] is not None and label_kw["ypro"] is not None):
         label_kw["x"] = label_kw.pop("xpro")
         label_kw["y"] = label_kw.pop("ypro")
         kwargs["transform"] = subplot.transAxes
-    elif "xabs" in label_kw and "yabs" in label_kw:
+    elif ("xabs" in label_kw and "yabs" in label_kw
+    and label_kw["xabs"] is not None and label_kw["yabs"] is not None):
         edges = get_edges(subplot, absolute=True)
         xabs = label_kw.pop("xabs")
         yabs = label_kw.pop("yabs")
