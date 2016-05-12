@@ -22,7 +22,7 @@ Functions for formatting text.
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
 ################################## FUNCTIONS ##################################
-def set_title(figure_or_subplot, *args, **kwargs):
+def set_title(figure_or_subplot, verbose=1, debug=0, *args, **kwargs):
     """
     Draws a title on a Figure or subplot.
 
@@ -90,9 +90,10 @@ def set_title(figure_or_subplot, *args, **kwargs):
                   - top) / fig_height
 
         if "fontproperties" in title_kw:
-            warn("matplotlib's figure.suptitle method currently supports "
-                 "setting only only font size and weight, other font "
-                 "settings may be lost.")
+            if verbose >= 2:
+                warn("matplotlib's figure.suptitle method currently supports "
+                     "setting only only font size and weight, other font "
+                     "settings may be lost.")
             fontproperties = title_kw.pop("fontproperties")
             title_kw["size"] = fontproperties.get_size()
             title_kw["weight"] = fontproperties.get_weight()
