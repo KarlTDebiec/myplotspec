@@ -469,8 +469,8 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     @manage_output()
-    def draw_figure(self, shared_legend=False, multiplot=False, verbose=1,
-        debug=0, **kwargs):
+    def draw_figure(self, shared_legend=False, multiplot=False,
+        verbose=1, debug=0, **kwargs):
         """
         Draws a figure.
 
@@ -573,9 +573,9 @@ class FigureManager(object):
                              **kwargs)
 
         # Format Figure
-        set_title(figure, **kwargs)
-        set_shared_xlabel(figure, **kwargs)
-        set_shared_ylabel(figure, **kwargs)
+        set_title(figure, verbose=verbose, debug=debug, **kwargs)
+        set_shared_xlabel(figure, verbose=verbose, debug=debug, **kwargs)
+        set_shared_ylabel(figure, verbose=verbose, debug=debug, **kwargs)
         if shared_legend:
             shared_legend_kw = multi_get_copy("shared_legend_kw", kwargs, {})
             handles = shared_legend_kw.pop("handles", OrderedDict())

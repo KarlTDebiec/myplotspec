@@ -65,6 +65,7 @@ def set_title(figure_or_subplot, verbose=1, debug=0, *args, **kwargs):
     # Determine drawing target and title
     if isinstance(figure_or_subplot, matplotlib.figure.Figure):
         figure = figure_or_subplot
+        fig_width = figure.get_figwidth()
         fig_height = figure.get_figheight()
         edges = get_edges(figure)
 
@@ -78,7 +79,13 @@ def set_title(figure_or_subplot, verbose=1, debug=0, *args, **kwargs):
         else:
             return None
 
-        if "x" not in title_kw:
+        if "left" in title_kw:
+            left = title_kw.pop("left")
+            title_kw["x"] = left / fig_width
+        elif "right" in title_kw:
+            right = title_kw.pop("right")
+            title_kw["x"] = (fig_width - right) / fig_width
+        elif "x" not in title_kw:
             title_kw["x"] = (edges["left"] + edges["right"]) / 2
 
         if "top" in title_kw:
