@@ -338,6 +338,9 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     # Determine partner dimensions in inches
     partner_kw = copy(kwargs.get("partner_kw", {}))
     position = partner_kw.get("position", "right")
+    for k in [k for k, v in partner_kw.items() if v is None]:
+        del(partner_kw[k])
+
     if position == "top":
         partner_kw["left"] = partner_kw.get("left", host_left)
         partner_kw["right"] = partner_kw.get("right", host_right)
@@ -347,40 +350,82 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
           host_bottom + host_height + partner_kw["hspace"])
         partner_kw["top"] = partner_kw.get("top",
           host_top - partner_kw["hspace"] - partner_kw["sub_height"])
-    if position == "bottom":
-        partner_kw["left"] = partner_kw.get("left", host_left)
-        partner_kw["right"] = partner_kw.get("right", host_right)
-        partner_kw["hspace"] = partner_kw.pop("hspace", 0.05)
-        partner_kw["sub_height"] = partner_kw.get("sub_height", 0.1)
-        partner_kw["bottom"] = partner_kw.get("bottom",
-          host_bottom - partner_kw["hspace"] - partner_kw["sub_height"])
-        partner_kw["top"] = partner_kw.get("top",
-          host_bottom - partner_kw["hspace"])
+
+    elif position == "bottom":
+        if "sub_width" in partner_kw:
+            if "right" not in partner_kw and "left" not in partner_kw:
+                partner_kw["left"] = (host_left
+                  + (host_width - partner_kw["sub_width"]) / 2)
+                partner_kw["right"] = (host_right
+                  - (host_width - partner_kw["sub_width"]) / 2)
+        else:
+            if "left" not in partner_kw and "right" not in partner_kw:
+                partner_kw["left"]  = host_left
+                partner_kw["right"] = host_right
+            elif "left" in partner_kw:
+                if partner_kw["left"] < host_right:
+                    partner_kw["right"] = host_right
+                else:
+                    partner_kw["sub_width"] = host_width
+            elif "right" in partner_kw:
+                if partner_kw["right"] < host_right:
+                    partner_kw["left"] = host_left
+                else:
+                    partner_kw["left"] = partner_kw["right"] - host_width
+        if "hspace" not in partner_kw:
+            partner_kw["hspace"] = rcParams["figure.subplot.hspace"]
+        if "sub_height" in partner_kw:
+            if "bottom" not in partner_kw and "top" not in partner_kw:
+                partner_kw["bottom"] = \
+                  (host_bottom + host_height - partner_kw["hspace"])
+        else:
+            if "bottom" not in partner_kw and "top" not in partner_kw:
+                partner_kw["top"] = host_bottom - partner_kw["hspace"]
+                partner_kw["sub_height"] = host_height * 0.1
+            elif "bottom" in partner_kw:
+                partner_kw["sub_height"] = host_height * 0.1
+            elif "top" in partner_kw:
+                partner_kw["sub_height"] = host_height * 0.1
+
     elif position == "right":
-        if "sub_height" in partner_kw and partner_kw["sub_height"] is not None:
-            if "bottom" not in partner_kw or partner_kw.get("bottom") is None:
+        if "sub_height" in partner_kw:
+            if "bottom" not in partner_kw and "top" not in partner_kw:
                 partner_kw["bottom"] = (host_bottom
                   + (host_height - partner_kw["sub_height"]) / 2)
-            if "top" not in partner_kw or partner_kw.get("top") is None:
                 partner_kw["top"] = (host_top
                   - (host_height - partner_kw["sub_height"]) / 2)
         else:
-            if "bottom" not in partner_kw or partner_kw.get("bottom") is None:
+            if "bottom" not in partner_kw and "top" not in partner_kw:
                 partner_kw["bottom"] = host_bottom
-            if "top" not in partner_kw or partner_kw.get("top") is None:
-                partner_kw["top"] = host_top
-        if "wspace" not in partner_kw or partner_kw.get("wspace") is None:
+                partner_kw["top"]    = host_top
+            elif "bottom" in partner_kw:
+                if partner_kw["bottom"] < host_top:
+                    partner_kw["top"] = host_top
+                else:
+                    partner_kw["sub_height"] = host_height
+            elif "top" in partner_kw:
+                if partner_kw["top"] < host_top:
+                    partner_kw["bottom"] = host_bottom
+                else:
+                    partner_kw["bottom"] = partner_kw["top"] - host_height
+        if "wspace" not in partner_kw:
             partner_kw["wspace"] = rcParams["figure.subplot.wspace"]
-        if "sub_width" not in partner_kw or partner_kw.get("sub_width") is None:
-            partner_kw["sub_width"] = rcParams["figure.subplot.wspace"]
-        if "left" not in partner_kw or partner_kw.get("left") is None:
-            partner_kw["left"] = (host_left + host_width
-              + partner_kw["wspace"])
-        if "right" not in partner_kw or partner_kw.get("right") is None:
-            partner_kw["right"] = (host_right - partner_kw["wspace"]
-              - partner_kw["sub_width"])
+        if "sub_width" in partner_kw:
+            if "right" not in partner_kw and "left" not in partner_kw:
+                partner_kw["left"] = \
+                  (host_left + host_width + partner_kw["hspace"])
+        else:
+            if "left" not in partner_kw and "right" not in partner_kw:
+                partner_kw["left"] = host_right + partner_kw["wspace"]
+                partner_kw["sub_width"] = host_width * 0.1
+            elif "left" in partner_kw:
+                partner_kw["sub_width"] = host_width * 0.1
+            elif "right" in partner_kw:
+                partner_kw["sub_width"] = host_width * 0.1
+
     else:
         raise()
+
     get_figure_subplots(figure=figure, subplots=subplots, **partner_kw)
     partner = subplots[list(subplots)[-1]]
     set_xaxis(partner, **partner_kw)
