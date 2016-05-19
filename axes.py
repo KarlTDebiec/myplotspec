@@ -42,7 +42,7 @@ def set_xaxis(subplot, **kwargs):
       [x]lw (float): Subplot top and bottom line width
       kwargs (dict): Additional keyword arguments
     """
-    from . import (FP_KEYS, get_font, multi_get_copy, multi_pop)
+    from . import (FP_KEYS, get_colors, get_font, multi_get_copy, multi_pop)
 
     # Ticks
     xbound = multi_get_copy(["xbound", "bound"], kwargs)
