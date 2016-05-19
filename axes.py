@@ -412,7 +412,7 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
         if "sub_width" in partner_kw:
             if "right" not in partner_kw and "left" not in partner_kw:
                 partner_kw["left"] = \
-                  (host_left + host_width + partner_kw["hspace"])
+                  (host_left + host_width + partner_kw["wspace"])
         else:
             if "left" not in partner_kw and "right" not in partner_kw:
                 partner_kw["left"] = host_right + partner_kw["wspace"]
