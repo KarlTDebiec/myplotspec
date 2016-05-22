@@ -210,11 +210,11 @@ def get_color(color):
         color = np.array(color, dtype=np.float)
         if np.any(color[0] > 1):
             color /= 255
-        return color
+        return tuple(color)
     elif isinstance(color, float):
         if color > 1:
             color /= 255
-        return [color, color, color]
+        return (color, color, color)
 
 def get_colors(dict_1, *args, **kwargs):
     """
