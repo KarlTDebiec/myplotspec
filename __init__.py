@@ -407,19 +407,25 @@ def get_edges(figure_or_subplots, absolute=False, **kwargs):
     if isinstance(figure_or_subplots, matplotlib.figure.Figure):
         figure   = figure_or_subplots
         subplots = figure.axes
-        edges = dict(
-          left   = min([subplot.get_position().xmin for subplot in subplots]),
-          right  = max([subplot.get_position().xmax for subplot in subplots]),
-          top    = max([subplot.get_position().ymax for subplot in subplots]),
-          bottom = min([subplot.get_position().ymin for subplot in subplots]))
+        if len(subplots) == 0:
+            edges = dict(left=0.5, right=0.5, top=0.5, bottom=0.5)
+        else:
+            edges = dict(
+              left   = min([s.get_position().xmin for s in subplots]),
+              right  = max([s.get_position().xmax for s in subplots]),
+              top    = max([s.get_position().ymax for s in subplots]),
+              bottom = min([s.get_position().ymin for s in subplots]))
     elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots.values()
         figure   = subplots[0].get_figure()
-        edges = dict(
-          left   = min([subplot.get_position().xmin for subplot in subplots]),
-          right  = max([subplot.get_position().xmax for subplot in subplots]),
-          top    = max([subplot.get_position().ymax for subplot in subplots]),
-          bottom = min([subplot.get_position().ymin for subplot in subplots]))
+        if len(subplots) == 0:
+            edges = dict(left=0.5, right=0.5, top=0.5, bottom=0.5)
+        else:
+            edges = dict(
+              left   = min([s.get_position().xmin for s in subplots]),
+              right  = max([s.get_position().xmax for s in subplots]),
+              top    = max([s.get_position().ymax for s in subplots]),
+              bottom = min([s.get_position().ymin for s in subplots]))
     elif isinstance(figure_or_subplots, matplotlib.axes.Axes):
         subplot = figure_or_subplots
         figure  = subplot.get_figure()

@@ -591,9 +591,14 @@ class FigureManager(object):
 
         # Configure and plot subplots
         for i in subplot_indexes:
-
             # Load the subplot and spec
             if i in subplots:
+                subplot = subplots[i]
+            elif (isinstance(subplot_specs[i], dict)
+            and "subplot_dim" in subplot_specs[i]):
+                get_figure_subplots(figure=figure, subplots=subplots,
+                verbose=verbose, debug=debug,
+                **subplot_specs[i]["subplot_dim"])
                 subplot = subplots[i]
             else:
                 warn("Specs provided for subplot {0}, ".format(i) +
