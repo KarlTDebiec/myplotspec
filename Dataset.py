@@ -184,7 +184,11 @@ class Dataset(object):
                         with h5py.File(expandvars(infile)) as h5_file:
                             address = kwargs.get("address",
                               sorted(list(h5_file.keys()))[0])
-                            data = np.array(h5_file[address])
+                            if "slice" in kwargs:
+                                data = np.array(h5_file[address][
+                                         slice(*kwargs["slice"])])
+                            else:
+                                data = np.array(h5_file[address])
                             attrs = dict(h5_file[address].attrs)
                             if   "fields"  in dataframe_kw:
                                 dataframe_kw["columns"] = \
