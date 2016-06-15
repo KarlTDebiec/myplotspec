@@ -936,92 +936,13 @@ class FigureManager(object):
         if handles is not None and label is not None:
             handles[label] = handle
 
-    def load_dataset(self, cls=None, **kwargs):
+    def load_dataset(self, **kwargs):
         """
-        Loads a dataset, or reloads a previously-loaded dataset.
-
-        Datasets are stored in :class:`FigureManager`'s dataset_cache
-        instance variable, a dictionary containing copies of previously
-        loaded datasets keyed by tuples containing the class and
-        arguments used to instantiate the dataset.
-
-        In order to support caching, a class must implement the static
-        method 'get_cache_key', which generates the hashable tuple key.
-        Only arguments that affect the resulting dataset should be
-        included in the key (e.g. 'infile' should be included, but
-        'verbose' and 'debug' should not). If the function accepts
-        arguments that are not hashable or convertable into a hashable
-        form, 'get_cache_key' should return None, causing
-        :meth:`load_dataset` to reload the dataset.
-
-        Cachable dataset classes may also implement the method
-        'get_cache_message' which returns a message to display when the
-        dataset is loaded from the cache.
-
-        Arguments:
-          cls (class): Dataset class
-          verbose (int): Level of verbose output
-          debug (int): Level of debug output
-          kwargs (dict): Keyword arguments passed to cls.get_cache_key()
-            and cls.__init__()
-
-        Returns:
-          dataset (cls): Dataset, either initialized new or copied from
-          cache
+        Loads a dataset, or reloads a previously-loaded dataset from cache.
         """
-        from inspect import getargspec
-        from warnings import warn
-        import six
-        from .debug import db_s
-        from .error import (is_argument_error, MPSArgumentError,
-                            MPSDatasetError, MPSDatasetCacheError)
+        from . import load_dataset
 
-        if cls is None:
-            from .Dataset import Dataset
-            cls = Dataset
-        elif isinstance(cls, six.string_types):
-            mod_name = ".".join(cls.split(".")[:-1])
-            cls_name   = cls.split(".")[-1]
-            mod = __import__(mod_name, fromlist=[cls_name])
-            cls = getattr(mod, cls_name)
-        verbose = kwargs.get("verbose", 1)
-        debug   = kwargs.get("debug",   0)
-
-        if hasattr(cls, "get_cache_key"):
-#            try:
-            cache_key = cls.get_cache_key(**kwargs)
-#            except TypeError as error:
-#                if is_argument_error(error):
-#                    error = MPSArgumentError(error, cls.get_cache_key,
-#                      kwargs, cls, "cls")
-#                raise MPSDatasetCacheError(error)
-            if cache_key is None:
-                try:
-                    return cls(dataset_cache=self.dataset_cache, **kwargs)
-                except TypeError as error:
-                    if is_argument_error(error):
-                        error = MPSArgumentError(error, cls.get_cache_key,
-                          kwargs, cls, "cls")
-                    raise MPSDatasetError(error)
-            if cache_key in self.dataset_cache:
-                if verbose >= 1:
-                    if hasattr(cls, "get_cache_message"):
-                        print(cls.get_cache_message(cache_key))
-                    else:
-                        print("Previously loaded")
-                return self.dataset_cache[cache_key]
-            else:
-#                try:
-                self.dataset_cache[cache_key] = cls(
-                  dataset_cache=self.dataset_cache, **kwargs)
-#                except TypeError as error:
-#                    if is_argument_error(error):
-#                        error = MPSArgumentError(error, cls.get_cache_key,
-#                          kwargs, cls, "cls")
-#                    raise MPSDatasetError(error)
-                return self.dataset_cache[cache_key]
-        else:
-            return cls(**kwargs)
+        return load_dataset(dataset_cache=self.dataset_cache, **kwargs)
 
     def main(self, parser=None):
         """
