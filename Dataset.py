@@ -58,12 +58,14 @@ class Dataset(object):
         """
         return "Dataset previously loaded from '{0}'".format(cache_key[1])
 
-    def load_dataset(self, **kwargs):
+    def load_dataset(self, cls=None, **kwargs):
         """
         """
         from . import load_dataset
 
-        return load_dataset(cls=type(self),
+        if cls is None:
+            cls = type(self)
+        return load_dataset(cls=cls,
                  dataset_cache=self.dataset_cache, **kwargs)
 
     def __init__(self, infile, address=None, dataset_cache=None,
@@ -130,7 +132,11 @@ class Dataset(object):
                 else:
                     raise()
             else:
-                read_csv_kw = kwargs.get("read_csv_kw", {})
+                read_csv_kw = dict(index_col=0, delimiter="\s\s+")
+                read_csv_kw.update(kwargs.get("read_csv_kw", {}))
+                if ("delimiter"        in read_csv_kw
+                and "delim_whitespace" in read_csv_kw):
+                    del(read_csv_kw["delimiter"])
                 self.dataframe = pd.read_csv(expandvars(infile), **read_csv_kw)
                 if (self.dataframe.index.name is not None
                 and self.dataframe.index.name.startswith("#")):

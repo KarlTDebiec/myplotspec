@@ -54,9 +54,10 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
       from cache
 
     .. todo:
-      - Handling of errors remains extremely frustrating in ptython
+      - Handling of errors remains extremely frustrating in python
         2.7; may not be worth bothering to improve
     """
+    from os.path import expandvars
     import six
 
     verbose = kwargs.get("verbose", 1)
@@ -68,9 +69,21 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
         if dataset_cache is not None:
             loose_keys = {key[1]:key for key in dataset_cache.keys()}
             infile = kwargs.get("infile")
-            if infile is not None and infile in loose_keys:
-                return dataset_cache[loose_keys[infile]]
+            if infile is not None:
+                if isinstance(infile, str):
+                    infile = expandvars(infile)
+                    if infile in loose_keys:
+                        dataset = dataset_cache[loose_keys[infile]]
+                        cls = type(dataset)
+                        cache_key = cls.get_cache_key(**kwargs)
+                        if hasattr(cls, "get_cache_message"):
+                            print(cls.get_cache_message(cache_key))
+                        else:
+                            print("Previously loaded")
+                        return dataset
 
+    if cls == "__noclass__":
+        return None
     if cls is None:
         from .Dataset import Dataset
         cls = Dataset
