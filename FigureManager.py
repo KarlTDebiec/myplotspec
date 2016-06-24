@@ -878,6 +878,14 @@ class FigureManager(object):
                 hline_y = [hline_y]
             for y in hline_y:
                 subplot.axhline(y, **hline_kw)
+        if kwargs.get("draw_vline", False):
+            from collections import Iterable
+            vline_kw = multi_get_copy("vline_kw", kwargs, {})
+            vline_y  = multi_pop(["vline_y", "y"], vline_kw)
+            if not isinstance(vline_y, Iterable):
+                vline_y = [vline_y]
+            for y in vline_y:
+                subplot.axvline(y, **vline_kw)
 
         # Draw subplot legend
         if legend:
