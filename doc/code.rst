@@ -1,17 +1,22 @@
-Command-Line Tools
-==================
-
 FigureManager
--------------
+=============
 .. automodule:: myplotspec.FigureManager
 .. autoclass::  myplotspec.FigureManager.FigureManager
-.. automethod:: myplotspec.FigureManager.FigureManager.draw_report(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.draw_figure(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.draw_subplot(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.draw_dataset(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.load_dataset(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.initialize_presets(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.main(...)
+.. automethod:: myplotspec.FigureManager.FigureManager.draw_report
+.. automethod:: myplotspec.FigureManager.FigureManager.draw_figure
+.. automethod:: myplotspec.FigureManager.FigureManager.draw_subplot
+.. automethod:: myplotspec.FigureManager.FigureManager.draw_dataset
+.. automethod:: myplotspec.FigureManager.FigureManager.load_dataset
+.. automethod:: myplotspec.FigureManager.FigureManager.initialize_presets
+.. automethod:: myplotspec.FigureManager.FigureManager.main
+
+Dataset
+=======
+.. automodule:: myplotspec.Dataset
+.. autoclass::  myplotspec.Dataset.Dataset
+.. automethod:: myplotspec.Dataset.Dataset.get_cache_key
+.. automethod:: myplotspec.Dataset.Dataset.get_cache_message
+.. automethod:: myplotspec.Dataset.Dataset.load_dataset
 
 Decorators
 ==========
@@ -49,71 +54,51 @@ manage_defaults_presets
 manage_kwargs
 -------------
 .. automodule:: myplotspec.manage_kwargs
-.. autoclass:: myplotspec.manage_kwargs.manage_kwargs
+.. autoclass::  myplotspec.manage_kwargs.manage_kwargs
 
 manage_output
 -------------
 .. automodule:: myplotspec.manage_output
-.. autoclass:: myplotspec.manage_output.manage_output
+.. autoclass::  myplotspec.manage_output.manage_output
 
 Functions
 =========
 
 General
 -------
-.. automodule:: myplotspec
+.. automodule::   myplotspec
+.. autofunction:: myplotspec.load_dataset
 .. autofunction:: myplotspec.get_yaml
 .. autofunction:: myplotspec.merge_dicts
 .. autofunction:: myplotspec.multi_get
 .. autofunction:: myplotspec.multi_get_copy
 .. autofunction:: myplotspec.multi_pop
 .. autofunction:: myplotspec.pad_zero
-
-matplotlib
-----------
-
-General
-_______
 .. autofunction:: myplotspec.get_color
+.. autofunction:: myplotspec.get_colors
 .. autofunction:: myplotspec.get_edges
 .. autofunction:: myplotspec.get_figure_subplots
 .. autofunction:: myplotspec.get_font
 
 Axes
-____
-.. automodule:: myplotspec.axes
+----
+.. automodule::   myplotspec.axes
 .. autofunction:: myplotspec.axes.set_xaxis
 .. autofunction:: myplotspec.axes.set_yaxis
+.. autofunction:: myplotspec.axes.set_colorbar
+.. autofunction:: myplotspec.axes.add_partner_subplot
 
 Text
-____
-.. automodule:: myplotspec.text
+----
+.. automodule::   myplotspec.text
 .. autofunction:: myplotspec.text.set_title
 .. autofunction:: myplotspec.text.set_shared_xlabel
 .. autofunction:: myplotspec.text.set_shared_ylabel
-.. autofunction:: myplotspec.text.set_inset
+.. autofunction:: myplotspec.text.set_label
 .. autofunction:: myplotspec.text.set_text
 
 Legend
-______
-.. automodule:: myplotspec.legend
+------
+.. automodule::   myplotspec.legend
 .. autofunction:: myplotspec.legend.set_legend
 .. autofunction:: myplotspec.legend.set_shared_legend
-
-
-Debug
-=====
-.. automodule:: myplotspec.debug
-
-Decorators
-----------
-.. autoclass:: myplotspec.debug.debug_arguments
-
-Output functions
-----------------
-.. autofunction:: myplotspec.debug.db_s
-.. autofunction:: myplotspec.debug.db_kv
-
-Formatting Functions
---------------------
-.. autofunction:: myplotspec.debug.identify
