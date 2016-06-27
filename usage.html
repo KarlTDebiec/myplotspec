@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Getting Started &mdash; MYPlotSpec 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="MYPlotSpec 0.1 documentation" href="index.html" />
+    <link rel="next" title="Command-Line Tools" href="code.html" />
+    <link rel="prev" title="MYPlotSpec" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>MYPlotSpec prepares matplotlib figures to specifications provided in a YAML
+file. At the most basic level the YAML file may specify simply an outfile and
+the dataset infiles to plot on it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>figures:
+    0:
+        outfile:    examples/example_1.png
+        subplots:
+            0:
+                datasets:
+                    0:
+                        infile: examples/dataset_1.txt
+                    1:
+                        infile: examples/dataset_2.txt
+                    2:
+                        infile: examples/dataset_3.txt
+</pre></div>
+</div>
+<img alt="_images/example_1.png" class="align-center" src="_images/example_1.png" />
+<p>The resulting plot uses matplotlib&#8217;s rcParams (i.e. defaults) for all settings,
+yielding a poorly-formatted figure. We could use matplotlib&#8217;s functions to
+adjust the formatting, but we will instead specify adjustments in the YAML
+file, allowing MYPlotSpec to handle matplotlib for us.</p>
+</div>
+<div class="section" id="figure-settings">
+<h2>Figure Settings<a class="headerlink" href="#figure-settings" title="Permalink to this headline">¶</a></h2>
+<p>We may specify the margins and subplot dimensions of the figure:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>figures:
+    ...
+    1:
+        outfile:    examples/example_2.png
+        left:       0.6
+        sub_width:  3.0
+        right:      0.2
+        bottom:     0.5
+        sub_height: 2.0
+        top:        0.4
+        subplots:
+            0:
+                datasets:
+                    0:
+                        infile: examples/dataset_1.txt
+                    1:
+                        infile: examples/dataset_2.txt
+                    2:
+                        infile: examples/dataset_3.txt
+</pre></div>
+</div>
+<img alt="_images/example_2.png" class="align-center" src="_images/example_2.png" />
+<p>This yields a much better-proportioned figure.</p>
+</div>
+<div class="section" id="subplot-settings">
+<h2>Subplot Settings<a class="headerlink" href="#subplot-settings" title="Permalink to this headline">¶</a></h2>
+<p>We may further adjust the subplot formatting, adding a title and axis labels,
+and applying specific formatting to the ticks:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>figures:
+    ...
+    2:
+        outfile:    examples/example_3.png
+        left:       0.6
+        sub_width:  3.0
+        right:      0.2
+        bottom:     0.5
+        sub_height: 2.0
+        top:        0.4
+        subplot_kw:
+            autoscale_on: False
+        subplots:
+            0:
+                title:       Subplot Title
+                xlabel:      X Axis
+                ylabel:      Y Axis
+                xticks:      [0, 2, 4, 6, 8, 10]
+                xticklabels: [&quot;zero&quot;, &quot;two&quot;, &quot;four&quot;, &quot;six&quot;, &quot;eight&quot;, &quot;ten&quot;]
+                yticks:      [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6]
+                title_fp:    10b
+                label_fp:    10b
+                tick_fp:     10r
+                tick_params:
+                    width:     1
+                    direction: out
+                    top:       off
+                    right:     off
+                datasets:
+                    0:
+                        infile: examples/dataset_1.txt
+                    1:
+                        infile: examples/dataset_2.txt
+                    2:
+                        infile: examples/dataset_3.txt
+</pre></div>
+</div>
+<img alt="_images/example_3.png" class="align-center" src="_images/example_3.png" />
+<p>Note the setting <code class="docutils literal"><span class="pre">subplot_kw:</span> <span class="pre">autoscale_on:</span> <span class="pre">False</span></code>, this stops matplotlib
+from changing the bounds of the x and y axis automatically to fit the plotted
+data; MYPlotSpec will instead set them based on the x and y ticks. Note also
+how font styles may be set using a string &#8216;##L&#8217;, which &#8216;##&#8217; is the font size
+and &#8216;L&#8217; is &#8216;r&#8217; for regular and &#8216;b&#8217; for bold.</p>
+</div>
+<div class="section" id="dataset-settings">
+<h2>Dataset Settings<a class="headerlink" href="#dataset-settings" title="Permalink to this headline">¶</a></h2>
+<p>We may further adjust the dataset formatting, and add a legend:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>figures:
+    ...
+    3:
+        outfile:    examples/example_4.png
+        left:       0.6
+        sub_width:  3.0
+        right:      0.2
+        bottom:     0.5
+        sub_height: 2.0
+        top:        0.4
+        subplot_kw:
+            autoscale_on: False
+        subplots:
+            0:
+                title:       Subplot Title
+                xlabel:      X Axis
+                ylabel:      Y Axis
+                xticks:      [0, 2, 4, 6, 8, 10]
+                xticklabels: [&quot;zero&quot;, &quot;two&quot;, &quot;four&quot;, &quot;six&quot;, &quot;eight&quot;, &quot;ten&quot;]
+                yticks:      [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6]
+                title_fp:    10b
+                label_fp:    10b
+                tick_fp:     10r
+                tick_params:
+                    width:     1
+                    direction: out
+                    top:       off
+                    right:     off
+                legend_fp:   8r
+                legend:      True
+                legend_lw:   2
+                legend_kw:
+                    frameon: False
+                datasets:
+                    0:
+                        label:  Dataset 1
+                        infile: examples/dataset_1.txt
+                        color:  blue
+                    1:
+                        label:  Dataset 2
+                        infile: examples/dataset_2.txt
+                        color:  green
+                    2:
+                        label:  Dataset 3
+                        infile: examples/dataset_3.txt
+                        color:  red
+</pre></div>
+</div>
+<img alt="_images/example_4.png" class="align-center" src="_images/example_4.png" />
+</div>
+<div class="section" id="presets">
+<h2>Presets<a class="headerlink" href="#presets" title="Permalink to this headline">¶</a></h2>
+<p>MYPlotSpec includes a system of presets that make it easy to switch between
+different plot settings without changing many settings manually. We may use the
+&#8216;notebook&#8217; preset to handle to font settings for us:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>figures:
+    ...
+    4:
+        preset:     notebook
+        outfile:    examples/example_5.png
+        left:       0.6
+        sub_width:  3.0
+        right:      0.2
+        bottom:     0.5
+        sub_height: 2.0
+        top:        0.4
+        subplot_kw:
+            autoscale_on: False
+        subplots:
+            0:
+                title:       Subplot Title
+                xlabel:      X Axis
+                ylabel:      Y Axis
+                xticks:      [0, 2, 4, 6, 8, 10]
+                xticklabels: [&quot;zero&quot;, &quot;two&quot;, &quot;four&quot;, &quot;six&quot;, &quot;eight&quot;, &quot;ten&quot;]
+                yticks:      [0.0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6]
+                tick_params:
+                    width:     1
+                    direction: out
+                    top:       off
+                    right:     off
+                legend:      True
+                legend_lw:   2
+                legend_kw:
+                    frameon: False
+                datasets:
+                    0:
+                        label:  Dataset 1
+                        infile: examples/dataset_1.txt
+                        color:  blue
+                    1:
+                        label:  Dataset 2
+                        infile: examples/dataset_2.txt
+                        color:  green
+                    2:
+                        label:  Dataset 3
+                        infile: examples/dataset_3.txt
+                        color:  red
+</pre></div>
+</div>
+<img alt="_images/example_5.png" class="align-center" src="_images/example_5.png" />
+<p>In practice, most of the settings listed above would be moved into a preset,
+keeping the actual information needed in each YAML file small.</p>
+</div>
+</div>
+<div class="section" id="subclassing-figuremanager">
+<h1>Subclassing FigureManager<a class="headerlink" href="#subclassing-figuremanager" title="Permalink to this headline">¶</a></h1>
+<p>Once the examples above are understood, the next step towards using MYPlotSpec
+is typically to write a subclass of <a class="reference internal" href="code.html#myplotspec.FigureManager.FigureManager" title="myplotspec.FigureManager.FigureManager"><code class="xref py py-class docutils literal"><span class="pre">FigureManager</span></code></a> for
+the specific type of dataset in use. Generally, only the function
+<a class="reference internal" href="code.html#myplotspec.FigureManager.FigureManager.draw_dataset" title="myplotspec.FigureManager.FigureManager.draw_dataset"><code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code></a> needs to be overridden, in
+addition to the attributes <a class="reference internal" href="code.html#myplotspec.FigureManager.FigureManager.defaults" title="myplotspec.FigureManager.FigureManager.defaults"><code class="xref py py-attr docutils literal"><span class="pre">defaults</span></code></a> and
+<code class="xref py py-attr docutils literal"><span class="pre">presets</span></code>. Example subclasses of
+<a class="reference internal" href="code.html#myplotspec.FigureManager.FigureManager" title="myplotspec.FigureManager.FigureManager"><code class="xref py py-class docutils literal"><span class="pre">FigureManager</span></code></a> for plotting several types of data are
+available on GitHub:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/KarlTDebiec/myplotspec_dls">Dynamic Light Scattering</a></li>
+<li><a class="reference external" href="https://github.com/KarlTDebiec/myplotspec_fplc">Fast Protein Liquid Chromatography</a></li>
+<li><a class="reference external" href="https://github.com/KarlTDebiec/myplotspec_sim">Molecular Dynamics Simulation</a></li>
+<li><a class="reference external" href="https://github.com/KarlTDebiec/myplotspec_nmr">Nuclear Magnetic Resonance Spectroscopy</a></li>
+<li><a class="reference external" href="https://github.com/KarlTDebiec/Ramaplot">Ramachandran Plots</a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting Started</a><ul>
+<li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li><a class="reference internal" href="#figure-settings">Figure Settings</a></li>
+<li><a class="reference internal" href="#subplot-settings">Subplot Settings</a></li>
+<li><a class="reference internal" href="#dataset-settings">Dataset Settings</a></li>
+<li><a class="reference internal" href="#presets">Presets</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#subclassing-figuremanager">Subclassing FigureManager</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">MYPlotSpec</a></li>
+      <li>Next: <a href="code.html" title="next chapter">Command-Line Tools</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/usage.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Karl T Debiec.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/usage.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

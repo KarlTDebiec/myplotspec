@@ -1,0 +1,1451 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Command-Line Tools &mdash; MYPlotSpec 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="MYPlotSpec 0.1 documentation" href="index.html" />
+    <link rel="prev" title="Getting Started" href="usage.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="command-line-tools">
+<h1>Command-Line Tools<a class="headerlink" href="#command-line-tools" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-myplotspec.FigureManager">
+<span id="figuremanager"></span><h2>FigureManager<a class="headerlink" href="#module-myplotspec.FigureManager" title="Permalink to this headline">¶</a></h2>
+<p>Generates one or more figures to specifications provided in a YAML file.</p>
+<dl class="class">
+<dt id="myplotspec.FigureManager.FigureManager">
+<em class="property">class </em><code class="descclassname">myplotspec.FigureManager.</code><code class="descname">FigureManager</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages the generation of figures.</p>
+<dl class="attribute">
+<dt id="myplotspec.FigureManager.FigureManager.defaults">
+<code class="descname">defaults</code><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, dict</em></p>
+<p>Default arguments to <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_report" title="myplotspec.FigureManager.FigureManager.draw_report"><code class="xref py py-meth docutils literal"><span class="pre">draw_report()</span></code></a>,
+<a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_figure" title="myplotspec.FigureManager.FigureManager.draw_figure"><code class="xref py py-meth docutils literal"><span class="pre">draw_figure()</span></code></a>, <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_subplot" title="myplotspec.FigureManager.FigureManager.draw_subplot"><code class="xref py py-meth docutils literal"><span class="pre">draw_subplot()</span></code></a>, and
+<a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_dataset" title="myplotspec.FigureManager.FigureManager.draw_dataset"><code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code></a> functions, in yaml format. Outer level (of
+indentation or keys) provides function names, and inner level
+provides default arguments to each function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">defaults</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    method_1:</span>
+<span class="s2">      method_1_arg_1: 1000</span>
+<span class="s2">      method_1_arg_2: abcd</span>
+<span class="s2">    method_2</span>
+<span class="s2">      method_2_arg_1: 2000</span>
+<span class="s2">      method_2_arg_2: efgh</span>
+<span class="s2">    ...</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="myplotspec.FigureManager.FigureManager.available_presets">
+<code class="descname">available_presets</code><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.available_presets" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, dict</em></p>
+<p>Available sets of preset arguments
+to <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_report" title="myplotspec.FigureManager.FigureManager.draw_report"><code class="xref py py-meth docutils literal"><span class="pre">draw_report()</span></code></a>, <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_figure" title="myplotspec.FigureManager.FigureManager.draw_figure"><code class="xref py py-meth docutils literal"><span class="pre">draw_figure()</span></code></a>,
+<a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_subplot" title="myplotspec.FigureManager.FigureManager.draw_subplot"><code class="xref py py-meth docutils literal"><span class="pre">draw_subplot()</span></code></a>, and <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_dataset" title="myplotspec.FigureManager.FigureManager.draw_dataset"><code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code></a> functions, in
+yaml format. Outer level (of indentation or keys) provides
+preset names, middle level provides function names, and inner
+level provides arguments to pass to each function when preset is
+active:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">available_presets</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  preset_1:</span>
+<span class="s2">    method_1:</span>
+<span class="s2">      method_1_arg_1: 1001</span>
+<span class="s2">      method_1_arg_2: abcde</span>
+<span class="s2">    method_2</span>
+<span class="s2">      method_2_arg_1: 2001</span>
+<span class="s2">      method_2_arg_2: efghi</span>
+<span class="s2">  preset_2:</span>
+<span class="s2">    method_1:</span>
+<span class="s2">      method_1_arg_1: 1002</span>
+<span class="s2">      method_1_arg_2: abcdef</span>
+<span class="s2">    method_2</span>
+<span class="s2">      method_2_arg_1: 2002</span>
+<span class="s2">      method_2_arg_2: efghij</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Each preset may additionally contain the keys &#8216;help&#8217;, &#8216;class&#8217;,
+&#8216;extends&#8217; and &#8216;inherits&#8217;. &#8216;help&#8217; may contain a short help
+message displayed with the help text of the script, while
+&#8216;class&#8217; is the name of the category in which the preset is
+classified; built-in categories include &#8216;content&#8217;, for presets
+related to the type of data being used, &#8216;appearance&#8217;, for
+presets related to modifications to formatting, and &#8216;target&#8217;,
+for presets specifying the target destination of the figure,
+such as &#8216;notebook&#8217; or &#8216;presentation&#8217;. &#8216;extends&#8217; may contain the
+name of another preset within the class from which the preset
+will inherit (and optionally override) all arguments. Subclasses
+of this base <a class="reference internal" href="#myplotspec.FigureManager.FigureManager" title="myplotspec.FigureManager.FigureManager"><code class="xref py py-class docutils literal"><span class="pre">FigureManager</span></code></a> class may also include the
+keyword &#8216;inherits&#8217; which may contain the name of a preset of
+<a class="reference internal" href="#myplotspec.FigureManager.FigureManager" title="myplotspec.FigureManager.FigureManager"><code class="xref py py-class docutils literal"><span class="pre">FigureManager</span></code></a> (listed below) from which it will inherit
+(and optionally override) all arguments.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="myplotspec.FigureManager.FigureManager.dataset_cache">
+<code class="descname">dataset_cache</code><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.dataset_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em></p>
+<p>Cache of previously-loaded datasets. Keys
+are the return values of the method &#8216;get_cache_key&#8217; from the
+class of each dataset, and values are the datasets themselves.
+This may be passed on from <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_dataset" title="myplotspec.FigureManager.FigureManager.draw_dataset"><code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code></a> to the dataset
+classes&#8217; __init__ methods, which may in turn add their own
+datasets to it.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.draw_report">
+<code class="descclassname">FigureManager.</code><code class="descname">draw_report</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws one or more figures based on provided specifications.</p>
+<p>Figure specs are provided in a dict structured as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>figures = {
+    &#39;all&#39;: {
+        &#39;shared_xlabel&#39;: &#39;Time&#39;,
+        &#39;shared_ylabel&#39;: &#39;Measurement&#39;,
+        &#39;shared_legend&#39;: True,
+        ...
+    },
+    &#39;0&#39;: {
+        &#39;title&#39;: &#39;Trial 1&#39;,
+        &#39;subplots&#39;: {
+            ...
+        },
+        ...
+    },
+    &#39;1&#39;: {
+        &#39;title&#39;: &#39;Trial 2&#39;,
+        &#39;subplots&#39;: {
+            ...
+        },
+        ...
+    },
+    &#39;2&#39;: {
+        &#39;title&#39;: &#39;Trial 3&#39;,
+        &#39;subplots&#39;: {
+            ...
+        },
+        ...
+    },
+    ...
+}
+</pre></div>
+</div>
+<p>The values stored at each (0-indexed) integer key provide the
+arguments to be passed to <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_figure" title="myplotspec.FigureManager.FigureManager.draw_figure"><code class="xref py py-meth docutils literal"><span class="pre">draw_figure()</span></code></a> for each of a
+series of figures. Values stored at &#8216;all&#8217; are passed to each
+figure, but overridden by values specific to that figure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>figure[s]</strong> (<em>dict</em>) &#8211; Figure specifications</li>
+<li><strong>preset[s]</strong> (<em>str, list, optional</em>) &#8211; Selected preset(s); presets
+loaded from figure specification will take precedence over
+those passed as arguments</li>
+<li><strong>yaml_spec</strong> (<em>str, dict, optional</em>) &#8211; Argument data structure; may
+be string path to yaml file, yaml-format string, or
+dictionary</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is one of two responsible for managing the
+output of figures to pdf files, if specified. While other
+output formats are single-page, pdf files may be multi-page.
+In order to allow multiple figures to be output to multiple
+pdfs, this function maintains a dict outfiles containing
+references to a PdfPages object for each specified pdf
+outfile. <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_figure" title="myplotspec.FigureManager.FigureManager.draw_figure"><code class="xref py py-meth docutils literal"><span class="pre">draw_figure()</span></code></a>&#8216;s decorator
+<a class="reference internal" href="#myplotspec.manage_output.manage_output" title="myplotspec.manage_output.manage_output"><code class="xref py py-class docutils literal"><span class="pre">manage_output</span></code></a> adds new PdfPages
+objects as requested, or adds pages to existing ones. Once all
+figures have been drawn, this function closes each PdfPages.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.draw_figure">
+<code class="descclassname">FigureManager.</code><code class="descname">draw_figure</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a figure.</p>
+<p>Figure will typically contain one or more subplots, whose
+specifications are provided in a dict structured as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>subplots = {
+    &#39;all&#39;: {
+        &#39;legend&#39;: True,
+        ...
+    },
+    &#39;0&#39;: {
+        &#39;title&#39;:    &#39;Subplot 1&#39;,
+        &#39;datasets&#39;: {
+            ...
+        },
+        ...
+    },
+    &#39;1&#39;: {
+        &#39;title&#39;:    &#39;Subplot 2&#39;,
+        &#39;datasets&#39;: {
+            ...
+        },
+        ...
+    },
+    &#39;2&#39;: {
+        &#39;title&#39;:    &#39;Subplot 3&#39;,
+        &#39;datasets&#39;: {
+            ...
+        },
+        ...
+    },
+    ...
+}
+</pre></div>
+</div>
+<p>The values stored at each integer key (0-indexed) provide the
+arguments to be passed to <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_subplot" title="myplotspec.FigureManager.FigureManager.draw_subplot"><code class="xref py py-meth docutils literal"><span class="pre">draw_subplot()</span></code></a> for each of a
+series of subplots. Values stored at &#8216;all&#8217; are passed to each
+subplot, but overridden by values specific to that subplot.</p>
+<p>Figure may be annotated by drawing a title, shared x axis label,
+shared y axis label, or shared legend. Title and shared axis
+labels are (by default) centered on all subplots present on the
+figure, Shared legend is drawn on an additional subplot created
+after those specified in subplots, using the arguments provided
+in &#8216;shared_legend&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>outfile</strong> (<em>str</em>) &#8211; Output filename</li>
+<li><strong>subplot[s]</strong> (<em>dict</em>) &#8211; Subplot specifications</li>
+<li><strong>preset[s]</strong> (<em>str, list, optional</em>) &#8211; Selected preset(s); presets
+loaded from figure specification will take precedence over
+those passed as arguments</li>
+<li><strong>nrows</strong> (<em>int, optional</em>) &#8211; Number of rows of subplots</li>
+<li><strong>ncols</strong> (<em>int, optional</em>) &#8211; Number of columns of subplots</li>
+<li><strong>nsubplots</strong> (<em>int, optional</em>) &#8211; Number of subplots</li>
+<li><strong>title</strong> (<em>str, optional</em>) &#8211; Figure title</li>
+<li><strong>[shared][x]label</strong> (<em>str, optional</em>) &#8211; X label to be shared among
+subplots</li>
+<li><strong>[shared][y]label</strong> (<em>str, optional</em>) &#8211; Y label to be shared among
+subplots</li>
+<li><strong>shared_legend</strong> (<em>bool, optional</em>) &#8211; Generate a legend shared
+between subplots</li>
+<li><strong>multiplot</strong> (<em>bool, optional</em>) &#8211; Subplots in specification are a
+small multiple set; x and y labels and ticklabels are
+omitted for plots other than those along the left side and
+bottom</li>
+<li><strong>multi_xticklabels</strong> (<em>list, optional</em>) &#8211; x tick labels to be
+assigned to subplots along bottom; only necessary with
+multiplot</li>
+<li><strong>multi_yticklabels</strong> (<em>list, optional</em>) &#8211; y tick labels to be
+assigned to subplots along left side; only necessary with
+multiplot</li>
+<li><strong>multi_tick_kw</strong> (<em>dict, optional</em>) &#8211; tick params to be assigned to
+multiple subplots</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(figure)</em> &#8211;
+Figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.draw_subplot">
+<code class="descclassname">FigureManager.</code><code class="descname">draw_subplot</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_subplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a subplot.</p>
+<p>Subplot will typically plot one or more datasets, whose
+specifications are provided in a dict structured as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>datasets = {
+    &#39;all&#39;: {
+        &#39;lw&#39;: 2,
+        ...
+    },
+    &#39;0&#39;: {
+        &#39;label&#39;:  &#39;Dataset 1&#39;,
+        &#39;infile&#39;: &#39;/path/to/dataset_1.txt&#39;,
+        &#39;color&#39;:  &#39;red&#39;,
+        ...
+    },
+    &#39;1&#39;: {
+        &#39;label&#39;:  &#39;Dataset 2&#39;,
+        &#39;infile&#39;: &#39;/path/to/dataset_2.txt&#39;,
+        &#39;color&#39;:  &#39;green&#39;,
+        ...
+    },
+    &#39;2&#39;: {
+        &#39;label&#39;:  &#39;Dataset 3&#39;,
+        &#39;infile&#39;: &#39;/path/to/dataset_3.txt&#39;,
+        &#39;color&#39;:  &#39;blue&#39;,
+        ...
+    },
+    ...
+}
+</pre></div>
+</div>
+<p>The values stored at each integer key (0-indexed) provide the
+arguments to be passed to <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.draw_dataset" title="myplotspec.FigureManager.FigureManager.draw_dataset"><code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code></a> for each of a
+series of datasets. Values stored at &#8216;all&#8217; are passed to each
+dataset, but overridden by values specific to that dataset.</p>
+<p>Subplot may be formatted by adjusting or labeling the x and y
+axes, or drawing a title or a legend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; Axes on which to act</li>
+<li><strong>dataset[s]</strong> (<em>dict</em>) &#8211; Dataset specifications</li>
+<li><strong>preset[s]</strong> (<em>str, list, optional</em>) &#8211; Selected preset(s); presets
+loaded from figure specification will take precedence over
+those passed as arguments</li>
+<li><strong>title</strong> (<em>str, optional</em>) &#8211; Subplot title</li>
+<li><strong>legend</strong> (<em>bool, optional</em>) &#8211; Draw legend on subplot</li>
+<li><strong>partner_subplot</strong> (<em>bool, optional</em>) &#8211; Add a parter subplot</li>
+<li><strong>handles</strong> (<em>OrderedDict, optional</em>) &#8211; Nascent OrderedDict of
+[labels]:handles shared among subplots of host figure; used
+to draw shared legend on figure</li>
+<li><strong>visible</strong> (<em>bool, optional</em>) &#8211; Subplot visibility</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.draw_dataset">
+<code class="descclassname">FigureManager.</code><code class="descname">draw_dataset</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a dataset on a subplot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; Axes on which to draw</li>
+<li><strong>infile</strong> (<em>str</em>) &#8211; Path to input text file; first column is x,
+second is y</li>
+<li><strong>label</strong> (<em>str, optional</em>) &#8211; Dataset label</li>
+<li><strong>color</strong> (<em>str, list, ndarray, float, optional</em>) &#8211; Dataset color</li>
+<li><strong>plot_kw</strong> (<em>dict, optional</em>) &#8211; Additional keyword arguments passed
+to subplot.plot()</li>
+<li><strong>handles</strong> (<em>OrderedDict, optional</em>) &#8211; Nascent OrderedDict of
+[labels]: handles on subplot</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.load_dataset">
+<code class="descclassname">FigureManager.</code><code class="descname">load_dataset</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.load_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a dataset, or reloads a previously-loaded dataset from cache.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.initialize_presets">
+<code class="descclassname">FigureManager.</code><code class="descname">initialize_presets</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.initialize_presets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes presets.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>available_presets</strong> (<em>string, dict</em>) &#8211; Available presets; may be a
+yaml string, path to a yaml file, or a dictionary; if not
+provided pulled from <a class="reference internal" href="#myplotspec.FigureManager.FigureManager.available_presets" title="myplotspec.FigureManager.FigureManager.available_presets"><code class="xref py py-attr docutils literal"><span class="pre">available_presets</span></code></a></li>
+<li><strong>args</strong> (<em>tuple</em>) &#8211; Additional positional arguments</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.main">
+<code class="descclassname">FigureManager.</code><code class="descname">main</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides command-line functionality.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<em>ArgumentParser, optional</em>) &#8211; argparse argument parser;
+enables sublass to instantiate parser and add arguments</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="decorators">
+<h1>Decorators<a class="headerlink" href="#decorators" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">MyPlotSpec&#8217;s decorator classes all support arguments provided at decoration
+(e.g. <code class="docutils literal"><span class="pre">&#64;decorator(foo</span> <span class="pre">=</span> <span class="pre">bar)</span></code>). These use a different syntax from
+decorator classes without arguments. When the wrapped function is declared,
+<code class="docutils literal"><span class="pre">__init__</span></code> and <code class="docutils literal"><span class="pre">__call__</span></code> from the decorator are called sequentially.
+<code class="docutils literal"><span class="pre">__init__</span></code> receives the arguments, while <code class="docutils literal"><span class="pre">__call__</span></code> receives the
+function. <code class="docutils literal"><span class="pre">__init__</span></code> should store the values of the arguments, while
+<code class="docutils literal"><span class="pre">__call__</span></code> should prepare and return a wrapped function using their
+values. Subsequent calls will go to the wrapped function. For decorator
+classes without arguments, <code class="docutils literal"><span class="pre">__init__</span></code> is called when the function is
+declared, and should store the reference to the function; <code class="docutils literal"><span class="pre">__call__</span></code> is
+called when the function is called, and should carry out the pre-function
+decorator logic, run the function, and carry out the post-function
+decorator logic.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">MyPlotSpec&#8217;s decorator classes <a class="reference internal" href="#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a>,
+<a class="reference internal" href="#myplotspec.manage_output.manage_output" title="myplotspec.manage_output.manage_output"><code class="xref py py-class docutils literal"><span class="pre">manage_output</span></code></a>, and <a class="reference internal" href="#myplotspec.debug.debug_arguments" title="myplotspec.debug.debug_arguments"><code class="xref py py-class docutils literal"><span class="pre">debug_arguments</span></code></a>
+may be used to wrap either functions or methods. This is enabled by
+restricting the arguments of their <code class="docutils literal"><span class="pre">wrapped_function</span></code> to <code class="docutils literal"><span class="pre">*args</span></code> and
+<code class="docutils literal"><span class="pre">**kwargs</span></code>, and accessing any arguments needed by the decorator using
+<code class="docutils literal"><span class="pre">kwargs.pop()</span></code> or <code class="docutils literal"><span class="pre">kwargs.get().</span></code> If a method is wrapped, the first
+argument is the host object of the method (<code class="docutils literal"><span class="pre">self</span></code>), shifting the positions
+of other named arguments.</p>
+</div>
+<div class="section" id="module-myplotspec.manage_defaults_presets">
+<span id="manage-defaults-presets"></span><h2>manage_defaults_presets<a class="headerlink" href="#module-myplotspec.manage_defaults_presets" title="Permalink to this headline">¶</a></h2>
+<p>Decorator to manage the passage of defaults and available presets to a
+method.</p>
+<dl class="class">
+<dt id="myplotspec.manage_defaults_presets.manage_defaults_presets">
+<em class="property">class </em><code class="descclassname">myplotspec.manage_defaults_presets.</code><code class="descname">manage_defaults_presets</code><span class="sig-paren">(</span><em>verbose=1</em>, <em>debug=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.manage_defaults_presets.manage_defaults_presets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to manage the passage of defaults and available presets to
+a method.</p>
+<p>This decorator is a partner to
+<a class="reference internal" href="#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a>, desiged to allows its use
+for methods of objects containg central <code class="docutils literal"><span class="pre">defaults</span></code> and
+<code class="docutils literal"><span class="pre">available_presets</span></code> attributes. It obtains available defaults and
+presets for the wrapped method from their central location in the
+host object, and passes on those applicable to the wrapped method.
+<a class="reference internal" href="#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a> then selects arguments to
+pass from among the provided defaults, available and selected
+presets, YAML file, and arguments provided at call time.</p>
+<p>Defaults are accessed from the host object&#8217;s instance (or class)
+variable <code class="docutils literal"><span class="pre">self.defaults</span></code>, and may be a dict, a path to a YAML
+file, or a YAML string. Outer level (of indentation or keys)
+provides function names, and inner level provides default arguments
+to each function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">defaults</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    method_1:</span>
+<span class="s2">        method_1_arg_1: 1000</span>
+<span class="s2">        method_1_arg_2: abcd</span>
+<span class="s2">    method_2</span>
+<span class="s2">        method_2_arg_1: 2000</span>
+<span class="s2">        method_2_arg_2: efgh</span>
+<span class="s2">    ...</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Presets are accessed from the host objects&#8217;s instance (or class)
+variable <code class="docutils literal"><span class="pre">self.available_presets</span></code>, in the same formats as
+<code class="docutils literal"><span class="pre">self.defaults</span></code>. Presets contain an outer level of keys providing
+the names of available presets:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">available_presets</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    preset_1:</span>
+<span class="s2">        method_1:</span>
+<span class="s2">            method_1_arg_1: 1001</span>
+<span class="s2">            method_1_arg_2: abcde</span>
+<span class="s2">        method_2</span>
+<span class="s2">            method_2_arg_1: 2001</span>
+<span class="s2">            method_2_arg_2: efghi</span>
+<span class="s2">    preset_2:</span>
+<span class="s2">        method_1:</span>
+<span class="s2">            method_1_arg_1: 1002</span>
+<span class="s2">            method_1_arg_2: abcdef</span>
+<span class="s2">        method_2</span>
+<span class="s2">            method_2_arg_1: 2002</span>
+<span class="s2">        method_2_arg_2: efghij</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>When this decorator is used to wrap a method of a class, it adds to
+the arguments being passed <code class="docutils literal"><span class="pre">defaults</span></code>, containing the defaults
+specified for the method, and <code class="docutils literal"><span class="pre">available_presets</span></code>, containing only
+the presets applicable to the method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>@manage_defaults_presets()
+def method_1(*args, **kwargs):
+    print(kwargs)
+    ...
+
+{
+    &#39;defaults&#39;: {
+        &#39;method_1_argument_1&#39;: 1000,
+        &#39;method_1_argument_2&#39;: &#39;asdf&#39;
+    },
+    &#39;presets&#39;: {
+        &#39;preset_1&#39;: {
+            &#39;method_1_argument_1&#39;: 1001,
+            &#39;method_1_argument_2&#39;: &#39;asde&#39;
+        },
+        &#39;preset_1&#39;: {
+            &#39;method_1_argument_1&#39;: 1002,
+            &#39;method_1_argument_2&#39;: &#39;asdef&#39;
+        }
+    },
+    ...
+}
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="myplotspec.manage_defaults_presets.manage_defaults_presets.verbose">
+<code class="descname">verbose</code><a class="headerlink" href="#myplotspec.manage_defaults_presets.manage_defaults_presets.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of verbose output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="myplotspec.manage_defaults_presets.manage_defaults_presets.debug">
+<code class="descname">debug</code><a class="headerlink" href="#myplotspec.manage_defaults_presets.manage_defaults_presets.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of debug output</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-myplotspec.manage_kwargs">
+<span id="manage-kwargs"></span><h2>manage_kwargs<a class="headerlink" href="#module-myplotspec.manage_kwargs" title="Permalink to this headline">¶</a></h2>
+<p>Decorator to manage the passage of keyword arguments to a function or
+method.</p>
+<dl class="class">
+<dt id="myplotspec.manage_kwargs.manage_kwargs">
+<em class="property">class </em><code class="descclassname">myplotspec.manage_kwargs.</code><code class="descname">manage_kwargs</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>debug=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.manage_kwargs.manage_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to manage the passage of keyword arguments to a function
+or method.</p>
+<p>Accumulates keyword arguments from several sources, in order of
+increasing priority:</p>
+<ol class="arabic simple">
+<li>Defaults</li>
+</ol>
+<blockquote>
+<div><p>Obtained from the argument <code class="docutils literal"><span class="pre">defaults</span></code>, which may be a dict, a
+path to a YAML file, or a YAML string:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>my_function(
+    defaults = {
+        &#39;fig_width&#39;:  5.0
+        &#39;fig_height&#39;: 5.0
+    },
+    ...
+)
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Presets</li>
+</ol>
+<blockquote>
+<div><p>Available presets are obtained from the argument
+<code class="docutils literal"><span class="pre">available_presets</span></code>, which may be a dict, a path to a YAML file,
+or a YAML string. Selected presets are obtained from the argument
+<code class="docutils literal"><span class="pre">presets</span></code>, which may be a string or list of strings in order of
+increasing priority:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>my_function(
+    presets = &#39;letter&#39;,
+    available_presets = {
+        &#39;letter&#39;: {
+            &#39;fig_width&#39;:   8.5
+            &#39;fig_height&#39;: 11.0
+        },
+        &#39;legal&#39;: {
+            &#39;fig_width&#39;:   8.5
+            &#39;fig_height&#39;: 14.0
+        }
+    },
+    ...
+)
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li>YAML file</li>
+</ol>
+<blockquote>
+<div><p>YAML file is obtained from the keyword argument <code class="docutils literal"><span class="pre">yaml_spec</span></code>,
+which may be a dict, a path to a YAML file, or a YAML string.
+Selected keys within the YAML file from which to load arguments
+are obtained from the argument <code class="docutils literal"><span class="pre">yaml_keys</span></code>, which is a list of
+lists in order of increasing priority:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">my_function</span><span class="p">(</span>
+    <span class="n">yaml_spec</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;figures&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;fig_width&#39;</span><span class="p">:</span>  <span class="mf">11.0</span><span class="p">,</span>
+                <span class="s1">&#39;fig_height&#39;</span><span class="p">:</span> <span class="mf">17.0</span><span class="p">,</span>
+                <span class="s1">&#39;outfile&#39;</span><span class="p">:</span>    <span class="s1">&#39;plot.pdf&#39;</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;fig_width&#39;</span><span class="p">:</span>  <span class="mf">12.0</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="n">yaml_keys</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;figures&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;figures&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">]],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal"><span class="pre">yaml_keys</span></code> is omitted, the complete yaml file will be used.</p>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li>Function call</li>
+</ol>
+<blockquote>
+<div><p>Arguments provided at function call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">my_function</span><span class="p">(</span>
+    <span class="n">fig_width</span>  <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span>
+    <span class="n">fig_height</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>All of the above will override defaults provided in the function
+declaration itself.</p>
+<dl class="attribute">
+<dt id="myplotspec.manage_kwargs.manage_kwargs.verbose">
+<code class="descname">verbose</code><a class="headerlink" href="#myplotspec.manage_kwargs.manage_kwargs.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of verbose output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="myplotspec.manage_kwargs.manage_kwargs.debug">
+<code class="descname">debug</code><a class="headerlink" href="#myplotspec.manage_kwargs.manage_kwargs.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of debug output</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-myplotspec.manage_output">
+<span id="manage-output"></span><h2>manage_output<a class="headerlink" href="#module-myplotspec.manage_output" title="Permalink to this headline">¶</a></h2>
+<p>Decorator to manage the output of matplotlib figures.</p>
+<dl class="class">
+<dt id="myplotspec.manage_output.manage_output">
+<em class="property">class </em><code class="descclassname">myplotspec.manage_output.</code><code class="descname">manage_output</code><a class="headerlink" href="#myplotspec.manage_output.manage_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to manage the output of matplotlib figures.</p>
+<p>Saves figure returned by wrapped function to a file named
+<code class="docutils literal"><span class="pre">outfile</span></code>; passing additional keyword arguments <code class="docutils literal"><span class="pre">savefig_kw</span></code> to
+<code class="docutils literal"><span class="pre">Figure.savefig()</span></code>. For pdf output, additional argument
+<code class="docutils literal"><span class="pre">outfiles</span></code> may be provided; containing a dictionary whose keys are
+the paths to output pdf files, and whose values are open PdfPages
+objects representing those files. The purpose of this is to allow
+figures output from multiple calls to the wrapped function to be
+output to sequential pages of the same pdf file. Typically
+<code class="docutils literal"><span class="pre">outfiles</span></code> will be initialized before calling this wrapped
+function; and once calls to the function is complete the
+<code class="docutils literal"><span class="pre">PdfPages.close()</span></code> method of each outfile in <code class="docutils literal"><span class="pre">outfiles</span></code> is
+called.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="functions">
+<h1>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-myplotspec">
+<span id="general"></span><h2>General<a class="headerlink" href="#module-myplotspec" title="Permalink to this headline">¶</a></h2>
+<p>General functions.</p>
+<dl class="function">
+<dt id="myplotspec.get_yaml">
+<code class="descclassname">myplotspec.</code><code class="descname">get_yaml</code><span class="sig-paren">(</span><em>input</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.get_yaml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a data structure from yaml input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input</strong> (<em>str, dict</em>) &#8211; yaml input; if str, tests whether or not it is
+a path to a yaml file. If it is, the file is loaded using yaml;
+if it is not a file, the string itself is loaded using yaml. If
+dict, returned without modification</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>output</em> &#8211;
+Data structure specified by input</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Warns:</th><td class="field-body"><strong>UserWarning</strong> &#8211;
+Loaded data structure is a string; occurs if input
+file is a path to a yaml file that is not found</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">TypeError</span></code> &#8211;
+Input is not str or dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.merge_dicts">
+<code class="descclassname">myplotspec.</code><code class="descname">merge_dicts</code><span class="sig-paren">(</span><em>dict_1</em>, <em>dict_2</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.merge_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively merges two dictionaries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dict_1</strong> (<em>dict</em>) &#8211; First dictionary</li>
+<li><strong>dict_2</strong> (<em>dict</em>) &#8211; Second dictionary; values for keys shared by both
+dictionaries are drawn from dict_2</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><em>(dict)</em> &#8211;
+Merged dictionary</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><code class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></code> &#8211;
+Either <cite>dict_1</cite> or <cite>dict_2</cite> lacks &#8216;keys&#8217; function</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.multi_get">
+<code class="descclassname">myplotspec.</code><code class="descname">multi_get</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.multi_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scans dict for keys; returns first value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>keys</strong> (<em>str, list</em>) &#8211; Acceptable key(s) in order of decreasing
+priority</li>
+<li><strong>dictionary</strong> (<em>dict</em>) &#8211; dict to be tested</li>
+<li><strong>value</strong> &#8211; Default to be returned if not found</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>value</em> &#8211;
+Value from first matching key; or None if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.multi_get_copy">
+<code class="descclassname">myplotspec.</code><code class="descname">multi_get_copy</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.multi_get_copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scans dict for keys; returns copy of first value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>keys</strong> (<em>str, list</em>) &#8211; Acceptable key(s) in order of decreasing
+priority</li>
+<li><strong>dictionary</strong> (<em>dict</em>) &#8211; dict to be tested</li>
+<li><strong>value</strong> &#8211; Default to be returned if not found</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>value</em> &#8211;
+Value from first matching key; or None if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.multi_pop">
+<code class="descclassname">myplotspec.</code><code class="descname">multi_pop</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.multi_pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scans dict for keys; returns first value and deletes it and others.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>keys</strong> (<em>str, list</em>) &#8211; Acceptable key(s) in order of decreasing
+priority</li>
+<li><strong>dictionary</strong> (<em>dict</em>) &#8211; dict to be tested</li>
+<li><strong>value</strong> &#8211; Default to be returned if not found</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>value</em> &#8211;
+Value from first matching key; or None if not found</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.pad_zero">
+<code class="descclassname">myplotspec.</code><code class="descname">pad_zero</code><span class="sig-paren">(</span><em>ticks</em>, <em>digits=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.pad_zero" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares list of tick labels, each with the same precision.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ticks</strong> (<em>list, ndarray</em>) &#8211; ticks</li>
+<li><strong>digits</strong> (<em>int, optional</em>) &#8211; Precision; by default uses largest
+provided</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>tick_labels</strong> (<em>list</em>) &#8211;
+Tick labels, each with the same number of
+digits after the decimal point</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="matplotlib">
+<h2>matplotlib<a class="headerlink" href="#matplotlib" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>General<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="myplotspec.get_color">
+<code class="descclassname">myplotspec.</code><code class="descname">get_color</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.get_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts color from a format understood by myplotspec to a format
+understood by matplotlib</p>
+<p>If color is a str, may be of form &#8216;pastel.red&#8217;, &#8216;dark.blue&#8217;, etc.
+corresponding to a color set and color; if no set is specified the
+&#8216;default&#8217; set is used. If list or ndarray, should contain three
+floating point numbers corresponding to red, green, and blue values.
+If these numbers are greater than 1, they will be divided by 255. If
+float, should correspond to a grayscale shade, if greater than 1
+will be divided by 255.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>color</strong> (<em>str, list, ndarray, float</em>) &#8211; color</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(list)</em> &#8211;
+[red, green, blue] on interval 0.0-1.0</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.get_edges">
+<code class="descclassname">myplotspec.</code><code class="descname">get_edges</code><span class="sig-paren">(</span><em>figure_or_subplots</em>, <em>absolute=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.get_edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the outermost edges of a set of subplots on a figure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>figure_or_subplots</strong> (<em>Figure, list, dict</em>) &#8211; Axes whose edges to
+get; if Figure, use all Axes</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(dict)</em> &#8211;
+Edges; keys are &#8216;left&#8217;, &#8216;right&#8217;, &#8216;top&#8217;, and &#8216;bottom&#8217;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.get_figure_subplots">
+<code class="descclassname">myplotspec.</code><code class="descname">get_figure_subplots</code><span class="sig-paren">(</span><em>figure=None</em>, <em>subplots=None</em>, <em>index=None</em>, <em>nrows=None</em>, <em>ncols=None</em>, <em>nsubplots=None</em>, <em>left=None</em>, <em>sub_width=None</em>, <em>wspace=None</em>, <em>right=None</em>, <em>bottom=None</em>, <em>sub_height=None</em>, <em>hspace=None</em>, <em>top=None</em>, <em>fig_width=None</em>, <em>fig_height=None</em>, <em>figsize=None</em>, <em>verbose=1</em>, <em>debug=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.get_figure_subplots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a figure and subplots to provided specifications.</p>
+<dl class="docutils">
+<dt>Differs from matplotlib&#8217;s built-in functions in that it:</dt>
+<dd><ul class="first last simple">
+<li>Accepts subplot dimensions is inches rather than proportional
+figure coordinates</li>
+<li>Optionally calculates figure dimensions from provided subplot
+dimensions, rather than the reverse</li>
+<li>Returns subplots in an OrderedDict</li>
+<li>Smoothly adds additional subplots to a previously-generated
+figure (i.e. can be called multiple times)</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>figure</strong> (<em>Figure, optional</em>) &#8211; Figure, if adding subplots to a preexisting
+Figure</li>
+<li><strong>subplots</strong> (<em>OrderedDict, optional</em>) &#8211; Subplots, if adding subplots to a
+prevexisting Figure</li>
+<li><strong>nrows</strong> (<em>int</em>) &#8211; Number of rows of subplots to add</li>
+<li><strong>ncols</strong> (<em>int</em>) &#8211; Number of columns of subplots to add</li>
+<li><strong>nsubplots</strong> (<em>int, optional</em>) &#8211; Number of subplots to add; if less than
+nrows*ncols (e.g. 2 cols and 2 rows but only three subplots)</li>
+<li><strong>sub_width</strong> (<em>float</em>) &#8211; Width of subplot(s)</li>
+<li><strong>sub_height</strong> (<em>float</em>) &#8211; Height of subplot(s)</li>
+<li><strong>left</strong> (<em>float</em>) &#8211; Margin between left side of figure and leftmost
+subplot</li>
+<li><strong>right</strong> (<em>float</em>) &#8211; Margin between right side of figure and rightmost
+subplot</li>
+<li><strong>top</strong> (<em>float</em>) &#8211; Margin between top of figure and topmost subplot</li>
+<li><strong>bottom</strong> (<em>float</em>) &#8211; Margin between bottom of figure and bottommost
+subplot</li>
+<li><strong>wspace</strong> (<em>float</em>) &#8211; Horizontal margin between adjacent subplots</li>
+<li><strong>hspace</strong> (<em>float</em>) &#8211; Vertical margin between adjacent subplots</li>
+<li><strong>fig_width</strong> (<em>float</em>) &#8211; Width of figure; by default calculated from
+left, sub_width, wspace, right, and ncols</li>
+<li><strong>fig_height</strong> (<em>float</em>) &#8211; Height of figure, by default calculated from
+bottom, sub_height, hspace, top, and nrows</li>
+<li><strong>figsize</strong> (<em>list</em>) &#8211; Equivalent to [<code class="docutils literal"><span class="pre">fig_width</span></code>, <code class="docutils literal"><span class="pre">fig_height</span></code>]</li>
+<li><strong>figure_kw</strong> (<em>dict</em>) &#8211; Additional keyword arguments passed to figure()</li>
+<li><strong>subplot_kw</strong> (<em>dict</em>) &#8211; Additional keyword arguments passed to Axes()</li>
+<li><strong>axes_kw</strong> (<em>dict</em>) &#8211; Alias to <code class="docutils literal"><span class="pre">subplot_kw</span></code></li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(*Figure</em>, <em>OrderedDict</em>)* &#8211;
+Figure and subplots</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.get_font">
+<code class="descclassname">myplotspec.</code><code class="descname">get_font</code><span class="sig-paren">(</span><em>fp=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.get_font" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates font based on provided specification.</p>
+<p><em>fp</em> may be a string of form &#8216;##L&#8217; in which &#8216;##&#8217; is the font size
+and L is &#8216;r&#8217; for regular or &#8216;b&#8217; for bold. fp may also be a dict of
+keyword arguments to pass to FontProperties. <em>fp</em> may also be a
+FontProperties, in which case it is returned without modification.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Font specifications</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(FontProperties)</em> &#8211;
+Font with given specifications</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-myplotspec.axes">
+<span id="axes"></span><h3>Axes<a class="headerlink" href="#module-myplotspec.axes" title="Permalink to this headline">¶</a></h3>
+<p>Functions for formatting axes.</p>
+<dl class="function">
+<dt id="myplotspec.axes.set_xaxis">
+<code class="descclassname">myplotspec.axes.</code><code class="descname">set_xaxis</code><span class="sig-paren">(</span><em>subplot</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.axes.set_xaxis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the x axis of a subplot using provided keyword arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; Axes to format</li>
+<li><strong>[x]ticks</strong> (<em>list, ndarray</em>) &#8211; Ticks; first and last are used as upper
+and lower boundaries</li>
+<li><strong>[x]tick_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.set_xticks()</li>
+<li><strong>[x]ticklabels</strong> (<em>list</em>) &#8211; Tick label text</li>
+<li><strong>[x]tick[label]_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Tick label
+font</li>
+<li><strong>[x]ticklabel_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.set_xticklabels()</li>
+<li><strong>[x]label</strong> (<em>str</em>) &#8211; Label text</li>
+<li><strong>[x]label_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Label font</li>
+<li><strong>[x]label_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.set_xlabel()</li>
+<li><strong>[x]tick_params</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.tick_params(); only affect x axis</li>
+<li><strong>[x]lw</strong> (<em>float</em>) &#8211; Subplot top and bottom line width</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.axes.set_yaxis">
+<code class="descclassname">myplotspec.axes.</code><code class="descname">set_yaxis</code><span class="sig-paren">(</span><em>subplot</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.axes.set_yaxis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats the y axis of a subplot using provided keyword arguments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; Axes to format</li>
+<li><strong>subplot_y2</strong> (<em>Axes, optional</em>) &#8211; Second y axes to format; if this is
+omitted, but y2ticks is included, the second y axis will be
+generated</li>
+<li><strong>yticks</strong> (<em>list or ndarray</em>) &#8211; Ticks; first and last are used as upper
+and lower boundaries</li>
+<li><strong>ytick_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to subplot.set_yticks()</li>
+<li><strong>yticklabels</strong> (<em>list</em>) &#8211; Tick label text</li>
+<li><strong>[y]tick[label]_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Tick label font</li>
+<li><strong>yticklabel_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.set_yticklabels()</li>
+<li><strong>ylabel</strong> (<em>str</em>) &#8211; Label text</li>
+<li><strong>[y]label_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Label font</li>
+<li><strong>ylabel_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to subplot.set_ylabel()</li>
+<li><strong>[y]tick_params</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.tick_params(); only affect y axis</li>
+<li><strong>[y]lw</strong> (<em>float</em>) &#8211; Subplot top and bottom line width</li>
+<li><strong>y2ticks</strong> (<em>list or ndarray</em>) &#8211; Ticks for second y axis; first and last
+are used as upper and lower boundaries; if this argument is
+provided, a y2 axis is generated using subplot.twiny()</li>
+<li><strong>y2tick_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to subplot.set_yticks()
+for second y axis</li>
+<li><strong>y2ticklabels</strong> (<em>list</em>) &#8211; Tick label text for second y axis</li>
+<li><strong>[y2]tick[label]_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Tick label font
+for second y axis</li>
+<li><strong>y2ticklabel_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.set_yticklabels() for second y axis</li>
+<li><strong>y2label</strong> (<em>str</em>) &#8211; Label text for second y axis</li>
+<li><strong>[y2]label_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Label font for second y
+axis</li>
+<li><strong>y2label_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to subplot.set_ylabel()
+for second y axis</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-myplotspec.text">
+<span id="text"></span><h3>Text<a class="headerlink" href="#module-myplotspec.text" title="Permalink to this headline">¶</a></h3>
+<p>Functions for formatting text.</p>
+<dl class="function">
+<dt id="myplotspec.text.set_title">
+<code class="descclassname">myplotspec.text.</code><code class="descname">set_title</code><span class="sig-paren">(</span><em>figure_or_subplot</em>, <em>verbose=1</em>, <em>debug=0</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.text.set_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a title on a Figure or subplot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>figure_or_subplot</strong> (<em>Figure, Axes</em>) &#8211; Object on which to draw title</li>
+<li><strong>title</strong> (<em>str</em>) &#8211; Title text</li>
+<li><strong>title_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Title font</li>
+<li><strong>top</strong> (<em>float</em>) &#8211; Distance between top of figure and title (inches);
+Figure title only</li>
+<li><strong>title_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to <code class="docutils literal"><span class="pre">Figure.suptitle()</span></code>
+or <code class="docutils literal"><span class="pre">Axes.set_title()</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(*Text</em>)* &#8211;
+Title</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.text.set_shared_xlabel">
+<code class="descclassname">myplotspec.text.</code><code class="descname">set_shared_xlabel</code><span class="sig-paren">(</span><em>figure_or_subplots</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.text.set_shared_xlabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws an x axis label shared by multiple subplots.</p>
+<p>The horizontal position of the shared x label is by default the
+center of the selected subplots, and the vertical position is
+halfway between the bottommost subplot and the bottom of the figure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>figure_or_subplots</strong> (<em>Figure, OrderedDict</em>) &#8211; Subplots to use to
+calculate label horizontal position; if Figure, all subplots
+present on figure are used</li>
+<li><strong>[shared][x]label</strong> (<em>str</em>) &#8211; Label text</li>
+<li><strong>[shared][x]label_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Label font</li>
+<li><strong>[shared][x]label_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+<a class="reference internal" href="#myplotspec.text.set_text" title="myplotspec.text.set_text"><code class="xref py py-func docutils literal"><span class="pre">set_text()</span></code></a></li>
+<li><strong>bottom</strong> (<em>float</em>) &#8211; Distance between bottom of figure and label
+(inches); if negative, distance between bottommost plot and
+label</li>
+<li><strong>top</strong> (<em>float</em>) &#8211; Distance between top of figure and label (inches); if
+negative, distance between topmost subplot and label; overrides
+<code class="docutils literal"><span class="pre">bottom</span></code></li>
+<li><strong>x</strong> (<em>float</em>) &#8211; X position within figure (proportion 0.0-1.0); default
+= center of selected subplots</li>
+<li><strong>y</strong> (<em>float</em>) &#8211; Y position within figure (proportion 0.0-1.0);
+overrides <code class="docutils literal"><span class="pre">bottom</span></code> and <code class="docutils literal"><span class="pre">top</span></code>; default = halfway between
+bottommost subplot and bottom of figure</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(Text)</em> &#8211;
+X axis label</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.text.set_shared_ylabel">
+<code class="descclassname">myplotspec.text.</code><code class="descname">set_shared_ylabel</code><span class="sig-paren">(</span><em>figure_or_subplots</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.text.set_shared_ylabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a y-axis label shared by multiple subplots.</p>
+<p>The vertical position of the shared y label is by default the
+center of the selected subplots, and the horizontal position is
+halfway between the leftmost subplot and the left edge of the
+figure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>figure_or_subplots</strong> (<em>Figure, OrderedDict</em>) &#8211; Subplots to use to
+calculate label vertical position; if Figure, all subplots
+present on figure are used</li>
+<li><strong>[shared][y]label</strong> (<em>str</em>) &#8211; Label text</li>
+<li><strong>[shared][y]label_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Label font</li>
+<li><strong>[shared][y]label_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+<a class="reference internal" href="#myplotspec.text.set_text" title="myplotspec.text.set_text"><code class="xref py py-func docutils literal"><span class="pre">set_text()</span></code></a></li>
+<li><strong>left</strong> (<em>float</em>) &#8211; Distance between left edge of figure and label
+(inches); if negative, distance between leftmost plot and label</li>
+<li><strong>right</strong> (<em>float</em>) &#8211; Distance between right edge of figure and label
+(inches); if negative, distance between rightmost plot and
+label; overrides <code class="docutils literal"><span class="pre">left</span></code></li>
+<li><strong>x</strong> (<em>float</em>) &#8211; X position within figure (proportion 0.0-1.0);
+overrides <code class="docutils literal"><span class="pre">left</span></code> and <code class="docutils literal"><span class="pre">right</span></code>; default = halfway between
+leftmost subplot and left edge of figure</li>
+<li><strong>y</strong> (<em>float</em>) &#8211; Y position within figure (proportion 0.0-1.0); default
+= center of selected subplots</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(Text)</em> &#8211;
+Y axis label</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.text.set_text">
+<code class="descclassname">myplotspec.text.</code><code class="descname">set_text</code><span class="sig-paren">(</span><em>figure_or_subplot</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.text.set_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints text on a figure or subplot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>figure_or_subplot</strong> (<em>Figure, Axes</em>) &#8211; Object on which to draw</li>
+<li><strong>text</strong> (<em>str</em>) &#8211; Text</li>
+<li><strong>text_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Text font</li>
+<li><strong>text_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to <code class="docutils literal"><span class="pre">text()</span></code></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(Text)</em> &#8211;
+Text</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-myplotspec.legend">
+<span id="legend"></span><h3>Legend<a class="headerlink" href="#module-myplotspec.legend" title="Permalink to this headline">¶</a></h3>
+<p>Functions for formatting legends.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Acceptable values of <code class="docutils literal"><span class="pre">loc</span></code> and their meanings, for reference:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span></span>0 = Best
++---------+
+|2   9   1|
+|6  10   7|
+|3   8   4|
++---------+
+</pre></div>
+</div>
+</div>
+<dl class="function">
+<dt id="myplotspec.legend.set_legend">
+<code class="descclassname">myplotspec.legend.</code><code class="descname">set_legend</code><span class="sig-paren">(</span><em>subplot</em>, <em>handles=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.legend.set_legend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws and formats a legend on a subplot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; Subplot to which to add legend</li>
+<li><strong>handles</strong> (<em>OrderedDict</em>) &#8211; Collection of [labels]: handles for
+datasets to be plotted on legend; by default all available
+datasets are included</li>
+<li><strong>legend_lw</strong> (<em>float</em>) &#8211; Legend handle linewidth</li>
+<li><strong>legend_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Legend font</li>
+<li><strong>legend_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to subplot.legend()</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(Legend)</em> &#8211;
+Legend</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.legend.set_shared_legend">
+<code class="descclassname">myplotspec.legend.</code><code class="descname">set_shared_legend</code><span class="sig-paren">(</span><em>figure</em>, <em>subplots</em>, <em>handles</em>, <em>mode=u'manual'</em>, <em>spines=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.legend.set_shared_legend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a legend on a figure, shared by multiple subplots.</p>
+<p>Useful when several plots on the same figure share the same
+description and plot style.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>figure</strong> (<em>Figure</em>) &#8211; Figure to which to add shared legend</li>
+<li><strong>subplots</strong> (<em>OrderedDict</em>) &#8211; Collection of subplots to which to append
+new subplot for shared legend</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(Legend)</em> &#8211;
+Legend</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="module-myplotspec.debug">
+<span id="debug"></span><h1>Debug<a class="headerlink" href="#module-myplotspec.debug" title="Permalink to this headline">¶</a></h1>
+<p>Classes and functions for debugging.</p>
+<div class="section" id="id2">
+<h2>Decorators<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="myplotspec.debug.debug_arguments">
+<em class="property">class </em><code class="descclassname">myplotspec.debug.</code><code class="descname">debug_arguments</code><span class="sig-paren">(</span><em>debug=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.debug.debug_arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to debug argument passage to a function or method.</p>
+<p>Provides more verbose output if a TypeError is encountered at
+function call</p>
+<dl class="attribute">
+<dt id="myplotspec.debug.debug_arguments.debug">
+<code class="descname">debug</code><a class="headerlink" href="#myplotspec.debug.debug_arguments.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of debug output</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="output-functions">
+<h2>Output functions<a class="headerlink" href="#output-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="myplotspec.debug.db_s">
+<code class="descclassname">myplotspec.debug.</code><code class="descname">db_s</code><span class="sig-paren">(</span><em>string</em>, <em>indent=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.debug.db_s" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints debug output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string</strong> (<em>str</em>) &#8211; Content of debug output</li>
+<li><strong>indent</strong> (<em>int, optional</em>) &#8211; Indentation level; multiplied by 4</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.debug.db_kv">
+<code class="descclassname">myplotspec.debug.</code><code class="descname">db_kv</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>indent=0</em>, <em>flag=u' '</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.debug.db_kv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints debug output for a key:value pair, truncated to 80 columns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>key</strong> (<em>str</em>) &#8211; key</li>
+<li><strong>value</strong> (<em>str</em>) &#8211; value</li>
+<li><strong>indent</strong> (<em>int, optional</em>) &#8211; Indentation level; multiplied by 4</li>
+<li><strong>flag</strong> (<em>str, optional</em>) &#8211; Single-character flag describing pair</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="formatting-functions">
+<h2>Formatting Functions<a class="headerlink" href="#formatting-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="myplotspec.debug.identify">
+<code class="descclassname">myplotspec.debug.</code><code class="descname">identify</code><span class="sig-paren">(</span><em>subplots</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.debug.identify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identifies key of each subplot with inset text.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subplots</strong> (<em>OrderedDict</em>) &#8211; subplots</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Command-Line Tools</a><ul>
+<li><a class="reference internal" href="#module-myplotspec.FigureManager">FigureManager</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#decorators">Decorators</a><ul>
+<li><a class="reference internal" href="#module-myplotspec.manage_defaults_presets">manage_defaults_presets</a></li>
+<li><a class="reference internal" href="#module-myplotspec.manage_kwargs">manage_kwargs</a></li>
+<li><a class="reference internal" href="#module-myplotspec.manage_output">manage_output</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#module-myplotspec">General</a></li>
+<li><a class="reference internal" href="#matplotlib">matplotlib</a><ul>
+<li><a class="reference internal" href="#id1">General</a></li>
+<li><a class="reference internal" href="#module-myplotspec.axes">Axes</a></li>
+<li><a class="reference internal" href="#module-myplotspec.text">Text</a></li>
+<li><a class="reference internal" href="#module-myplotspec.legend">Legend</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-myplotspec.debug">Debug</a><ul>
+<li><a class="reference internal" href="#id2">Decorators</a></li>
+<li><a class="reference internal" href="#output-functions">Output functions</a></li>
+<li><a class="reference internal" href="#formatting-functions">Formatting Functions</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="usage.html" title="previous chapter">Getting Started</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/code.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Karl T Debiec.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/code.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

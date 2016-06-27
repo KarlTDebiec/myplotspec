@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MYPlotSpec &mdash; MYPlotSpec 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="MYPlotSpec 0.1 documentation" href="#" />
+    <link rel="next" title="Getting Started" href="usage.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="myplotspec">
+<h1>MYPlotSpec<a class="headerlink" href="#myplotspec" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>MYPlotSpec is a Python package used to write matplotlib-based plotting tools
+that support powerful configuration options using the simple text format YAML.</p>
+<p>The goal of MYPlotSpec is to make it possible to modify plot settings such as
+proportions, ticks, colors, or fonts with per-figure, per-subplot, and
+per-dataset specificity without needing to modify Python code or implement
+support for individual settings. MYPlotSpec accomplishes this by parsing
+arguments provided in YAML format and routing them to matplotlib&#8217;s existing
+formatting functions. MYPlotSpec should have no conflict with existing
+matplotlibrc settings, instead offering a level of specific control on top of
+them. MyPlotSpec supports a system of defaults and presets that make it easy to
+prepare multiple versions of plots without modifying code, such as for a lab
+notebook, printout, or presentation.</p>
+<p>Sample applications of MYPlotSpec for plotting several types of data are
+available on GitHub:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/KarlTDebiec/Ramaplot">Ramachandran Plots</a></li>
+<li><a class="reference external" href="https://github.com/KarlTDebiec/Moldynplot">Molecular Dynamics Simulation Analysis</a></li>
+<li><a class="reference external" href="https://github.com/KarlTDebiec/myplotspec_nmr">Nuclear Magnetic Resonance Spectroscopy</a></li>
+<li><a class="reference external" href="https://github.com/KarlTDebiec/myplotspec_dls">Dynamic Light Scattering</a></li>
+<li><a class="reference external" href="https://github.com/KarlTDebiec/myplotspec_fplc">Fast Protein Liquid Chromatography</a></li>
+</ul>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>MYPlotSpec supports Python 2.7 and 3.4, and requires the following packages:</p>
+<ul class="simple">
+<li>matplotlib</li>
+<li>numpy</li>
+<li>six</li>
+<li>yaml</li>
+</ul>
+<p>MYPlotSpec has been tested with Anaconda python 2.2.0 on Arch Linux, OSX
+Yosemite, and Windows 8.1.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Put in your <code class="docutils literal"><span class="pre">$PYTHONPATH</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>export PYTHONPATH=/path/to/my/python/modules:$PYTHONPATH
+</pre></div>
+</div>
+<p>where <code class="docutils literal"><span class="pre">/path/to/my/python/modules</span></code> contains <code class="docutils literal"><span class="pre">myplotspec</span></code>.</p>
+</div>
+<div class="section" id="authorship">
+<h2>Authorship<a class="headerlink" href="#authorship" title="Permalink to this headline">¶</a></h2>
+<p>MYPlotSpec is developed by Karl T. Debiec, a graduate student at the University
+of Pittsburgh advised by Professors Lillian T. Chong and Angela M. Gronenborn.</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>Released under a 3-clause BSD license.</p>
+<p>Copyright (c) 2015-2016, Karl T. Debiec, Lillian T. Chong, and Angela M.
+Gronenborn</p>
+<p>All rights reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:</p>
+<ul class="simple">
+<li>Redistributions of source code must retain the above copyright notice, this
+list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice,
+this list of conditions and the following disclaimer in the documentation
+and/or other materials provided with the distribution.</li>
+<li>Neither the name MYPlotSpec nor the names of its contributors may be used to
+endorse or promote products derived from this software without specific
+prior written permission.</li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &#8220;AS IS&#8221; AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#figure-settings">Figure Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#subplot-settings">Subplot Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#dataset-settings">Dataset Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#presets">Presets</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html#subclassing-figuremanager">Subclassing FigureManager</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="code">
+<h1>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="code.html">Command-Line Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code.html#module-myplotspec.FigureManager">FigureManager</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code.html#decorators">Decorators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code.html#module-myplotspec.manage_defaults_presets">manage_defaults_presets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#module-myplotspec.manage_kwargs">manage_kwargs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#module-myplotspec.manage_output">manage_output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code.html#functions">Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code.html#module-myplotspec">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#matplotlib">matplotlib</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="code.html#id1">General</a></li>
+<li class="toctree-l3"><a class="reference internal" href="code.html#module-myplotspec.axes">Axes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="code.html#module-myplotspec.text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="code.html#module-myplotspec.legend">Legend</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code.html#module-myplotspec.debug">Debug</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code.html#id2">Decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#output-functions">Output functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code.html#formatting-functions">Formatting Functions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="index">
+<h1>Index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="genindex.html"><span>Index</span></a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MYPlotSpec</a></li>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#authorship">Authorship</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#code">Code</a></li>
+<li><a class="reference internal" href="#index">Index</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="usage.html" title="next chapter">Getting Started</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Karl T Debiec.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/index.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
