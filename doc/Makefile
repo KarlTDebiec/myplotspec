@@ -50,7 +50,9 @@ html:
 gh-pages:
 	make html
 	git checkout gh-pages
-	cd .. && mv doc/_build/html/* .
+	cd .. && \
+    mv doc/_build/html/* . && \
+    rm -vr doc *.pyc
 #	mv _build/html/* ..
 #	rm -rf build _sources _static
 #	git checkout master $(GH_PAGES_SOURCES)
