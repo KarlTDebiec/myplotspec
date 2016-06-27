@@ -51,6 +51,7 @@ gh-pages:
 	make html
 	git checkout gh-pages
 	cd .. && \
+    rm -vr _images _sources _static && \
     mv doc/_build/html/* . && \
     rm -vr doc *.pyc
 #	mv _build/html/* ..
