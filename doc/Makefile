@@ -55,7 +55,7 @@ gh-pages:
     mv doc/_build/html/* . && \
     rm -vr doc *.pyc && \
     git add -A && \
-    git commit -m "updated from sphinx" && \
+    git commit -m "Updated documentation for `git log master -1 --pretty=short --abbrev-commit`" && \
     git push && \
     git checkout master
 #	mv _build/html/* ..
