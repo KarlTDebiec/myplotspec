@@ -47,7 +47,9 @@ html:
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 gh-pages:
+	make html
 	git checkout gh-pages
+	git checkout master doc/_build/html
 #	rm -rf build _sources _static
 #	git checkout master $(GH_PAGES_SOURCES)
 #	git reset HEAD
