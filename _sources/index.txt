@@ -3,6 +3,8 @@ MYPlotSpec
 .. include:: ../README.rst
 .. include:: ../LICENSE
 
+Test of sphinx/github-pages integration
+
 Usage
 =====
 .. toctree::
