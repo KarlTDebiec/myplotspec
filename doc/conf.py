@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sphinx_bootstrap_theme
 
 todo_include_todos = False
 
@@ -26,9 +27,9 @@ exclude_patterns = ['_build']
 pygments_style = "sphinx"
 # modindex_common_prefix = []
 
-html_theme = "alabaster"
+html_theme = "bootstrap"
 # html_theme_options = {}
-# html_theme_path = []
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 # html_title = None
 # html_short_title = None
 # html_logo = None
