@@ -53,7 +53,10 @@ gh-pages:
 	cd .. && \
     rm -vr _images _sources _static && \
     mv doc/_build/html/* . && \
-    rm -vr doc *.pyc
+    rm -vr doc *.pyc && \
+    git add -A && \
+    git commit -m "updated from sphinx" && \
+    git push
 #	mv _build/html/* ..
 #	rm -rf build _sources _static
 #	git checkout master $(GH_PAGES_SOURCES)
