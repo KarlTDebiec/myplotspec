@@ -91,7 +91,6 @@ ____
 .. autofunction:: myplotspec.text.set_title
 .. autofunction:: myplotspec.text.set_shared_xlabel
 .. autofunction:: myplotspec.text.set_shared_ylabel
-.. autofunction:: myplotspec.text.set_inset
 .. autofunction:: myplotspec.text.set_text
 
 Legend
