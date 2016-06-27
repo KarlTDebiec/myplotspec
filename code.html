@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Command-Line Tools &mdash; MYPlotSpec 0.1 documentation</title>
+  <title>FigureManager &mdash; MYPlotSpec 0.1 documentation</title>
   
 
   
@@ -31,7 +31,7 @@
 
   
     <link rel="top" title="MYPlotSpec 0.1 documentation" href="index.html"/>
-        <link rel="prev" title="Getting Started" href="usage.html"/> 
+        <link rel="prev" title="MYPlotSpec" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -80,15 +80,9 @@
           
             
             
-                <ul>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html#subclassing-figuremanager">Subclassing FigureManager</a></li>
-</ul>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Command-Line Tools</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-myplotspec.FigureManager">FigureManager</a></li>
-</ul>
-</li>
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">FigureManager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-myplotspec.Dataset">Dataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#decorators">Decorators</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-myplotspec.manage_defaults_presets">manage_defaults_presets</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-myplotspec.manage_kwargs">manage_kwargs</a></li>
@@ -97,19 +91,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#functions">Functions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-myplotspec">General</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#matplotlib">matplotlib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">General</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-myplotspec.axes">Axes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-myplotspec.text">Text</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-myplotspec.legend">Legend</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="#module-myplotspec.debug">Debug</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id2">Decorators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#output-functions">Output functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#formatting-functions">Formatting Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-myplotspec.axes">Axes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-myplotspec.text">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-myplotspec.legend">Legend</a></li>
 </ul>
 </li>
 </ul>
@@ -142,7 +126,7 @@
   <ul class="wy-breadcrumbs">
     <li><a href="index.html">Docs</a> &raquo;</li>
       
-    <li>Command-Line Tools</li>
+    <li>FigureManager</li>
       <li class="wy-breadcrumbs-aside">
         
           
@@ -156,10 +140,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="command-line-tools">
-<h1>Command-Line Tools<a class="headerlink" href="#command-line-tools" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-myplotspec.FigureManager">
-<span id="figuremanager"></span><h2>FigureManager<a class="headerlink" href="#module-myplotspec.FigureManager" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="module-myplotspec.FigureManager">
+<span id="figuremanager"></span><h1>FigureManager<a class="headerlink" href="#module-myplotspec.FigureManager" title="Permalink to this headline">¶</a></h1>
 <p>Generates one or more figures to specifications provided in a YAML file.</p>
 <dl class="class">
 <dt id="myplotspec.FigureManager.FigureManager">
@@ -552,6 +534,53 @@ enables sublass to instantiate parser and add arguments</td>
 </dd></dl>
 
 </div>
+<div class="section" id="module-myplotspec.Dataset">
+<span id="dataset"></span><h1>Dataset<a class="headerlink" href="#module-myplotspec.Dataset" title="Permalink to this headline">¶</a></h1>
+<p>Manages datasets and implements caching.</p>
+<dl class="class">
+<dt id="myplotspec.Dataset.Dataset">
+<em class="property">class </em><code class="descclassname">myplotspec.Dataset.</code><code class="descname">Dataset</code><span class="sig-paren">(</span><em>infile</em>, <em>address=None</em>, <em>dataset_cache=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manages datasets and implements caching.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="myplotspec.Dataset.Dataset.get_cache_key">
+<em class="property">classmethod </em><code class="descclassname">Dataset.</code><code class="descname">get_cache_key</code><span class="sig-paren">(</span><em>infile=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.get_cache_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates tuple of arguments to be used as key for dataset
+cache.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="myplotspec.Dataset.Dataset.get_cache_message">
+<em class="property">static </em><code class="descclassname">Dataset.</code><code class="descname">get_cache_message</code><span class="sig-paren">(</span><em>cache_key</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.get_cache_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates message to be used when reloading previously-loaded
+dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cache_key</strong> (<em>tuple</em>) &#8211; key with which dataset object is stored in
+dataset cache</li>
+<li><strong>hand</strong> (<em>stump</em>) &#8211; asdf asdf asdfasdf asdf asdf asd f asdf asdf asd
+fa sdfa sdf asd fafsd</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>str</em> &#8211;
+message to be used when reloading previously-loaded
+dataset</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.Dataset.Dataset.load_dataset">
+<code class="descclassname">Dataset.</code><code class="descname">load_dataset</code><span class="sig-paren">(</span><em>cls=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.load_dataset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 <div class="section" id="decorators">
 <h1>Decorators<a class="headerlink" href="#decorators" title="Permalink to this headline">¶</a></h1>
@@ -574,7 +603,7 @@ decorator logic.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">MyPlotSpec&#8217;s decorator classes <a class="reference internal" href="#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a>,
-<a class="reference internal" href="#myplotspec.manage_output.manage_output" title="myplotspec.manage_output.manage_output"><code class="xref py py-class docutils literal"><span class="pre">manage_output</span></code></a>, and <a class="reference internal" href="#myplotspec.debug.debug_arguments" title="myplotspec.debug.debug_arguments"><code class="xref py py-class docutils literal"><span class="pre">debug_arguments</span></code></a>
+<a class="reference internal" href="#myplotspec.manage_output.manage_output" title="myplotspec.manage_output.manage_output"><code class="xref py py-class docutils literal"><span class="pre">manage_output</span></code></a>, and <code class="xref py py-class docutils literal"><span class="pre">debug_arguments</span></code>
 may be used to wrap either functions or methods. This is enabled by
 restricting the arguments of their <code class="docutils literal"><span class="pre">wrapped_function</span></code> to <code class="docutils literal"><span class="pre">*args</span></code> and
 <code class="docutils literal"><span class="pre">**kwargs</span></code>, and accessing any arguments needed by the decorator using
@@ -826,6 +855,49 @@ called.</p>
 <span id="general"></span><h2>General<a class="headerlink" href="#module-myplotspec" title="Permalink to this headline">¶</a></h2>
 <p>General functions.</p>
 <dl class="function">
+<dt id="myplotspec.load_dataset">
+<code class="descclassname">myplotspec.</code><code class="descname">load_dataset</code><span class="sig-paren">(</span><em>cls=None</em>, <em>dataset_cache=None</em>, <em>loose=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.load_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a dataset, or reloads a previously-loaded dataset.</p>
+<p>Datasets are stored in <cite>dataset_cache</cite>, a dictionary containing
+copies of previously loaded datasets keyed by tuples containing
+the class and arguments used to instantiate the dataset.</p>
+<p>In order to support caching, a class must implement the static
+method <code class="xref py py-meth docutils literal"><span class="pre">get_cache_key()</span></code>, which generates the hashable tuple
+key. Only arguments that affect the resulting dataset should be
+included in the key (e.g. &#8216;infile&#8217; should be included, but
+&#8216;verbose&#8217; and &#8216;debug&#8217; should not). If the function accepts
+arguments that are not hashable or convertable into a hashable
+form, <code class="xref py py-meth docutils literal"><span class="pre">get_cache_key()</span></code> should return None, causing
+<a class="reference internal" href="#myplotspec.load_dataset" title="myplotspec.load_dataset"><code class="xref py py-meth docutils literal"><span class="pre">load_dataset()</span></code></a> to reload the dataset.</p>
+<p>Cachable dataset classes may also implement the method
+<code class="xref py py-meth docutils literal"><span class="pre">get_cache_message()</span></code> which returns a message to display
+when the dataset is loaded from the cache.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cls</strong> (<em>class, str</em>) &#8211; Dataset class; may be either class object
+itself or name of class in form of &#8216;package.module.class&#8217;</li>
+<li><strong>dataset_cache</strong> (<em>dict, optional</em>) &#8211; Cache of previously-loaded
+datasets</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Keyword arguments passed to cls.get_cache_key()
+and cls.__init__()</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>dataset</strong> (<em>cls</em>) &#8211;
+Dataset, either newly initialized or copied
+from cache</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
 <dt id="myplotspec.get_yaml">
 <code class="descclassname">myplotspec.</code><code class="descname">get_yaml</code><span class="sig-paren">(</span><em>input</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.get_yaml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a data structure from yaml input.</p>
@@ -975,11 +1047,6 @@ digits after the decimal point</p>
 </table>
 </dd></dl>
 
-</div>
-<div class="section" id="matplotlib">
-<h2>matplotlib<a class="headerlink" href="#matplotlib" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3>General<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="myplotspec.get_color">
 <code class="descclassname">myplotspec.</code><code class="descname">get_color</code><span class="sig-paren">(</span><em>color</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.get_color" title="Permalink to this definition">¶</a></dt>
@@ -1000,6 +1067,35 @@ will be divided by 255.</p>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(list)</em> &#8211;
 [red, green, blue] on interval 0.0-1.0</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.get_colors">
+<code class="descclassname">myplotspec.</code><code class="descname">get_colors</code><span class="sig-paren">(</span><em>dict_1</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.get_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convers color variables in a dict from formats understood by
+myplotspec to formats understood by matplotlib</p>
+<p>This function is intended to process dictionaries of keyword
+arguments including colors  before passing them on to matplotlib&#8217;s
+plotting functions.
+For each name of color argument provided in  <em>color_keys</em>, the
+function searches through <em>dict_1</em> and processes each using
+<a class="reference internal" href="#myplotspec.get_color" title="myplotspec.get_color"><code class="xref py py-func docutils literal"><span class="pre">get_color()</span></code></a>. If the argument is not found in <em>dict_1</em>, it then
+searches through each additional dictionary provided in <em>args</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dict_1</strong> (<em>dict</em>) &#8211; Target and first source of keys</li>
+<li><strong>color_keys</strong> (<em>list</em>) &#8211; Names of keys</li>
+<li><strong>*args</strong> (<em>tuple</em>) &#8211; Additional dictionary sources of keys</li>
+<li><strong>(additional keyword arguments</strong> (<em>**kwargs</em>) &#8211; </li>
+<li><strong>keys</strong> (<em>list</em>) &#8211; Acceptable keys in order of decreasing priority</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1109,7 +1205,7 @@ Font with given specifications</td>
 
 </div>
 <div class="section" id="module-myplotspec.axes">
-<span id="axes"></span><h3>Axes<a class="headerlink" href="#module-myplotspec.axes" title="Permalink to this headline">¶</a></h3>
+<span id="axes"></span><h2>Axes<a class="headerlink" href="#module-myplotspec.axes" title="Permalink to this headline">¶</a></h2>
 <p>Functions for formatting axes.</p>
 <dl class="function">
 <dt id="myplotspec.axes.set_xaxis">
@@ -1194,9 +1290,74 @@ for second y axis</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="myplotspec.axes.set_colorbar">
+<code class="descclassname">myplotspec.axes.</code><code class="descname">set_colorbar</code><span class="sig-paren">(</span><em>subplot</em>, <em>mappable</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.axes.set_colorbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configures a colorbar.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; axes on which</li>
+<li><strong>mappable</strong> &#8211; Object used to generate colorbar; typically returned
+by matplotlib&#8217;s imshow or pcolormesh</li>
+<li><strong>colorbar_kw</strong> (<em>dict</em>) &#8211; Keyword arguments used to configure colorbar;
+&#8216;position&#8217; key is used to control orientation</li>
+<li><strong>[z|c]ticks</strong> (<em>list or ndarray</em>) &#8211; Ticks; first and last are used as
+upper and lower boundaries</li>
+<li><strong>[z|c]tick_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.set_ticks</li>
+<li><strong>[z|c]ticklabels</strong> (<em>list</em>) &#8211; Tick label text</li>
+<li><strong>[z|c]tick[label]_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Tick label
+font</li>
+<li><strong>[z|c]ticklabel_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.set_[x|y]ticklabels()</li>
+<li><strong>[z|c]label</strong> (<em>str</em>) &#8211; Label text</li>
+<li><strong>[z|c]label_fp</strong> (<em>str, dict, FontProperties</em>) &#8211; Label font</li>
+<li><strong>zlabel_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to subplot.set_label</li>
+<li><strong>[z|c]tick_params</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+subplot.tick_params()</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="myplotspec.axes.add_partner_subplot">
+<code class="descclassname">myplotspec.axes.</code><code class="descname">add_partner_subplot</code><span class="sig-paren">(</span><em>subplot</em>, <em>figure</em>, <em>subplots</em>, <em>verbose=1</em>, <em>debug=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.axes.add_partner_subplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a subplot to the side</p>
+<p>Typically used for colorbars.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; Host subplot to which partner will be added</li>
+<li><strong>figure</strong> (<em>Figure</em>) &#8211; Figure on which subplot and partner are located</li>
+<li><strong>subplots</strong> (<em>OrderedDict</em>) &#8211; subplots</li>
+<li><strong>partner_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+<code class="xref py py-func docutils literal"><span class="pre">get_figure_subplots()</span></code> to add partner subplot; &#8216;position&#8217;
+key is used to control position relative to host subplot</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>partner</strong> (<em>Axes</em>) &#8211;
+Parter subplot</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-myplotspec.text">
-<span id="text"></span><h3>Text<a class="headerlink" href="#module-myplotspec.text" title="Permalink to this headline">¶</a></h3>
+<span id="text"></span><h2>Text<a class="headerlink" href="#module-myplotspec.text" title="Permalink to this headline">¶</a></h2>
 <p>Functions for formatting text.</p>
 <dl class="function">
 <dt id="myplotspec.text.set_title">
@@ -1308,6 +1469,11 @@ Y axis label</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="myplotspec.text.set_label">
+<code class="descclassname">myplotspec.text.</code><code class="descname">set_label</code><span class="sig-paren">(</span><em>subplot</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.text.set_label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="myplotspec.text.set_text">
 <code class="descclassname">myplotspec.text.</code><code class="descname">set_text</code><span class="sig-paren">(</span><em>figure_or_subplot</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.text.set_text" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints text on a figure or subplot.</p>
@@ -1333,7 +1499,7 @@ Text</p>
 
 </div>
 <div class="section" id="module-myplotspec.legend">
-<span id="legend"></span><h3>Legend<a class="headerlink" href="#module-myplotspec.legend" title="Permalink to this headline">¶</a></h3>
+<span id="legend"></span><h2>Legend<a class="headerlink" href="#module-myplotspec.legend" title="Permalink to this headline">¶</a></h2>
 <p>Functions for formatting legends.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -1401,87 +1567,6 @@ Legend</p>
 
 </div>
 </div>
-</div>
-<div class="section" id="module-myplotspec.debug">
-<span id="debug"></span><h1>Debug<a class="headerlink" href="#module-myplotspec.debug" title="Permalink to this headline">¶</a></h1>
-<p>Classes and functions for debugging.</p>
-<div class="section" id="id2">
-<h2>Decorators<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="myplotspec.debug.debug_arguments">
-<em class="property">class </em><code class="descclassname">myplotspec.debug.</code><code class="descname">debug_arguments</code><span class="sig-paren">(</span><em>debug=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.debug.debug_arguments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decorator to debug argument passage to a function or method.</p>
-<p>Provides more verbose output if a TypeError is encountered at
-function call</p>
-<dl class="attribute">
-<dt id="myplotspec.debug.debug_arguments.debug">
-<code class="descname">debug</code><a class="headerlink" href="#myplotspec.debug.debug_arguments.debug" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>int</em></p>
-<p>Level of debug output</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="output-functions">
-<h2>Output functions<a class="headerlink" href="#output-functions" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="myplotspec.debug.db_s">
-<code class="descclassname">myplotspec.debug.</code><code class="descname">db_s</code><span class="sig-paren">(</span><em>string</em>, <em>indent=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.debug.db_s" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prints debug output.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>string</strong> (<em>str</em>) &#8211; Content of debug output</li>
-<li><strong>indent</strong> (<em>int, optional</em>) &#8211; Indentation level; multiplied by 4</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="myplotspec.debug.db_kv">
-<code class="descclassname">myplotspec.debug.</code><code class="descname">db_kv</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>indent=0</em>, <em>flag=u' '</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.debug.db_kv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prints debug output for a key:value pair, truncated to 80 columns.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>key</strong> (<em>str</em>) &#8211; key</li>
-<li><strong>value</strong> (<em>str</em>) &#8211; value</li>
-<li><strong>indent</strong> (<em>int, optional</em>) &#8211; Indentation level; multiplied by 4</li>
-<li><strong>flag</strong> (<em>str, optional</em>) &#8211; Single-character flag describing pair</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="formatting-functions">
-<h2>Formatting Functions<a class="headerlink" href="#formatting-functions" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="myplotspec.debug.identify">
-<code class="descclassname">myplotspec.debug.</code><code class="descname">identify</code><span class="sig-paren">(</span><em>subplots</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.debug.identify" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identifies key of each subplot with inset text.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>subplots</strong> (<em>OrderedDict</em>) &#8211; subplots</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-</div>
 
 
            </div>
@@ -1491,7 +1576,7 @@ function call</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="usage.html" class="btn btn-neutral" title="Getting Started" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="MYPlotSpec" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
