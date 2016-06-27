@@ -21,7 +21,7 @@ class Dataset(object):
     """
 
     @classmethod
-    def get_cache_key(cls, infile=None, *args, **kwargs):
+    def get_cache_key(cls, infile=None, **kwargs):
         """
         Generates tuple of arguments to be used as key for dataset
         cache.
@@ -49,12 +49,15 @@ class Dataset(object):
         dataset.
 
         Arguments:
-            cache_key (tuple): key with which dataset object is stored
-              in dataset cache
+          cache_key (tuple): key with which dataset object is stored in
+            dataset cache
+          hand (stump): asdf asdf asdfasdf asdf asdf asd f asdf asdf asd
+            fa sdfa sdf asd fafsd 
 
         Returns:
-            cache_message (str): message to be used when reloading
-              previously-loaded dataset
+          str: message to be used when reloading previously-loaded
+          dataset
+
         """
         return "Dataset previously loaded from '{0}'".format(cache_key[1])
 
