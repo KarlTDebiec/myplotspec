@@ -18,6 +18,23 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 ################################## VARIABLES ##################################
 FP_KEYS = ["fp", "font_properties", "fontproperties", "prop"]
 ################################## FUNCTIONS ##################################
+def wiprint(text, width=80, subsequent_indent="  ", **kwargs):
+    """
+    """
+    import re
+    from textwrap import TextWrapper
+
+    tw = TextWrapper(width=width, subsequent_indent=subsequent_indent,
+           **kwargs)
+    print(tw.fill(re.sub(r"\s+", " ", text)))
+
+def sformat(text, **kwargs):
+    """
+    """
+    import re
+
+    return(re.sub(r"\s+", " ", text))
+
 def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
     """
     Loads a dataset, or reloads a previously-loaded dataset.

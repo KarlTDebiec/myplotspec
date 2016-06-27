@@ -14,11 +14,14 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 import h5py
 import numpy as np
 import pandas as pd
+from . import wiprint
 ################################### CLASSES ###################################
 class Dataset(object):
     """
     Manages datasets and implements caching.
     """
+
+    default_h5_address = "dataset"
 
     @classmethod
     def get_cache_key(cls, infile=None, *args, **kwargs):
@@ -58,6 +61,65 @@ class Dataset(object):
         """
         return "Dataset previously loaded from '{0}'".format(cache_key[1])
 
+    @staticmethod
+    def add_shared_args(parser, **kwargs):
+        """
+        Adds command line arguments shared by all subclasses.
+
+        Arguments:
+          parser (ArgumentParser): Nascent argument parser to which to
+            add arguments
+          kwargs (dict): Additional keyword arguments
+        """
+        verbosity = parser.add_mutually_exclusive_group()
+        verbosity.add_argument(
+          "-v", "--verbose",
+          action   = "count",
+          default  = 1,
+          help     = "enable verbose output, may be specified more than once")
+        verbosity.add_argument(
+          "-q", "--quiet",
+          action   = "store_const",
+          const    = 0,
+          default  = 1,
+          dest     = "verbose",
+          help     = "disable verbose output")
+        parser.add_argument(
+          "-d", "--debug",
+          action   = "count",
+          default  = 1,
+          help     = "enable debug output, may be specified more than once")
+
+    @staticmethod
+    def process_infiles(infiles, **kwargs):
+        """
+        Processes a list of infiles, expanding environment variables and
+        wildcards.
+
+        Arguments:
+          infiles (list): Paths to infiles, may contain environment
+            variables and wildcards
+
+        Returns:
+          processed_infiles (list): Paths to infiles with environment
+            variables and wildcards expanded
+        """
+        from glob import glob
+        from os.path import expandvars
+        import six
+
+        # Process arguments
+        if isinstance(infiles, six.string_types):
+            infiles = [infiles]
+
+        processed_infiles = []
+        for infile in infiles:
+            matching_infiles = sorted(glob(expandvars(infile)))
+            processed_infiles.extend(matching_infiles)
+
+        return processed_infiles
+
+
     def load_dataset(self, cls=None, **kwargs):
         """
         """
@@ -94,6 +156,7 @@ class Dataset(object):
         """
         from os.path import expandvars
 
+        # Process arguments
         verbose = kwargs.get("verbose", 1)
         self.dataset_cache = dataset_cache
 
@@ -142,3 +205,4 @@ class Dataset(object):
                 and self.dataframe.index.name.startswith("#")):
                     self.dataframe.index.name = \
                       self.dataframe.index.name.lstrip("#")
+
