@@ -2,13 +2,13 @@ FigureManager
 =============
 .. automodule:: myplotspec.FigureManager
 .. autoclass::  myplotspec.FigureManager.FigureManager
-.. automethod:: myplotspec.FigureManager.FigureManager.draw_report(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.draw_figure(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.draw_subplot(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.draw_dataset(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.load_dataset(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.initialize_presets(...)
-.. automethod:: myplotspec.FigureManager.FigureManager.main(...)
+.. automethod:: myplotspec.FigureManager.FigureManager.draw_report
+.. automethod:: myplotspec.FigureManager.FigureManager.draw_figure
+.. automethod:: myplotspec.FigureManager.FigureManager.draw_subplot
+.. automethod:: myplotspec.FigureManager.FigureManager.draw_dataset
+.. automethod:: myplotspec.FigureManager.FigureManager.load_dataset
+.. automethod:: myplotspec.FigureManager.FigureManager.initialize_presets
+.. automethod:: myplotspec.FigureManager.FigureManager.main
 
 Dataset
 =======

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>FigureManager &mdash; MYPlotSpec 0.1 documentation</title>
+  <title>FigureManager &mdash; myplotspec 0.1 documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   
 
   
-    <link rel="top" title="MYPlotSpec 0.1 documentation" href="index.html"/>
-        <link rel="prev" title="MYPlotSpec" href="index.html"/> 
+    <link rel="top" title="myplotspec 0.1 documentation" href="index.html"/>
+        <link rel="prev" title="myplotspec" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -49,7 +49,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> MYPlotSpec
+            <a href="index.html" class="icon icon-home"> myplotspec
           
 
           
@@ -109,7 +109,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">MYPlotSpec</a>
+        <a href="index.html">myplotspec</a>
       </nav>
 
 
@@ -231,7 +231,7 @@ datasets to it.</p>
 
 <dl class="method">
 <dt id="myplotspec.FigureManager.FigureManager.draw_report">
-<code class="descclassname">FigureManager.</code><code class="descname">draw_report</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_report" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FigureManager.</code><code class="descname">draw_report</code><span class="sig-paren">(</span><em>*in_args</em>, <em>**in_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws one or more figures based on provided specifications.</p>
 <p>Figure specs are provided in a dict structured as follows:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span>figures = {
@@ -307,7 +307,7 @@ figures have been drawn, this function closes each PdfPages.</p>
 
 <dl class="method">
 <dt id="myplotspec.FigureManager.FigureManager.draw_figure">
-<code class="descclassname">FigureManager.</code><code class="descname">draw_figure</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_figure" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FigureManager.</code><code class="descname">draw_figure</code><span class="sig-paren">(</span><em>*in_args</em>, <em>**in_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_figure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a figure.</p>
 <p>Figure will typically contain one or more subplots, whose
 specifications are provided in a dict structured as follows:</p>
@@ -399,7 +399,7 @@ Figure</p>
 
 <dl class="method">
 <dt id="myplotspec.FigureManager.FigureManager.draw_subplot">
-<code class="descclassname">FigureManager.</code><code class="descname">draw_subplot</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_subplot" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FigureManager.</code><code class="descname">draw_subplot</code><span class="sig-paren">(</span><em>*in_args</em>, <em>**in_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_subplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a subplot.</p>
 <p>Subplot will typically plot one or more datasets, whose
 specifications are provided in a dict structured as follows:</p>
@@ -465,7 +465,7 @@ to draw shared legend on figure</li>
 
 <dl class="method">
 <dt id="myplotspec.FigureManager.FigureManager.draw_dataset">
-<code class="descclassname">FigureManager.</code><code class="descname">draw_dataset</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FigureManager.</code><code class="descname">draw_dataset</code><span class="sig-paren">(</span><em>*in_args</em>, <em>**in_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Draws a dataset on a subplot.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -493,13 +493,13 @@ to subplot.plot()</li>
 
 <dl class="method">
 <dt id="myplotspec.FigureManager.FigureManager.load_dataset">
-<code class="descclassname">FigureManager.</code><code class="descname">load_dataset</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.load_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FigureManager.</code><code class="descname">load_dataset</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.load_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a dataset, or reloads a previously-loaded dataset from cache.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="myplotspec.FigureManager.FigureManager.initialize_presets">
-<code class="descclassname">FigureManager.</code><code class="descname">initialize_presets</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.initialize_presets" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FigureManager.</code><code class="descname">initialize_presets</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.initialize_presets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes presets.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -520,7 +520,7 @@ provided pulled from <a class="reference internal" href="#myplotspec.FigureManag
 
 <dl class="method">
 <dt id="myplotspec.FigureManager.FigureManager.main">
-<code class="descclassname">FigureManager.</code><code class="descname">main</code><span class="sig-paren">(</span><em>...</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.main" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">FigureManager.</code><code class="descname">main</code><span class="sig-paren">(</span><em>parser=None</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides command-line functionality.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -1576,7 +1576,7 @@ Legend</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="index.html" class="btn btn-neutral" title="MYPlotSpec" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="myplotspec" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -1585,7 +1585,7 @@ Legend</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2015, Karl T Debiec.
+        &copy; Copyright 2015-2016, Karl T Debiec.
 
     </p>
   </div>

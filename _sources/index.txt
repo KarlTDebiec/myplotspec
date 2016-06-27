@@ -1,4 +1,4 @@
-MYPlotSpec
+myplotspec
 ==========
 .. include:: ../README.rst
 .. include:: ../LICENSE
