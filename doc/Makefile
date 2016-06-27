@@ -56,7 +56,8 @@ gh-pages:
     rm -vr doc *.pyc && \
     git add -A && \
     git commit -m "updated from sphinx" && \
-    git push
+    git push && \
+    git checkout master
 #	mv _build/html/* ..
 #	rm -rf build _sources _static
 #	git checkout master $(GH_PAGES_SOURCES)
