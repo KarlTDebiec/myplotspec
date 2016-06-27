@@ -50,7 +50,7 @@ html:
 gh-pages:
 	make html
 	git checkout gh-pages
-	git checkout master doc/_build/html
+	cd .. && mv doc/_build/html/* .
 #	mv _build/html/* ..
 #	rm -rf build _sources _static
 #	git checkout master $(GH_PAGES_SOURCES)
