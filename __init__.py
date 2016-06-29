@@ -380,6 +380,27 @@ def multi_kw(keys, dictionary, value=None):
             del dictionary[key]
     return value
 
+def multi_get_merged(keys, dictionary):
+    """
+    Scans dict for keys; returns list of values for all matches
+
+    Arguments:
+      keys (str, list): Acceptable key(s) in order of decreasing
+        priority
+      dictionary (dict): dict to be tested
+
+    Returns:
+      value: Values for all matching keys
+    """
+    values = []
+    for key in [key for key in keys if key in dictionary]:
+        if isinstance(dictionary[key], list):
+            values.extend(dictionary[key])
+        else:
+            values.append(dictionary[key])
+
+    return values
+
 def multi_get(*args, **kwargs):
     """
     Scans dict for keys; returns first value.

@@ -12,18 +12,18 @@ import sphinx_rtd_theme
 ################################ CONFIGURATION ################################
 todo_include_todos = False
 
-needs_sphinx = '1.3'
+needs_sphinx = "1.3"
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.todo' ]
-source_suffix = '.rst'
-source_encoding = 'utf-8'
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.todo" ]
+source_suffix = ".rst"
+source_encoding = "utf-8"
 napoleon_use_rtype = False
 
-master_doc = 'index'
+master_doc = "index"
 project   = "myplotspec"
 copyright = "2015-2016, Karl T Debiec"
 author    = "Karl T Debiec"

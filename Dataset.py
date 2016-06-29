@@ -18,7 +18,7 @@ from . import wiprint
 ################################### CLASSES ###################################
 class Dataset(object):
     """
-    Manages datasets and implements caching.
+    Represents data.
     """
 
     default_h5_address = "dataset"
@@ -92,28 +92,35 @@ class Dataset(object):
           action   = "count",
           default  = 1,
           help     = "enable debug output, may be specified more than once")
+        parser.add_argument(
+          "-I", "--interactive",
+          action   = "store_true",
+          help     = """enable interactive ipython terminal after loading and
+                      processing data""")
 
     @staticmethod
-    def process_infiles(infiles, **kwargs):
+    def process_infiles(**kwargs):
         """
         Processes a list of infiles, expanding environment variables and
         wildcards.
 
         Arguments:
-          infiles (list): Paths to infiles, may contain environment
+          infile[s] (str, list): Paths to infile(s), may contain environment
             variables and wildcards
 
         Returns:
           processed_infiles (list): Paths to infiles with environment
             variables and wildcards expanded
+
+        .. todo:
+          - handle hdf5 addresses smoothly
         """
         from glob import glob
         from os.path import expandvars
-        import six
+        from . import multi_get_merged
 
         # Process arguments
-        if isinstance(infiles, six.string_types):
-            infiles = [infiles]
+        infiles = multi_get_merged(["infile", "infiles"], kwargs)
 
         processed_infiles = []
         for infile in infiles:
@@ -121,7 +128,6 @@ class Dataset(object):
             processed_infiles.extend(matching_infiles)
 
         return processed_infiles
-
 
     def load_dataset(self, cls=None, **kwargs):
         """
@@ -165,7 +171,7 @@ class Dataset(object):
 
         # Load dataset
         if verbose >= 1:
-            print("loading from '{0}'".format(expandvars(infile)))
+            wiprint("loading from '{0}'".format(expandvars(infile)))
         target = "pandas"
         if target == "pandas":
 
