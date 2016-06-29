@@ -401,6 +401,28 @@ def multi_get_merged(keys, dictionary):
 
     return values
 
+def multi_pop_merged(keys, dictionary):
+    """
+    Scans dict for keys; returns list of values for all matches
+
+    Arguments:
+      keys (str, list): Acceptable key(s) in order of decreasing
+        priority
+      dictionary (dict): dict to be tested
+
+    Returns:
+      value: Values for all matching keys
+    """
+    values = []
+    for key in [key for key in keys if key in dictionary]:
+        if isinstance(dictionary[key], list):
+            values.extend(dictionary[key])
+        else:
+            values.append(dictionary[key])
+        del(dictionary[key])
+
+    return values
+
 def multi_get(*args, **kwargs):
     """
     Scans dict for keys; returns first value.
