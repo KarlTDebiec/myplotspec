@@ -255,6 +255,12 @@ class Dataset(object):
                     dataframe_kw["columns"] = list(attrs["fields"])
                 elif "columns" in attrs:
                     dataframe_kw["columns"] = list(attrs["columns"])
+
+                columns = dataframe_kw.pop("columns")
+                columns = map(eval, columns)
+                if np.array([isinstance(c, tuple) for c in columns]).all():
+                    columns = pd.MultiIndex.from_tuples(columns)
+                dataframe_kw["columns"] = columns
                 df = pd.DataFrame(data=values, index=index, **dataframe_kw)
                 if "index_name" in attrs:
                     df.index.name = attrs["index_name"]
@@ -367,7 +373,12 @@ class Dataset(object):
 
         # Process arguments
         verbose = kwargs.get("verbose", 1)
-        df      = kwargs.get("df", self.dataframe)
+        df      = kwargs.get("df")
+        if df is None:
+            if hasattr(self, "dataframe"):
+                df = self.dataframe
+            else:
+                raise()
         outfile = expandvars(outfile)
         to_string_kw = dict(col_space=12, sparsify=False)
         to_string_kw.update(kwargs.get("to_string_kw", {}))
@@ -423,7 +434,7 @@ class Dataset(object):
           DataFrame: Sequence DataFrame
         """
         import re
-        from .myplotspec import multi_pop_merged
+        from . import multi_pop_merged
 
         # Process arguments
         infile_args = multi_pop_merged(["infile", "infiles"], kwargs)
@@ -446,9 +457,6 @@ class Dataset(object):
         df = dfs.pop(0)
         for df_i in dfs:
             df.merge(df_i)
-
-        # Load index, if applicable
-        df = self._set_index(df, **kwargs)
 
         return df
 
@@ -493,9 +501,10 @@ class Dataset(object):
 
         # Write DataFrame
         if re_h5:
-            self._write_hdf5(outfile, **kwargs)
+            self._write_hdf5(outfile=outfile, **kwargs)
         else:
-            self._write_text(outfile, **kwargs)
+            print(kwargs)
+            self._write_text(outfile=outfile, **kwargs)
 
     def load_dataset(self, cls=None, **kwargs):
         """
