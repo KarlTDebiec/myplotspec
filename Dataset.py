@@ -62,7 +62,8 @@ class Dataset(object):
           dataset
 
         """
-        return "Dataset previously loaded from '{0}'".format(cache_key[1])
+        return sformat("""Dataset previously loaded from
+          '{0}'""".format(cache_key[1]))
 
     @staticmethod
     def add_shared_args(parser, **kwargs):

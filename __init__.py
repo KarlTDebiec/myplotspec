@@ -94,9 +94,9 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
                         cls = type(dataset)
                         cache_key = cls.get_cache_key(**kwargs)
                         if hasattr(cls, "get_cache_message"):
-                            print(cls.get_cache_message(cache_key))
+                            wiprint(cls.get_cache_message(cache_key))
                         else:
-                            print("Previously loaded")
+                            wiprint("Previously loaded")
                         return dataset
 
     if cls == "__noclass__":
@@ -117,9 +117,9 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
         if cache_key in dataset_cache:
             if verbose >= 1:
                 if hasattr(cls, "get_cache_message"):
-                    print(cls.get_cache_message(cache_key))
+                    wiprint(cls.get_cache_message(cache_key))
                 else:
-                    print("Previously loaded")
+                    wiprint("Previously loaded")
             return dataset_cache[cache_key]
         else:
             dataset_cache[cache_key] = cls(
