@@ -296,8 +296,7 @@ class Dataset(object):
 
         # Read DataFrame
         if verbose >= 1:
-            wiprint("""Reading sequence DataFrame from '{0}'
-                    """.format(infile))
+            wiprint("""Reading DataFrame from '{0}' """.format(infile))
         df = pd.read_csv(infile, **read_csv_kw)
         if (df.index.name is not None and df.index.name.startswith("#")):
             df.index.name = df.index.name.lstrip("#")
