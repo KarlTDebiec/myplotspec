@@ -128,6 +128,26 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
     else:
         return cls(**kwargs)
 
+def get_cmap(color, **kwargs):
+    """
+    Generates colormap.
+
+    Arguments:
+      color (str, list, ndarray): Color
+
+    Returns:
+      LinearSegmentedColormap: Color map
+    """
+    from matplotlib.colors import LinearSegmentedColormap
+    from . import get_color
+
+    r, g, b = get_color(color)
+
+    cdict = {"red":  ((0, r, r), (1, r, r)),
+            "green": ((0, g, g), (1, g, g)),
+            "blue":  ((0, b, b), (1, b, b))}
+    return LinearSegmentedColormap("cmap", cdict, 256)
+
 def get_yaml(input):
     """
     Generates a data structure from yaml input. 
