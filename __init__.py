@@ -287,6 +287,7 @@ def get_color(color):
 
     colors = dict(
       default = dict(
+        black  = [0.000, 0.000, 0.000],
         blue   = [0.298, 0.447, 0.690],
         green  = [0.333, 0.659, 0.408],
         red    = [0.769, 0.306, 0.321],
@@ -323,6 +324,9 @@ def get_color(color):
         cyan   = [0.000, 0.388, 0.455]))
 
     if isinstance(color, str):
+        if color.startswith("#"):
+            from matplotlib.colors import hex2color
+            return hex2color(color)
         try:
             color = float(color)
             return [color, color, color]

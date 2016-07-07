@@ -43,8 +43,7 @@ def set_title(figure_or_subplot, verbose=1, debug=0, *args, **kwargs):
     """
     from warnings import warn
     import matplotlib
-    from . import (FP_KEYS, get_edges, get_font, multi_get,
-                   multi_get_copy, multi_pop)
+    from . import (FP_KEYS, get_edges, get_font, multi_get_copy, multi_pop)
 
     # Determine title and keyword arguments
     title_kw = multi_get_copy("title_kw", kwargs, {})
@@ -154,8 +153,7 @@ def set_shared_xlabel(figure_or_subplots, *args, **kwargs):
       (Text): X axis label
     """
     import matplotlib
-    from . import (FP_KEYS, get_edges, get_font, multi_get,
-                   multi_get_copy, multi_pop)
+    from . import (FP_KEYS, get_edges, get_font, multi_get_copy, multi_pop)
 
     # Determine label and keyword arguments
     label_kw = multi_get_copy(["shared_xlabel_kw", "xlabel_kw", "label_kw"],
@@ -249,8 +247,7 @@ def set_shared_ylabel(figure_or_subplots, *args, **kwargs):
       (Text): Y axis label
     """
     import matplotlib
-    from . import (FP_KEYS, get_edges, get_font, multi_get,
-                   multi_get_copy, multi_pop)
+    from . import (FP_KEYS, get_edges, get_font, multi_get_copy, multi_pop)
 
     # Determine label and keyword arguments
     label_kw = multi_get_copy(["shared_ylabel_kw", "ylabel_kw", "label_kw"],
@@ -317,8 +314,9 @@ def set_shared_ylabel(figure_or_subplots, *args, **kwargs):
     return set_text(figure, text_kw=label_kw, **kwargs)
 
 def set_label(subplot, *args, **kwargs):
-    from . import (FP_KEYS, get_edges, get_font, multi_get, multi_get_copy,
-                   multi_pop)
+    """
+    """
+    from . import (FP_KEYS, get_edges, get_font, multi_get_copy, multi_pop)
 
     # Determine label and keyword arguments
     label_kw = multi_get_copy("label_kw", kwargs, {})
@@ -371,7 +369,7 @@ def set_label(subplot, *args, **kwargs):
 
 def set_text(figure_or_subplot, *args, **kwargs):
     """
-    Prints text on a figure or subplot.
+    Draws text on a figure or subplot.
 
     Arguments:
       figure_or_subplot (Figure, Axes): Object on which to draw
@@ -382,10 +380,8 @@ def set_text(figure_or_subplot, *args, **kwargs):
     Returns:
       (Text): Text
     """
-    import matplotlib
     from  matplotlib import patheffects
-    from . import (FP_KEYS, get_colors, get_font, multi_get, multi_get_copy,
-                   multi_pop)
+    from . import (FP_KEYS, get_colors, get_font, multi_get_copy, multi_pop)
 
     # Determine text and keyword arguments
     text_kw = multi_get_copy("text_kw", kwargs, {})
