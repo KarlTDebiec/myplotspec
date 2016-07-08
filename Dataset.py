@@ -288,7 +288,7 @@ class Dataset(object):
         # Process arguments
         verbose = kwargs.get("verbose", 1)
         infile = expandvars(infile)
-        read_csv_kw = dict(index_col=0, delimiter="\s\s+", engine="python")
+        read_csv_kw = dict(index_col=0, delimiter="\s\s+")
         read_csv_kw.update(kwargs.get("read_csv_kw", {}))
         if ("delimiter"        in read_csv_kw
         and "delim_whitespace" in read_csv_kw):
