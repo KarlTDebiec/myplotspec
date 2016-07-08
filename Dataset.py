@@ -54,8 +54,6 @@ class Dataset(object):
         Arguments:
           cache_key (tuple): key with which dataset object is stored in
             dataset cache
-          hand (stump): asdf asdf asdfasdf asdf asdf asd f asdf asdf asd
-            fa sdfa sdf asd fafsd 
 
         Returns:
           str: message to be used when reloading previously-loaded
@@ -106,12 +104,12 @@ class Dataset(object):
         wildcards.
 
         Arguments:
-          infile[s] (str, list): Paths to infile(s), may contain environment
-            variables and wildcards
+          infile{s} (str, list): Paths to infile(s), may contain
+            environment variables and wildcards
 
         Returns:
-          processed_infiles (list): Paths to infiles with environment
-            variables and wildcards expanded
+          list: Paths to infiles with environment variables and
+          wildcards expanded
 
         .. todo:
           - handle hdf5 addresses smoothly
@@ -513,6 +511,9 @@ class Dataset(object):
 
     def load_dataset(self, cls=None, **kwargs):
         """
+        Loads a dataset, or reloads a previously-loaded dataset from a
+        cache.
+
         """
         from . import load_dataset
 

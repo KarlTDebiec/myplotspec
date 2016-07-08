@@ -20,6 +20,15 @@ FP_KEYS = ["fp", "font_properties", "fontproperties", "prop"]
 ################################## FUNCTIONS ##################################
 def wiprint(text, width=80, subsequent_indent="  ", **kwargs):
     """
+    Prints wrapped text.
+
+    Arguments:
+      text (str): Text to wrap
+      width (int): Width of formatted text
+      subsequent_indent (str): Text with which to prepend lines after
+        the first
+      kwargs (dict): Additional keyword arguments passed to
+        :func:`TextWrapper`
     """
     import re
     from textwrap import TextWrapper
@@ -30,6 +39,12 @@ def wiprint(text, width=80, subsequent_indent="  ", **kwargs):
 
 def sformat(text, **kwargs):
     """
+    Formats whitespace in text.
+
+    Arguments:
+      text (str): Text to format
+    Returns:
+      str: *text* with all whitespace replaced with single spaces
     """
     import re
 
@@ -37,51 +52,59 @@ def sformat(text, **kwargs):
 
 def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
     """
-    Loads a dataset, or reloads a previously-loaded dataset.
+    Loads a dataset, or reloads a previously-loaded dataset from a
+    cache.
 
     Datasets are stored in `dataset_cache`, a dictionary containing
     copies of previously loaded datasets keyed by tuples containing
     the class and arguments used to instantiate the dataset.
 
     In order to support caching, a class must implement the static
-    method :meth:`get_cache_key`, which generates the hashable tuple
-    key. Only arguments that affect the resulting dataset should be
-    included in the key (e.g. 'infile' should be included, but
-    'verbose' and 'debug' should not). If the function accepts
-    arguments that are not hashable or convertable into a hashable
-    form, :meth:`get_cache_key` should return None, causing
-    :meth:`load_dataset` to reload the dataset.
+    method :meth:`Dataset.Dataset.get_cache_key`, which generates the
+    hashable tuple key. Only arguments that influence the resulting
+    dataset should be included in the key (e.g. `infile` should be
+    included, but `verbose` and `debug` should not). If the function
+    accepts arguments that are not hashable or convertable into a
+    hashable form, :meth:`Dataset.Dataset.get_cache_key` should return
+    None, causing :func:`load_dataset` to reload the dataset.
 
     Cachable dataset classes may also implement the method
-    :meth:`get_cache_message` which returns a message to display
-    when the dataset is loaded from the cache.
+    :meth:`Dataset.Dataset.get_cache_message` which returns a message to
+    display when the dataset is loaded from the cache.
 
     Arguments:
-      cls (class, str): Dataset class; may be either class object
-        itself or name of class in form of 'package.module.class'
+      cls (class, str): Dataset class; may be either class object itself
+        or name of class in form of 'package.module.class'; if None,
+        will be set to :class:`Dataset.Dataset`; if '__noclass__',
+        function will return None
       dataset_cache (dict, optional): Cache of previously-loaded
         datasets
+      loose (bool): Check only `infile` when reloading from cache; this
+        may be used to reload a previously-loaded dataset without
+        specifiying every argument every time.
       verbose (int): Level of verbose output
-      debug (int): Level of debug output
-      kwargs (dict): Keyword arguments passed to cls.get_cache_key()
-        and cls.__init__()
+      kwargs (dict): Keyword arguments passed to
+        :meth:`Dataset.Dataset.get_cache_key` and
+        :meth:`Dataset.Dataset.cls`
 
     Returns:
-      dataset (cls): Dataset, either newly initialized or copied
-      from cache
+      cls: Dataset, either newly initialized or copied from cache
 
     .. todo:
       - Handling of errors remains extremely frustrating in python
         2.7; may not be worth bothering to improve
+      - Understand copying better and select appropriate behavior
+      - May be better to keep argument names in cache keys, so that dict
+        may be recapitulated; this may help with 'loose'
     """
     from os.path import expandvars
     import six
 
+    # Process arguments
     verbose = kwargs.get("verbose", 1)
-    debug   = kwargs.get("debug",   0)
 
     # Enable 'loose' loading of previously-loaded datasets using
-    #   infile path only
+    # infile path only
     if loose:
         if dataset_cache is not None:
             loose_keys = {key[1]:key for key in dataset_cache.keys()}
@@ -130,10 +153,11 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
 
 def get_cmap(color, **kwargs):
     """
-    Generates colormap.
+    Generates a colormap of uniform `color`.
 
     Arguments:
-      color (str, list, ndarray): Color
+      color (str, list, ndarray, float): Color; passed through
+        :func:`get_color`
 
     Returns:
       LinearSegmentedColormap: Color map
@@ -278,8 +302,6 @@ def get_color(color):
 
     .. todo:
         - Useful error messages
-        - Support dict format to specify mode,
-          e.g.: get_color(color = {RGB: [0.1, 0.2, 0.3]})
         - Probably just use seaborn now that it is known to be
           compatible and easy to use
     """

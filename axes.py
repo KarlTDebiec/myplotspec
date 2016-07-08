@@ -24,22 +24,22 @@ def set_xaxis(subplot, **kwargs):
 
     Arguments:
       subplot (Axes): Axes to format
-      [x]ticks (list, ndarray): Ticks; first and last are used as upper
+      {x}ticks (list, ndarray): Ticks; first and last are used as upper
         and lower boundaries
-      [x]tick_kw (dict): Keyword arguments passed to
+      {x}tick_kw (dict): Keyword arguments passed to
         subplot.set_xticks()
-      [x]ticklabels (list): Tick label text
-      [x]tick[label]_fp (str, dict, FontProperties): Tick label
+      {x}ticklabels (list): Tick label text
+      {x}tick{label}_fp (str, dict, FontProperties): Tick label
         font
-      [x]ticklabel_kw (dict): Keyword arguments passed to
+      {x}ticklabel_kw (dict): Keyword arguments passed to
         subplot.set_xticklabels()
-      [x]label (str): Label text
-      [x]label_fp (str, dict, FontProperties): Label font
-      [x]label_kw (dict): Keyword arguments passed to
+      {x}label (str): Label text
+      {x}label_fp (str, dict, FontProperties): Label font
+      {x}label_kw (dict): Keyword arguments passed to
         subplot.set_xlabel()
-      [x]tick_params (dict): Keyword arguments passed to
+      {x}tick_params (dict): Keyword arguments passed to
         subplot.tick_params(); only affect x axis
-      [x]lw (float): Subplot top and bottom line width
+      {x}lw (float): Subplot top and bottom line width
       kwargs (dict): Additional keyword arguments
     """
     from . import (FP_KEYS, get_colors, get_font, multi_get_copy, multi_pop)
@@ -120,27 +120,27 @@ def set_yaxis(subplot, **kwargs):
         and lower boundaries
       ytick_kw (dict): Keyword arguments passed to subplot.set_yticks()
       yticklabels (list): Tick label text
-      [y]tick[label]_fp (str, dict, FontProperties): Tick label font
+      {y}tick{label}_fp (str, dict, FontProperties): Tick label font
       yticklabel_kw (dict): Keyword arguments passed to
         subplot.set_yticklabels()
       ylabel (str): Label text
-      [y]label_fp (str, dict, FontProperties): Label font
+      {y}label_fp (str, dict, FontProperties): Label font
       ylabel_kw (dict): Keyword arguments passed to subplot.set_ylabel()
-      [y]tick_params (dict): Keyword arguments passed to
+      {y}tick_params (dict): Keyword arguments passed to
         subplot.tick_params(); only affect y axis
-      [y]lw (float): Subplot top and bottom line width
+      {y}lw (float): Subplot top and bottom line width
       y2ticks (list or ndarray): Ticks for second y axis; first and last
         are used as upper and lower boundaries; if this argument is
         provided, a y2 axis is generated using subplot.twiny()
       y2tick_kw (dict): Keyword arguments passed to subplot.set_yticks()
         for second y axis
       y2ticklabels (list): Tick label text for second y axis
-      [y2]tick[label]_fp (str, dict, FontProperties): Tick label font
+      {y2}tick{label}_fp (str, dict, FontProperties): Tick label font
         for second y axis
       y2ticklabel_kw (dict): Keyword arguments passed to
         subplot.set_yticklabels() for second y axis
       y2label (str): Label text for second y axis
-      [y2]label_fp (str, dict, FontProperties): Label font for second y
+      {y2}label_fp (str, dict, FontProperties): Label font for second y
         axis
       y2label_kw (dict): Keyword arguments passed to subplot.set_ylabel()
         for second y axis
@@ -448,19 +448,19 @@ def set_colorbar(subplot, mappable, **kwargs):
         by matplotlib's imshow or pcolormesh
       colorbar_kw (dict): Keyword arguments used to configure colorbar;
         'position' key is used to control orientation
-      [z|c]ticks (list or ndarray): Ticks; first and last are used as
+      {z|c}ticks (list or ndarray): Ticks; first and last are used as
         upper and lower boundaries
-      [z|c]tick_kw (dict): Keyword arguments passed to
+      {z|c}tick_kw (dict): Keyword arguments passed to
         subplot.set_ticks
-      [z|c]ticklabels (list): Tick label text
-      [z|c]tick[label]_fp (str, dict, FontProperties): Tick label
+      {z|c}ticklabels (list): Tick label text
+      {z|c}tick{label}_fp (str, dict, FontProperties): Tick label
         font
-      [z|c]ticklabel_kw (dict): Keyword arguments passed to
-        subplot.set_[x|y]ticklabels()
-      [z|c]label (str): Label text
-      [z|c]label_fp (str, dict, FontProperties): Label font
+      {z|c}ticklabel_kw (dict): Keyword arguments passed to
+        subplot.set_{x|y}ticklabels()
+      {z|c}label (str): Label text
+      {z|c}label_fp (str, dict, FontProperties): Label font
       zlabel_kw (dict): Keyword arguments passed to subplot.set_label
-      [z|c]tick_params (dict): Keyword arguments passed to
+      {z|c}tick_params (dict): Keyword arguments passed to
         subplot.tick_params()
       kwargs (dict): Additional keyword arguments
     """

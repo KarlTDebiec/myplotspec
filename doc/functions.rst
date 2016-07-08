@@ -15,6 +15,8 @@ General
 .. autofunction:: myplotspec.get_edges
 .. autofunction:: myplotspec.get_figure_subplots
 .. autofunction:: myplotspec.get_font
+.. autofunction:: myplotspec.wiprint
+.. autofunction:: myplotspec.sformat
 
 Axes
 ----
