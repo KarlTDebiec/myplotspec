@@ -71,7 +71,8 @@ def set_legend(subplot, handles=None, **kwargs):
     else:
         legend = subplot.legend(**legend_kw)
 
-    legend.get_title().set_fontproperties(title_fp)
+    if title_fp is not None:
+        legend.get_title().set_fontproperties(title_fp)
 
     return legend
 

@@ -578,7 +578,14 @@ class FigureManager(object):
         set_shared_ylabel(figure, verbose=verbose, debug=debug, **kwargs)
         if shared_legend:
             shared_legend_kw = multi_get_copy("shared_legend_kw", kwargs, {})
-            handles = shared_legend_kw.pop("handles", OrderedDict())
+            if isinstance(shared_legend_kw, dict):
+                handles = shared_legend_kw.pop("handles", OrderedDict())
+            elif (isinstance(shared_legend_kw, list)
+            and len(shared_legend_kw) >= 1
+            and isinstance(shared_legend_kw[0], dict)):
+                handles = shared_legend_kw[0].pop("handles", OrderedDict())
+            else:
+                raise Exception()
 
         # Load multiplot variables
         if multiplot:
@@ -722,8 +729,11 @@ class FigureManager(object):
 
         # Draw legend
         if shared_legend:
-            set_shared_legend(figure, subplots, handles=handles,
-              **shared_legend_kw)
+            if not isinstance(shared_legend_kw, list):
+                shared_legend_kw = [shared_legend_kw]
+            shared_legend_kw[0]["handles"] = handles
+            for s_l_kw in shared_legend_kw:
+                set_shared_legend(figure, subplots, **s_l_kw)
 
         # Return results
         return figure
