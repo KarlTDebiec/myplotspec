@@ -236,7 +236,6 @@ class FigureManager(object):
             width: 2
           legend_kw:
             legend_fp: 14r
-            frameon: False
           lw: 2
           y2tick_params:
             length: 3
