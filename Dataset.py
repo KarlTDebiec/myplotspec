@@ -11,6 +11,7 @@ Manages datasets and implements caching.
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
+from IPython import embed
 import h5py
 import numpy as np
 import pandas as pd
@@ -21,7 +22,10 @@ class Dataset(object):
     Represents data.
     """
 
-    default_h5_address = "dataset"
+    default_h5_address = ""
+    default_h5_kw = dict(
+      chunks = True,
+      compression = "gzip")
 
     @classmethod
     def get_cache_key(cls, infile=None, **kwargs):
@@ -44,6 +48,129 @@ class Dataset(object):
                 value = tuple(value)
             read_csv_kw.append((key, value))
         return (cls, expandvars(infile), tuple(read_csv_kw))
+
+    @staticmethod
+    def construct_argparser(parser_or_subparsers=None, **kwargs):
+        """
+        Adds arguments to an existing argument parser, constructs a
+        subparser, or constructs a new parser
+
+        Arguments:
+          parser_or_subparsers (ArgumentParser, _SubParsersAction,
+            optional): If ArgumentParser, existing parser to which
+            arguments will be added; if _SubParsersAction, collection of
+            subparsers to which a new argument parser will be added; if
+            None, a new argument parser will be generated
+          kwargs (dict): Additional keyword arguments
+
+        Returns:
+          ArgumentParser: Argument parser or subparser
+        """
+        import argparse
+
+        # Process arguments
+        help_message = """Process data"""
+        if isinstance(parser_or_subparsers, argparse.ArgumentParser):
+            parser = parser_or_subparsers
+        elif isinstance(parser_or_subparsers, argparse._SubParsersAction):
+            parser = parser_or_subparsers.add_parser(
+              name        = "data",
+              description = help_message,
+              help        = help_message)
+        elif parser is None:
+            parser = argparse.ArgumentParser(
+              description = help_message)
+
+        # Defaults
+        if parser.get_default("cls") is None:
+            parser.set_defaults(cls=Dataset)
+
+        # Arguments unique to this class
+        arg_groups = {ag.title: ag for ag in parser._action_groups}
+
+        # Standard arguments
+        # Unfortunately; this appears to be the only way to handle the
+        #   change the chance that a mutually-exclusive group will be
+        #   added more than once. add_mutually_exclusive_group does not
+        #   support setting 'title' or 'description', as soon as the
+        #   local variable pointing to the group is lost, the parser has
+        #   no information about what the group is supposed to be or
+        #   contain. If the parser has multiple mutually-exclusive
+        #   groups that contain degenerate arguments, it will not fail
+        #   until parse_args is called.
+        if hasattr(parser, "_verbosity"):
+            verbosity = parser._verbosity
+        else:
+            verbosity = parser._verbosity = \
+              parser.add_mutually_exclusive_group()
+        try:
+            verbosity.add_argument(
+              "-v", "--verbose",
+              action   = "count",
+              default  = 1,
+              help     = """enable verbose output, may be specified more than
+                         once""")
+        except argparse.ArgumentError:
+            pass
+        try:
+            verbosity.add_argument(
+              "-q", "--quiet",
+              action   = "store_const",
+              const    = 0,
+              default  = 1,
+              dest     = "verbose",
+              help     = "disable verbose output")
+        except argparse.ArgumentError:
+            pass
+        try:
+            parser.add_argument(
+              "-d", "--debug",
+              action   = "count",
+              default  = 1,
+              help     = """enable debug output, may be specified more than
+                         once""")
+        except argparse.ArgumentError:
+            pass
+        try:
+            parser.add_argument(
+              "-I", "--interactive",
+              action   = "store_true",
+              help     = """enable interactive ipython terminal after loading
+                         and processing data""")
+        except argparse.ArgumentError:
+            pass
+
+        # Input arguments
+        input_group  = arg_groups.get("input",
+          parser.add_argument_group("input"))
+        try:
+            input_group.add_argument(
+              "-infiles",
+              required = True,
+              dest     = "infiles",
+              metavar  = "INFILE",
+              nargs    = "+",
+              type     = str,
+              help     = """File(s) from which to load data; may be text or
+                         hdf5; may contain environment variables and
+                         wildcards""")
+        except argparse.ArgumentError:
+            pass
+
+        # Output arguments
+        output_group = arg_groups.get("output",
+          parser.add_argument_group("output"))
+        try:
+            output_group.add_argument(
+              "-outfile",
+              required = False,
+              type     = str,
+              help     = """text or hdf5 file to which processed DataFrame will
+                         be output; may contain environment variables""")
+        except argparse.ArgumentError:
+            pass
+
+        return parser
 
     @staticmethod
     def get_cache_message(cache_key):
@@ -73,29 +200,8 @@ class Dataset(object):
             add arguments
           kwargs (dict): Additional keyword arguments
         """
-        verbosity = parser.add_mutually_exclusive_group()
-        verbosity.add_argument(
-          "-v", "--verbose",
-          action   = "count",
-          default  = 1,
-          help     = "enable verbose output, may be specified more than once")
-        verbosity.add_argument(
-          "-q", "--quiet",
-          action   = "store_const",
-          const    = 0,
-          default  = 1,
-          dest     = "verbose",
-          help     = "disable verbose output")
-        parser.add_argument(
-          "-d", "--debug",
-          action   = "count",
-          default  = 1,
-          help     = "enable debug output, may be specified more than once")
-        parser.add_argument(
-          "-I", "--interactive",
-          action   = "store_true",
-          help     = """enable interactive ipython terminal after loading and
-                      processing data""")
+        import argparse
+
 
     @staticmethod
     def process_infiles(**kwargs):
@@ -338,13 +444,13 @@ class Dataset(object):
         path    = expandvars(re_h5.groupdict()["path"])
         address = re_h5.groupdict()["address"]
         if (address is None or address == ""
-        and hasattr(self, "default_hdf5_address")):
-            address = self.default_hdf5_address
-        if hasattr(self, "default_hdf5_kw"):
-            h5_kw = self.default_hdf5_kw
+        and hasattr(self, "default_h5_address")):
+            address = self.default_h5_address
+        if hasattr(self, "default_h5_kw"):
+            h5_kw = self.default_h5_kw
         else:
             h5_kw = {}
-        h5_kw.update(kwargs.get("hdf5_kw", {}))
+        h5_kw.update(kwargs.get("h5_kw", {}))
 
         # Write DataFrame
         if verbose >= 1:
