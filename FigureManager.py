@@ -9,6 +9,9 @@
 #   BSD license. See the LICENSE file for details.
 """
 Generates one or more figures to specifications provided in a YAML file.
+
+.. todo:
+  - Add partner subplot in draw_subplot
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
