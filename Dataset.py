@@ -22,7 +22,7 @@ class Dataset(object):
     Represents data.
     """
 
-    default_h5_address = ""
+    default_h5_address = "/"
     default_h5_kw = dict(
       chunks = True,
       compression = "gzip")
@@ -459,7 +459,7 @@ class Dataset(object):
             hdf5_file.create_dataset("{0}/values".format(address),
               data=df.values, **h5_kw)
             hdf5_file.create_dataset("{0}/index".format(address),
-              data=np.array(df.index.values, np.str))
+              data=df.index.values, **h5_kw)
             hdf5_file[address].attrs["columns"] = \
               map(str, df.columns.tolist())
             hdf5_file[address].attrs["index_name"] = \
