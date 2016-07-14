@@ -1,0 +1,933 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>FigureManager &mdash; myplotspec 16-06-29 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="myplotspec 16-06-29 documentation" href="index.html"/>
+        <link rel="next" title="Dataset" href="dataset.html"/>
+        <link rel="prev" title="myplotspec" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> myplotspec
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">FigureManager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decorators.html">Decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Functions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">myplotspec</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>FigureManager</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/figure_manager.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="figuremanager">
+<h1>FigureManager<a class="headerlink" href="#figuremanager" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="myplotspec.FigureManager.FigureManager">
+<em class="property">class </em><code class="descclassname">myplotspec.FigureManager.</code><code class="descname">FigureManager</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Manages the generation of figures.</p>
+<dl class="attribute">
+<dt id="FigureManager.defaults">
+<code class="descname">defaults</code><a class="headerlink" href="#FigureManager.defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, dict</em></p>
+<p>Default arguments to <code class="xref py py-meth docutils literal"><span class="pre">draw_report()</span></code>,
+<code class="xref py py-meth docutils literal"><span class="pre">draw_figure()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">draw_subplot()</span></code>, and
+<code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code> functions, in yaml format. Outer level (of
+indentation or keys) provides function names, and inner level
+provides default arguments to each function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">defaults</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    method_1:</span>
+<span class="s2">      method_1_arg_1: 1000</span>
+<span class="s2">      method_1_arg_2: abcd</span>
+<span class="s2">    method_2</span>
+<span class="s2">      method_2_arg_1: 2000</span>
+<span class="s2">      method_2_arg_2: efgh</span>
+<span class="s2">    ...</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FigureManager.available_presets">
+<code class="descname">available_presets</code><a class="headerlink" href="#FigureManager.available_presets" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>str, dict</em></p>
+<p>Available sets of preset arguments
+to <code class="xref py py-meth docutils literal"><span class="pre">draw_report()</span></code>, <code class="xref py py-meth docutils literal"><span class="pre">draw_figure()</span></code>,
+<code class="xref py py-meth docutils literal"><span class="pre">draw_subplot()</span></code>, and <code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code> functions, in
+yaml format. Outer level (of indentation or keys) provides
+preset names, middle level provides function names, and inner
+level provides arguments to pass to each function when preset is
+active:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">available_presets</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">  preset_1:</span>
+<span class="s2">    method_1:</span>
+<span class="s2">      method_1_arg_1: 1001</span>
+<span class="s2">      method_1_arg_2: abcde</span>
+<span class="s2">    method_2</span>
+<span class="s2">      method_2_arg_1: 2001</span>
+<span class="s2">      method_2_arg_2: efghi</span>
+<span class="s2">  preset_2:</span>
+<span class="s2">    method_1:</span>
+<span class="s2">      method_1_arg_1: 1002</span>
+<span class="s2">      method_1_arg_2: abcdef</span>
+<span class="s2">    method_2</span>
+<span class="s2">      method_2_arg_1: 2002</span>
+<span class="s2">      method_2_arg_2: efghij</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Each preset may additionally contain the keys &#8216;help&#8217;, &#8216;class&#8217;,
+&#8216;extends&#8217; and &#8216;inherits&#8217;. &#8216;help&#8217; may contain a short help
+message displayed with the help text of the script, while
+&#8216;class&#8217; is the name of the category in which the preset is
+classified; built-in categories include &#8216;content&#8217;, for presets
+related to the type of data being used, &#8216;appearance&#8217;, for
+presets related to modifications to formatting, and &#8216;target&#8217;,
+for presets specifying the target destination of the figure,
+such as &#8216;notebook&#8217; or &#8216;presentation&#8217;. &#8216;extends&#8217; may contain the
+name of another preset within the class from which the preset
+will inherit (and optionally override) all arguments. Subclasses
+of this base <code class="xref py py-class docutils literal"><span class="pre">FigureManager</span></code> class may also include the
+keyword &#8216;inherits&#8217; which may contain the name of a preset of
+<code class="xref py py-class docutils literal"><span class="pre">FigureManager</span></code> (listed below) from which it will inherit
+(and optionally override) all arguments.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FigureManager.dataset_cache">
+<code class="descname">dataset_cache</code><a class="headerlink" href="#FigureManager.dataset_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>dict</em></p>
+<p>Cache of previously-loaded datasets. Keys
+are the return values of the method &#8216;get_cache_key&#8217; from the
+class of each dataset, and values are the datasets themselves.
+This may be passed on from <code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code> to the dataset
+classes&#8217; __init__ methods, which may in turn add their own
+datasets to it.</p>
+</dd></dl>
+
+<p>Initializes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>defaults</strong> (<em>string, dict, optional</em>) &#8211; Default arguments; may be a
+yaml string, path to a yaml file, or a dictionary; if not
+provided pulled from self.defaults</li>
+<li><strong>args</strong> (<em>tuple</em>) &#8211; Additional positional arguments</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.initialize_presets">
+<code class="descname">initialize_presets</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.initialize_presets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes presets.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>available_presets</strong> (<em>string, dict</em>) &#8211; Available presets; may be a
+yaml string, path to a yaml file, or a dictionary; if not
+provided pulled from <a class="reference internal" href="#FigureManager.available_presets" title="FigureManager.available_presets"><code class="xref py py-attr docutils literal"><span class="pre">available_presets</span></code></a></li>
+<li><strong>args</strong> (<em>tuple</em>) &#8211; Additional positional arguments</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>When called as a function, calls <code class="xref py py-meth docutils literal"><span class="pre">draw_report()</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> (<em>tuple</em>) &#8211; Passed to <code class="xref py py-meth docutils literal"><span class="pre">draw_report()</span></code></li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Passed to <code class="xref py py-meth docutils literal"><span class="pre">draw_report()</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.draw_report">
+<code class="descname">draw_report</code><span class="sig-paren">(</span><em>*in_args</em>, <em>**in_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws one or more figures based on provided specifications.</p>
+<p>Figure specs are provided in a dict structured as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>figures = {
+    &#39;all&#39;: {
+        &#39;shared_xlabel&#39;: &#39;Time&#39;,
+        &#39;shared_ylabel&#39;: &#39;Measurement&#39;,
+        &#39;shared_legend&#39;: True,
+        ...
+    },
+    &#39;0&#39;: {
+        &#39;title&#39;: &#39;Trial 1&#39;,
+        &#39;subplots&#39;: {
+            ...
+        },
+        ...
+    },
+    &#39;1&#39;: {
+        &#39;title&#39;: &#39;Trial 2&#39;,
+        &#39;subplots&#39;: {
+            ...
+        },
+        ...
+    },
+    &#39;2&#39;: {
+        &#39;title&#39;: &#39;Trial 3&#39;,
+        &#39;subplots&#39;: {
+            ...
+        },
+        ...
+    },
+    ...
+}
+</pre></div>
+</div>
+<p>The values stored at each (0-indexed) integer key provide the
+arguments to be passed to <code class="xref py py-meth docutils literal"><span class="pre">draw_figure()</span></code> for each of a
+series of figures. Values stored at &#8216;all&#8217; are passed to each
+figure, but overridden by values specific to that figure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>figure[s]</strong> (<em>dict</em>) &#8211; Figure specifications</li>
+<li><strong>preset[s]</strong> (<em>str, list, optional</em>) &#8211; Selected preset(s); presets
+loaded from figure specification will take precedence over
+those passed as arguments</li>
+<li><strong>yaml_spec</strong> (<em>str, dict, optional</em>) &#8211; Argument data structure; may
+be string path to yaml file, yaml-format string, or
+dictionary</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function is one of two responsible for managing the
+output of figures to pdf files, if specified. While other
+output formats are single-page, pdf files may be multi-page.
+In order to allow multiple figures to be output to multiple
+pdfs, this function maintains a dict outfiles containing
+references to a PdfPages object for each specified pdf
+outfile. <code class="xref py py-meth docutils literal"><span class="pre">draw_figure()</span></code>&#8216;s decorator
+<a class="reference internal" href="decorators.html#myplotspec.manage_output.manage_output" title="myplotspec.manage_output.manage_output"><code class="xref py py-class docutils literal"><span class="pre">manage_output</span></code></a> adds new PdfPages
+objects as requested, or adds pages to existing ones. Once all
+figures have been drawn, this function closes each PdfPages.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.draw_figure">
+<code class="descname">draw_figure</code><span class="sig-paren">(</span><em>*in_args</em>, <em>**in_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_figure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a figure.</p>
+<p>Figure will typically contain one or more subplots, whose
+specifications are provided in a dict structured as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>subplots = {
+    &#39;all&#39;: {
+        &#39;legend&#39;: True,
+        ...
+    },
+    &#39;0&#39;: {
+        &#39;title&#39;:    &#39;Subplot 1&#39;,
+        &#39;datasets&#39;: {
+            ...
+        },
+        ...
+    },
+    &#39;1&#39;: {
+        &#39;title&#39;:    &#39;Subplot 2&#39;,
+        &#39;datasets&#39;: {
+            ...
+        },
+        ...
+    },
+    &#39;2&#39;: {
+        &#39;title&#39;:    &#39;Subplot 3&#39;,
+        &#39;datasets&#39;: {
+            ...
+        },
+        ...
+    },
+    ...
+}
+</pre></div>
+</div>
+<p>The values stored at each integer key (0-indexed) provide the
+arguments to be passed to <code class="xref py py-meth docutils literal"><span class="pre">draw_subplot()</span></code> for each of a
+series of subplots. Values stored at &#8216;all&#8217; are passed to each
+subplot, but overridden by values specific to that subplot.</p>
+<p>Figure may be annotated by drawing a title, shared x axis label,
+shared y axis label, or shared legend. Title and shared axis
+labels are (by default) centered on all subplots present on the
+figure, Shared legend is drawn on an additional subplot created
+after those specified in subplots, using the arguments provided
+in &#8216;shared_legend&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>outfile</strong> (<em>str</em>) &#8211; Output filename</li>
+<li><strong>subplot[s]</strong> (<em>dict</em>) &#8211; Subplot specifications</li>
+<li><strong>preset[s]</strong> (<em>str, list, optional</em>) &#8211; Selected preset(s); presets
+loaded from figure specification will take precedence over
+those passed as arguments</li>
+<li><strong>nrows</strong> (<em>int, optional</em>) &#8211; Number of rows of subplots</li>
+<li><strong>ncols</strong> (<em>int, optional</em>) &#8211; Number of columns of subplots</li>
+<li><strong>nsubplots</strong> (<em>int, optional</em>) &#8211; Number of subplots</li>
+<li><strong>title</strong> (<em>str, optional</em>) &#8211; Figure title</li>
+<li><strong>[shared][x]label</strong> (<em>str, optional</em>) &#8211; X label to be shared among
+subplots</li>
+<li><strong>[shared][y]label</strong> (<em>str, optional</em>) &#8211; Y label to be shared among
+subplots</li>
+<li><strong>shared_legend</strong> (<em>bool, optional</em>) &#8211; Generate a legend shared
+between subplots</li>
+<li><strong>multiplot</strong> (<em>bool, optional</em>) &#8211; Subplots in specification are a
+small multiple set; x and y labels and ticklabels are
+omitted for plots other than those along the left side and
+bottom</li>
+<li><strong>multi_xticklabels</strong> (<em>list, optional</em>) &#8211; x tick labels to be
+assigned to subplots along bottom; only necessary with
+multiplot</li>
+<li><strong>multi_yticklabels</strong> (<em>list, optional</em>) &#8211; y tick labels to be
+assigned to subplots along left side; only necessary with
+multiplot</li>
+<li><strong>multi_tick_kw</strong> (<em>dict, optional</em>) &#8211; tick params to be assigned to
+multiple subplots</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>(figure)</em> &#8211;
+Figure</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.draw_subplot">
+<code class="descname">draw_subplot</code><span class="sig-paren">(</span><em>*in_args</em>, <em>**in_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_subplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a subplot.</p>
+<p>Subplot will typically plot one or more datasets, whose
+specifications are provided in a dict structured as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>datasets = {
+    &#39;all&#39;: {
+        &#39;lw&#39;: 2,
+        ...
+    },
+    &#39;0&#39;: {
+        &#39;label&#39;:  &#39;Dataset 1&#39;,
+        &#39;infile&#39;: &#39;/path/to/dataset_1.txt&#39;,
+        &#39;color&#39;:  &#39;red&#39;,
+        ...
+    },
+    &#39;1&#39;: {
+        &#39;label&#39;:  &#39;Dataset 2&#39;,
+        &#39;infile&#39;: &#39;/path/to/dataset_2.txt&#39;,
+        &#39;color&#39;:  &#39;green&#39;,
+        ...
+    },
+    &#39;2&#39;: {
+        &#39;label&#39;:  &#39;Dataset 3&#39;,
+        &#39;infile&#39;: &#39;/path/to/dataset_3.txt&#39;,
+        &#39;color&#39;:  &#39;blue&#39;,
+        ...
+    },
+    ...
+}
+</pre></div>
+</div>
+<p>The values stored at each integer key (0-indexed) provide the
+arguments to be passed to <code class="xref py py-meth docutils literal"><span class="pre">draw_dataset()</span></code> for each of a
+series of datasets. Values stored at &#8216;all&#8217; are passed to each
+dataset, but overridden by values specific to that dataset.</p>
+<p>Subplot may be formatted by adjusting or labeling the x and y
+axes, or drawing a title or a legend.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; Axes on which to act</li>
+<li><strong>dataset[s]</strong> (<em>dict</em>) &#8211; Dataset specifications</li>
+<li><strong>preset[s]</strong> (<em>str, list, optional</em>) &#8211; Selected preset(s); presets
+loaded from figure specification will take precedence over
+those passed as arguments</li>
+<li><strong>title</strong> (<em>str, optional</em>) &#8211; Subplot title</li>
+<li><strong>legend</strong> (<em>bool, optional</em>) &#8211; Draw legend on subplot</li>
+<li><strong>partner_subplot</strong> (<em>bool, optional</em>) &#8211; Add a parter subplot</li>
+<li><strong>handles</strong> (<em>OrderedDict, optional</em>) &#8211; Nascent OrderedDict of
+[labels]:handles shared among subplots of host figure; used
+to draw shared legend on figure</li>
+<li><strong>visible</strong> (<em>bool, optional</em>) &#8211; Subplot visibility</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.draw_dataset">
+<code class="descname">draw_dataset</code><span class="sig-paren">(</span><em>*in_args</em>, <em>**in_kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.draw_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws a dataset on a subplot.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>subplot</strong> (<em>Axes</em>) &#8211; Axes on which to draw</li>
+<li><strong>infile</strong> (<em>str</em>) &#8211; Path to input text file; first column is x,
+second is y</li>
+<li><strong>label</strong> (<em>str, optional</em>) &#8211; Dataset label</li>
+<li><strong>color</strong> (<em>str, list, ndarray, float, optional</em>) &#8211; Dataset color</li>
+<li><strong>plot_kw</strong> (<em>dict, optional</em>) &#8211; Additional keyword arguments passed
+to subplot.plot()</li>
+<li><strong>handles</strong> (<em>OrderedDict, optional</em>) &#8211; Nascent OrderedDict of
+[labels]: handles on subplot</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="myplotspec.FigureManager.FigureManager.manage_defaults_presets">
+<em class="property">class </em><code class="descname">manage_defaults_presets</code><span class="sig-paren">(</span><em>verbose=1</em>, <em>debug=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.manage_defaults_presets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Decorator to manage the passage of defaults and available presets to
+a method.</p>
+<p>This decorator is a partner to
+<a class="reference internal" href="decorators.html#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a>, desiged to allows its use
+for methods of objects containg central <code class="docutils literal"><span class="pre">defaults</span></code> and
+<code class="docutils literal"><span class="pre">available_presets</span></code> attributes. It obtains available defaults and
+presets for the wrapped method from their central location in the
+host object, and passes on those applicable to the wrapped method.
+<a class="reference internal" href="decorators.html#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a> then selects arguments to
+pass from among the provided defaults, available and selected
+presets, YAML file, and arguments provided at call time.</p>
+<p>Defaults are accessed from the host object&#8217;s instance (or class)
+variable <code class="docutils literal"><span class="pre">self.defaults</span></code>, and may be a dict, a path to a YAML
+file, or a YAML string. Outer level (of indentation or keys)
+provides function names, and inner level provides default arguments
+to each function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">defaults</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    method_1:</span>
+<span class="s2">        method_1_arg_1: 1000</span>
+<span class="s2">        method_1_arg_2: abcd</span>
+<span class="s2">    method_2</span>
+<span class="s2">        method_2_arg_1: 2000</span>
+<span class="s2">        method_2_arg_2: efgh</span>
+<span class="s2">    ...</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Presets are accessed from the host objects&#8217;s instance (or class)
+variable <code class="docutils literal"><span class="pre">self.available_presets</span></code>, in the same formats as
+<code class="docutils literal"><span class="pre">self.defaults</span></code>. Presets contain an outer level of keys providing
+the names of available presets:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">available_presets</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    preset_1:</span>
+<span class="s2">        method_1:</span>
+<span class="s2">            method_1_arg_1: 1001</span>
+<span class="s2">            method_1_arg_2: abcde</span>
+<span class="s2">        method_2</span>
+<span class="s2">            method_2_arg_1: 2001</span>
+<span class="s2">            method_2_arg_2: efghi</span>
+<span class="s2">    preset_2:</span>
+<span class="s2">        method_1:</span>
+<span class="s2">            method_1_arg_1: 1002</span>
+<span class="s2">            method_1_arg_2: abcdef</span>
+<span class="s2">        method_2</span>
+<span class="s2">            method_2_arg_1: 2002</span>
+<span class="s2">        method_2_arg_2: efghij</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>When this decorator is used to wrap a method of a class, it adds to
+the arguments being passed <code class="docutils literal"><span class="pre">defaults</span></code>, containing the defaults
+specified for the method, and <code class="docutils literal"><span class="pre">available_presets</span></code>, containing only
+the presets applicable to the method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>@manage_defaults_presets()
+def method_1(*args, **kwargs):
+    print(kwargs)
+    ...
+
+{
+    &#39;defaults&#39;: {
+        &#39;method_1_argument_1&#39;: 1000,
+        &#39;method_1_argument_2&#39;: &#39;asdf&#39;
+    },
+    &#39;presets&#39;: {
+        &#39;preset_1&#39;: {
+            &#39;method_1_argument_1&#39;: 1001,
+            &#39;method_1_argument_2&#39;: &#39;asde&#39;
+        },
+        &#39;preset_1&#39;: {
+            &#39;method_1_argument_1&#39;: 1002,
+            &#39;method_1_argument_2&#39;: &#39;asdef&#39;
+        }
+    },
+    ...
+}
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="FigureManager.manage_defaults_presets.verbose">
+<code class="descname">verbose</code><a class="headerlink" href="#FigureManager.manage_defaults_presets.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of verbose output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FigureManager.manage_defaults_presets.debug">
+<code class="descname">debug</code><a class="headerlink" href="#FigureManager.manage_defaults_presets.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of debug output</p>
+</dd></dl>
+
+<p>Stores arguments provided at decoration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.manage_defaults_presets.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.manage_defaults_presets.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>method</em>) &#8211; method to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(method)</em> &#8211;
+Wrapped method</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="myplotspec.FigureManager.FigureManager.manage_kwargs">
+<em class="property">class </em><code class="descclassname">FigureManager.</code><code class="descname">manage_kwargs</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>debug=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.manage_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Decorator to manage the passage of keyword arguments to a function
+or method.</p>
+<p>Accumulates keyword arguments from several sources, in order of
+increasing priority:</p>
+<ol class="arabic simple">
+<li>Defaults</li>
+</ol>
+<blockquote>
+<div><p>Obtained from the argument <code class="docutils literal"><span class="pre">defaults</span></code>, which may be a dict, a
+path to a YAML file, or a YAML string:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>my_function(
+    defaults = {
+        &#39;fig_width&#39;:  5.0
+        &#39;fig_height&#39;: 5.0
+    },
+    ...
+)
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Presets</li>
+</ol>
+<blockquote>
+<div><p>Available presets are obtained from the argument
+<code class="docutils literal"><span class="pre">available_presets</span></code>, which may be a dict, a path to a YAML file,
+or a YAML string. Selected presets are obtained from the argument
+<code class="docutils literal"><span class="pre">presets</span></code>, which may be a string or list of strings in order of
+increasing priority:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>my_function(
+    presets = &#39;letter&#39;,
+    available_presets = {
+        &#39;letter&#39;: {
+            &#39;fig_width&#39;:   8.5
+            &#39;fig_height&#39;: 11.0
+        },
+        &#39;legal&#39;: {
+            &#39;fig_width&#39;:   8.5
+            &#39;fig_height&#39;: 14.0
+        }
+    },
+    ...
+)
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li>YAML file</li>
+</ol>
+<blockquote>
+<div><p>YAML file is obtained from the keyword argument <code class="docutils literal"><span class="pre">yaml_spec</span></code>,
+which may be a dict, a path to a YAML file, or a YAML string.
+Selected keys within the YAML file from which to load arguments
+are obtained from the argument <code class="docutils literal"><span class="pre">yaml_keys</span></code>, which is a list of
+lists in order of increasing priority:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">my_function</span><span class="p">(</span>
+    <span class="n">yaml_spec</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;figures&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;fig_width&#39;</span><span class="p">:</span>  <span class="mf">11.0</span><span class="p">,</span>
+                <span class="s1">&#39;fig_height&#39;</span><span class="p">:</span> <span class="mf">17.0</span><span class="p">,</span>
+                <span class="s1">&#39;outfile&#39;</span><span class="p">:</span>    <span class="s1">&#39;plot.pdf&#39;</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;fig_width&#39;</span><span class="p">:</span>  <span class="mf">12.0</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="n">yaml_keys</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;figures&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;figures&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">]],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal"><span class="pre">yaml_keys</span></code> is omitted, the complete yaml file will be used.</p>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li>Function call</li>
+</ol>
+<blockquote>
+<div><p>Arguments provided at function call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">my_function</span><span class="p">(</span>
+    <span class="n">fig_width</span>  <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span>
+    <span class="n">fig_height</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>All of the above will override defaults provided in the function
+declaration itself.</p>
+<dl class="attribute">
+<dt id="FigureManager.manage_kwargs.verbose">
+<code class="descname">verbose</code><a class="headerlink" href="#FigureManager.manage_kwargs.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of verbose output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="FigureManager.manage_kwargs.debug">
+<code class="descname">debug</code><a class="headerlink" href="#FigureManager.manage_kwargs.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of debug output</p>
+</dd></dl>
+
+<p>Stores arguments provided at decoration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.manage_kwargs.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.manage_kwargs.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps function or method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> (<em>function</em>) &#8211; Function or method to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(function)</em> &#8211;
+Wrapped function or method</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="myplotspec.FigureManager.FigureManager.manage_output">
+<em class="property">class </em><code class="descclassname">FigureManager.</code><code class="descname">manage_output</code><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.manage_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Decorator to manage the output of matplotlib figures.</p>
+<p>Saves figure returned by wrapped function to a file named
+<code class="docutils literal"><span class="pre">outfile</span></code>; passing additional keyword arguments <code class="docutils literal"><span class="pre">savefig_kw</span></code> to
+<code class="docutils literal"><span class="pre">Figure.savefig()</span></code>. For pdf output, additional argument
+<code class="docutils literal"><span class="pre">outfiles</span></code> may be provided; containing a dictionary whose keys are
+the paths to output pdf files, and whose values are open PdfPages
+objects representing those files. The purpose of this is to allow
+figures output from multiple calls to the wrapped function to be
+output to sequential pages of the same pdf file. Typically
+<code class="docutils literal"><span class="pre">outfiles</span></code> will be initialized before calling this wrapped
+function; and once calls to the function is complete the
+<code class="docutils literal"><span class="pre">PdfPages.close()</span></code> method of each outfile in <code class="docutils literal"><span class="pre">outfiles</span></code> is
+called.</p>
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.manage_output.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.manage_output.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps function or method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> (<em>function</em>) &#8211; Function or method to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(function)</em> &#8211;
+Wrapped function or method</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.load_dataset">
+<code class="descclassname">FigureManager.</code><code class="descname">load_dataset</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.load_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a dataset, or reloads a previously-loaded dataset from cache.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.FigureManager.FigureManager.main">
+<code class="descclassname">FigureManager.</code><code class="descname">main</code><span class="sig-paren">(</span><em>parser=None</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.FigureManager.FigureManager.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides command-line functionality.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<em>ArgumentParser, optional</em>) &#8211; argparse argument parser;
+enables sublass to instantiate parser and add arguments</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="dataset.html" class="btn btn-neutral float-right" title="Dataset" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="myplotspec" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015-2016, Karl T Debiec.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'16-06-29',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

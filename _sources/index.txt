@@ -3,12 +3,15 @@ myplotspec
 .. include:: ../README.rst
 .. include:: ../LICENSE
 
-Code
-====
+Contents
+========
 .. toctree::
     :maxdepth: 4
 
-    code
+    figure_manager
+    dataset
+    decorators
+    functions
 
 .. only:: html
 

@@ -1,0 +1,549 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Decorators &mdash; myplotspec 16-06-29 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="myplotspec 16-06-29 documentation" href="index.html"/>
+        <link rel="next" title="Functions" href="functions.html"/>
+        <link rel="prev" title="Dataset" href="dataset.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> myplotspec
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="figure_manager.html">FigureManager</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Dataset</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Decorators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#manage-defaults-presets">manage_defaults_presets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#manage-kwargs">manage_kwargs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#manage-output">manage_output</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Functions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">myplotspec</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Decorators</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/decorators.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="decorators">
+<h1>Decorators<a class="headerlink" href="#decorators" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">MyPlotSpec&#8217;s decorator classes all support arguments provided at decoration
+(e.g. <code class="docutils literal"><span class="pre">&#64;decorator(foo</span> <span class="pre">=</span> <span class="pre">bar)</span></code>). These use a different syntax from
+decorator classes without arguments. When the wrapped function is declared,
+<code class="docutils literal"><span class="pre">__init__</span></code> and <code class="docutils literal"><span class="pre">__call__</span></code> from the decorator are called sequentially.
+<code class="docutils literal"><span class="pre">__init__</span></code> receives the arguments, while <code class="docutils literal"><span class="pre">__call__</span></code> receives the
+function. <code class="docutils literal"><span class="pre">__init__</span></code> should store the values of the arguments, while
+<code class="docutils literal"><span class="pre">__call__</span></code> should prepare and return a wrapped function using their
+values. Subsequent calls will go to the wrapped function. For decorator
+classes without arguments, <code class="docutils literal"><span class="pre">__init__</span></code> is called when the function is
+declared, and should store the reference to the function; <code class="docutils literal"><span class="pre">__call__</span></code> is
+called when the function is called, and should carry out the pre-function
+decorator logic, run the function, and carry out the post-function
+decorator logic.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">MyPlotSpec&#8217;s decorator classes <a class="reference internal" href="#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a>,
+<a class="reference internal" href="#myplotspec.manage_output.manage_output" title="myplotspec.manage_output.manage_output"><code class="xref py py-class docutils literal"><span class="pre">manage_output</span></code></a>, and <code class="xref py py-class docutils literal"><span class="pre">debug_arguments</span></code>
+may be used to wrap either functions or methods. This is enabled by
+restricting the arguments of their <code class="docutils literal"><span class="pre">wrapped_function</span></code> to <code class="docutils literal"><span class="pre">*args</span></code> and
+<code class="docutils literal"><span class="pre">**kwargs</span></code>, and accessing any arguments needed by the decorator using
+<code class="docutils literal"><span class="pre">kwargs.pop()</span></code> or <code class="docutils literal"><span class="pre">kwargs.get().</span></code> If a method is wrapped, the first
+argument is the host object of the method (<code class="docutils literal"><span class="pre">self</span></code>), shifting the positions
+of other named arguments.</p>
+</div>
+<div class="section" id="manage-defaults-presets">
+<h2>manage_defaults_presets<a class="headerlink" href="#manage-defaults-presets" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="myplotspec.manage_defaults_presets.manage_defaults_presets">
+<em class="property">class </em><code class="descclassname">myplotspec.manage_defaults_presets.</code><code class="descname">manage_defaults_presets</code><span class="sig-paren">(</span><em>verbose=1</em>, <em>debug=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.manage_defaults_presets.manage_defaults_presets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Decorator to manage the passage of defaults and available presets to
+a method.</p>
+<p>This decorator is a partner to
+<a class="reference internal" href="#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a>, desiged to allows its use
+for methods of objects containg central <code class="docutils literal"><span class="pre">defaults</span></code> and
+<code class="docutils literal"><span class="pre">available_presets</span></code> attributes. It obtains available defaults and
+presets for the wrapped method from their central location in the
+host object, and passes on those applicable to the wrapped method.
+<a class="reference internal" href="#myplotspec.manage_kwargs.manage_kwargs" title="myplotspec.manage_kwargs.manage_kwargs"><code class="xref py py-class docutils literal"><span class="pre">manage_kwargs</span></code></a> then selects arguments to
+pass from among the provided defaults, available and selected
+presets, YAML file, and arguments provided at call time.</p>
+<p>Defaults are accessed from the host object&#8217;s instance (or class)
+variable <code class="docutils literal"><span class="pre">self.defaults</span></code>, and may be a dict, a path to a YAML
+file, or a YAML string. Outer level (of indentation or keys)
+provides function names, and inner level provides default arguments
+to each function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">defaults</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    method_1:</span>
+<span class="s2">        method_1_arg_1: 1000</span>
+<span class="s2">        method_1_arg_2: abcd</span>
+<span class="s2">    method_2</span>
+<span class="s2">        method_2_arg_1: 2000</span>
+<span class="s2">        method_2_arg_2: efgh</span>
+<span class="s2">    ...</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Presets are accessed from the host objects&#8217;s instance (or class)
+variable <code class="docutils literal"><span class="pre">self.available_presets</span></code>, in the same formats as
+<code class="docutils literal"><span class="pre">self.defaults</span></code>. Presets contain an outer level of keys providing
+the names of available presets:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">available_presets</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    preset_1:</span>
+<span class="s2">        method_1:</span>
+<span class="s2">            method_1_arg_1: 1001</span>
+<span class="s2">            method_1_arg_2: abcde</span>
+<span class="s2">        method_2</span>
+<span class="s2">            method_2_arg_1: 2001</span>
+<span class="s2">            method_2_arg_2: efghi</span>
+<span class="s2">    preset_2:</span>
+<span class="s2">        method_1:</span>
+<span class="s2">            method_1_arg_1: 1002</span>
+<span class="s2">            method_1_arg_2: abcdef</span>
+<span class="s2">        method_2</span>
+<span class="s2">            method_2_arg_1: 2002</span>
+<span class="s2">        method_2_arg_2: efghij</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>When this decorator is used to wrap a method of a class, it adds to
+the arguments being passed <code class="docutils literal"><span class="pre">defaults</span></code>, containing the defaults
+specified for the method, and <code class="docutils literal"><span class="pre">available_presets</span></code>, containing only
+the presets applicable to the method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>@manage_defaults_presets()
+def method_1(*args, **kwargs):
+    print(kwargs)
+    ...
+
+{
+    &#39;defaults&#39;: {
+        &#39;method_1_argument_1&#39;: 1000,
+        &#39;method_1_argument_2&#39;: &#39;asdf&#39;
+    },
+    &#39;presets&#39;: {
+        &#39;preset_1&#39;: {
+            &#39;method_1_argument_1&#39;: 1001,
+            &#39;method_1_argument_2&#39;: &#39;asde&#39;
+        },
+        &#39;preset_1&#39;: {
+            &#39;method_1_argument_1&#39;: 1002,
+            &#39;method_1_argument_2&#39;: &#39;asdef&#39;
+        }
+    },
+    ...
+}
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="manage_defaults_presets.verbose">
+<code class="descname">verbose</code><a class="headerlink" href="#manage_defaults_presets.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of verbose output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="manage_defaults_presets.debug">
+<code class="descname">debug</code><a class="headerlink" href="#manage_defaults_presets.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of debug output</p>
+</dd></dl>
+
+<p>Stores arguments provided at decoration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="myplotspec.manage_defaults_presets.manage_defaults_presets.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>method</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.manage_defaults_presets.manage_defaults_presets.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>method</em>) &#8211; method to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(method)</em> &#8211;
+Wrapped method</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="manage-kwargs">
+<h2>manage_kwargs<a class="headerlink" href="#manage-kwargs" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="myplotspec.manage_kwargs.manage_kwargs">
+<em class="property">class </em><code class="descclassname">myplotspec.manage_kwargs.</code><code class="descname">manage_kwargs</code><span class="sig-paren">(</span><em>verbose=0</em>, <em>debug=0</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.manage_kwargs.manage_kwargs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Decorator to manage the passage of keyword arguments to a function
+or method.</p>
+<p>Accumulates keyword arguments from several sources, in order of
+increasing priority:</p>
+<ol class="arabic simple">
+<li>Defaults</li>
+</ol>
+<blockquote>
+<div><p>Obtained from the argument <code class="docutils literal"><span class="pre">defaults</span></code>, which may be a dict, a
+path to a YAML file, or a YAML string:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>my_function(
+    defaults = {
+        &#39;fig_width&#39;:  5.0
+        &#39;fig_height&#39;: 5.0
+    },
+    ...
+)
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>Presets</li>
+</ol>
+<blockquote>
+<div><p>Available presets are obtained from the argument
+<code class="docutils literal"><span class="pre">available_presets</span></code>, which may be a dict, a path to a YAML file,
+or a YAML string. Selected presets are obtained from the argument
+<code class="docutils literal"><span class="pre">presets</span></code>, which may be a string or list of strings in order of
+increasing priority:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>my_function(
+    presets = &#39;letter&#39;,
+    available_presets = {
+        &#39;letter&#39;: {
+            &#39;fig_width&#39;:   8.5
+            &#39;fig_height&#39;: 11.0
+        },
+        &#39;legal&#39;: {
+            &#39;fig_width&#39;:   8.5
+            &#39;fig_height&#39;: 14.0
+        }
+    },
+    ...
+)
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li>YAML file</li>
+</ol>
+<blockquote>
+<div><p>YAML file is obtained from the keyword argument <code class="docutils literal"><span class="pre">yaml_spec</span></code>,
+which may be a dict, a path to a YAML file, or a YAML string.
+Selected keys within the YAML file from which to load arguments
+are obtained from the argument <code class="docutils literal"><span class="pre">yaml_keys</span></code>, which is a list of
+lists in order of increasing priority:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">my_function</span><span class="p">(</span>
+    <span class="n">yaml_spec</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;figures&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;all&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;fig_width&#39;</span><span class="p">:</span>  <span class="mf">11.0</span><span class="p">,</span>
+                <span class="s1">&#39;fig_height&#39;</span><span class="p">:</span> <span class="mf">17.0</span><span class="p">,</span>
+                <span class="s1">&#39;outfile&#39;</span><span class="p">:</span>    <span class="s1">&#39;plot.pdf&#39;</span>
+            <span class="p">},</span>
+            <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s1">&#39;fig_width&#39;</span><span class="p">:</span>  <span class="mf">12.0</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="n">yaml_keys</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;figures&#39;</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;figures&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">]],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal"><span class="pre">yaml_keys</span></code> is omitted, the complete yaml file will be used.</p>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li>Function call</li>
+</ol>
+<blockquote>
+<div><p>Arguments provided at function call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">my_function</span><span class="p">(</span>
+    <span class="n">fig_width</span>  <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span>
+    <span class="n">fig_height</span> <span class="o">=</span> <span class="mf">6.0</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>All of the above will override defaults provided in the function
+declaration itself.</p>
+<dl class="attribute">
+<dt id="manage_kwargs.verbose">
+<code class="descname">verbose</code><a class="headerlink" href="#manage_kwargs.verbose" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of verbose output</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="manage_kwargs.debug">
+<code class="descname">debug</code><a class="headerlink" href="#manage_kwargs.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>int</em></p>
+<p>Level of debug output</p>
+</dd></dl>
+
+<p>Stores arguments provided at decoration.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="myplotspec.manage_kwargs.manage_kwargs.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.manage_kwargs.manage_kwargs.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps function or method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> (<em>function</em>) &#8211; Function or method to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(function)</em> &#8211;
+Wrapped function or method</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="manage-output">
+<h2>manage_output<a class="headerlink" href="#manage-output" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="myplotspec.manage_output.manage_output">
+<em class="property">class </em><code class="descclassname">myplotspec.manage_output.</code><code class="descname">manage_output</code><a class="headerlink" href="#myplotspec.manage_output.manage_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Decorator to manage the output of matplotlib figures.</p>
+<p>Saves figure returned by wrapped function to a file named
+<code class="docutils literal"><span class="pre">outfile</span></code>; passing additional keyword arguments <code class="docutils literal"><span class="pre">savefig_kw</span></code> to
+<code class="docutils literal"><span class="pre">Figure.savefig()</span></code>. For pdf output, additional argument
+<code class="docutils literal"><span class="pre">outfiles</span></code> may be provided; containing a dictionary whose keys are
+the paths to output pdf files, and whose values are open PdfPages
+objects representing those files. The purpose of this is to allow
+figures output from multiple calls to the wrapped function to be
+output to sequential pages of the same pdf file. Typically
+<code class="docutils literal"><span class="pre">outfiles</span></code> will be initialized before calling this wrapped
+function; and once calls to the function is complete the
+<code class="docutils literal"><span class="pre">PdfPages.close()</span></code> method of each outfile in <code class="docutils literal"><span class="pre">outfiles</span></code> is
+called.</p>
+<dl class="method">
+<dt id="myplotspec.manage_output.manage_output.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>function</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.manage_output.manage_output.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps function or method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>function</strong> (<em>function</em>) &#8211; Function or method to wrap</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>(function)</em> &#8211;
+Wrapped function or method</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="functions.html" class="btn btn-neutral float-right" title="Functions" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dataset.html" class="btn btn-neutral" title="Dataset" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015-2016, Karl T Debiec.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'16-06-29',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

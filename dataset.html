@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dataset &mdash; myplotspec 16-06-29 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="myplotspec 16-06-29 documentation" href="index.html"/>
+        <link rel="next" title="Decorators" href="decorators.html"/>
+        <link rel="prev" title="FigureManager" href="figure_manager.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> myplotspec
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="figure_manager.html">FigureManager</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decorators.html">Decorators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Functions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">myplotspec</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Dataset</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/dataset.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dataset">
+<h1>Dataset<a class="headerlink" href="#dataset" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="myplotspec.Dataset.Dataset">
+<em class="property">class </em><code class="descclassname">myplotspec.Dataset.</code><code class="descname">Dataset</code><span class="sig-paren">(</span><em>infile</em>, <em>address=None</em>, <em>dataset_cache=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Represents data.</p>
+<p>Initializes dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>infile</strong> (<em>str</em>) &#8211; Path to input file, may contain environment
+variables</li>
+<li><strong>address</strong> (<em>str</em>) &#8211; Address within hdf5 file from which to load
+dataset (hdf5 only)</li>
+<li><strong>slice</strong> (<em>slice</em>) &#8211; Slice to load from hdf5 dataset (hdf5 only)</li>
+<li><strong>dataframe_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+pandas.DataFrame(...) (hdf5 only)</li>
+<li><strong>read_csv_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+pandas.read_csv(...) (text only)</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>debug</strong> (<em>int</em>) &#8211; Level of debug output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="myplotspec.Dataset.Dataset.get_cache_key">
+<em class="property">classmethod </em><code class="descname">get_cache_key</code><span class="sig-paren">(</span><em>infile=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.get_cache_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates tuple of arguments to be used as key for dataset
+cache.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="myplotspec.Dataset.Dataset.get_cache_message">
+<em class="property">static </em><code class="descname">get_cache_message</code><span class="sig-paren">(</span><em>cache_key</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.get_cache_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates message to be used when reloading previously-loaded
+dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cache_key</strong> (<em>tuple</em>) &#8211; key with which dataset object is stored in
+dataset cache</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>str</em> &#8211;
+message to be used when reloading previously-loaded
+dataset</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="myplotspec.Dataset.Dataset.add_shared_args">
+<em class="property">static </em><code class="descname">add_shared_args</code><span class="sig-paren">(</span><em>parser</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.add_shared_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds command line arguments shared by all subclasses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parser</strong> (<em>ArgumentParser</em>) &#8211; Nascent argument parser to which to
+add arguments</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="myplotspec.Dataset.Dataset.process_infiles">
+<em class="property">static </em><code class="descname">process_infiles</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.process_infiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes a list of infiles, expanding environment variables and
+wildcards.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>infile{s}</strong> (<em>str, list</em>) &#8211; Paths to infile(s), may contain
+environment variables and wildcards</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><em>list</em> &#8211;
+Paths to infiles with environment variables and
+wildcards expanded</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.Dataset.Dataset.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads data from one or more <em>infiles</em> into a DataFrame.</p>
+<p>If more than on <em>infile</em> is provided, the resulting DataFrame
+will consist of their merged data.</p>
+<p>If an <em>infile</em> is an hdf5 file path and (optionally) address
+within the file in the form
+<code class="docutils literal"><span class="pre">/path/to/file.h5:/address/within/file</span></code>, the corresponding
+DataFrame&#8217;s values will be loaded from
+<code class="docutils literal"><span class="pre">/address/within/file/values</span></code>, its index will be loaded from
+<code class="docutils literal"><span class="pre">/address/within/file/index</span></code>, its column names will be loaded
+from the &#8216;columns&#8217; attribute of <code class="docutils literal"><span class="pre">/address/within/file</span></code> if
+present, and index name will be loaded from the &#8216;index_name&#8217;
+attribute of <code class="docutils literal"><span class="pre">/address/within/file</span></code> if present. Additional
+arguments provided in <em>dataframe_kw</em> will be passes to
+<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.18.1)"><code class="xref py py-class docutils literal"><span class="pre">DataFrame</span></code></a>.</p>
+<p>If an <em>infile</em> is the path to a text file, the corresponding
+DataFrame will be loaded using
+<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html#pandas.read_csv" title="(in pandas v0.18.1)"><code class="xref py py-func docutils literal"><span class="pre">read_csv</span></code></a>, including additional
+arguments provided in <em>read_csv_kw</em>.</p>
+<p>After generating the DataFrame from <em>infiles</em>, the index may be
+set by loading a list of residue names and numbers in the form
+<code class="docutils literal"><span class="pre">XAA:#</span></code> from <em>indexfile</em>. This is useful when loading data
+from files that do not specify residue names.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>infile[s]</strong> (<em>str</em>) &#8211; Path(s) to input file(s); may contain
+environment variables and wildcards</li>
+<li><strong>dataframe_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.18.1)"><code class="xref py py-class docutils literal"><span class="pre">DataFrame</span></code></a> (hdf5 only)</li>
+<li><strong>read_csv_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.read_csv.html#pandas.read_csv" title="(in pandas v0.18.1)"><code class="xref py py-func docutils literal"><span class="pre">read_csv</span></code></a> (text only)</li>
+<li><strong>indexfile</strong> (<em>str</em>) &#8211; Path to index file; may contain environment
+variables</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>DataFrame</em> &#8211;
+Sequence DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.Dataset.Dataset.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>outfile</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes DataFrame to text or hdf5.</p>
+<p>If <em>outfile</em> is an hdf5 file path and (optionally) address
+within the file in the form
+<code class="docutils literal"><span class="pre">/path/to/file.h5:/address/within/file</span></code>, DataFrame&#8217;s values
+will be written to <code class="docutils literal"><span class="pre">/address/within/file/values</span></code>, index will
+be written to <code class="docutils literal"><span class="pre">/address/within/file/index</span></code>, column names will
+be written to the &#8216;columns&#8217; attribute of
+<code class="docutils literal"><span class="pre">/address/within/file</span></code>, and index name will be written to the
+&#8216;index.name&#8217; attribute of <code class="docutils literal"><span class="pre">/address/within/file</span></code>.</p>
+<p>If <em>outfile</em> is the path to a text file, DataFrame will be
+written using <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_string.html#pandas.DataFrame.to_string" title="(in pandas v0.18.1)"><code class="xref py py-meth docutils literal"><span class="pre">to_string</span></code></a>,
+including additional arguments provided in <em>read_csv_kw</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>outfile</strong> (<em>str</em>) &#8211; Path to output file; may be path to text file
+or path to hdf5 file in the form
+&#8216;/path/to/hdf5/file.h5:/address/within/hdf5/file&#8217;; may
+contain environment variables</li>
+<li><strong>hdf5_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+<a class="reference external" href="http://docs.h5py.org/en/latest/high/group.html#Group.create_dataset" title="(in h5py v2.6)"><code class="xref py py-meth docutils literal"><span class="pre">create_dataset</span></code></a> (hdf5
+only)</li>
+<li><strong>read_csv_kw</strong> (<em>dict</em>) &#8211; Keyword arguments passed to
+<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_string.html#pandas.DataFrame.to_string" title="(in pandas v0.18.1)"><code class="xref py py-meth docutils literal"><span class="pre">to_string</span></code></a> (text only)</li>
+<li><strong>verbose</strong> (<em>int</em>) &#8211; Level of verbose output</li>
+<li><strong>kwargs</strong> (<em>dict</em>) &#8211; Additional keyword arguments</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="myplotspec.Dataset.Dataset.load_dataset">
+<code class="descname">load_dataset</code><span class="sig-paren">(</span><em>cls=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#myplotspec.Dataset.Dataset.load_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a dataset, or reloads a previously-loaded dataset from a
+cache.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="decorators.html" class="btn btn-neutral float-right" title="Decorators" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="figure_manager.html" class="btn btn-neutral" title="FigureManager" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015-2016, Karl T Debiec.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'16-06-29',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
