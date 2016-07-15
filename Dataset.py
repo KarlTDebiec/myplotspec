@@ -345,35 +345,35 @@ class Dataset(object):
                 if hasattr(self, "default_hdf5_address"):
                     address = self.default_hdf5_address
                 else:
-                    address = sorted(list(h5_file.keys()))[0]
-                if verbose >= 1:
-                    wiprint("""Reading DataFrame from '{0}:{1}'
-                            """.format(path, address))
-                if ("{0}/values".format(address) in h5_file
-                and "{0}/index".format(address) in h5_file):
-                    values = np.array(h5_file["{0}/values".format(address)])
-                    index  = np.array(h5_file["{0}/index".format(address)])
-                else:
-                    values = np.array(h5_file[address])
-                    index = np.arange(values.shape[0])
-                attrs  = dict(h5_file[address].attrs)
-                if "fields"  in dataframe_kw:
-                    dataframe_kw["columns"] = dataframe_kw.pop("fields")
-                elif "columns" in dataframe_kw:
-                    pass
-                elif "fields" in attrs:
-                    dataframe_kw["columns"] = list(attrs["fields"])
-                elif "columns" in attrs:
-                    dataframe_kw["columns"] = list(attrs["columns"])
-                if "columns" in dataframe_kw:
-                    columns = dataframe_kw.pop("columns")
-                    columns = map(str, columns)
-                    if np.array([isinstance(c, tuple) for c in columns]).all():
-                        columns = pd.MultiIndex.from_tuples(columns)
-                    dataframe_kw["columns"] = columns
-                df = pd.DataFrame(data=values, index=index, **dataframe_kw)
-                if "index_name" in attrs:
-                    df.index.name = attrs["index_name"]
+                    address = "/"
+            if verbose >= 1:
+                wiprint("""Reading DataFrame from '{0}:{1}'
+                        """.format(path, address))
+            if ("{0}/values".format(address) in h5_file
+            and "{0}/index".format(address) in h5_file):
+                values = np.array(h5_file["{0}/values".format(address)])
+                index  = np.array(h5_file["{0}/index".format(address)])
+            else:
+                values = np.array(h5_file[address])
+                index = np.arange(values.shape[0])
+            attrs  = dict(h5_file[address].attrs)
+            if "fields"  in dataframe_kw:
+                dataframe_kw["columns"] = dataframe_kw.pop("fields")
+            elif "columns" in dataframe_kw:
+                pass
+            elif "fields" in attrs:
+                dataframe_kw["columns"] = list(attrs["fields"])
+            elif "columns" in attrs:
+                dataframe_kw["columns"] = list(attrs["columns"])
+            if "columns" in dataframe_kw:
+                columns = dataframe_kw.pop("columns")
+                columns = map(str, columns)
+                if np.array([isinstance(c, tuple) for c in columns]).all():
+                    columns = pd.MultiIndex.from_tuples(columns)
+                dataframe_kw["columns"] = columns
+            df = pd.DataFrame(data=values, index=index, **dataframe_kw)
+            if "index_name" in attrs:
+                df.index.name = attrs["index_name"]
 
         return df
 
@@ -612,7 +612,6 @@ class Dataset(object):
         if re_h5:
             self._write_hdf5(outfile=outfile, **kwargs)
         else:
-            print(kwargs)
             self._write_text(outfile=outfile, **kwargs)
 
     def load_dataset(self, cls=None, **kwargs):
