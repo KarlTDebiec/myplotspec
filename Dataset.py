@@ -354,7 +354,9 @@ class Dataset(object):
                 values = np.array(h5_file["{0}/values".format(address)])
                 index  = np.array(h5_file["{0}/index".format(address)])
             else:
-                values = np.array(h5_file[address])
+                if len(h5_file.keys()) >= 1:
+                    address = sorted(list(h5_file.keys()))[0]
+                values = np.array(h5_file[address], np.float64)
                 index = np.arange(values.shape[0])
             attrs  = dict(h5_file[address].attrs)
             if "fields"  in dataframe_kw:
