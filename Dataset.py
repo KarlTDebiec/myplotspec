@@ -461,7 +461,7 @@ class Dataset(object):
 
         # Write DataFrame
         if verbose >= 1:
-            print("Writing sequence DataFrame to '{0}'".format(outfile))
+            print("Writing DataFrame to '{0}'".format(outfile))
         with h5py.File(path) as hdf5_file:
             hdf5_file.create_dataset("{0}/values".format(address),
               data=df.values, **h5_kw)
@@ -501,7 +501,7 @@ class Dataset(object):
 
         # Write DataFrame
         if verbose >= 1:
-            print("Writing sequence DataFrame to '{0}'".format(outfile))
+            print("Writing DataFrame to '{0}'".format(outfile))
         with open(outfile, "w") as text_file:
             text_file.write(df.to_string(**to_string_kw))
 
@@ -572,7 +572,7 @@ class Dataset(object):
             dfs.append(df)
         df = dfs.pop(0)
         for df_i in dfs:
-            df.merge(df_i)
+            df = df.merge(df_i, how="outer", left_index=True, right_index=True)
 
         return df
 
