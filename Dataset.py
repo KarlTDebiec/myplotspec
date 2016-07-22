@@ -465,8 +465,12 @@ class Dataset(object):
         with h5py.File(path) as hdf5_file:
             hdf5_file.create_dataset("{0}/values".format(address),
               data=df.values, **h5_kw)
+            if df.index.values.dtype == object:
+                index = map(str, df.index.values)
+            else:
+                index = df.index.values
             hdf5_file.create_dataset("{0}/index".format(address),
-              data=df.index.values, **h5_kw)
+              data=index, **h5_kw)
             hdf5_file[address].attrs["columns"] = \
               map(str, df.columns.tolist())
             hdf5_file[address].attrs["index_name"] = \
