@@ -272,8 +272,6 @@ class FigureManager(object):
 
     def __init__(self, *args, **kwargs):
         """
-        Initializes.
-
         Arguments:
           defaults (string, dict, optional): Default arguments; may be a
             yaml string, path to a yaml file, or a dictionary; if not
