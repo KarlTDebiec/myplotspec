@@ -7,11 +7,10 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Manages datasets and implements caching.
+Represents data.
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
-from IPython import embed
 import h5py
 import numpy as np
 import pandas as pd
@@ -20,6 +19,11 @@ from . import sformat, wiprint
 class Dataset(object):
     """
     Represents data.
+
+    .. note:
+      - pandas' MultiIndex only supports dtype of 'object'. It does not appear
+        to be possible to force pandas to use a 32 bit float or integer for a
+        MultiIndex. _read_hdf5 and _write_hdf5 must behave accordingly
     """
 
     default_h5_address = "/"
@@ -356,14 +360,9 @@ class Dataset(object):
             else:
                 if len(h5_file.keys()) >= 1:
                     address = sorted(list(h5_file.keys()))[0]
-                dtype = h5_file[address].dtype
-                if dtype == np.float32:
-                    dtype = np.float64
-                if dtype == np.uint8:
-                    dtype = np.int64
-                values = np.array(h5_file[address], dtype)
+                values = np.array(h5_file[address])
                 index = np.arange(values.shape[0])
-            attrs  = dict(h5_file[address].attrs)
+            attrs = dict(h5_file[address].attrs)
             if "fields"  in dataframe_kw:
                 dataframe_kw["columns"] = dataframe_kw.pop("fields")
             elif "columns" in dataframe_kw:
@@ -378,9 +377,15 @@ class Dataset(object):
                 if np.array([isinstance(c, tuple) for c in columns]).all():
                     columns = pd.MultiIndex.from_tuples(columns)
                 dataframe_kw["columns"] = columns
-            df = pd.DataFrame(data=values, index=index, **dataframe_kw)
-            if "index_name" in attrs:
-                df.index.name = attrs["index_name"]
+            if len(index.shape) == 1:
+                df = pd.DataFrame(data=values, index=index, **dataframe_kw)
+                if "index_name" in attrs:
+                    df.index.name = attrs["index_name"]
+            else:
+                index = pd.MultiIndex.from_tuples(map(tuple, index))
+                df = pd.DataFrame(data=values, index=index, **dataframe_kw)
+                if "index_name" in attrs:
+                    df.index.names = attrs["index_name"]
 
         return df
 
@@ -424,7 +429,7 @@ class Dataset(object):
         Writes DataFrame to hdf5.
 
         Arguments:
-          df (DataFrame): DataFrame to write
+          d{ata}f{rame} (DataFrame): DataFrame to write
           outfile (str): Path to output hdf5 file and (optionally)
             address within the file in the form
             ``/path/to/file.h5:/address/within/file``; may contain
@@ -436,15 +441,16 @@ class Dataset(object):
         """
         from os.path import expandvars
         import re
+        from . import multi_get
 
         # Process arguments
         verbose = kwargs.get("verbose", 1)
-        df      = kwargs.get("df")
+        df = multi_get(["dataframe", "df"], kwargs)
         if df is None:
             if hasattr(self, "dataframe"):
                 df = self.dataframe
             else:
-                raise()
+                raise Exception("Cannot find DataFrame to write")
         re_h5 = re.match(
           r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$",
           outfile, flags=re.UNICODE)
@@ -464,24 +470,30 @@ class Dataset(object):
             print("Writing DataFrame to '{0}'".format(outfile))
         with h5py.File(path) as hdf5_file:
             hdf5_file.create_dataset("{0}/values".format(address),
-              data=df.values, **h5_kw)
+              data=df.values, dtype=df.values.dtype, **h5_kw)
             if df.index.values.dtype == object:
-                index = map(str, df.index.values)
+                if type(df.index.values[0]) == tuple:
+                    index = np.array(map(list, df.index.values))
+                else:
+                    index = map(str, df.index.values)
             else:
                 index = df.index.values
             hdf5_file.create_dataset("{0}/index".format(address),
-              data=index, **h5_kw)
+              data=index, dtype=index.dtype, **h5_kw)
             hdf5_file[address].attrs["columns"] = \
               map(str, df.columns.tolist())
-            hdf5_file[address].attrs["index_name"] = \
-              str(df.index.name)
+            if df.index.name is not None:
+                hdf5_file[address].attrs["index_name"] = str(df.index.name)
+            else:
+                hdf5_file[address].attrs["index_name"] = \
+                  map(str, df.index.names)
 
     def _write_text(self, outfile, **kwargs):
         """
         Writes DataFrame to hdf5
 
         Arguments:
-          df (DataFrame): DataFrame to write
+          d{ata}f{rame} (DataFrame): DataFrame to write
           outfile (str): Path to output file; may contain environment
             variables
           to_string_kw (dict): Keyword arguments passed to
@@ -490,10 +502,11 @@ class Dataset(object):
           kwargs (dict): Additional keyword arguments
         """
         from os.path import expandvars
+        from . import multi_get
 
         # Process arguments
         verbose = kwargs.get("verbose", 1)
-        df      = kwargs.get("df")
+        df = multi_get(["dataframe", "df"], kwargs)
         if df is None:
             if hasattr(self, "dataframe"):
                 df = self.dataframe
@@ -630,6 +643,14 @@ class Dataset(object):
         Loads a dataset, or reloads a previously-loaded dataset from a
         cache.
 
+        Arguments:
+          cls (class, str): Dataset class; may be either class object itself
+            or name of class in form of 'package.module.class'; if None,
+            will be set to self.__class__; if '__noclass__',
+            function will return None
+
+        Returns:
+          object: Dataset, either newly initialized or copied from cache
         """
         from . import load_dataset
 

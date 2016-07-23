@@ -88,7 +88,7 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
         :meth:`Dataset.Dataset.cls`
 
     Returns:
-      cls: Dataset, either newly initialized or copied from cache
+      object: Dataset, either newly initialized or copied from cache
 
     .. todo:
       - Handling of errors remains extremely frustrating in python
