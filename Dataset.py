@@ -592,6 +592,10 @@ class Dataset(object):
         for df_i in dfs:
             df = df.merge(df_i, how="outer", left_index=True, right_index=True)
 
+        # Apply dtype
+        if kwargs.get("dtype") is not None:
+            df = df.astype(kwargs.get("dtype"))
+
         return df
 
     def write(self, outfile, **kwargs):
