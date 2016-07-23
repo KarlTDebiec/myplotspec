@@ -475,9 +475,10 @@ class Dataset(object):
                 if type(df.index.values[0]) == tuple:
                     index = np.array(map(list, df.index.values))
                 else:
-                    index = map(str, df.index.values)
+                    index = np.array(map(str, df.index.values))
             else:
                 index = df.index.values
+
             hdf5_file.create_dataset("{0}/index".format(address),
               data=index, dtype=index.dtype, **h5_kw)
             hdf5_file[address].attrs["columns"] = \
