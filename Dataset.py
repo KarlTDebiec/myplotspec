@@ -155,7 +155,7 @@ class Dataset(object):
               metavar  = "INFILE",
               nargs    = "+",
               type     = str,
-              help     = """File(s) from which to load data; may be text or
+              help     = """file(s) from which to load data; may be text or
                          hdf5; may contain environment variables and
                          wildcards""")
         except argparse.ArgumentError:
