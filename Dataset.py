@@ -362,7 +362,12 @@ class Dataset(object):
                     address = sorted(list(h5_file.keys()))[0]
                 values = np.array(h5_file[address])
                 index = np.arange(values.shape[0])
+
             attrs = dict(h5_file[address].attrs)
+
+            # Read columns from attribute; alternatively may be set
+            # manually in dataframe_kw; previous name was 'fields',
+            # which is retained here for convenience
             if "fields"  in dataframe_kw:
                 dataframe_kw["columns"] = dataframe_kw.pop("fields")
             elif "columns" in dataframe_kw:
@@ -373,7 +378,8 @@ class Dataset(object):
                 dataframe_kw["columns"] = list(attrs["columns"])
             if "columns" in dataframe_kw:
                 columns = dataframe_kw.pop("columns")
-                columns = map(str, columns)
+                if np.array([isinstance(c, np.ndarray) for c in columns]).all():
+                    columns = pd.MultiIndex.from_tuples(map(tuple, columns))
                 if np.array([isinstance(c, tuple) for c in columns]).all():
                     columns = pd.MultiIndex.from_tuples(columns)
                 dataframe_kw["columns"] = columns
@@ -441,6 +447,7 @@ class Dataset(object):
         """
         from os.path import expandvars
         import re
+        import six
         from . import multi_get
 
         # Process arguments
@@ -481,8 +488,30 @@ class Dataset(object):
 
             hdf5_file.create_dataset("{0}/index".format(address),
               data=index, dtype=index.dtype, **h5_kw)
-            hdf5_file[address].attrs["columns"] = \
-              map(str, df.columns.tolist())
+
+            # Process and store columns as an attribute
+            columns = df.columns.tolist()
+            if (np.array([isinstance(c, six.string_types)
+                for c in columns]).all()):
+                # String columns; must make sure all strings are strings
+                #   and not unicode
+                columns = map(str, columns)
+            elif np.array([isinstance(c, tuple) for c in columns]).all():
+                # MultiIndex columns; must make sure all strings are
+                #   strings and not unicode
+                new_columns = []
+                for column in columns:
+                    new_column = []
+                    for c in column:
+                        if isinstance(c, six.string_types):
+                            new_column.append(str(c))
+                        else:
+                            new_column.append(c)
+                    new_columns.append(tuple(new_column))
+                columns = new_columns
+            hdf5_file[address].attrs["columns"] = columns
+
+            # Process and store index name as an attribute
             if df.index.name is not None:
                 hdf5_file[address].attrs["index_name"] = str(df.index.name)
             else:
