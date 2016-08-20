@@ -18,10 +18,10 @@ notebook, printout, or presentation.
 Sample applications of MYPlotSpec for plotting several types of data are
 available on GitHub:
 
+- `Molecular Dynamics Simulation Analysis
+  <https://github.com/KarlTDebiec/MolDynPlot>`_
 - `Ramachandran Plots
   <https://github.com/KarlTDebiec/Ramaplot>`_
-- `Molecular Dynamics Simulation Analysis
-  <https://github.com/KarlTDebiec/Moldynplot>`_
 - `Nuclear Magnetic Resonance Spectroscopy
   <https://github.com/KarlTDebiec/myplotspec_nmr>`_
 - `Dynamic Light Scattering
