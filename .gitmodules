@@ -1,0 +1,4 @@
+[submodule "yspec"]
+    ignore  = dirty
+    path    = yspec
+    url     = https://github.com/KarlTDebiec/yspec.git
