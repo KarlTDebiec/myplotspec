@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   myplotspec.plugins.Initialize.py
+#   myplotspec.plugins.InitializePlugin.py
 #
 #   Copyright (C) 2015-2016 Karl T Debiec
 #   All rights reserved.
@@ -23,11 +23,29 @@ class InitializePlugin(YSpecPlugin):
     """
     name = "initialize"
 
-    def process_level(self, spec, source_spec, hierarchy):
+    def __init__(self, indexed_levels=None, **kwargs):
+        """
+        Store settings for this plugin here
+        """
+        if indexed_levels is not None:
+            self.indexed_levels = indexed_levels
+        else:
+            self.indexed_levels = {}
+
+    def __call__(self, spec, source_spec=None, **kwargs):
+        """
+        Apply settings to spec here
+        """
+        if source_spec is not None:
+            self.process_level(spec, source_spec, self.indexed_levels)
+        return spec
+
+    def process_level(self, spec, source_spec, indexed_levels):
         """
         """
-        if hierarchy is not None:
-            for key in hierarchy.keys():
+
+        if indexed_levels is not None:
+            for key in indexed_levels.keys():
                 if key in source_spec:
                     spec[key] = {}
                     i_keys = source_spec.get(key).keys()
@@ -37,20 +55,5 @@ class InitializePlugin(YSpecPlugin):
                         self.process_level(
                           spec[key][i_key],
                           source_spec[key][i_key],
-                          hierarchy.get(key, {}))
-    def __init__(self, settings=None, **kwargs):
-        """
-        Read in settings here
-        """
-        if settings is not None:
-            self.hierarchy = yaml_load(settings)
-        else:
-            self.hierarchy = {}
+                          indexed_levels.get(key, {}))
 
-    def __call__(self, spec, source_spec=None, **kwargs):
-        """
-        Apply settings to spec here
-        """
-        if source_spec is not None:
-            self.process_level(spec, source_spec, self.hierarchy)
-        return spec

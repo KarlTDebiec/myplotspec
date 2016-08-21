@@ -19,19 +19,36 @@ from IPython import embed
 import ruamel.yaml as yaml
 from yspec.YSpecConstructor import YSpecConstructor
 from myplotspec.plugins.InitializePlugin import InitializePlugin
+from myplotspec.plugins.DefaultsPlugin import DefaultsPlugin
 ################################### CLASSES ###################################
 class MYPlotSpecConstructor(YSpecConstructor):
     """
     """
 
     available_plugins = dict(
-      initialize = InitializePlugin)
-    plugin_settings = dict(
+      initialize = InitializePlugin,
+      defaults   = DefaultsPlugin)
+    plugin_config = dict(
       initialize = """
-        figures:
+        indexed_levels:
+          figures:
+              subplots:
+                  datasets:""",
+      defaults = """
+        indexed_levels:
+          figures:
             subplots:
-                datasets:""",
-      defaults = """""",
+              datasets:
+        defaults:
+          figures:
+            subplot_kw:
+              autoscale_on: False
+              axisbg: none
+            subplots:
+              hand: stump
+              datasets:
+                nay: bama
+      """,
       presets = """""")
 
     def __init__(self, source_spec=None, **kwargs):
@@ -42,9 +59,11 @@ class MYPlotSpecConstructor(YSpecConstructor):
         # Identify available plugins and order
         #   Probably read from attribute
         plugins = ["initialize", "defaults", "presets", "manual", "write"]
-        plugins = ["initialize"]
+        plugins = ["initialize", "defaults"]
         self.source_spec = yaml_load(source_spec)
         spec = yaml.comments.CommentedMap()
+
+        print()
         print(yaml_dump(spec))
         print()
 
@@ -52,13 +71,13 @@ class MYPlotSpecConstructor(YSpecConstructor):
             print(plugin_name.upper())
             if plugin_name in self.available_plugins:
                 plugin = self.available_plugins[plugin_name](
-                  settings=self.plugin_settings.get(plugin_name, None))
+                  **yaml_load(self.plugin_config.get(plugin_name, {})))
                 spec = plugin(spec, self.source_spec)
             else:
                 raise Exception()
             print(yaml_dump(spec))
             print()
-        # Read yaml file?
+
         # Should be possible to set defaults and presets from string or file
         # if os.path.isfile(defaults):
         #   self.available_defaults = pyyaml.read(defaults)
