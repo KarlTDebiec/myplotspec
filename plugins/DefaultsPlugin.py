@@ -81,13 +81,15 @@ class DefaultsPlugin(YSpecPlugin):
         # Loop over default argument keys and values at this level
         for default_key, default_val in defaults.items():
 
-            # This level is indexed; use indexed function
+            # This level is indexed; loop over indexes as well
             if indexed_levels is not None and default_key in indexed_levels:
-                self.process_indexed_level(
-                  spec[default_key],
-                  source_spec.get(default_key, {}),
-                  indexed_levels.get(default_key, {}),
-                  default_val)
+                for index in sorted( [k for k in spec[default_key]
+                if str(k).isdigit()]):
+                    self.process_level(
+                      spec[default_key][index],
+                      source_spec.get(default_key, {}).get(index, {}),
+                      indexed_levels.get(default_key, {}),
+                      default_val)
             # This level is not indexed
             else:
                 # default_val is a dict; recurse
@@ -102,45 +104,3 @@ class DefaultsPlugin(YSpecPlugin):
                 # default_val is singular; store and continue loop
                 else:
                     spec[default_key] = default_val
-
-    def process_indexed_level(self, spec, source_spec, indexed_levels,
-        defaults):
-        """
-        Adds default arguments to one indexed level of spec hierarchy
-
-        Arguments:
-          spec (dict): Nascent spec at current level
-          source_spec (dict): Source spec at current level
-          indexed_levels (dict): Indexed levels within current level
-          defaults (dict): Defaults within current level
-        """
-
-        if defaults is None:
-            return
-
-        # Loop over indexes
-        for index in sorted([k for k in spec if str(k).isdigit()]):
-
-            # Loop over default argument keys and values at this level
-            for default_key, default_val in defaults.items():
-                # This key is indexed; use indexed function
-                if indexed_levels is not None and default_key in indexed_levels:
-                    self.process_indexed_level(
-                      spec[index][default_key],
-                      source_spec.get(index, {}).get(default_key, {}),
-                      indexed_levels.get(default_key, {}),
-                      default_val)
-                # This level is not indexed
-                else:
-                    # default_val is a dict; recurse
-                    if isinstance(default_val, dict):
-                        if default_key not in spec[index]:
-                            spec[index][default_key] = {}
-                        self.process_level(
-                          spec[index][default_key],
-                          source_spec.get(index, {}).get(default_key, {}),
-                          indexed_levels.get(default_key, {}),
-                          default_val)
-                    # default_val is singular; store and continue loop
-                    else:
-                        spec[index][default_key] = default_val
