@@ -72,16 +72,15 @@ class InitializePlugin(YSpecPlugin):
         if indexed_levels is None:
             return
 
-        for key in [k for k in indexed_levels if k in source_spec]:
-            # Add dict in which to store indexes
-            spec[key] = {}
+        for level in [k for k in indexed_levels if k in source_spec]:
+            if level not in spec:
+                spec[level] = {}
             # Loop over indexes
-            i_keys = source_spec.get(key).keys()
-            i_keys = sorted([k for k in i_keys if str(k).isdigit()])
-            for i_key in i_keys:
+            for index in sorted([k for k in source_spec.get(level, {})
+            if str(k).isdigit()]):
                 # Add dict in which to store lower levels
-                spec[key][i_key] = {}
+                spec[level][index] = {}
                 self.process_level(
-                  spec[key][i_key],
-                  source_spec[key][i_key],
-                  indexed_levels.get(key, {}))
+                  spec[level][index],
+                  source_spec[level][index],
+                  indexed_levels.get(level, {}))

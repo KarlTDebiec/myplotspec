@@ -79,7 +79,7 @@ class PresetsPlugin(YSpecPlugin):
           indexed_levels (dict): Indexed levels below current level
           available_presets (dict): Available presets within current
             level
-          selected_presets (list): 
+          selected_presets (list): Presets selected above current level
         """
         from copy import deepcopy
         print(spec.keys(), source_spec.keys(), indexed_levels,

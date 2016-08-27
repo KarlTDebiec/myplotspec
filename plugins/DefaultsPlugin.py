@@ -120,7 +120,7 @@ class DefaultsPlugin(YSpecPlugin):
             return
 
         # Loop over indexes
-        for index in sorted([k for k in spec.keys() if str(k).isdigit()]):
+        for index in sorted([k for k in spec if str(k).isdigit()]):
 
             # Loop over default argument keys and values at this level
             for default_key, default_val in defaults.items():
