@@ -1,0 +1,83 @@
+figures:
+    0:
+        subplot_kw:
+            axisbg: none
+            autoscale_on: false
+        subplots:
+            0:
+                datasets:
+                    1:
+                        nay: bama
+                    2:
+                        nay: bama
+                    14:
+                        nay: bama
+                    15:
+                        nay: bama
+                hand: stump
+            1:
+                datasets:
+                    1:
+                        nay: bama
+                    2:
+                        nay: bama
+                    14:
+                        nay: bama
+                    15:
+                        nay: bama
+                hand: stump
+    1:
+        subplot_kw:
+            axisbg: none
+            autoscale_on: false
+        subplots:
+            0:
+                datasets:
+                    1:
+                        nay: bama
+                    2:
+                        nay: bama
+                    14:
+                        nay: bama
+                    15:
+                        nay: bama
+                hand: stump
+            1:
+                datasets:
+                    1:
+                        nay: bama
+                    2:
+                        nay: bama
+                    14:
+                        nay: bama
+                    15:
+                        nay: bama
+                hand: stump
+    2:
+        subplot_kw:
+            axisbg: none
+            autoscale_on: false
+        subplots:
+            0:
+                datasets:
+                    1:
+                        nay: bama
+                    2:
+                        nay: bama
+                    14:
+                        nay: bama
+                    15:
+                        nay: bama
+                hand: stump
+            1:
+                datasets:
+                    1:
+                        nay: bama
+                    2:
+                        nay: bama
+                    14:
+                        nay: bama
+                    15:
+                        nay: bama
+                hand: stump
+yumbo: elephant

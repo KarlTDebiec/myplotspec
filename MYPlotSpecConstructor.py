@@ -49,8 +49,8 @@ class MYPlotSpecConstructor(YSpecConstructor):
       presets = """
         available_presets:
           letter:
-            class: target
-            help: Letter (width ≤ 6.5", height ≤ 9.0")
+            _class: target
+            _help: Letter (width ≤ 6.5", height ≤ 9.0")
             figures:
               fig_width: 100.00
               subplots:
@@ -59,8 +59,11 @@ class MYPlotSpecConstructor(YSpecConstructor):
                   plot_kw:
                     lw: 2
           manuscript:
-            class: target
-            help: Manuscript (width ≤ 7.0", height ≤ 9.167")
+            _class: target
+            _help: Manuscript (width ≤ 7.0", height ≤ 9.167")
+            herp: derp
+            perp:
+                merp: sperp
             figures:
               fig_width: 10.00
               shared_legend_kw:
@@ -72,8 +75,9 @@ class MYPlotSpecConstructor(YSpecConstructor):
                   plot_kw:
                     lw: 1
           dssp:
-            class: content
-            help: Dynamic secondary structure of proteins calculated by cpptraj
+            _class: content
+            _help: Dynamic secondary structure of proteins calculated by cpptraj
+            asdf: fdsa
             figures:
               shared_legend: True
               shared_legend_kw:
@@ -89,8 +93,8 @@ class MYPlotSpecConstructor(YSpecConstructor):
                   dataset_kw:
                     downsample_mode: mode
           perresrmsd:
-            class: content
-            help: Per-residue RMSD calculated by cpptraj
+            _class: content
+            _help: Per-residue RMSD calculated by cpptraj
             figures:
               shared_legend: False
               subplots:
@@ -108,7 +112,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
         # Identify available plugins and order
         #   Probably read from attribute
         plugins = ["initialize", "defaults", "presets", "manual", "write"]
-        plugins = ["initialize", "defaults"]
+        plugins = ["initialize", "defaults", "presets"]
         self.source_spec = yaml_load(source_spec)
         spec = yaml.comments.CommentedMap()
 
@@ -126,6 +130,8 @@ class MYPlotSpecConstructor(YSpecConstructor):
             else:
                 raise Exception()
             print(yaml_dump(spec))
+            with open ("test_{0}.yml".format(plugin_name), "w") as outfile:
+                outfile.write(yaml_dump(spec))
             print()
 
 #################################### MAIN #####################################

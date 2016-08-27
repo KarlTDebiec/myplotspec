@@ -1,0 +1,225 @@
+figures:
+    0:
+        shared_legend: true
+        subplot_kw:
+            axisbg: none
+            autoscale_on: false
+        fig_width: 10.0
+        subplots:
+            0:
+                title_fp: 8b
+                ylabel: Residue
+                datasets:
+                    1:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    2:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    14:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    15:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                hand: stump
+            1:
+                title_fp: 8b
+                ylabel: Residue
+                datasets:
+                    1:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    2:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    14:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    15:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                hand: stump
+        shared_legend_kw:
+            handles:
+              - [None, {color: [0, 0, 7]}]
+              - ["Parallel \u03B2 Sheet", {color: [1, 0, 7]}]
+              - ["Antiparallel \u03B2 Sheet", {color: [2, 0, 7]}]
+            legend_kw:
+                title: Secondary Structure
+                title_fp: 8b
+    1:
+        shared_legend: true
+        subplot_kw:
+            axisbg: none
+            autoscale_on: false
+        fig_width: 10.0
+        subplots:
+            0:
+                title_fp: 8b
+                ylabel: Residue
+                datasets:
+                    1:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    2:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    14:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    15:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                hand: stump
+            1:
+                title_fp: 8b
+                ylabel: Residue
+                datasets:
+                    1:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    2:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    14:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    15:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                hand: stump
+        shared_legend_kw:
+            handles:
+              - [None, {color: [0, 0, 7]}]
+              - ["Parallel \u03B2 Sheet", {color: [1, 0, 7]}]
+              - ["Antiparallel \u03B2 Sheet", {color: [2, 0, 7]}]
+            legend_kw:
+                title: Secondary Structure
+                title_fp: 8b
+    2:
+        shared_legend: true
+        subplot_kw:
+            axisbg: none
+            autoscale_on: false
+        fig_width: 10.0
+        subplots:
+            0:
+                title_fp: 8b
+                ylabel: Residue
+                datasets:
+                    1:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    2:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    14:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    15:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                hand: stump
+            1:
+                title_fp: 8b
+                ylabel: Residue
+                datasets:
+                    1:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    2:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    14:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                    15:
+                        plot_kw:
+                            lw: 1
+                        nay: bama
+                        dataset_kw:
+                            downsample_mode: mode
+                hand: stump
+        shared_legend_kw:
+            handles:
+              - [None, {color: [0, 0, 7]}]
+              - ["Parallel \u03B2 Sheet", {color: [1, 0, 7]}]
+              - ["Antiparallel \u03B2 Sheet", {color: [2, 0, 7]}]
+            legend_kw:
+                title: Secondary Structure
+                title_fp: 8b
+yumbo: elephant
+herp: derp
+perp:
+    merp: sperp
+asdf: fdsa

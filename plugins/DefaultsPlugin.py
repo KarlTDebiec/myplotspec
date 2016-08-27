@@ -81,14 +81,13 @@ class DefaultsPlugin(YSpecPlugin):
         # Loop over default argument keys and values at this level
         for default_key, default_val in defaults.items():
 
-            # This key is indexed; use indexed function
+            # This level is indexed; use indexed function
             if indexed_levels is not None and default_key in indexed_levels:
                 self.process_indexed_level(
                   spec[default_key],
                   source_spec.get(default_key, {}),
                   indexed_levels.get(default_key, {}),
                   default_val)
-                # TODO: Is it possible that default_val may not be a dict here?
             # This level is not indexed
             else:
                 # default_val is a dict; recurse
@@ -100,7 +99,7 @@ class DefaultsPlugin(YSpecPlugin):
                       source_spec.get(default_key, {}),
                       indexed_levels.get(default_key, {}),
                       default_val)
-                # Argument value is singular; store and continue loop
+                # default_val is singular; store and continue loop
                 else:
                     spec[default_key] = default_val
 
@@ -134,14 +133,14 @@ class DefaultsPlugin(YSpecPlugin):
                 # This level is not indexed
                 else:
                     # default_val is a dict; recurse
-                    if default_key not in spec[index]:
-                        spec[index][default_key] = {}
                     if isinstance(default_val, dict):
+                        if default_key not in spec[index]:
+                            spec[index][default_key] = {}
                         self.process_level(
                           spec[index][default_key],
                           source_spec.get(index, {}).get(default_key, {}),
                           indexed_levels.get(default_key, {}),
                           default_val)
-                    # Argument value is singular; store and continue loop
+                    # default_val is singular; store and continue loop
                     else:
                         spec[index][default_key] = default_val
