@@ -15,7 +15,7 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
     import myplotspec.plugins
-from ..yspec import yaml_load, yaml_dump
+import ruamel.yaml as yaml
 from ..yspec.plugins import YSpecPlugin
 ################################### CLASSES ###################################
 class ManualPlugin(YSpecPlugin):
@@ -75,6 +75,8 @@ class ManualPlugin(YSpecPlugin):
             if source_key in indexed_levels:
                 # Apply arguments from "all" before arguments from specific
                 # indexes
+                if source_spec.get(source_key) is None:
+                    continue
                 if "all" in source_spec.get(source_key, {}):
                     for index in sorted([k for k in spec[source_key]
                     if str(k).isdigit()]):
@@ -93,7 +95,7 @@ class ManualPlugin(YSpecPlugin):
                 # source_val is a dict; recurse
                 if isinstance(source_val, dict):
                     if source_key not in spec:
-                        spec[source_key] = {}
+                        spec[source_key] = yaml.comments.CommentedMap()
                     self.process_level(
                       spec[source_key],
                       source_spec.get(source_key, {}),

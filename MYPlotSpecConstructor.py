@@ -17,14 +17,14 @@ if __name__ == "__main__":
     import myplotspec
 import ruamel.yaml as yaml
 from yspec.YSpecConstructor import YSpecConstructor
-from myplotspec.plugins.InitializePlugin import InitializePlugin
-from myplotspec.plugins.DefaultsPlugin import DefaultsPlugin
-from myplotspec.plugins.PresetsPlugin import PresetsPlugin
-from myplotspec.plugins.ManualPlugin import ManualPlugin
 ################################### CLASSES ###################################
 class MYPlotSpecConstructor(YSpecConstructor):
     """
     """
+    from myplotspec.plugins.InitializePlugin import InitializePlugin
+    from myplotspec.plugins.DefaultsPlugin import DefaultsPlugin
+    from myplotspec.plugins.PresetsPlugin import PresetsPlugin
+    from myplotspec.plugins.ManualPlugin import ManualPlugin
 
     available_plugins = dict(
       initialize = InitializePlugin,

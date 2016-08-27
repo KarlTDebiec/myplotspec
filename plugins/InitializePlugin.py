@@ -11,7 +11,6 @@
 Initializes a nascent spec.
 
 .. todo:
-    - Move this version to ypec
     - Write updated version for myplotspec
       - Must understand nrows, ncols, nsubplots and add those indexes
       - Must somehow get indexes from presets if present
@@ -21,7 +20,7 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
     import myplotspec.plugins
-from ..yspec import yaml_load, yaml_dump
+import ruamel.yaml as yaml
 from ..yspec.plugins import YSpecPlugin
 ################################### CLASSES ###################################
 class InitializePlugin(YSpecPlugin):
@@ -70,17 +69,20 @@ class InitializePlugin(YSpecPlugin):
         """
 
         # Process arguments
-        if indexed_levels is None:
+        if indexed_levels is None or source_spec is None:
             return
 
+        # Loop over indexed levels at this level
         for level in [k for k in indexed_levels if k in source_spec]:
+            if source_spec.get(level) is None:
+                continue
             if level not in spec:
-                spec[level] = {}
+                spec[level] = yaml.comments.CommentedMap()
             # Loop over indexes
-            for index in sorted([k for k in source_spec.get(level, {})
+            for index in sorted([k for k in source_spec[level]
             if str(k).isdigit()]):
                 # Add dict in which to store lower levels
-                spec[level][index] = {}
+                spec[level][index] = yaml.comments.CommentedMap()
                 self.process_level(
                   spec[level][index],
                   source_spec[level][index],

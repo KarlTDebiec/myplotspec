@@ -11,7 +11,6 @@
 Adds preset argument groups to a nascent spec
 
 .. todo:
-    - Move this version to yspec
     - Write updated version for myplotspec
       - Must read presets from dataset classes
 """
@@ -20,7 +19,8 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
     import myplotspec.plugins
-from ..yspec import yaml_load, yaml_dump
+import six
+import ruamel.yaml as yaml
 from ..yspec.plugins import YSpecPlugin
 ################################### CLASSES ###################################
 class PresetsPlugin(YSpecPlugin):
@@ -92,8 +92,13 @@ class PresetsPlugin(YSpecPlugin):
             selected_presets = []
         else:
             selected_presets = selected_presets[:]
+        if source_spec is None:
+            source_spec = {}
         if "presets" in source_spec:
-            for preset in source_spec["presets"]:
+            source_spec_presets = source_spec["presets"]
+            if isinstance(source_spec_presets, six.string_types):
+                source_spec_presets = [source_spec_presets]
+            for preset in source_spec_presets:
                 if preset in selected_presets:
                     selected_presets.remove(preset)
                 selected_presets += [preset]
@@ -111,6 +116,8 @@ class PresetsPlugin(YSpecPlugin):
                 if preset_key in indexed_levels:
                     # Make new dict of available_presets including only
                     # those applicable to the next level
+                    if preset_key not in spec:
+                        continue
                     for index in sorted([k for k in spec[preset_key]
                     if str(k).isdigit()]):
                         # Make new dict of available_presets including only
@@ -134,7 +141,7 @@ class PresetsPlugin(YSpecPlugin):
                           for k, v in available_presets.items()
                           if preset_key in v}
                         if preset_key not in spec:
-                            spec[preset_key] = {}
+                            spec[preset_key] = yaml.comments.CommentedMap()
                         self.process_level(
                           spec[preset_key],
                           source_spec.get(preset_key, {}),
