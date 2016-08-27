@@ -74,6 +74,7 @@ class DefaultsPlugin(YSpecPlugin):
           indexed_levels (dict): Indexed levels within current level
           defaults (dict): Defaults within current level
         """
+        from copy import deepcopy
 
         if defaults is None:
             return
@@ -83,7 +84,7 @@ class DefaultsPlugin(YSpecPlugin):
 
             # This level is indexed; loop over indexes as well
             if indexed_levels is not None and default_key in indexed_levels:
-                for index in sorted( [k for k in spec[default_key]
+                for index in sorted([k for k in spec[default_key]
                 if str(k).isdigit()]):
                     self.process_level(
                       spec[default_key][index],
@@ -103,4 +104,4 @@ class DefaultsPlugin(YSpecPlugin):
                       default_val)
                 # default_val is singular; store and continue loop
                 else:
-                    spec[default_key] = default_val
+                    spec[default_key] = deepcopy(default_val)

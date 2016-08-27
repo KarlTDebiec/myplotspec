@@ -109,21 +109,25 @@ class PresetsPlugin(YSpecPlugin):
 
             # Loop over preset argument keys and values at this level
             for preset_key, preset_val in [(k, v)
-              for k, v in available_presets[selected_preset].items()
-              if not k.startswith("_")]:
+            for k, v in available_presets[selected_preset].items()
+            if not k.startswith("_")]:
                 # This key is indexed; use indexed function
                 if indexed_levels is not None and preset_key in indexed_levels:
                     # Make new dict of available_presets including only
                     # those applicable to the next level
-                    level_available_presets = {k: v[preset_key]
-                      for k, v in available_presets.items()
-                      if preset_key in v}
-                    self.process_indexed_level(
-                      spec[preset_key],
-                      source_spec.get(preset_key, {}),
-                      indexed_levels.get(preset_key, {}),
-                      level_available_presets,
-                      selected_presets)
+                    for index in sorted([k for k in spec[preset_key]
+                    if str(k).isdigit()]):
+                        # Make new dict of available_presets including only
+                        # those applicable to the next level
+                        level_available_presets = {k: v[preset_key]
+                          for k, v in available_presets.items()
+                          if preset_key in v}
+                        self.process_level(
+                          spec[preset_key][index],
+                          source_spec.get(preset_key, {}).get(index, {}),
+                          indexed_levels.get(preset_key, {}),
+                          level_available_presets,
+                          selected_presets)
                 # This level is not indexed
                 else:
                     # preset_val is a dict; recurse
@@ -144,83 +148,3 @@ class PresetsPlugin(YSpecPlugin):
                     # preset_val is singular; store and continue loop
                     else:
                         spec[preset_key] = deepcopy(preset_val)
-
-    def process_indexed_level(self, spec, source_spec, indexed_levels,
-        available_presets, selected_presets=None):
-        """
-        Adds selected preset arguments to one level of spec hierarchy
-
-        Arguments:
-          spec (dict): Nascent spec at current level
-          source_spec (dict): Source spec at current level
-          indexed_levels (dict): Indexed levels below current level
-          available_presets (dict): Available presets within current
-            level
-          selected_presets (list): Presets selected above current level
-        """
-        from copy import deepcopy
-
-        if available_presets is None:
-            return
-        if indexed_levels is None:
-            indexed_levels = {}
-
-        # Determine selected presets, including those inherited from a
-        # parent level and those first selected at this level
-        if selected_presets is None:
-            selected_presets = []
-        else:
-            selected_presets = selected_presets[:]
-        if "presets" in source_spec:
-            for preset in source_spec["presets"]:
-                if preset in selected_presets:
-                    selected_presets.remove(preset)
-                selected_presets += [preset]
-        # Even if no presets are selected, cannot return here, because
-        # lower levels may activate presets
-
-        # Loop over indexes
-        for index in sorted([k for k in spec if str(k).isdigit()]):
-
-            # Loop over presets that are currently selected
-            for selected_preset in selected_presets:
-                if selected_preset not in available_presets:
-                    continue
-
-                # Loop over preset argument keys and values at this level
-                for preset_key, preset_val in [(k, v)
-                  for k, v in available_presets[selected_preset].items()
-                  if not k.startswith("_")]:
-                    # This key is indexed; use indexed function
-                    if indexed_levels is not None and preset_key in indexed_levels:
-                        # Make new dict of available_presets including only
-                        # those applicable to the next level
-                        level_available_presets = {k: v[preset_key]
-                          for k, v in available_presets.items()
-                          if preset_key in v}
-                        self.process_indexed_level(
-                          spec[index][preset_key],
-                          source_spec.get(index, {}).get(preset_key, {}),
-                          indexed_levels.get(preset_key, {}),
-                          level_available_presets,
-                          selected_presets)
-                    # This level is not indexed
-                    else:
-                        # preset_val is a dict; recurse
-                        if isinstance(preset_val, dict):
-                            # Make new dict of available_presets including only
-                            # those applicable to the next level
-                            level_available_presets = {k: v[preset_key]
-                              for k, v in available_presets.items()
-                              if preset_key in v}
-                            if preset_key not in spec[index]:
-                                spec[index][preset_key] = {}
-                            self.process_level(
-                              spec[index][preset_key],
-                              source_spec.get(index, {}).get(preset_key, {}),
-                              indexed_levels.get(preset_key, {}),
-                              level_available_presets,
-                              selected_presets)
-                        # preset_val is singular; store and continue loop
-                        else:
-                            spec[index][preset_key] = deepcopy(preset_val)
