@@ -20,6 +20,7 @@ import ruamel.yaml as yaml
 from yspec.YSpecConstructor import YSpecConstructor
 from myplotspec.plugins.InitializePlugin import InitializePlugin
 from myplotspec.plugins.DefaultsPlugin import DefaultsPlugin
+from myplotspec.plugins.PresetsPlugin import PresetsPlugin
 ################################### CLASSES ###################################
 class MYPlotSpecConstructor(YSpecConstructor):
     """
@@ -27,18 +28,14 @@ class MYPlotSpecConstructor(YSpecConstructor):
 
     available_plugins = dict(
       initialize = InitializePlugin,
-      defaults   = DefaultsPlugin)
+      defaults   = DefaultsPlugin,
+      presets    = PresetsPlugin)
+    indexed_levels = """
+      figures:
+          subplots:
+              datasets:"""
     plugin_config = dict(
-      initialize = """
-        indexed_levels:
-          figures:
-              subplots:
-                  datasets:""",
       defaults = """
-        indexed_levels:
-          figures:
-            subplots:
-              datasets:
         defaults:
           figures:
             subplot_kw:
@@ -47,9 +44,60 @@ class MYPlotSpecConstructor(YSpecConstructor):
             subplots:
               hand: stump
               datasets:
-                nay: bama
-      """,
-      presets = """""")
+                nay: bama""",
+      presets = """
+        available_presets:
+          letter:
+            class: target
+            help: Letter (width ≤ 6.5", height ≤ 9.0")
+            figures:
+              fig_width: 100.00
+              subplots:
+                title_fp: 16b
+                datasets:
+                  plot_kw:
+                    lw: 2
+          manuscript:
+            class: target
+            help: Manuscript (width ≤ 7.0", height ≤ 9.167")
+            figures:
+              fig_width: 10.00
+              shared_legend_kw:
+                legend_kw:
+                  title_fp:  8b
+              subplots:
+                title_fp: 8b
+                datasets:
+                  plot_kw:
+                    lw: 1
+          dssp:
+            class: content
+            help: Dynamic secondary structure of proteins calculated by cpptraj
+            figures:
+              shared_legend: True
+              shared_legend_kw:
+                handles:
+                  - ["None",                 {color: [0,0,7]}]
+                  - ["Parallel β Sheet",     {color: [1,0,7]}]
+                  - ["Antiparallel β Sheet", {color: [2,0,7]}]
+                legend_kw:
+                  title: Secondary Structure
+              subplots:
+                ylabel: Residue
+                datasets:
+                  dataset_kw:
+                    downsample_mode: mode
+          perresrmsd:
+            class: content
+            help: Per-residue RMSD calculated by cpptraj
+            figures:
+              shared_legend: False
+              subplots:
+                ylabel: yoop
+                datasets:
+                  dataset_kw:
+                  downsample_mode: mean
+      """)
 
     def __init__(self, source_spec=None, **kwargs):
         """
@@ -59,6 +107,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
         # Identify available plugins and order
         #   Probably read from attribute
         plugins = ["initialize", "defaults", "presets", "manual", "write"]
+        plugins = ["initialize", "defaults", "presets"]
         plugins = ["initialize", "defaults"]
         self.source_spec = yaml_load(source_spec)
         spec = yaml.comments.CommentedMap()
@@ -71,19 +120,13 @@ class MYPlotSpecConstructor(YSpecConstructor):
             print(plugin_name.upper())
             if plugin_name in self.available_plugins:
                 plugin = self.available_plugins[plugin_name](
+                  indexed_levels=yaml_load(self.indexed_levels),
                   **yaml_load(self.plugin_config.get(plugin_name, {})))
                 spec = plugin(spec, self.source_spec)
             else:
                 raise Exception()
             print(yaml_dump(spec))
             print()
-
-        # Should be possible to set defaults and presets from string or file
-        # if os.path.isfile(defaults):
-        #   self.available_defaults = pyyaml.read(defaults)
-        # elif:
-        #   self.available_defaults = defaults
-        # Call construct with kwargs
 
 #################################### MAIN #####################################
 def main():

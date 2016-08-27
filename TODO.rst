@@ -54,9 +54,10 @@ Major Rewrite
         the number and organization of figures, subplots, and datasets
       - Needs some way to inspect dataset classes to look for their own
         presets
+    - MANUAL applies remaining specs from source
+    - ARGS pull arguments from terminal
     - MULTIPLE looks for MULTIPLE settings within each figure; applies
       appropriate arguments
-    - MANUAL applies remaining specs from source
 
       - Reads entire source spec and applies all arguments other than those
         marked by 

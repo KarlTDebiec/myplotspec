@@ -9,6 +9,12 @@
 #   BSD license. See the LICENSE file for details.
 """
 Constructs specification
+
+.. todo:
+    - Move this version to ypec
+    - Write updated version for myplotspec
+      - Must understand nrows, ncols, nsubplots and add those indexes
+      - Must somehow get indexes from presets if present
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
