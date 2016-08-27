@@ -3,7 +3,64 @@ figures:
         subplot_kw:
             axisbg: none
             autoscale_on: false
-        fig_width: 10.0
+        right: 0.15
+        shared_legend_kw:
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.18
+            sub_height: 0.18
+            fp: 7r
+            handle_kw:
+                ls: none
+                marker: s
+                mec: black
+            legend_kw:
+                columnspacing: 1.0
+                ncol: 3
+                loc: 9
+                handletextpad: 0
+                numpoints: 1
+                borderaxespad: 0
+                frameon: false
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.0
+            sub_height: 0.18
+            fp: 7r
+            legend_kw:
+                columnspacing: 2
+                ncol: 2
+                loc: 9
+                handletextpad: 0.5
+                handlelength: 3
+                borderaxespad: 0
+                frameon: false
+                fancybox: true
+                framealpha: 0
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.0
+            sub_height: 0.18
+            fp: 7r
+            axes_kw:
+                axis_bgcolor: none
+            legend_kw:
+                columnspacing: 2
+                ncol: 2
+                loc: 9
+                handletextpad: 0.5
+                handlelength: 3
+                borderaxespad: 0
+                frameon: false
+                fancybox: true
+                framealpha: 1
+        bottom: 0.8
+        sub_width: 2.75
+        title: Mo-WT
+        sub_height: 0.75
         subplots:
             0:
                 title_fp: 8b
@@ -11,21 +68,81 @@ figures:
                     1:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19,
+                                20, 22, 23, 24, 25, 26, 29, 31, 32, 33, 34, 35, 36,
+                                37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 48, 49, 50,
+                                51, 52, 53, 121, 122, 123, 124, 125, 126, 127, 128,
+                                129, 130, 132, 133, 134, 135, 136, 137, 138, 139,
+                                140, 141, 142, 143, 145, 146, 147, 148, 149, 150,
+                                151, 152, 153, 154, 155, 157, 158, 159, 160, 161,
+                                162, 163, 164, 165, 166, 167]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: blue
+                        label: ff15ipq, $SPC/E_b$"
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_100ns.dat
                     2:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19,
+                                20, 22, 23, 24, 25, 26, 29, 31, 32, 33, 34, 35, 36,
+                                37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 48, 49, 50,
+                                51, 52, 53, 121, 122, 123, 124, 125, 126, 127, 128,
+                                129, 130, 132, 133, 134, 135, 136, 137, 138, 139,
+                                140, 141, 142, 143, 145, 146, 147, 148, 149, 150,
+                                151, 152, 153, 154, 155, 157, 158, 159, 160, 161,
+                                162, 163, 164, 165, 166, 167]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: red
+                        label: CHARMM22*, TIP4P-D
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_100ns.dat
                     14:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [64, 65, 67, 70, 71, 72, 73, 74, 75, 76,
+                                77, 79, 80, 82, 84, 85, 86, 88, 89, 90, 91, 92, 93,
+                                100, 102, 103, 106, 107]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: blue
+                        label: ff15ipq, $SPC/E_b$
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_100ns.dat
                     15:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [64, 65, 67, 70, 71, 72, 73, 74, 75, 76,
+                                77, 79, 80, 82, 84, 85, 86, 88, 89, 90, 91, 92, 93,
+                                100, 102, 103, 106, 107]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: red
+                        label: CHARMM22*, TIP4P-D
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_100ns.dat
                 hand: stump
@@ -35,32 +152,127 @@ figures:
                     1:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: blue
+                        column: CVNH tc
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_100ns.dat
                     2:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: red
+                        column: CVNH tc
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_100ns.dat
                     14:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: blue
+                        column: LysM tc
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_100ns.dat
                     15:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: red
+                        column: LysM tc
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_100ns.dat
                 hand: stump
-        shared_legend_kw:
-            legend_kw:
-                title_fp: 8b
+        multiplot: false
+        outfile: mo_relax_pdist.pdf
+        shared_legend: true
+        fig_width: 10.0
+        hspace: 0.4
+        top: 0.25
+        left: 0.35
     1:
         subplot_kw:
             axisbg: none
             autoscale_on: false
-        fig_width: 10.0
+        right: 0.15
+        shared_legend_kw:
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.18
+            sub_height: 0.18
+            fp: 7r
+            handle_kw:
+                ls: none
+                marker: s
+                mec: black
+            legend_kw:
+                columnspacing: 1.0
+                ncol: 3
+                loc: 9
+                handletextpad: 0
+                numpoints: 1
+                borderaxespad: 0
+                frameon: false
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.0
+            sub_height: 0.18
+            fp: 7r
+            legend_kw:
+                columnspacing: 2
+                ncol: 2
+                loc: 9
+                handletextpad: 0.5
+                handlelength: 3
+                borderaxespad: 0
+                frameon: false
+                fancybox: true
+                framealpha: 0
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.0
+            sub_height: 0.18
+            fp: 7r
+            axes_kw:
+                axis_bgcolor: none
+            legend_kw:
+                columnspacing: 2
+                ncol: 2
+                loc: 9
+                handletextpad: 0.5
+                handlelength: 3
+                borderaxespad: 0
+                frameon: false
+                fancybox: true
+                framealpha: 1
+        bottom: 0.8
+        sub_width: 2.75
+        title: Mo-WT
+        sub_height: 0.75
         subplots:
             0:
                 title_fp: 8b
@@ -68,21 +280,81 @@ figures:
                     1:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19,
+                                20, 22, 23, 24, 25, 26, 29, 31, 32, 33, 34, 35, 36,
+                                37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 48, 49, 50,
+                                51, 52, 53, 121, 122, 123, 124, 125, 126, 127, 128,
+                                129, 130, 132, 133, 134, 135, 136, 137, 138, 139,
+                                140, 141, 142, 143, 145, 146, 147, 148, 149, 150,
+                                151, 152, 153, 154, 155, 157, 158, 159, 160, 161,
+                                162, 163, 164, 165, 166, 167]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: blue
+                        label: ff15ipq, $SPC/E_b$"
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_200ns.dat
                     2:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19,
+                                20, 22, 23, 24, 25, 26, 29, 31, 32, 33, 34, 35, 36,
+                                37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 48, 49, 50,
+                                51, 52, 53, 121, 122, 123, 124, 125, 126, 127, 128,
+                                129, 130, 132, 133, 134, 135, 136, 137, 138, 139,
+                                140, 141, 142, 143, 145, 146, 147, 148, 149, 150,
+                                151, 152, 153, 154, 155, 157, 158, 159, 160, 161,
+                                162, 163, 164, 165, 166, 167]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: red
+                        label: CHARMM22*, TIP4P-D
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_200ns.dat
                     14:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [64, 65, 67, 70, 71, 72, 73, 74, 75, 76,
+                                77, 79, 80, 82, 84, 85, 86, 88, 89, 90, 91, 92, 93,
+                                100, 102, 103, 106, 107]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: blue
+                        label: ff15ipq, $SPC/E_b$
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_200ns.dat
                     15:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [64, 65, 67, 70, 71, 72, 73, 74, 75, 76,
+                                77, 79, 80, 82, 84, 85, 86, 88, 89, 90, 91, 92, 93,
+                                100, 102, 103, 106, 107]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: red
+                        label: CHARMM22*, TIP4P-D
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_200ns.dat
                 hand: stump
@@ -92,32 +364,127 @@ figures:
                     1:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: blue
+                        column: CVNH tc
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_200ns.dat
                     2:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: red
+                        column: CVNH tc
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_200ns.dat
                     14:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: blue
+                        column: LysM tc
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_200ns.dat
                     15:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: red
+                        column: LysM tc
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_200ns.dat
                 hand: stump
-        shared_legend_kw:
-            legend_kw:
-                title_fp: 8b
+        multiplot: false
+        outfile: mo_relax_pdist.pdf
+        shared_legend: true
+        fig_width: 10.0
+        hspace: 0.4
+        top: 0.25
+        left: 0.35
     2:
         subplot_kw:
             axisbg: none
             autoscale_on: false
-        fig_width: 10.0
+        right: 0.15
+        shared_legend_kw:
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.18
+            sub_height: 0.18
+            fp: 7r
+            handle_kw:
+                ls: none
+                marker: s
+                mec: black
+            legend_kw:
+                columnspacing: 1.0
+                ncol: 3
+                loc: 9
+                handletextpad: 0
+                numpoints: 1
+                borderaxespad: 0
+                frameon: false
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.0
+            sub_height: 0.18
+            fp: 7r
+            legend_kw:
+                columnspacing: 2
+                ncol: 2
+                loc: 9
+                handletextpad: 0.5
+                handlelength: 3
+                borderaxespad: 0
+                frameon: false
+                fancybox: true
+                framealpha: 0
+          - spines: false
+            left: 0.0
+            sub_width: 3.25
+            bottom: 0.0
+            sub_height: 0.18
+            fp: 7r
+            axes_kw:
+                axis_bgcolor: none
+            legend_kw:
+                columnspacing: 2
+                ncol: 2
+                loc: 9
+                handletextpad: 0.5
+                handlelength: 3
+                borderaxespad: 0
+                frameon: false
+                fancybox: true
+                framealpha: 1
+        bottom: 0.8
+        sub_width: 2.75
+        title: Mo-WT
+        sub_height: 0.75
         subplots:
             0:
                 title_fp: 8b
@@ -125,21 +492,81 @@ figures:
                     1:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19,
+                                20, 22, 23, 24, 25, 26, 29, 31, 32, 33, 34, 35, 36,
+                                37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 48, 49, 50,
+                                51, 52, 53, 121, 122, 123, 124, 125, 126, 127, 128,
+                                129, 130, 132, 133, 134, 135, 136, 137, 138, 139,
+                                140, 141, 142, 143, 145, 146, 147, 148, 149, 150,
+                                151, 152, 153, 154, 155, 157, 158, 159, 160, 161,
+                                162, 163, 164, 165, 166, 167]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: blue
+                        label: ff15ipq, $SPC/E_b$"
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_500ns.dat
                     2:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [7, 8, 9, 10, 12, 14, 15, 16, 17, 18, 19,
+                                20, 22, 23, 24, 25, 26, 29, 31, 32, 33, 34, 35, 36,
+                                37, 38, 39, 40, 41, 42, 43, 44, 45, 47, 48, 49, 50,
+                                51, 52, 53, 121, 122, 123, 124, 125, 126, 127, 128,
+                                129, 130, 132, 133, 134, 135, 136, 137, 138, 139,
+                                140, 141, 142, 143, 145, 146, 147, 148, 149, 150,
+                                151, 152, 153, 154, 155, 157, 158, 159, 160, 161,
+                                162, 163, 164, 165, 166, 167]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: red
+                        label: CHARMM22*, TIP4P-D
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_500ns.dat
                     14:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [64, 65, 67, 70, 71, 72, 73, 74, 75, 76,
+                                77, 79, 80, 82, 84, 85, 86, 88, 89, 90, 91, 92, 93,
+                                100, 102, 103, 106, 107]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: blue
+                        label: ff15ipq, $SPC/E_b$
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_500ns.dat
                     15:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            use_indexes: [64, 65, 67, 70, 71, 72, 73, 74, 75, 76,
+                                77, 79, 80, 82, 84, 85, 86, 88, 89, 90, 91, 92, 93,
+                                100, 102, 103, 106, 107]
+                            pdist_kw:
+                                bandwidth: 0.3
+                                columns: [r2/r1]
+                            cls: moldynplot.Dataset.RelaxSequenceDataset
+                        color: red
+                        label: CHARMM22*, TIP4P-D
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_500ns.dat
                 hand: stump
@@ -149,27 +576,65 @@ figures:
                     1:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: blue
+                        column: CVNH tc
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_500ns.dat
                     2:
                         plot_kw:
                             lw: 1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: red
+                        column: CVNH tc
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_500ns.dat
                     14:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: blue
+                        column: LysM tc
+                        draw_mean: true
                         nay: bama
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_500ns.dat
                     15:
                         plot_kw:
                             lw: 1
+                            alpha: 0.1
+                        dataset_kw:
+                            calc_pdist: true
+                            pdist_kw:
+                                bandwidth: 0.3
+                            cls: moldynplot.Dataset.TimeSeriesDataset
+                        color: red
+                        column: LysM tc
+                        draw_mean: true
                         nay: bama
                         infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_500ns.dat
                 hand: stump
-        shared_legend_kw:
-            legend_kw:
-                title_fp: 8b
+        multiplot: false
+        outfile: mo_relax_pdist.pdf
+        shared_legend: true
+        fig_width: 10.0
+        hspace: 0.4
+        top: 0.25
+        left: 0.35
 yumbo: elephant
 herp: derp
 perp:

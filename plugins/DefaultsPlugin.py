@@ -76,14 +76,17 @@ class DefaultsPlugin(YSpecPlugin):
         """
         from copy import deepcopy
 
+        # Process arguments
         if defaults is None:
             return
+        if indexed_levels is None:
+            indexed_levels = {}
 
         # Loop over default argument keys and values at this level
         for default_key, default_val in defaults.items():
 
             # This level is indexed; loop over indexes as well
-            if indexed_levels is not None and default_key in indexed_levels:
+            if default_key in indexed_levels:
                 for index in sorted([k for k in spec[default_key]
                 if str(k).isdigit()]):
                     self.process_level(

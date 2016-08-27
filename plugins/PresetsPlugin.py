@@ -83,13 +83,11 @@ class PresetsPlugin(YSpecPlugin):
         """
         from copy import deepcopy
 
+        # Process arguments
         if available_presets is None:
             return
         if indexed_levels is None:
             indexed_levels = {}
-
-        # Determine selected presets, including those inherited from a
-        # parent level and those first selected at this level
         if selected_presets is None:
             selected_presets = []
         else:
@@ -99,8 +97,6 @@ class PresetsPlugin(YSpecPlugin):
                 if preset in selected_presets:
                     selected_presets.remove(preset)
                 selected_presets += [preset]
-        # Even if no presets are selected, cannot return here, because
-        # lower levels may activate presets
 
         # Loop over presets that are currently selected
         for selected_preset in selected_presets:
@@ -112,7 +108,7 @@ class PresetsPlugin(YSpecPlugin):
             for k, v in available_presets[selected_preset].items()
             if not k.startswith("_")]:
                 # This key is indexed; use indexed function
-                if indexed_levels is not None and preset_key in indexed_levels:
+                if preset_key in indexed_levels:
                     # Make new dict of available_presets including only
                     # those applicable to the next level
                     for index in sorted([k for k in spec[preset_key]

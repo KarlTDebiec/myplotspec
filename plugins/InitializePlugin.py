@@ -69,6 +69,7 @@ class InitializePlugin(YSpecPlugin):
           indexed_levels (dict): Indexed levels below current level
         """
 
+        # Process arguments
         if indexed_levels is None:
             return
 

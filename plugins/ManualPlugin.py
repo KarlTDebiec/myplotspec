@@ -64,12 +64,24 @@ class ManualPlugin(YSpecPlugin):
         """
         from copy import deepcopy
 
+        # Process arguments
+        if indexed_levels is None:
+            indexed_levels = {}
+
         # Loop over source argument keys and values at this level
         for source_key, source_val in source_spec.items():
-            print(source_key)
 
             # This level is indexed; loop over indexes as well
-            if indexed_levels is not None and source_key in indexed_levels:
+            if source_key in indexed_levels:
+                # Apply arguments from "all" before arguments from specific
+                # indexes
+                if "all" in source_spec.get(source_key, {}):
+                    for index in sorted([k for k in spec[source_key]
+                    if str(k).isdigit()]):
+                        self.process_level(
+                          spec[source_key][index],
+                          source_spec[source_key]["all"],
+                          indexed_levels.get(source_key, {}))
                 for index in sorted([k for k in spec[source_key]
                 if str(k).isdigit()]):
                     self.process_level(
