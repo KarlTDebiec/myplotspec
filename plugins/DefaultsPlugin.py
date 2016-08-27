@@ -35,7 +35,7 @@ class DefaultsPlugin(YSpecPlugin):
     """
     name = "defaults"
 
-    def __init__(self, indexed_levels=None, defaults=None,**kwargs):
+    def __init__(self, indexed_levels=None, defaults=None, **kwargs):
         """
         """
         if indexed_levels is not None:
@@ -49,7 +49,7 @@ class DefaultsPlugin(YSpecPlugin):
 
     def __call__(self, spec, source_spec=None, **kwargs):
         """
-        Apply settings to spec here
+        Adds default arguments to a nascent spec.
 
         Arguments:
           spec (dict): Nascent spec
@@ -57,7 +57,7 @@ class DefaultsPlugin(YSpecPlugin):
             defaults should be added
 
         Returns:
-          dict: Update spec including default arguments
+          dict: Updated spec including default arguments
         """
         if source_spec is not None:
             self.process_level(spec, source_spec, self.indexed_levels,
@@ -71,49 +71,50 @@ class DefaultsPlugin(YSpecPlugin):
         Arguments:
           spec (dict): Nascent spec at current level
           source_spec (dict): Source spec at current level
-          indexed_levels (dict): Indexed levels within current level
+          indexed_levels (dict): Indexed levels below current level
           defaults (dict): Defaults within current level
         """
 
-        if defaults is not None:
+        if defaults is None:
+            return
 
-            # Loop over default argument keys and values at this level
-            for key, value in defaults.items():
+        # Loop over default argument keys and values at this level
+        for key, value in defaults.items():
 
-                # This level is indexed; loop over next level here as well
-                if indexed_levels is not None and key in indexed_levels:
-                    # No need to loop through indexes if none present
-                    if key not in spec:
-                        continue
-                    # Loop over indexes
-                    i_keys = spec[key].keys()
-                    i_keys = sorted([k for k in i_keys if str(k).isdigit()])
-                    for i_key in i_keys:
-                        # Add dict in which to store argument values
-                        if i_key not in spec[key]:
-                            spec[key][i_key] = {}
-                        # Argument value is a dict; recurse
-                        if isinstance(value, dict):
-                            self.process_level(
-                              spec[key][i_key],
-                              source_spec[key][i_key],
-                              indexed_levels.get(key, {}),
-                              value)
-                        # Argument value is singular; store and continue loop
-                        else:
-                            spec[key][i_key] = value
-                # This level is not indexed
-                else:
+            # This level is indexed; loop over next level here as well
+            if indexed_levels is not None and key in indexed_levels:
+                # No need to loop through indexes if none present
+                if key not in spec:
+                    continue
+                # Loop over indexes
+                i_keys = spec[key].keys()
+                i_keys = sorted([k for k in i_keys if str(k).isdigit()])
+                for i_key in i_keys:
+                    # Add dict in which to store argument values
+                    if i_key not in spec[key]:
+                        spec[key][i_key] = {}
                     # Argument value is a dict; recurse
                     if isinstance(value, dict):
-                        # Add dict in which to store argument values
-                        if key not in spec:
-                            spec[key] = {}
                         self.process_level(
-                          spec[key],
-                          source_spec.get(key, {}),
+                          spec[key][i_key],
+                          source_spec[key][i_key],
                           indexed_levels.get(key, {}),
                           value)
                     # Argument value is singular; store and continue loop
                     else:
-                        spec[key] = value
+                        spec[key][i_key] = value
+            # This level is not indexed
+            else:
+                # Argument value is a dict; recurse
+                if isinstance(value, dict):
+                    # Add dict in which to store argument values
+                    if key not in spec:
+                        spec[key] = {}
+                    self.process_level(
+                      spec[key],
+                      source_spec.get(key, {}),
+                      indexed_levels.get(key, {}),
+                      value)
+                # Argument value is singular; store and continue loop
+                else:
+                    spec[key] = value
