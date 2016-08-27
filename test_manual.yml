@@ -12,18 +12,22 @@ figures:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_100ns.dat
                     2:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_100ns.dat
                     14:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_100ns.dat
                     15:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_100ns.dat
                 hand: stump
             1:
                 title_fp: 8b
@@ -32,18 +36,22 @@ figures:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_100ns.dat
                     2:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_100ns.dat
                     14:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_100ns.dat
                     15:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_100ns.dat
                 hand: stump
         shared_legend_kw:
             legend_kw:
@@ -61,18 +69,22 @@ figures:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_200ns.dat
                     2:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_200ns.dat
                     14:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_200ns.dat
                     15:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_200ns.dat
                 hand: stump
             1:
                 title_fp: 8b
@@ -81,18 +93,22 @@ figures:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_200ns.dat
                     2:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_200ns.dat
                     14:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_200ns.dat
                     15:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_200ns.dat
                 hand: stump
         shared_legend_kw:
             legend_kw:
@@ -110,18 +126,22 @@ figures:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_500ns.dat
                     2:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_500ns.dat
                     14:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/relax_500ns.dat
                     15:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/relax_500ns.dat
                 hand: stump
             1:
                 title_fp: 8b
@@ -130,18 +150,22 @@ figures:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_500ns.dat
                     2:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_500ns.dat
                     14:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rotdif_500ns.dat
                     15:
                         plot_kw:
                             lw: 1
                         nay: bama
+                        infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rotdif_500ns.dat
                 hand: stump
         shared_legend_kw:
             legend_kw:
@@ -150,3 +174,4 @@ yumbo: elephant
 herp: derp
 perp:
     merp: sperp
+presets: [manuscript]

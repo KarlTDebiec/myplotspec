@@ -1,4 +1,4 @@
-presets: [manuscript, dssp]
+presets: [manuscript]
 figures:
     all:
         outfile: mo_relax_pdist.pdf
@@ -66,7 +66,6 @@ figures:
                 framealpha: 1
         title: "Mo-WT"
         subplots:
-            presets: dssp
             0:
                 datasets:
                     all:
@@ -78,7 +77,6 @@ figures:
                                 bandwidth: 0.3
                                 columns: ["r2/r1"]
                     0:
-                        presets: perresrmsd
                         infile: $PROJ_ROOT/protein/MOCVNHLYSM/analysis_relax/MOCVNHLYSM_600.dat
                         label: "Experiment"
                         color: green

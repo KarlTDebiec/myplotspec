@@ -15,12 +15,12 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 if __name__ == "__main__":
     __package__ = str("myplotspec")
     import myplotspec
-from IPython import embed
 import ruamel.yaml as yaml
 from yspec.YSpecConstructor import YSpecConstructor
 from myplotspec.plugins.InitializePlugin import InitializePlugin
 from myplotspec.plugins.DefaultsPlugin import DefaultsPlugin
 from myplotspec.plugins.PresetsPlugin import PresetsPlugin
+from myplotspec.plugins.ManualPlugin import ManualPlugin
 ################################### CLASSES ###################################
 class MYPlotSpecConstructor(YSpecConstructor):
     """
@@ -29,7 +29,8 @@ class MYPlotSpecConstructor(YSpecConstructor):
     available_plugins = dict(
       initialize = InitializePlugin,
       defaults   = DefaultsPlugin,
-      presets    = PresetsPlugin)
+      presets    = PresetsPlugin,
+      manual     = ManualPlugin)
     indexed_levels = """
       figures:
           subplots:
@@ -112,7 +113,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
         # Identify available plugins and order
         #   Probably read from attribute
         plugins = ["initialize", "defaults", "presets", "manual", "write"]
-        plugins = ["initialize", "defaults", "presets"]
+        plugins = ["initialize", "defaults", "presets", "manual"]
         self.source_spec = yaml_load(source_spec)
         spec = yaml.comments.CommentedMap()
 
