@@ -37,6 +37,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
     plugin_config = dict(
       defaults = """
         defaults:
+          yumbo: elephant
           figures:
             subplot_kw:
               autoscale_on: False
@@ -107,7 +108,6 @@ class MYPlotSpecConstructor(YSpecConstructor):
         # Identify available plugins and order
         #   Probably read from attribute
         plugins = ["initialize", "defaults", "presets", "manual", "write"]
-        plugins = ["initialize", "defaults", "presets"]
         plugins = ["initialize", "defaults"]
         self.source_spec = yaml_load(source_spec)
         spec = yaml.comments.CommentedMap()
