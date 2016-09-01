@@ -1058,7 +1058,6 @@ class FigureManager(object):
           help     = "Selected preset(s)")
 
         seaborn = parser.add_mutually_exclusive_group()
-
         seaborn.add_argument(
           "-S",
           "--seaborn",
@@ -1066,7 +1065,6 @@ class FigureManager(object):
           const    = 2,
           default  = 0,
           help     = "Enable seaborn, overriding matplotlib defaults")
-
         seaborn.add_argument(
           "-s",
           "--seaborn-apionly",
@@ -1077,14 +1075,12 @@ class FigureManager(object):
           help     = "Enable seaborn without overriding matplotlib defaults")
 
         verbosity = parser.add_mutually_exclusive_group()
-
         verbosity.add_argument(
           "-v",
           "--verbose",
           action   = "count",
           default  = 1,
           help     = "Enable verbose output, may be specified more than once")
-
         verbosity.add_argument(
           "-q",
           "--quiet",
