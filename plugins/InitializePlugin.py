@@ -83,7 +83,7 @@ class InitializePlugin(YSpecPlugin):
                 continue
             if level not in spec:
                 spec[level] = yaml.comments.CommentedMap()
-            # Loop over indexes
+            # Loop over indexes first
             for index in sorted([k for k in source_spec[level]
                          if str(k).isdigit()]):
                 # Add dict in which to store lower levels
@@ -93,3 +93,12 @@ class InitializePlugin(YSpecPlugin):
                   source_spec[level][index],
                   indexed_levels.get(level, {}),
                   path=path+[level, index])
+            # Descend into "all" now that indexes are present
+            if "all" in source_spec.get(level, {}):
+                for index in sorted([k for k in source_spec[level]
+                             if str(k).isdigit()]):
+                    self.process_level(
+                      spec[level][index],
+                      source_spec[level]["all"],
+                      indexed_levels.get(level, {}),
+                      path=path+[level, index])
