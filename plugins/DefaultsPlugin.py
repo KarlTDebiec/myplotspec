@@ -33,6 +33,8 @@ class DefaultsPlugin(YSpecPlugin):
       defaults (dict): Default arguments
     """
     name = "defaults"
+    description = """Adds default arguments based on structure observed
+      in nascent spec."""
 
     def __init__(self, indexed_levels=None, defaults=None, **kwargs):
         """

@@ -36,6 +36,8 @@ class PresetsPlugin(YSpecPlugin):
         with each preset
     """
     name = "presets"
+    description = """Add selected group(s) of 'preset' arguments to nascent
+      spec."""
 
     def __init__(self, indexed_levels=None, available_presets=None,**kwargs):
         """

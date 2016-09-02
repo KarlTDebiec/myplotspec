@@ -1,0 +1,123 @@
+preset: [manuscript, pdist, rmsd]
+figures:
+    0:
+        outfile: mo_rmsd.pdf
+        ncols: 2
+        nrows: 4
+        multiplot: True
+        left:       0.400
+        sub_width:  2.575
+        wspace:     0.650
+        right:      0.800
+        top:        0.250
+        sub_height: 1.000
+        hspace:     0.100
+        bottom:     0.650
+        shared_ylabel: "Backbone RMSD (Å)"
+        shared_ylabel_kw:
+            left:     -0.30
+        shared_legend_kw:
+            left:       0.40
+            sub_width:  6.35
+            sub_height: 0.25
+            legend_kw:
+                columnspacing: 1
+        multi_xticklabels: [0,1,2,3,4,5,6,7,8]
+        multi_yticklabels: [0,1,2,3,4,5]
+        subplots:
+            all:
+                xbound: [0,7.3]
+                xticks: [0,1,2,3,4,5,6,7]
+                ylabel:
+                yticks: [0,1,2,3,4,5]
+                datasets:
+                    all:
+                        dataset_kw:
+                        partner_kw:
+                            yticks: [0,1,2,3,4,5]
+                            wspace:    0.05
+                            sub_width: 0.50
+                            xlabel:
+                            tick_params:
+                                bottom: off
+                        plot_kw:
+                            rasterized: True
+                        draw_mean: True
+                    0:
+                        dataset_kw:
+                            dt: 0.000001
+                            downsample: 1000
+                        color: blue
+                    1:
+                        dataset_kw:
+                            dt: 0.000105
+                            downsample: 10
+                        color: red
+            0:
+                title: "CVNH Domain"
+                datasets:
+                    0: {infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rmsd_2L9Y_CVNH.dat}
+                    1: {infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rmsd_2L9Y_CVNH.dat}
+            1:
+                title: "LysM Domain"
+                datasets:
+                    0:
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rmsd_2L9Y_LYSM.dat
+                        partner_kw:
+                            y2label: "Mo-WT"
+                            y2ticks: []
+                    1: {infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-WT_CHARMM22STAR_TIP4PD/rmsd_2L9Y_LYSM.dat}
+            2:
+                datasets:
+                    0: {infile: $PROJ_ROOT/protein/MOCVNHLYSM2G/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rmsd_2L9Y_CVNH.dat}
+                    1: {infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-2G_CHARMM22STAR_TIP4PD/rmsd_2L9Y_CVNH.dat}
+            3:
+                datasets:
+                    0:
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM2G/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rmsd_2L9Y_LYSM.dat
+                        partner_kw:
+                            y2label: "Mo-2G"
+                            y2ticks: []
+                    1: {infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-2G_CHARMM22STAR_TIP4PD/rmsd_2L9Y_LYSM.dat}
+            4:
+                datasets:
+                    0: {infile: $PROJ_ROOT/protein/MOCVNHLYSM0G/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rmsd_2L9Y_CVNH.dat}
+                    1: {infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-0G_CHARMM22STAR_TIP4PD/rmsd_2L9Y_CVNH.dat}
+            5:
+                datasets:
+                    0:
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSM0G/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rmsd_2L9Y_LYSM.dat
+                        partner_kw:
+                            y2label: "Mo-0G"
+                            y2ticks: []
+                    1: {infile: /Volumes/KDebiecSSD/ANTON/analysis/CL-0G_CHARMM22STAR_TIP4PD/rmsd_2L9Y_LYSM.dat}
+            6:
+                xlabel: "Time (µs)"
+                datasets:
+                    0:
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSMXRAY/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rmsd_2L9Y_CVNH.dat
+                        partner_kw:
+                            xlabel: "Distribution"
+                            tick_params:
+                                bottom: "on"
+                    1:
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSMXRAY/charmm22star_tip4pd/analysis/rmsd_2L9Y_CVNH.dat
+                        dataset_kw:
+                            dt: 0.000001
+                            downsample: 1000
+            7:
+                xlabel: "Time (µs)"
+                datasets:
+                    0:
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSMXRAY/ff15ipq10.3_spceb_T_tau_10.0ps/analysis/rmsd_2L9Y_LYSM.dat
+                        partner_kw:
+                            xlabel:  "Distribution"
+                            y2label: "Mo-0v"
+                            y2ticks: []
+                            tick_params:
+                                bottom: "on"
+                    1:
+                        infile: $PROJ_ROOT/protein/MOCVNHLYSMXRAY/charmm22star_tip4pd/analysis/rmsd_2L9Y_LYSM.dat
+                        dataset_kw:
+                            dt: 0.000001
+                            downsample: 1000

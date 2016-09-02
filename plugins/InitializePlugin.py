@@ -33,6 +33,8 @@ class InitializePlugin(YSpecPlugin):
         additional layer of indexes below them
     """
     name = "initialize"
+    description = """Initializes indexed levels of nascent spec based on
+      structure present in source spec."""
 
     def __init__(self, indexed_levels=None, **kwargs):
         """
@@ -58,7 +60,7 @@ class InitializePlugin(YSpecPlugin):
             self.process_level(spec, source_spec, self.indexed_levels)
         return spec
 
-    def process_level(self, spec, source_spec, indexed_levels):
+    def process_level(self, spec, source_spec, indexed_levels, path=None):
         """
         Initialize one level of spec hierarchy
 
@@ -66,11 +68,14 @@ class InitializePlugin(YSpecPlugin):
           spec (dict): Nascent spec at current level
           source_spec (dict): Source spec at current level
           indexed_levels (dict): Indexed levels below current level
+          path (list): List of keys leading to this level
         """
 
         # Process arguments
         if indexed_levels is None or source_spec is None:
             return
+        if path is None:
+            path = []
 
         # Loop over indexed levels at this level
         for level in [k for k in indexed_levels if k in source_spec]:
@@ -80,10 +85,11 @@ class InitializePlugin(YSpecPlugin):
                 spec[level] = yaml.comments.CommentedMap()
             # Loop over indexes
             for index in sorted([k for k in source_spec[level]
-            if str(k).isdigit()]):
+                         if str(k).isdigit()]):
                 # Add dict in which to store lower levels
                 spec[level][index] = yaml.comments.CommentedMap()
                 self.process_level(
                   spec[level][index],
                   source_spec[level][index],
-                  indexed_levels.get(level, {}))
+                  indexed_levels.get(level, {}),
+                  path=path+[level, index])
