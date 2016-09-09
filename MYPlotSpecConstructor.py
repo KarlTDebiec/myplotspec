@@ -22,14 +22,14 @@ class MYPlotSpecConstructor(YSpecConstructor):
     """
     from collections import OrderedDict
     from .plugins.MPSInitializePlugin import MPSInitializePlugin
-    from .plugins.DefaultsPlugin import DefaultsPlugin
-    from .plugins.PresetsPlugin import PresetsPlugin
+    from .plugins.MPSDefaultsPlugin import MPSDefaultsPlugin
+    from .plugins.MPSPresetsPlugin import MPSPresetsPlugin
     from .yspec.plugins.ManualPlugin import ManualPlugin
 
     available_plugins = OrderedDict(
       initialize = MPSInitializePlugin,
-      defaults   = DefaultsPlugin,
-      presets    = PresetsPlugin,
+      defaults   = MPSDefaultsPlugin,
+      presets    = MPSPresetsPlugin,
       manual     = ManualPlugin)
     default_plugins = ["initialize", "defaults"]
     indexed_levels = """

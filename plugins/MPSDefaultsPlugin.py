@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   myplotspec.plugins.DefaultsPlugin.py
+#   myplotspec.plugins.MPSDefaultsPlugin.py
 #
 #   Copyright (C) 2015-2016 Karl T Debiec
 #   All rights reserved.
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 import ruamel.yaml as yaml
 from ..yspec.plugins import YSpecPlugin
 ################################### CLASSES ###################################
-class DefaultsPlugin(YSpecPlugin):
+class MPSDefaultsPlugin(YSpecPlugin):
     """
     Adds default arguments to a nascent spec.
 

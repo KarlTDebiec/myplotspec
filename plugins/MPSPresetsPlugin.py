@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   myplotspec.plugins.PresetsPlugin.py
+#   myplotspec.plugins.MPSPresetsPlugin.py
 #
 #   Copyright (C) 2015-2016 Karl T Debiec
 #   All rights reserved.
@@ -23,7 +23,7 @@ import six
 import ruamel.yaml as yaml
 from ..yspec.plugins import YSpecPlugin
 ################################### CLASSES ###################################
-class PresetsPlugin(YSpecPlugin):
+class MPSPresetsPlugin(YSpecPlugin):
     """
     Adds preset argument groups to a nascent spec
 
