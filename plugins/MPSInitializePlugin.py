@@ -20,9 +20,9 @@ if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
     import myplotspec.plugins
 import ruamel.yaml as yaml
-from ..yspec.plugins import YSpecPlugin
+from ..yspec.plugins.InitializePlugin import InitializePlugin
 ################################### CLASSES ###################################
-class MPSInitializePlugin(YSpecPlugin):
+class MPSInitializePlugin(InitializePlugin):
     """
     Initializes a nascent spec.
 
@@ -35,33 +35,6 @@ class MPSInitializePlugin(YSpecPlugin):
       indexed_levels (dict): Levels of spec hierarchy that include an
         additional layer of indexes below them
     """
-    name = "initialize"
-    description = """Initializes indexed levels of nascent spec based on
-      structure present in source spec."""
-
-    def __init__(self, indexed_levels=None, **kwargs):
-        """
-        """
-        if indexed_levels is not None:
-            self.indexed_levels = indexed_levels
-        else:
-            self.indexed_levels = {}
-
-    def __call__(self, spec, source_spec=None, **kwargs):
-        """
-        Initializes a nascent spec.
-
-        Arguments:
-          spec (dict): Nascent spec (typically {} at this time)
-          source_spec (dict): Source spec to use to determine initial
-            structure
-
-        Returns:
-          dict: Initialized spec
-        """
-        if source_spec is not None:
-            self.process_level(spec, source_spec, self.indexed_levels)
-        return spec
 
     def process_level(self, spec, source_spec, indexed_levels, path=None):
         """
