@@ -1,8 +1,11 @@
 preset: [manuscript, pdist, rmsd]
 figures:
+    all:
+        subplots:
+            grid:
+                nrows: 3
+                ncols: 4
     0:
-        nrows: 2
-        ncols: 3
         subplots:
             all:
                 xbound: [0,7.3]
@@ -21,3 +24,8 @@ figures:
                 xlabel: "Time (µs)"
             7:
                 xlabel: "Time (µs)"
+    1:
+        subplots:
+            all:
+                datasets:
+                    10:

@@ -21,16 +21,17 @@ class MYPlotSpecConstructor(YSpecConstructor):
     """
     """
     from collections import OrderedDict
-    from .plugins.InitializePlugin import InitializePlugin
+    from .plugins.MPSInitializePlugin import MPSInitializePlugin
     from .plugins.DefaultsPlugin import DefaultsPlugin
     from .plugins.PresetsPlugin import PresetsPlugin
     from .yspec.plugins.ManualPlugin import ManualPlugin
 
     available_plugins = OrderedDict(
-      initialize = InitializePlugin,
+      initialize = MPSInitializePlugin,
       defaults   = DefaultsPlugin,
       presets    = PresetsPlugin,
       manual     = ManualPlugin)
+    default_plugins = ["initialize", "defaults"]
     indexed_levels = """
       figures:
           subplots:

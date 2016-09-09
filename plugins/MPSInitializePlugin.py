@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#   myplotspec.plugins.InitializePlugin.py
+#   myplotspec.plugins.MPSInitializePlugin.py
 #
 #   Copyright (C) 2015-2016 Karl T Debiec
 #   All rights reserved.
@@ -11,9 +11,7 @@
 Initializes a nascent spec.
 
 .. todo:
-    - Write updated version for myplotspec
-      - Must understand nrows, ncols, nsubplots and add those indexes
-      - Must somehow get indexes from presets if present
+  - Somehow get indexes from presets if present
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -23,7 +21,7 @@ if __name__ == "__main__":
 import ruamel.yaml as yaml
 from ..yspec.plugins import YSpecPlugin
 ################################### CLASSES ###################################
-class InitializePlugin(YSpecPlugin):
+class MPSInitializePlugin(YSpecPlugin):
     """
     Initializes a nascent spec.
 
@@ -69,6 +67,13 @@ class InitializePlugin(YSpecPlugin):
           source_spec (dict): Source spec at current level
           indexed_levels (dict): Indexed levels below current level
           path (list): List of keys leading to this level
+          source_spec[grid][nrows] (int, optional): Number of rows of subplots
+            to add
+          source_spec[grid][ncols] (int, optional): Number of columns of
+            subplots to add
+          source_spec[grid][nsubplots] (int, optional): Number of subplots to
+            add; if less than nrows*ncols (e.g. 2 cols and 2 rows but
+            only three subplots)
         """
 
         # Process arguments
@@ -83,22 +88,35 @@ class InitializePlugin(YSpecPlugin):
                 continue
             if level not in spec:
                 spec[level] = yaml.comments.CommentedMap()
+            indexes = sorted(list(set([k for k in source_spec[level]
+              if str(k).isdigit()])))
+            # Handle grid of subplots
+            if level == "subplots" and "grid" in source_spec.get(level, {}):
+                grid = source_spec[level]["grid"]
+                nrows     = grid.get("nrows", 1)
+                ncols     = grid.get("ncols", 1)
+                nsubplots = min(grid.get("nsubplots", nrows*ncols),
+                             nrows*ncols)
+                indexes = sorted(list(set(indexes + range(nsubplots))))
             # Loop over indexes first
-            for index in sorted([k for k in source_spec[level]
-                         if str(k).isdigit()]):
-                # Add dict in which to store lower levels
-                spec[level][index] = yaml.comments.CommentedMap()
-                self.process_level(
-                  spec[level][index],
-                  source_spec[level][index],
-                  indexed_levels.get(level, {}),
-                  path=path+[level, index])
             # Descend into "all" now that indexes are present
             if "all" in source_spec.get(level, {}):
-                for index in sorted([k for k in source_spec[level]
-                             if str(k).isdigit()]):
+                all_indexes = sorted(list(set(indexes +
+                  [k for k in spec[level] if str(k).isdigit()])))
+                for index in all_indexes:
+                    if index not in spec[level]:
+                        spec[level][index] = yaml.comments.CommentedMap()
                     self.process_level(
                       spec[level][index],
                       source_spec[level]["all"],
                       indexed_levels.get(level, {}),
                       path=path+[level, index])
+            for index in indexes:
+                # Add dict in which to store lower levels
+                if index not in spec[level]:
+                    spec[level][index] = yaml.comments.CommentedMap()
+                self.process_level(
+                  spec[level][index],
+                  source_spec[level].get(index, {}),
+                  indexed_levels.get(level, {}),
+                  path=path+[level, index])
