@@ -21,9 +21,9 @@ if __name__ == "__main__":
     import myplotspec.plugins
 import six
 import ruamel.yaml as yaml
-from ..yspec.plugins import YSpecPlugin
+from ..yspec.plugins.PresetsPlugin import PresetsPlugin
 ################################### CLASSES ###################################
-class MPSPresetsPlugin(YSpecPlugin):
+class MPSPresetsPlugin(PresetsPlugin):
     """
     Adds preset argument groups to a nascent spec
 

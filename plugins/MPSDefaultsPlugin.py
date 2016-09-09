@@ -20,9 +20,9 @@ if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
     import myplotspec.plugins
 import ruamel.yaml as yaml
-from ..yspec.plugins import YSpecPlugin
+from ..yspec.plugins.DefaultsPlugin import DefaultsPlugin
 ################################### CLASSES ###################################
-class MPSDefaultsPlugin(YSpecPlugin):
+class MPSDefaultsPlugin(DefaultsPlugin):
     """
     Adds default arguments to a nascent spec.
 
