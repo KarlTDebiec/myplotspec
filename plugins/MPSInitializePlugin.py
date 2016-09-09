@@ -12,6 +12,7 @@ Initializes a nascent spec.
 
 .. todo:
   - Somehow get indexes from presets if present
+  - Intersphinx documentation
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -24,6 +25,10 @@ from ..yspec.plugins import YSpecPlugin
 class MPSInitializePlugin(YSpecPlugin):
     """
     Initializes a nascent spec.
+
+    Differs from yspec's InitializePlugin through the addition of
+    support for initializing a grid of subplots based on arguments
+    defined under figures/INDEX/subplots/grid
 
     Attributes
       name (str): Name of this plugin
@@ -98,8 +103,7 @@ class MPSInitializePlugin(YSpecPlugin):
                 nsubplots = min(grid.get("nsubplots", nrows*ncols),
                              nrows*ncols)
                 indexes = sorted(list(set(indexes + range(nsubplots))))
-            # Loop over indexes first
-            # Descend into "all" now that indexes are present
+            # Apply "all" to all indexes
             if "all" in source_spec.get(level, {}):
                 all_indexes = sorted(list(set(indexes +
                   [k for k in spec[level] if str(k).isdigit()])))
@@ -111,6 +115,7 @@ class MPSInitializePlugin(YSpecPlugin):
                       source_spec[level]["all"],
                       indexed_levels.get(level, {}),
                       path=path+[level, index])
+            # Loop over specific indexes
             for index in indexes:
                 # Add dict in which to store lower levels
                 if index not in spec[level]:
