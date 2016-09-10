@@ -32,38 +32,6 @@ class MPSDefaultsPlugin(DefaultsPlugin):
         additional layer of indexes below them
       defaults (dict): Default arguments
     """
-    name = "defaults"
-    description = """Adds default arguments based on structure observed
-      in nascent spec."""
-
-    def __init__(self, indexed_levels=None, defaults=None, **kwargs):
-        """
-        """
-        if indexed_levels is not None:
-            self.indexed_levels = indexed_levels
-        else:
-            self.indexed_levels = {}
-        if defaults is not None:
-            self.defaults = defaults
-        else:
-            self.defaults = {}
-
-    def __call__(self, spec, source_spec=None, **kwargs):
-        """
-        Adds default arguments to a nascent spec.
-
-        Arguments:
-          spec (dict): Nascent spec
-          source_spec (dict): Source spec to use to determine where
-            defaults should be added
-
-        Returns:
-          dict: Updated spec including default arguments
-        """
-        if source_spec is not None:
-            self.process_level(spec, source_spec, self.indexed_levels,
-              self.defaults)
-        return spec
 
     def process_level(self, spec, source_spec, indexed_levels, defaults):
         """

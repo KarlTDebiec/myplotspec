@@ -38,7 +38,12 @@ class MYPlotSpecConstructor(YSpecConstructor):
               datasets:"""
     plugin_config = dict(
       defaults = """
-        defaults:""",
+        defaults:
+          figures:
+            subplots:
+              datasets:
+                nay: bama
+      """,
       presets = """
         available_presets:
           letter:
@@ -173,7 +178,8 @@ class MYPlotSpecConstructor(YSpecConstructor):
                 lw: 3
                 datasets:
                   plot_kw:
-                    lw: 3""")
+                    lw: 3
+      """)
 
 #################################### MAIN #####################################
 if __name__ == "__main__":

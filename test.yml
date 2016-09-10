@@ -1,10 +1,10 @@
 preset: [manuscript, pdist, rmsd]
 figures:
     all:
-        subplots:
-            grid:
-                nrows: 3
-                ncols: 4
+        gridspec:
+            nrows: 3
+            ncols: 4
+            nsubplots: 9
     0:
         subplots:
             all:

@@ -19,7 +19,6 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
     import myplotspec.plugins
-import ruamel.yaml as yaml
 from ..yspec.plugins.InitializePlugin import InitializePlugin
 ################################### CLASSES ###################################
 class MPSInitializePlugin(InitializePlugin):
@@ -45,13 +44,13 @@ class MPSInitializePlugin(InitializePlugin):
           source_spec (dict): Source spec at current level
           indexed_levels (dict): Indexed levels below current level
           path (list): List of keys leading to this level
-          source_spec[grid][nrows] (int, optional): Number of rows of subplots
-            to add
-          source_spec[grid][ncols] (int, optional): Number of columns of
-            subplots to add
-          source_spec[grid][nsubplots] (int, optional): Number of subplots to
-            add; if less than nrows*ncols (e.g. 2 cols and 2 rows but
-            only three subplots)
+          source_spec[gridspec][nrows] (int, optional): Number of rows
+            of subplots to add
+          source_spec[gridspec][ncols] (int, optional): Number of
+            columns of subplots to add
+          source_spec[gridspec][nsubplots] (int, optional): Number of
+            subplots to add; if less than nrows*ncols (e.g. 2 cols and 2
+            rows but only 3 subplots)
         """
 
         # Process arguments
@@ -61,28 +60,34 @@ class MPSInitializePlugin(InitializePlugin):
             path = []
 
         # Loop over indexed levels at this level
+        # Handle grid of subplots
+        if (len(path) == 2 and path[0] == "figures"
+        and "gridspec" in source_spec):
+            gridspec  = source_spec["gridspec"]
+            nrows     = gridspec.get("nrows", 1)
+            ncols     = gridspec.get("ncols", 1)
+            nsubplots = min(gridspec.get("nsubplots", nrows*ncols),
+                         nrows*ncols)
+            indexes = range(nsubplots)
+            if "subplots" not in spec:
+                self.initialize(spec, "subplots")
+            for index in indexes:
+                if index not in spec["subplots"]:
+                    self.initialize(spec["subplots"], index)
         for level in [k for k in indexed_levels if k in source_spec]:
             if source_spec.get(level) is None:
                 continue
             if level not in spec:
-                spec[level] = yaml.comments.CommentedMap()
+                self.initialize(spec, level)
             indexes = sorted(list(set([k for k in source_spec[level]
               if str(k).isdigit()])))
-            # Handle grid of subplots
-            if level == "subplots" and "grid" in source_spec.get(level, {}):
-                grid = source_spec[level]["grid"]
-                nrows     = grid.get("nrows", 1)
-                ncols     = grid.get("ncols", 1)
-                nsubplots = min(grid.get("nsubplots", nrows*ncols),
-                             nrows*ncols)
-                indexes = sorted(list(set(indexes + range(nsubplots))))
             # Apply "all" to all indexes
             if "all" in source_spec.get(level, {}):
                 all_indexes = sorted(list(set(indexes +
                   [k for k in spec[level] if str(k).isdigit()])))
                 for index in all_indexes:
                     if index not in spec[level]:
-                        spec[level][index] = yaml.comments.CommentedMap()
+                        self.initialize(spec[level], index)
                     self.process_level(
                       spec[level][index],
                       source_spec[level]["all"],
@@ -92,7 +97,7 @@ class MPSInitializePlugin(InitializePlugin):
             for index in indexes:
                 # Add dict in which to store lower levels
                 if index not in spec[level]:
-                    spec[level][index] = yaml.comments.CommentedMap()
+                    self.initialize(spec[level], index)
                 self.process_level(
                   spec[level][index],
                   source_spec[level].get(index, {}),
