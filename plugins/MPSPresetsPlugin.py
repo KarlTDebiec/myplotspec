@@ -138,7 +138,9 @@ class MPSPresetsPlugin(PresetsPlugin):
                           for k, v in available_presets.items()
                           if preset_key in v}
                         if preset_key not in spec:
-                            self.initialize(spec, preset_key)
+                            self.initialize(spec, preset_key,
+                              comment="{0}:{1}".format(self.name,
+                              selected_preset))
                         self.process_level(
                           spec[preset_key],
                           source_spec.get(preset_key, {}),
