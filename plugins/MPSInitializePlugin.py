@@ -59,7 +59,6 @@ class MPSInitializePlugin(InitializePlugin):
         if path is None:
             path = []
 
-        # Loop over indexed levels at this level
         # Handle grid of subplots
         if (len(path) == 2 and path[0] == "figures"
         and "gridspec" in source_spec):
@@ -74,13 +73,14 @@ class MPSInitializePlugin(InitializePlugin):
             for index in indexes:
                 if index not in spec["subplots"]:
                     self.initialize(spec["subplots"], index)
+        # Loop over indexed levels at this level
         for level in [k for k in indexed_levels if k in source_spec]:
             if source_spec.get(level) is None:
                 continue
             if level not in spec:
                 self.initialize(spec, level)
-            indexes = sorted(list(set([k for k in source_spec[level]
-              if str(k).isdigit()])))
+            indexes = sorted([k for k in source_spec[level]
+                        if str(k).isdigit()])
             # Apply "all" to all indexes
             if "all" in source_spec.get(level, {}):
                 all_indexes = sorted(list(set(indexes +

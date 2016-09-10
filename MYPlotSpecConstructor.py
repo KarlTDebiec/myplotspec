@@ -43,6 +43,10 @@ class MYPlotSpecConstructor(YSpecConstructor):
             subplots:
               datasets:
                 nay: bama
+                yumbo:
+                  da: yes
+                  ben: yes
+                  xiang: yes
       """,
       presets = """
         available_presets:

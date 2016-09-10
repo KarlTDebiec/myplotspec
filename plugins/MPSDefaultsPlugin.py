@@ -43,7 +43,6 @@ class MPSDefaultsPlugin(DefaultsPlugin):
           indexed_levels (dict): Indexed levels within current level
           defaults (dict): Defaults within current level
         """
-        from copy import deepcopy
 
         # Process arguments
         if defaults is None:
@@ -60,8 +59,9 @@ class MPSDefaultsPlugin(DefaultsPlugin):
             if default_key in indexed_levels:
                 if default_key not in spec:
                     continue
-                for index in sorted([k for k in spec[default_key]
-                if str(k).isdigit()]):
+                indexes = sorted([k for k in spec[default_key]
+                            if str(k).isdigit()])
+                for index in indexes:
                     self.process_level(
                       spec[default_key][index],
                       source_spec.get(default_key, {}).get(index, {}),
@@ -72,7 +72,7 @@ class MPSDefaultsPlugin(DefaultsPlugin):
                 # default_val is a dict; recurse
                 if isinstance(default_val, dict):
                     if default_key not in spec:
-                        spec[default_key] = yaml.comments.CommentedMap()
+                        self.initialize(spec, default_key)
                     self.process_level(
                       spec[default_key],
                       source_spec.get(default_key, {}),
@@ -80,4 +80,4 @@ class MPSDefaultsPlugin(DefaultsPlugin):
                       default_val)
                 # default_val is singular; store and continue loop
                 else:
-                    spec[default_key] = deepcopy(default_val)
+                    self.set(spec, default_key, default_val)
