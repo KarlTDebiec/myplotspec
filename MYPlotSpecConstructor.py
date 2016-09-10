@@ -31,7 +31,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
       defaults   = MPSDefaultsPlugin,
       presets    = MPSPresetsPlugin,
       manual     = ManualPlugin)
-    default_plugins = ["initialize", "defaults", "presets"]
+    default_plugins = ["initialize", "defaults", "presets", "manual"]
     indexed_levels = """
       figures:
           subplots:

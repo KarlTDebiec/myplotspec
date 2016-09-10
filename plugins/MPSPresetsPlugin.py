@@ -109,7 +109,7 @@ class MPSPresetsPlugin(PresetsPlugin):
             for preset_key, preset_val in [(k, v)
             for k, v in available_presets[selected_preset].items()
             if not k.startswith("_")]:
-                # This key is indexed; use indexed function
+                # This level is indexed; loop over indexes as well
                 if preset_key in indexed_levels:
                     # Make new dict of available_presets including only
                     # those applicable to the next level
