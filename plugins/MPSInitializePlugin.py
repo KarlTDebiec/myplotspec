@@ -9,10 +9,6 @@
 #   BSD license. See the LICENSE file for details.
 """
 Initializes a nascent spec.
-
-.. todo:
-  - Somehow get indexes from presets if present
-  - Intersphinx documentation
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -27,7 +23,7 @@ class MPSInitializePlugin(InitializePlugin):
 
     Differs from yspec's InitializePlugin through the addition of
     support for initializing a grid of subplots based on arguments
-    defined under figures/INDEX/subplots/grid
+    defined under figures/INDEX/gridspec
 
     Attributes
       name (str): Name of this plugin
@@ -37,10 +33,10 @@ class MPSInitializePlugin(InitializePlugin):
 
     def process_level(self, spec, source_spec, indexed_levels, path=None):
         """
-        Initialize one level of spec hierarchy
+        Initializes one level of spec hierarchy
 
         Arguments:
-          spec (dict): Nascent spec at current level
+          spec (CommentedMap): Nascent spec at current level
           source_spec (dict): Source spec at current level
           indexed_levels (dict): Indexed levels below current level
           path (list): List of keys leading to this level
@@ -73,6 +69,7 @@ class MPSInitializePlugin(InitializePlugin):
             for index in indexes:
                 if index not in spec["subplots"]:
                     self.initialize(spec["subplots"], index)
+
         # Loop over indexed levels at this level
         for level in [k for k in indexed_levels if k in source_spec]:
             if source_spec.get(level) is None:

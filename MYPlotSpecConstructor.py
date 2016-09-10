@@ -25,13 +25,16 @@ class MYPlotSpecConstructor(YSpecConstructor):
     from .plugins.MPSDefaultsPlugin import MPSDefaultsPlugin
     from .plugins.MPSPresetsPlugin import MPSPresetsPlugin
     from .yspec.plugins.ManualPlugin import ManualPlugin
+    from .yspec.plugins.SortPlugin import SortPlugin
 
     available_plugins = OrderedDict(
       initialize = MPSInitializePlugin,
       defaults   = MPSDefaultsPlugin,
       presets    = MPSPresetsPlugin,
-      manual     = ManualPlugin)
-    default_plugins = ["initialize", "defaults", "presets", "manual"]
+      manual     = ManualPlugin,
+      sort       = SortPlugin)
+    default_plugins = ["initialize", "defaults", "presets", "manual", 
+                       "sort"]
     indexed_levels = """
       figures:
           subplots:
