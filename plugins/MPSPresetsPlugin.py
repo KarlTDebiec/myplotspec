@@ -19,8 +19,6 @@ from __future__ import absolute_import,division,print_function,unicode_literals
 if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
     import myplotspec.plugins
-import six
-import ruamel.yaml as yaml
 from ..yspec.plugins.PresetsPlugin import PresetsPlugin
 ################################### CLASSES ###################################
 class MPSPresetsPlugin(PresetsPlugin):
@@ -35,9 +33,6 @@ class MPSPresetsPlugin(PresetsPlugin):
         the preset names, while the values are the arguments associated
         with each preset
     """
-    name = "presets"
-    description = """Add selected group(s) of 'preset' arguments to nascent
-      spec."""
 
     def __init__(self, indexed_levels=None, available_presets=None,**kwargs):
         """
@@ -83,7 +78,7 @@ class MPSPresetsPlugin(PresetsPlugin):
             level
           selected_presets (list): Presets selected above current level
         """
-        from copy import deepcopy
+        import six
 
         # Process arguments
         if available_presets is None:
@@ -143,7 +138,7 @@ class MPSPresetsPlugin(PresetsPlugin):
                           for k, v in available_presets.items()
                           if preset_key in v}
                         if preset_key not in spec:
-                            spec[preset_key] = yaml.comments.CommentedMap()
+                            self.initialize(spec, preset_key)
                         self.process_level(
                           spec[preset_key],
                           source_spec.get(preset_key, {}),
@@ -152,4 +147,5 @@ class MPSPresetsPlugin(PresetsPlugin):
                           selected_presets)
                     # preset_val is singular; store and continue loop
                     else:
-                        spec[preset_key] = deepcopy(preset_val)
+                        self.set(spec, preset_key, preset_val,
+                          comment="{0}:{1}".format(self.name, selected_preset))

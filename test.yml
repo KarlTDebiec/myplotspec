@@ -1,4 +1,4 @@
-preset: [manuscript, pdist, rmsd]
+presets: [manuscript, pdist, rmsd]
 figures:
     all:
         gridspec:
