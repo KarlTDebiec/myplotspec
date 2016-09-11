@@ -186,6 +186,10 @@ class MYPlotSpecConstructor(YSpecConstructor):
                 datasets:
                   plot_kw:
                     lw: 3
+      """,
+      sort = """
+        header:
+          - presets
       """)
 
 #################################### MAIN #####################################
