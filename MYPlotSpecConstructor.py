@@ -19,6 +19,7 @@ from .yspec.YSpecConstructor import YSpecConstructor
 ################################### CLASSES ###################################
 class MYPlotSpecConstructor(YSpecConstructor):
     """
+    Constructs yaml-format specification for myplotspec
     """
     from collections import OrderedDict
     from .plugins.MPSInitializePlugin import MPSInitializePlugin
