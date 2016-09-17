@@ -27,14 +27,13 @@ class MYPlotSpecConstructor(YSpecConstructor):
     from .yspec.plugins.ManualPlugin import ManualPlugin
     from .yspec.plugins.SortPlugin import SortPlugin
 
-    available_plugins = OrderedDict(
-      initialize = MPSInitializePlugin,
-      defaults   = MPSDefaultsPlugin,
-      presets    = MPSPresetsPlugin,
-      manual     = ManualPlugin,
-      sort       = SortPlugin)
-    default_plugins = ["initialize", "defaults", "presets", "manual", 
-                       "sort"]
+    available_plugins = OrderedDict([
+      ("initialize", MPSInitializePlugin),
+      ("defaults", MPSDefaultsPlugin),
+      ("presets", MPSPresetsPlugin),
+      ("manual", ManualPlugin),
+      ("sort", SortPlugin)])
+    default_plugins = ["initialize", "defaults", "presets", "manual", "sort"]
     indexed_levels = """
       figures:
           subplots:
@@ -55,7 +54,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
         available_presets:
           letter:
             _class: target
-            _help: Letter (width ≤ 6.5", height ≤ 9.0")
+            _help: letter (width ≤ 6.5", height ≤ 9.0")
             figures:
               fig_width:  9.00
               fig_height: 6.50
@@ -81,7 +80,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
                     lw: 2
           manuscript:
             _class: target
-            _help: Manuscript (width ≤ 7.0", height ≤ 9.167")
+            _help: manuscript (width ≤ 7.0", height ≤ 9.167")
             figures:
               title_fp: 8b
               label_fp: 8b
@@ -109,7 +108,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
                     lw: 1
           notebook:
             _class: target
-            _help: Notebook (width ≤ 6.5", height ≤ 9.0")
+            _help: notebook (width ≤ 6.5", height ≤ 9.0")
             figures:
               title_fp: 10b
               label_fp: 10b
