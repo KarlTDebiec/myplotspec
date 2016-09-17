@@ -58,23 +58,29 @@ class YSpecDataset(YSpecConstructor):
         if parser.get_default("class_") is None:
             parser.set_defaults(class_=class_)
         arg_groups = {ag.title: ag for ag in parser._action_groups}
+        input_group = arg_groups.get("input",
+          parser.add_argument_group("input"))
+        action_group = arg_groups.get("action",
+          parser.add_argument_group("action"))
+        output_group = arg_groups.get("output",
+          parser.add_argument_group("output"))
 
         # Standard arguments
         verbosity = class_.add_mutually_exclusive_argument_group(parser,
           "verbosity")
-        class_.add_argument(verbosity, 
+        class_.add_argument(verbosity,
           "-v", "--verbose",
           action   = "count",
           default  = 1,
           help     = "enable verbose output, may be specified more than once")
-        class_.add_argument(verbosity, 
+        class_.add_argument(verbosity,
           "-q", "--quiet",
           action   = "store_const",
           const    = 0,
           default  = 1,
           dest     = "verbose",
           help     = "disable verbose output")
-        class_.add_argument(parser, 
+        class_.add_argument(parser,
           "-d", "--debug",
           action   = "count",
           default  = 1,
@@ -86,9 +92,7 @@ class YSpecDataset(YSpecConstructor):
                      processing data""")
 
         # Input arguments
-        input_group  = arg_groups.get("input",
-          parser.add_argument_group("input"))
-        class_.add_argument(input_group, 
+        class_.add_argument(input_group,
           "-infiles",
           dest     = "infiles",
           metavar  = "INFILE",
@@ -103,6 +107,14 @@ class YSpecDataset(YSpecConstructor):
           type     = str,
           help     = "file from which to load source spec")
 
+        # Output arguments
+        class_.add_argument(output_group,
+          "-outfile",
+          required = False,
+          type     = str,
+          help     = """text or hdf5 file to which processed DataFrame will be
+                     output; may contain environment variables""")
+
         # Plugins
         if len(class_.available_plugins) > 0:
             if (hasattr(class_, "default_plugins")
@@ -113,18 +125,6 @@ class YSpecDataset(YSpecConstructor):
             parser.description += "available plugins:\n"
             for name, plugin in class_.available_plugins.items():
                 plugin.add_arguments(parser, constructor=class_)
-
-        # Output arguments
-        output_group = arg_groups.get("output",
-          parser.add_argument_group("output"))
-        class_.add_argument(output_group, 
-          "-outfile",
-          required = False,
-          type     = str,
-          help     = """text or hdf5 file to which processed DataFrame will be
-                     output; may contain environment variables""")
-
-        parser.set_defaults(class_=class_)
 
         return parser
 
