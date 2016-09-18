@@ -7,12 +7,12 @@
 #   This software may be modified and distributed under the terms of the
 #   BSD license. See the LICENSE file for details.
 """
-Represents data
+Processes and represents data
 
-    .. note:
-      - pandas' MultiIndex only supports dtype of 'object'. It does not appear
-        to be possible to force pandas to use a 32 bit float or integer for a
-        MultiIndex. _read_hdf5 and _write_hdf5 must behave accordingly
+  .. note:
+    - pandas' MultiIndex only supports dtype of 'object'. It does not appear
+      to be possible to force pandas to use a 32 bit float or integer for a
+      MultiIndex. _read_hdf5 and _write_hdf5 must behave accordingly
 """
 ################################### MODULES ###################################
 from __future__ import absolute_import,division,print_function,unicode_literals
@@ -28,7 +28,23 @@ class YSpecDataset(YSpecConstructor):
     """
     Processes and represents data
     """
-
+    from collections import OrderedDict
+    from .yspec.plugins.InitializePlugin import InitializePlugin
+    from .yspec.plugins.DefaultsPlugin import DefaultsPlugin
+    from .yspec.plugins.PresetsPlugin import PresetsPlugin
+    from .yspec.plugins.ManualPlugin import ManualPlugin
+    from .yspec.plugins.CLArgumentPlugin import CLArgumentPlugin
+    from .yspec.plugins.SortPlugin import SortPlugin
+    available_plugins = OrderedDict([
+      ("initialize", InitializePlugin),
+      ("defaults", DefaultsPlugin),
+      ("presets", PresetsPlugin),
+      ("manual", ManualPlugin),
+      ("clargument", CLArgumentPlugin),
+      ("sort", SortPlugin)])
+    default_plugins = ["initialize", "defaults", "presets", "manual",
+                       "clargument", "sort"]
+    indexed_levels = """"""
     plugin_config = dict(
       defaults = """
         defaults:
@@ -36,6 +52,18 @@ class YSpecDataset(YSpecConstructor):
           h5_kw:
             chunks: True
             compression: gzip
+      """,
+      clargument = """
+        exclude:
+          - constructor
+          - source_spec
+          - verbose
+          - debug
+          - interactive
+      """,
+      sort = """
+        header:
+          - presets
       """)
 
     @classmethod
@@ -127,6 +155,59 @@ class YSpecDataset(YSpecConstructor):
                 plugin.add_arguments(parser, constructor=class_)
 
         return parser
+
+    @classmethod
+    def construct_spec(class_, source_spec=None, plugins=None, **kwargs):
+        """
+        Arguments:
+          source_spec (str): Path to source spec infile
+          plugins (list, optional): Sequence of plugins with which to
+            prepare spec
+          verbose (int): Level of verbose output
+          kwargs (dict): Additional keyword arguments
+
+        Returns:
+          CommentedMap: Spec
+        """
+        from ruamel.yaml.comments import CommentedMap
+        from .yspec import yaml_load, yaml_dump
+
+        # Process arguments
+        verbose = kwargs.get("verbose", 1)
+        if source_spec is None:
+            source_spec = {}
+        else:
+            source_spec = yaml_load(source_spec)
+        if plugins is None:
+            plugins = class_.default_plugins
+
+        # Prepare spec
+        spec = CommentedMap()
+        for plugin_name in plugins:
+            plugin = class_.available_plugins[plugin_name](
+                       constructor=class_, **kwargs)
+            spec = plugin(spec, source_spec, **kwargs)
+            # Output intermediate spec
+            if verbose >= 3:
+                print("\nSpec after running {0} plugin:".format(plugin_name))
+                print(yaml_dump(spec))
+
+        # Output spec
+        if verbose >= 2:
+            print("\nFinal spec:")
+            print(yaml_dump(spec))
+
+        return spec
+
+    @classmethod
+    def main(class_):
+        """
+        """
+        parser = class_.construct_argparser()
+        kwargs = vars(parser.parse_args())
+        kwargs.pop("class_")
+        spec = class_.construct_spec(**kwargs)
+        return class_(**spec)
 
 #    @classmethod
 #    def get_cache_key(class_, infile=None, **kwargs):
@@ -785,15 +866,6 @@ class YSpecDataset(YSpecConstructor):
 #            class_ = type(self)
 #        return load_dataset(class_=class_,
 #                 dataset_cache=self.dataset_cache, **kwargs)
-
-    @classmethod
-    def main(class_):
-        """
-        """
-        # Prepare argument parser
-        parser = class_.construct_argparser()
-        kwargs = vars(parser.parse_args())
-        kwargs.pop("class_")(**kwargs)
 
 #################################### MAIN #####################################
 if __name__ == "__main__":

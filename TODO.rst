@@ -11,8 +11,8 @@ Future Tasks
 ------------
 - [ ] Update documentation
 
-Potenial Future Tasks
----------------------
+Potential Future Tasks
+----------------------
 
 Completed Tasks
 ---------------
