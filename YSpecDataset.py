@@ -82,9 +82,10 @@ class YSpecDataset(YSpecConstructor):
         """
 
         # Process arguments
-        parser = class_.get_parser(**kwargs)
+        parser = class_.get_argparser(**kwargs)
         if parser.get_default("class_") is None:
             parser.set_defaults(class_=class_)
+        help_groups = kwargs.get("help_groups")
         arg_groups = {ag.title: ag for ag in parser._action_groups}
         input_group = arg_groups.get("input",
           parser.add_argument_group("input"))
@@ -133,7 +134,7 @@ class YSpecDataset(YSpecConstructor):
           dest     = "source_spec",
           metavar  = "SPEC",
           type     = str,
-          help     = "file from which to load source spec")
+          help     = "file from which to load source specification")
 
         # Output arguments
         class_.add_argument(output_group,
@@ -144,15 +145,21 @@ class YSpecDataset(YSpecConstructor):
                      output; may contain environment variables""")
 
         # Plugins
-        if len(class_.available_plugins) > 0:
-            if (hasattr(class_, "default_plugins")
-            and len(class_.default_plugins) > 0):
-                parser.description += \
-                  "\ndefault plugin order:\n  {0}\n\n".format(
-                  " → ".join( class_.default_plugins))
-            parser.description += "available plugins:\n"
-            for name, plugin in class_.available_plugins.items():
-                plugin.add_arguments(parser, constructor=class_)
+        if "spec" in help_groups or "*" in help_groups:
+            if len(class_.available_plugins) > 0:
+                spec = arg_groups.get(
+                  "arguments related to yaml specification",
+                  parser.add_argument_group(
+                  "arguments related to yaml specification", description=""))
+                if (hasattr(class_, "default_plugins")
+                and len(class_.default_plugins) > 0):
+                    spec.description += \
+                      "default plugin order:\n  {0}\n\n".format(
+                      " → ".join( class_.default_plugins))
+                spec.description += "available plugins:\n"
+                for name, plugin in class_.available_plugins.items():
+                    plugin.add_arguments(parser, help_dest=spec,
+                      constructor=class_)
 
         return parser
 
@@ -203,11 +210,12 @@ class YSpecDataset(YSpecConstructor):
     def main(class_):
         """
         """
-        parser = class_.construct_argparser()
+        parser = class_.construct_argparser(
+          help_groups=class_.get_help_arg_groups())
         kwargs = vars(parser.parse_args())
-        kwargs.pop("class_")
-        spec = class_.construct_spec(**kwargs)
-        return class_(**spec)
+#        kwargs.pop("class_")
+#        spec = class_.construct_spec(**kwargs)
+#        return class_(**spec)
 
 #    @classmethod
 #    def get_cache_key(class_, infile=None, **kwargs):
