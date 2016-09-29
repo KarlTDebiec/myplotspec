@@ -237,8 +237,7 @@ class Dataset(object):
 
         return processed_infiles
 
-    def __init__(self, infile, address=None, dataset_cache=None,
-        **kwargs):
+    def __init__(self, infile, address=None, dataset_cache=None, **kwargs):
         """
         Initializes dataset.
 
