@@ -43,13 +43,12 @@ class MYPlotSpecConstructor(YSpecConstructor):
       defaults = """
         defaults:
           figures:
+            figure_default_1_name: figure_default_1_value
             subplots:
+              subplot_default_1_name: subpot_default_1_value
               datasets:
-                nay: bama
-                yumbo:
-                  da: yes
-                  ben: yes
-                  xiang: yes
+                dataset_default_1_name: dataset_default_1_value
+                dataset_default_2_name: dataset_default_2_value
       """,
       presets = """
         available_presets:

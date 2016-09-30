@@ -776,7 +776,7 @@ class Dataset(object):
                    wiprint("calculating probability distribution of "
                     "{0} using a kernel density estimate".format(column))
                 kde = KernelDensity(bandwidth=bandwidth[column], **kde_kw)
-                kde.fit(series[:, np.newaxis])
+                kde.fit(series.dropna()[:, np.newaxis])
                 pdf = np.exp(kde.score_samples(grid[column][:, np.newaxis]))
                 pdf /= pdf.sum()
                 series_pdist = pd.DataFrame(pdf, index=grid[column],
