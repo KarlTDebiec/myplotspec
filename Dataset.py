@@ -225,14 +225,25 @@ class Dataset(object):
         """
         from glob import glob
         from os.path import expandvars
+        import re
         from . import multi_get_merged
 
         # Process arguments
         infiles = multi_get_merged(["infile", "infiles"], kwargs)
+        re_h5 = re.compile(
+          r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$",
+          flags=re.UNICODE)
 
         processed_infiles = []
         for infile in infiles:
-            matching_infiles = sorted(glob(expandvars(infile)))
+            if re_h5.match(infile):
+                path = expandvars(re_h5.match(infile).groupdict()["path"])
+                address = re_h5.match(infile).groupdict()["address"]
+                matching_infiles = sorted(glob(expandvars(path)))
+                matching_infiles = ["{0}:{1}".format(infile, address)
+                  for infile in matching_infiles]
+            else:
+                matching_infiles = sorted(glob(expandvars(infile)))
             processed_infiles.extend(matching_infiles)
 
         return processed_infiles
@@ -247,7 +258,8 @@ class Dataset(object):
           address (str): Address within hdf5 file from which to load
             dataset (hdf5 only)
           slice (slice): Slice to load from hdf5 dataset (hdf5 only)
-          dataframe_kw (dict): Keyword arguments passed to
+          dataframe_kw (
+          dict): Keyword arguments passed to
             pandas.DataFrame(...) (hdf5 only)
           read_csv_kw (dict): Keyword arguments passed to
             pandas.read_csv(...) (text only)
@@ -356,8 +368,10 @@ class Dataset(object):
                 values = np.array(h5_file["{0}/values".format(address)])
                 index  = np.array(h5_file["{0}/index".format(address)])
             else:
-                if len(h5_file.keys()) >= 1:
-                    address = sorted(list(h5_file.keys()))[0]
+#                # This line appears to be wrong; keeping it here for now in
+#                  case it turns out to have had some importance
+#                if len(h5_file.keys()) >= 1:
+#                    address = sorted(list(h5_file.keys()))[0]
                 values = np.array(h5_file[address])
                 index = np.arange(values.shape[0])
 
@@ -472,7 +486,7 @@ class Dataset(object):
 
         # Write DataFrame
         if verbose >= 1:
-            print("Writing DataFrame to '{0}'".format(outfile))
+            wiprint("Writing DataFrame to '{0}'".format(outfile))
         with h5py.File(path) as hdf5_file:
             hdf5_file.create_dataset("{0}/values".format(address),
               data=df.values, dtype=df.values.dtype, **h5_kw)
@@ -546,7 +560,7 @@ class Dataset(object):
 
         # Write DataFrame
         if verbose >= 1:
-            print("Writing DataFrame to '{0}'".format(outfile))
+            wiprint("Writing DataFrame to '{0}'".format(outfile))
         with open(outfile, "w") as text_file:
             text_file.write(df.to_string(**to_string_kw))
 
