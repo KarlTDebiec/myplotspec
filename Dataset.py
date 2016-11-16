@@ -257,9 +257,9 @@ class Dataset(object):
             variables
           address (str): Address within hdf5 file from which to load
             dataset (hdf5 only)
+          dataset_cache (dict, optional): Cache of previously-loaded datasets
           slice (slice): Slice to load from hdf5 dataset (hdf5 only)
-          dataframe_kw (
-          dict): Keyword arguments passed to
+          dataframe_kw (dict): Keyword arguments passed to
             pandas.DataFrame(...) (hdf5 only)
           read_csv_kw (dict): Keyword arguments passed to
             pandas.read_csv(...) (text only)
@@ -755,7 +755,7 @@ class Dataset(object):
                 all_bandwidth = None
             else:
                 raise Exception()
-            for column, series in df.iteritems():
+            for column, series in df.items():
                 if column in bandwidth:
                     bandwidth[column] = float(bandwidth[column])
                 elif all_bandwidth is not None:
@@ -772,7 +772,7 @@ class Dataset(object):
                 grid = {}
             elif isinstance(grid, dict):
                 all_grid = None
-            for column, series in df.iteritems():
+            for column, series in df.items():
                 if column in grid:
                     grid[column] = np.array(grid[column])
                 elif all_grid is not None:
@@ -785,7 +785,7 @@ class Dataset(object):
             # Calculate probability distributions
             kde_kw = kwargs.get("kde_kw", {})
             pdist = OrderedDict()
-            for column, series in df.iteritems():
+            for column, series in df.items():
                 if verbose >= 1:
                    wiprint("calculating probability distribution of "
                     "{0} using a kernel density estimate".format(column))
