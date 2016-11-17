@@ -34,13 +34,20 @@ class Dataset(object):
     @classmethod
     def get_cache_key(cls, infile=None, **kwargs):
         """
-        Generates tuple of arguments to be used as key for dataset
-        cache.
+        Generates tuple of arguments to be used as key for dataset cache.
+
+        Arguments:
+          infile (str): Path to infile
+          kwargs (dict): Additional keyword arguments
+
+        Returns:
+          tuple: Cache key
 
         .. todo:
           - Verify that keyword arguments passed to pandas may be safely
             converted to hashable tuple, and if they cannot throw a
             warning and load dataset without caching
+
         """
         from os.path import expandvars
 
@@ -78,12 +85,12 @@ class Dataset(object):
             parser = parser_or_subparsers
         elif isinstance(parser_or_subparsers, argparse._SubParsersAction):
             parser = parser_or_subparsers.add_parser(
-              name        = "data",
-              description = help_message,
-              help        = help_message)
+              name          = "data",
+              description   = help_message,
+              help          = help_message)
         elif parser is None:
             parser = argparse.ArgumentParser(
-              description = help_message)
+              description   = help_message)
 
         # Defaults
         if parser.get_default("cls") is None:
@@ -93,15 +100,14 @@ class Dataset(object):
         arg_groups = {ag.title: ag for ag in parser._action_groups}
 
         # Standard arguments
-        # Unfortunately; this appears to be the only way to handle the
-        #   change the chance that a mutually-exclusive group will be
-        #   added more than once. add_mutually_exclusive_group does not
-        #   support setting 'title' or 'description', as soon as the
-        #   local variable pointing to the group is lost, the parser has
-        #   no information about what the group is supposed to be or
-        #   contain. If the parser has multiple mutually-exclusive
-        #   groups that contain degenerate arguments, it will not fail
-        #   until parse_args is called.
+        # Unfortunately; this appears to be the only way to handle the change
+        # the chance that a mutually-exclusive group will be added more than
+        # once. add_mutually_exclusive_group does not support setting 'title'
+        # or 'description', as soon as the local variable pointing to the group
+        # is lost, the parser has no information about what the group is
+        # supposed to be or contain. If the parser has multiple
+        # mutually-exclusive groups that contain degenerate arguments, it will
+        # not fail until parse_args is called.
         if hasattr(parser, "_verbosity"):
             verbosity = parser._verbosity
         else:
@@ -110,37 +116,37 @@ class Dataset(object):
         try:
             verbosity.add_argument(
               "-v", "--verbose",
-              action   = "count",
-              default  = 1,
-              help     = """enable verbose output, may be specified more than
-                         once""")
+              action    = "count",
+              default   = 1,
+              help      = """enable verbose output, may be specified more than
+                          once""")
         except argparse.ArgumentError:
             pass
         try:
             verbosity.add_argument(
               "-q", "--quiet",
-              action   = "store_const",
-              const    = 0,
-              default  = 1,
-              dest     = "verbose",
-              help     = "disable verbose output")
+              action    = "store_const",
+              const     = 0,
+              default   = 1,
+              dest      = "verbose",
+              help      = "disable verbose output")
         except argparse.ArgumentError:
             pass
         try:
             parser.add_argument(
               "-d", "--debug",
-              action   = "count",
-              default  = 1,
-              help     = """enable debug output, may be specified more than
-                         once""")
+              action    = "count",
+              default   = 1,
+              help      = """enable debug output, may be specified more than
+                          once""")
         except argparse.ArgumentError:
             pass
         try:
             parser.add_argument(
               "-I", "--interactive",
-              action   = "store_true",
-              help     = """enable interactive ipython terminal after loading
-                         and processing data""")
+              action    = "store_true",
+              help      = """enable interactive ipython terminal after loading
+                          and processing data""")
         except argparse.ArgumentError:
             pass
 
@@ -150,14 +156,14 @@ class Dataset(object):
         try:
             input_group.add_argument(
               "-infiles",
-              required = True,
-              dest     = "infiles",
-              metavar  = "INFILE",
-              nargs    = "+",
-              type     = str,
-              help     = """file(s) from which to load data; may be text or
-                         hdf5; may contain environment variables and
-                         wildcards""")
+              required  = True,
+              dest      = "infiles",
+              metavar   = "INFILE",
+              nargs     = "+",
+              type      = str,
+              help      = """file(s) from which to load data; may be text or
+                          hdf5; may contain environment variables and
+                          wildcards""")
         except argparse.ArgumentError:
             pass
 
@@ -167,10 +173,10 @@ class Dataset(object):
         try:
             output_group.add_argument(
               "-outfile",
-              required = False,
-              type     = str,
-              help     = """text or hdf5 file to which processed DataFrame will
-                         be output; may contain environment variables""")
+              required  = False,
+              type      = str,
+              help      = """text or hdf5 file to which processed DataFrame will
+                          be output; may contain environment variables""")
         except argparse.ArgumentError:
             pass
 
@@ -183,12 +189,11 @@ class Dataset(object):
         dataset.
 
         Arguments:
-          cache_key (tuple): key with which dataset object is stored in
-            dataset cache
+          cache_key (tuple): key with which dataset object is stored in dataset
+            cache
 
         Returns:
-          str: message to be used when reloading previously-loaded
-          dataset
+          str: message to be used when reloading previously-loaded dataset
 
         """
         return sformat("""Dataset previously loaded from
@@ -200,8 +205,8 @@ class Dataset(object):
         Adds command line arguments shared by all subclasses.
 
         Arguments:
-          parser (ArgumentParser): Nascent argument parser to which to
-            add arguments
+          parser (ArgumentParser): Nascent argument parser to which to add
+            arguments
           kwargs (dict): Additional keyword arguments
         """
         pass
@@ -213,12 +218,12 @@ class Dataset(object):
         wildcards.
 
         Arguments:
-          infile{s} (str, list): Paths to infile(s), may contain
-            environment variables and wildcards
+          infile{s} (str, list): Paths to infile(s), may contain environment
+            variables and wildcards
 
         Returns:
-          list: Paths to infiles with environment variables and
-          wildcards expanded
+          list: Paths to infiles with environment variables and wildcards
+            expanded
 
         .. todo:
           - handle hdf5 addresses smoothly
