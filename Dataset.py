@@ -79,7 +79,7 @@ class Dataset(object):
         """
         import argparse
 
-        # Process arguments
+    # Process arguments
         help_message = """Process data"""
         if isinstance(parser_or_subparsers, argparse.ArgumentParser):
             parser = parser_or_subparsers
