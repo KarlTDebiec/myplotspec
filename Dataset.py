@@ -760,7 +760,8 @@ class Dataset(object):
                 all_bandwidth = None
             else:
                 raise Exception()
-            for column, series in df.items():
+            for column in df.columns.values:
+                series = df[column]
                 if column in bandwidth:
                     bandwidth[column] = float(bandwidth[column])
                 elif all_bandwidth is not None:
@@ -777,7 +778,8 @@ class Dataset(object):
                 grid = {}
             elif isinstance(grid, dict):
                 all_grid = None
-            for column, series in df.items():
+            for column in df.columns.values:
+                series = df[column]
                 if column in grid:
                     grid[column] = np.array(grid[column])
                 elif all_grid is not None:
@@ -790,7 +792,8 @@ class Dataset(object):
             # Calculate probability distributions
             kde_kw = kwargs.get("kde_kw", {})
             pdist = OrderedDict()
-            for column, series in df.items():
+            for column in df.columns.values:
+                series = df[column]
                 if verbose >= 1:
                    wiprint("calculating probability distribution of "
                     "{0} using a kernel density estimate".format(column))
