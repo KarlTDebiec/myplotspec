@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #   myplotspec/doc/conf.py
 #
-#   Copyright (C) 2015-2016 Karl T Debiec
+#   Copyright (C) 2015-2017 Karl T Debiec
 #   All rights reserved.
 #
 #   This software may be modified and distributed under the terms of the
@@ -27,7 +27,7 @@ intersphinx_mapping = {
   "pandas":     ("http://pandas.pydata.org/pandas-docs/stable", None)}
 master_doc = "index"
 project   = "myplotspec"
-copyright = "2015-2016, Karl T Debiec"
+copyright = "2015-2017, Karl T Debiec"
 author    = "Karl T Debiec"
 version   = "0.1"
 release   = "16-06-29"
