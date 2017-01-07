@@ -11,11 +11,14 @@
 Adds preset argument groups to a nascent spec
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
 if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
-    import myplotspec.plugins
 from ..yspec.plugins.PresetsPlugin import PresetsPlugin
+
+
 ################################### CLASSES ###################################
 class MPSPresetsPlugin(PresetsPlugin):
     """

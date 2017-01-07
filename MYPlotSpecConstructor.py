@@ -11,11 +11,14 @@
 Constructs yaml-format specification
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
 if __name__ == "__main__":
     __package__ = str("myplotspec")
-    import myplotspec
 from .yspec.YSpecConstructor import YSpecConstructor
+
+
 ################################### CLASSES ###################################
 class MYPlotSpecConstructor(YSpecConstructor):
     """
@@ -28,19 +31,16 @@ class MYPlotSpecConstructor(YSpecConstructor):
     from .yspec.plugins.ManualPlugin import ManualPlugin
     from .yspec.plugins.SortPlugin import SortPlugin
 
-    available_plugins = OrderedDict([
-      ("initialize", MPSInitializePlugin),
-      ("defaults", MPSDefaultsPlugin),
-      ("presets", MPSPresetsPlugin),
-      ("manual", ManualPlugin),
-      ("sort", SortPlugin)])
+    available_plugins = OrderedDict(
+        [("initialize", MPSInitializePlugin), ("defaults", MPSDefaultsPlugin),
+            ("presets", MPSPresetsPlugin), ("manual", ManualPlugin),
+            ("sort", SortPlugin)])
     default_plugins = ["initialize", "defaults", "presets", "manual", "sort"]
     indexed_levels = """
       figures:
           subplots:
               datasets:"""
-    plugin_config = dict(
-      defaults = """
+    plugin_config = dict(defaults="""
         defaults:
           figures:
             figure_default_1_name: figure_default_1_value
@@ -49,8 +49,7 @@ class MYPlotSpecConstructor(YSpecConstructor):
               datasets:
                 dataset_default_1_name: dataset_default_1_value
                 dataset_default_2_name: dataset_default_2_value
-      """,
-      presets = """
+      """, presets="""
         available_presets:
           letter:
             _class: target
@@ -185,11 +184,11 @@ class MYPlotSpecConstructor(YSpecConstructor):
                 datasets:
                   plot_kw:
                     lw: 3
-      """,
-      sort = """
+      """, sort="""
         header:
           - presets
       """)
+
 
 #################################### MAIN #####################################
 if __name__ == "__main__":

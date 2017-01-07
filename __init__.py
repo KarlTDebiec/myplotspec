@@ -14,9 +14,13 @@ General functions.
   - Is OrderedSet ever used?
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
 ################################## VARIABLES ##################################
 FP_KEYS = ["fp", "font_properties", "fontproperties", "prop"]
+
+
 ################################## FUNCTIONS ##################################
 def wiprint(text, width=80, subsequent_indent="  ", **kwargs):
     """
@@ -34,8 +38,9 @@ def wiprint(text, width=80, subsequent_indent="  ", **kwargs):
     from textwrap import TextWrapper
 
     tw = TextWrapper(width=width, subsequent_indent=subsequent_indent,
-           **kwargs)
+        **kwargs)
     print(tw.fill(re.sub(r"\s+", " ", text)))
+
 
 def sformat(text, **kwargs):
     """
@@ -48,7 +53,8 @@ def sformat(text, **kwargs):
     """
     import re
 
-    return(re.sub(r"\s+", " ", text))
+    return (re.sub(r"\s+", " ", text))
+
 
 def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
     """
@@ -107,7 +113,7 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
     # infile path only
     if loose:
         if dataset_cache is not None:
-            loose_keys = {key[1]:key for key in dataset_cache.keys()}
+            loose_keys = {key[1]: key for key in dataset_cache.keys()}
             infile = kwargs.get("infile")
             if infile is not None:
                 if isinstance(infile, str):
@@ -129,7 +135,7 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
         cls = Dataset
     elif isinstance(cls, six.string_types):
         mod_name = ".".join(cls.split(".")[:-1])
-        cls_name   = cls.split(".")[-1]
+        cls_name = cls.split(".")[-1]
         mod = __import__(mod_name, fromlist=[cls_name])
         cls = getattr(mod, cls_name)
 
@@ -145,11 +151,12 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
                     wiprint("Previously loaded")
             return dataset_cache[cache_key]
         else:
-            dataset_cache[cache_key] = cls(
-              dataset_cache=dataset_cache, **kwargs)
+            dataset_cache[cache_key] = cls(dataset_cache=dataset_cache,
+                **kwargs)
             return dataset_cache[cache_key]
     else:
         return cls(**kwargs)
+
 
 def get_cmap(color, **kwargs):
     """
@@ -167,10 +174,10 @@ def get_cmap(color, **kwargs):
 
     r, g, b = get_color(color)
 
-    cdict = {"red":  ((0, r, r), (1, r, r)),
-            "green": ((0, g, g), (1, g, g)),
-            "blue":  ((0, b, b), (1, b, b))}
+    cdict = {"red": ((0, r, r), (1, r, r)), "green": ((0, g, g), (1, g, g)),
+        "blue": ((0, b, b), (1, b, b))}
     return LinearSegmentedColormap("cmap", cdict, 256)
+
 
 def get_yaml(input):
     """
@@ -216,19 +223,22 @@ def get_yaml(input):
             output = yaml.load(input)
             if isinstance(output, str):
                 warn("myplotspec.get_yaml() has loaded input "
-                  "'{0}' as a string rather than a dictionary ".format(input) +
-                  "or other data structure; if input was intended as an "
-                  "infile it was not found.")
+                     "'{0}' as a string rather than a dictionary ".format(
+                    input) + "or other data structure; if input was intended "
+                             "as an "
+                             "infile it was not found.")
             return output
     elif input is None:
         warn("myplotspec.get_yaml() has been asked to load input 'None', and "
-          "will return an empty dictionary.")
+             "will return an empty dictionary.")
         return {}
     else:
         raise TypeError("myplotspec.get_yaml() does not support input of type "
-          "{0}; ".format(input.__class__.__name__) +
-          "input may be a string path to a yaml file, a yaml-format string, "
-          "or a dictionary.")
+                        "{0}; ".format(
+            input.__class__.__name__) + "input may be a string path to a "
+                                        "yaml file, a yaml-format string, "
+                                        "or a dictionary.")
+
 
 def merge_dicts(dict_1, dict_2):
     """
@@ -249,6 +259,7 @@ def merge_dicts(dict_1, dict_2):
       - Consider options to override, concatenate, or merge list
         values within dictionaries
     """
+
     def merge(dict_1, dict_2):
         """
         Generator used to recursively merge two dictionaries
@@ -263,8 +274,8 @@ def merge_dicts(dict_1, dict_2):
         """
         for key in set(dict_1.keys()).union(dict_2.keys()):
             if key in dict_1 and key in dict_2:
-                if (isinstance(dict_1[key], dict)
-                and isinstance(dict_2[key], dict)):
+                if (isinstance(dict_1[key], dict) and isinstance(dict_2[key],
+                    dict)):
                     yield (key, dict(merge(dict_1[key], dict_2[key])))
                 else:
                     yield (key, dict_2[key])
@@ -272,14 +283,18 @@ def merge_dicts(dict_1, dict_2):
                 yield (key, dict_1[key])
             else:
                 yield (key, dict_2[key])
+
     if not isinstance(dict_1, dict) or not isinstance(dict_2, dict):
-        raise AttributeError("Function myplotspec.merge_dict() requires " +
-          "arguments 'dict_1' and 'dict_2' to be dictionaries; " +
-          "arguments of types " +
-          "'{0}' and '{1}' provided".format(dict_1.__class__.__name__,
-          dict_2.__class__.__name__))
+        raise AttributeError(
+            "Function myplotspec.merge_dict() requires " + "arguments "
+                                                           "'dict_1' and "
+                                                           "'dict_2' to be "
+                                                           "dictionaries; "
+            + "arguments of types " + "'{0}' and '{1}' provided".format(
+                dict_1.__class__.__name__, dict_2.__class__.__name__))
 
     return dict(merge(dict_1, dict_2))
+
 
 def get_color(color):
     """
@@ -308,42 +323,22 @@ def get_color(color):
     import numpy as np
 
     colors = dict(
-      default = dict(
-        black  = [0.000, 0.000, 0.000],
-        blue   = [0.298, 0.447, 0.690],
-        green  = [0.333, 0.659, 0.408],
-        red    = [0.769, 0.306, 0.321],
-        purple = [0.506, 0.447, 0.698],
-        yellow = [0.800, 0.725, 0.455],
-        cyan   = [0.392, 0.710, 0.804]),
-      pastel   = dict(
-        blue   = [0.573, 0.776, 1.000],
-        green  = [0.592, 0.941, 0.667],
-        red    = [1.000, 0.624, 0.604],
-        purple = [0.816, 0.733, 1.000],
-        yellow = [1.000, 0.996, 0.639],
-        cyan   = [0.690, 0.878, 0.902]),
-      muted    = dict(
-        blue   = [0.282, 0.471, 0.812],
-        green  = [0.416, 0.800, 0.396],
-        red    = [0.839, 0.373, 0.373],
-        purple = [0.706, 0.486, 0.780],
-        yellow = [0.769, 0.678, 0.400],
-        cyan   = [0.467, 0.745, 0.859]),
-      deep     = dict(
-        blue   = [0.298, 0.447, 0.690],
-        green  = [0.333, 0.659, 0.408],
-        red    = [0.769, 0.306, 0.322],
-        purple = [0.506, 0.447, 0.698],
-        yellow = [0.800, 0.725, 0.455],
-        cyan   = [0.392, 0.710, 0.804]),
-      dark     = dict(
-        blue   = [0.000, 0.110, 0.498],
-        green  = [0.004, 0.459, 0.090],
-        red    = [0.549, 0.035, 0.000],
-        purple = [0.463, 0.000, 0.631],
-        yellow = [0.722, 0.525, 0.043],
-        cyan   = [0.000, 0.388, 0.455]))
+        default=dict(black=[0.000, 0.000, 0.000], blue=[0.298, 0.447, 0.690],
+            green=[0.333, 0.659, 0.408], red=[0.769, 0.306, 0.321],
+            purple=[0.506, 0.447, 0.698], yellow=[0.800, 0.725, 0.455],
+            cyan=[0.392, 0.710, 0.804]),
+        pastel=dict(blue=[0.573, 0.776, 1.000], green=[0.592, 0.941, 0.667],
+            red=[1.000, 0.624, 0.604], purple=[0.816, 0.733, 1.000],
+            yellow=[1.000, 0.996, 0.639], cyan=[0.690, 0.878, 0.902]),
+        muted=dict(blue=[0.282, 0.471, 0.812], green=[0.416, 0.800, 0.396],
+            red=[0.839, 0.373, 0.373], purple=[0.706, 0.486, 0.780],
+            yellow=[0.769, 0.678, 0.400], cyan=[0.467, 0.745, 0.859]),
+        deep=dict(blue=[0.298, 0.447, 0.690], green=[0.333, 0.659, 0.408],
+            red=[0.769, 0.306, 0.322], purple=[0.506, 0.447, 0.698],
+            yellow=[0.800, 0.725, 0.455], cyan=[0.392, 0.710, 0.804]),
+        dark=dict(blue=[0.000, 0.110, 0.498], green=[0.004, 0.459, 0.090],
+            red=[0.549, 0.035, 0.000], purple=[0.463, 0.000, 0.631],
+            yellow=[0.722, 0.525, 0.043], cyan=[0.000, 0.388, 0.455]))
 
     if isinstance(color, str):
         if color.startswith("#"):
@@ -361,9 +356,8 @@ def get_color(color):
             return colors["default"][color]
         else:
             return color
-    elif (isinstance(color, list)
-    or    isinstance(color, np.ndarray)
-    or    isinstance(color, tuple)):
+    elif (isinstance(color, list) or isinstance(color,
+        np.ndarray) or isinstance(color, tuple)):
         color = np.array(color, dtype=np.float)
         if np.any(color[0] > 1):
             color /= 255
@@ -372,6 +366,7 @@ def get_color(color):
         if color > 1:
             color /= 255
         return (color, color, color)
+
 
 def get_colors(dict_1, *args, **kwargs):
     """
@@ -396,7 +391,7 @@ def get_colors(dict_1, *args, **kwargs):
     from . import get_color
 
     color_keys = kwargs.get("color_keys",
-      ["c", "color", "mec", "markeredgecolor", "mfc", "markerfacecolor"])
+        ["c", "color", "mec", "markeredgecolor", "mfc", "markerfacecolor"])
     for color_key in color_keys:
         if color_key in dict_1:
             dict_1[color_key] = get_color(dict_1[color_key])
@@ -404,6 +399,7 @@ def get_colors(dict_1, *args, **kwargs):
             for arg in args:
                 if color_key in arg:
                     dict_1[color_key] = get_color(arg[color_key])
+
 
 def multi_kw(keys, dictionary, value=None):
     """
@@ -426,6 +422,7 @@ def multi_kw(keys, dictionary, value=None):
             del dictionary[key]
     return value
 
+
 def multi_get_merged(keys, dictionary):
     """
     Scans dict for keys; returns list of values for all matches
@@ -447,6 +444,7 @@ def multi_get_merged(keys, dictionary):
 
     return values
 
+
 def multi_pop_merged(keys, dictionary):
     """
     Scans dict for keys; returns list of values for all matches
@@ -465,9 +463,10 @@ def multi_pop_merged(keys, dictionary):
             values.extend(dictionary[key])
         else:
             values.append(dictionary[key])
-        del(dictionary[key])
+        del (dictionary[key])
 
     return values
+
 
 def multi_get(*args, **kwargs):
     """
@@ -484,6 +483,7 @@ def multi_get(*args, **kwargs):
     """
     return _multi_get_pop(pop=False, *args, **kwargs)
 
+
 def multi_get_copy(*args, **kwargs):
     """
     Scans dict for keys; returns copy of first value.
@@ -499,6 +499,7 @@ def multi_get_copy(*args, **kwargs):
     """
     return _multi_get_pop(pop=False, copy=True, *args, **kwargs)
 
+
 def multi_pop(*args, **kwargs):
     """
     Scans dict for keys; returns first value and deletes it and others.
@@ -513,6 +514,7 @@ def multi_pop(*args, **kwargs):
       value: Value from first matching key; or None if not found
     """
     return _multi_get_pop(pop=True, *args, **kwargs)
+
 
 def _multi_get_pop(keys, dictionary, value=None, pop=False, copy=False):
     """
@@ -549,8 +551,9 @@ def _multi_get_pop(keys, dictionary, value=None, pop=False, copy=False):
 
     if pop and copy:
         raise TypeError("Argument seetings 'pop' and 'copy' may not be used "
-          "simultaneously; if the value is to be removed from the source "
-          "dictionary making a copy of it is not appropriate.")
+                        "simultaneously; if the value is to be removed from "
+                        "the source "
+                        "dictionary making a copy of it is not appropriate.")
 
     found = False
     for key in [key for key in keys if key in dictionary]:
@@ -563,6 +566,7 @@ def _multi_get_pop(keys, dictionary, value=None, pop=False, copy=False):
         if pop:
             del dictionary[key]
     return value
+
 
 def pad_zero(ticks, digits=None, **kwargs):
     """
@@ -587,6 +591,7 @@ def pad_zero(ticks, digits=None, **kwargs):
     else:
         return ["{0:.{1}f}".format(tick, digits) for tick in ticks]
 
+
 def get_edges(figure_or_subplots, absolute=False, **kwargs):
     """
     Finds the outermost edges of a set of subplots on a figure.
@@ -605,49 +610,46 @@ def get_edges(figure_or_subplots, absolute=False, **kwargs):
     import matplotlib
 
     if isinstance(figure_or_subplots, matplotlib.figure.Figure):
-        figure   = figure_or_subplots
+        figure = figure_or_subplots
         subplots = figure.axes
         if len(subplots) == 0:
             edges = dict(left=0.5, right=0.5, top=0.5, bottom=0.5)
         else:
-            edges = dict(
-              left   = min([s.get_position().xmin for s in subplots]),
-              right  = max([s.get_position().xmax for s in subplots]),
-              top    = max([s.get_position().ymax for s in subplots]),
-              bottom = min([s.get_position().ymin for s in subplots]))
+            edges = dict(left=min([s.get_position().xmin for s in subplots]),
+                right=max([s.get_position().xmax for s in subplots]),
+                top=max([s.get_position().ymax for s in subplots]),
+                bottom=min([s.get_position().ymin for s in subplots]))
     elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots.values()
-        figure   = subplots[0].get_figure()
+        figure = subplots[0].get_figure()
         if len(subplots) == 0:
             edges = dict(left=0.5, right=0.5, top=0.5, bottom=0.5)
         else:
-            edges = dict(
-              left   = min([s.get_position().xmin for s in subplots]),
-              right  = max([s.get_position().xmax for s in subplots]),
-              top    = max([s.get_position().ymax for s in subplots]),
-              bottom = min([s.get_position().ymin for s in subplots]))
+            edges = dict(left=min([s.get_position().xmin for s in subplots]),
+                right=max([s.get_position().xmax for s in subplots]),
+                top=max([s.get_position().ymax for s in subplots]),
+                bottom=min([s.get_position().ymin for s in subplots]))
     elif isinstance(figure_or_subplots, matplotlib.axes.Axes):
         subplot = figure_or_subplots
-        figure  = subplot.get_figure()
-        edges = dict(
-          left   = subplot.get_position().xmin,
-          right  = subplot.get_position().xmax,
-          top    = subplot.get_position().ymax,
-          bottom = subplot.get_position().ymin)
-    edges["width"]  = edges["right"] - edges["left"]
-    edges["height"] = edges["top"]   - edges["bottom"]
+        figure = subplot.get_figure()
+        edges = dict(left=subplot.get_position().xmin,
+            right=subplot.get_position().xmax, top=subplot.get_position().ymax,
+            bottom=subplot.get_position().ymin)
+    edges["width"] = edges["right"] - edges["left"]
+    edges["height"] = edges["top"] - edges["bottom"]
 
     if absolute:
         fig_height = figure.get_figheight()
-        fig_width  = figure.get_figwidth()
-        edges["left"]   *= fig_width
-        edges["right"]  *= fig_width
-        edges["width"]  *= fig_width
-        edges["top"]    *= fig_height
+        fig_width = figure.get_figwidth()
+        edges["left"] *= fig_width
+        edges["right"] *= fig_width
+        edges["width"] *= fig_width
+        edges["top"] *= fig_height
         edges["bottom"] *= fig_height
         edges["height"] *= fig_height
 
     return edges
+
 
 def get_font(fp=None, **kwargs):
     """
@@ -671,20 +673,24 @@ def get_font(fp=None, **kwargs):
         return fp
     elif isinstance(fp, six.string_types):
         kwargs["size"] = kwargs.get("size", int(fp[:-1]))
-        kwargs["weight"] = kwargs.get("weight", {"r":"regular",
-            "b":"bold"}[fp[-1]])
+        kwargs["weight"] = kwargs.get("weight",
+            {"r": "regular", "b": "bold"}[fp[-1]])
     elif isinstance(fp, dict):
         kwargs.update(fp)
     else:
-        raise TypeError("Function myplotspec.get_font() does not support" +
-          "input of type {0}".format(fp.__class__.__name__))
+        raise TypeError(
+            "Function myplotspec.get_font() does not support" + "input of "
+                                                                "type {"
+                                                                "0}".format(
+                fp.__class__.__name__))
     return FontProperties(**kwargs)
 
+
 def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
-    ncols=None, nsubplots=None, left=None, sub_width=None, wspace=None,
-    right=None, bottom=None, sub_height=None, hspace=None, top=None,
-    fig_width=None, fig_height=None, figsize=None, verbose=1,
-    debug=0, **kwargs):
+        ncols=None, nsubplots=None, left=None, sub_width=None, wspace=None,
+        right=None, bottom=None, sub_height=None, hspace=None, top=None,
+        fig_width=None, fig_height=None, figsize=None, verbose=1, debug=0,
+        **kwargs):
     """
     Generates a figure and subplots to provided specifications.
 
@@ -761,8 +767,8 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
         fig_height = figure.get_figheight()
         fig_width = figure.get_figwidth()
         figsize = [fig_width, fig_height]
-    if  ((sub_width is None or sub_height is None)
-    and ((fig_width is None or fig_height is None) and figsize is None)):
+    if ((sub_width is None or sub_height is None) and (
+        (fig_width is None or fig_height is None) and figsize is None)):
         # Lack subplot and figure dimensions
         figsize = matplotlib.rcParams["figure.figsize"]
         if fig_width is None:
@@ -774,8 +780,8 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
             sub_width = fig_width - left - (wspace * (ncols - 1)) - right
         if sub_height is None:
             sub_height = fig_height - top - (hspace * (nrows - 1)) - bottom
-    elif    ((sub_width is None or sub_height is None)
-    and not ((fig_width is None or fig_height is None) and figsize is None)):
+    elif ((sub_width is None or sub_height is None) and not (
+        (fig_width is None or fig_height is None) and figsize is None)):
         # Lack sublot dimensions, but have figure dimensions
         if figsize is not None:
             fig_width, fig_height = figsize
@@ -783,24 +789,26 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
         if sub_width is None:
             sub_width = fig_width - left - (wspace * (ncols - 1)) - right
         if sub_height is None:
-            sub_height = fig_height - top  - (hspace * (nrows - 1)) - bottom
-    elif (not (sub_width is None or sub_height is None)
-    and      ((fig_width is None or fig_height is None) and figsize is None)):
+            sub_height = fig_height - top - (hspace * (nrows - 1)) - bottom
+    elif (not (sub_width is None or sub_height is None) and (
+        (fig_width is None or fig_height is None) and figsize is None)):
         # Have subplot dimensions, but lack figure dimensions
         if fig_width is None:
-            fig_width = left+(sub_width*ncols)+(wspace*(ncols-1))+right
+            fig_width = left + (sub_width * ncols) + (
+            wspace * (ncols - 1)) + right
         if fig_height is None:
-            fig_height = top+(sub_height*nrows)+(hspace*(nrows-1))+bottom
+            fig_height = top + (sub_height * nrows) + (
+            hspace * (nrows - 1)) + bottom
         figsize = [fig_width, fig_height]
-    elif (not  (sub_width is None or sub_height is None)
-    and   not ((fig_width is None or fig_height is None) and figsize is None)):
+    elif (not (sub_width is None or sub_height is None) and not (
+        (fig_width is None or fig_height is None) and figsize is None)):
         # Have subplot and figure dimensions
         figsize = [fig_width, fig_height]
 
     # Manage figure
     if figure is None:
         figure_kw = kwargs.get("figure_kw", {})
-        figure = pyplot.figure(figsize = figsize, **figure_kw)
+        figure = pyplot.figure(figsize=figsize, **figure_kw)
 
     # Manage subplots
     subplot_kw = kwargs.get("subplot_kw", kwargs.get("axes_kw", {}))
@@ -825,12 +833,13 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
         if breaking:
             break
         for k in range(0, ncols, 1):
-            subplots[i] = matplotlib.axes.Axes(figure, rect = [
-              (left + k * sub_width + k * wspace) / fig_width,      # Left
-              (bottom + j * sub_height + j * hspace) / fig_height,  # Bottom
-              sub_width / fig_width,                                # Width
-              sub_height / fig_height],                             # Height
-              **subplot_kw)
+            subplots[i] = matplotlib.axes.Axes(figure,
+                rect=[(left + k * sub_width + k * wspace) / fig_width,  # Left
+                    (bottom + j * sub_height + j * hspace) / fig_height,
+                    # Bottom
+                    sub_width / fig_width,  # Width
+                    sub_height / fig_height],  # Height
+                **subplot_kw)
             figure.add_axes(subplots[i])
             i += 1
             if i >= i_max:
@@ -839,23 +848,28 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
 
     if verbose >= 1:
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(
-          figure.get_figwidth(), figure.get_figheight()))
+            figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots
+
 
 ################################### CLASSES ###################################
 class OrderedSet(object):
     """
     """
+
     def __init__(self, iterable=None):
         self.items = []
         if iterable is not None:
             for item in iterable:
                 if item not in self.items:
                     self.items.append(item)
+
     def __len__(self):
         return len(self.items)
+
     def __contains__(self, key):
         return key in self.items
+
     def __getitem__(self, index):
         """
         .. todo:
@@ -865,15 +879,17 @@ class OrderedSet(object):
 
         if not isinstance(index, six.integer_types):
             raise TypeError("OrderedSet index must be integer, "
-              "not {0}".format(index.__class__.__name__))
+                            "not {0}".format(index.__class__.__name__))
         if index < len(self.items):
             return self.items[index]
         else:
             raise IndexError("OrderedSet index out of range")
+
     def __repr__(self):
         if not self:
             return "{0}()".format(self.__class__.__name__)
         return "{0}({1})".format(self.__class__.__name__, list(self))
+
     def __eq__(self, other):
         if isinstance(other, OrderedSet):
             return len(self) == len(other) and list(self) == list(other)
@@ -892,7 +908,7 @@ class OrderedSet(object):
     def insert(self, index, key):
         if key in self.items:
             self.items.remove(key)
-        self.items.insert(index,key)
+        self.items.insert(index, key)
 
     def remove(self, key):
         if key in self.items:
@@ -913,7 +929,7 @@ class OrderedSet(object):
             raise KeyError("pop from an empty OrderedSet")
         elif not (isinstance(index, six.integer_types) or index is None):
             raise TypeError("OrderedSet index must be integer, "
-              "not {0}".format(index.__class__.__name__))
+                            "not {0}".format(index.__class__.__name__))
         if index is None:
             index = len(self.items) - 1
 

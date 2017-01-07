@@ -11,7 +11,10 @@ Decorator to manage the passage of keyword arguments to a function or
 method.
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
+
 ################################### CLASSES ###################################
 class manage_kwargs(object):
     """
@@ -140,29 +143,29 @@ class manage_kwargs(object):
             Returns:
               Return value of wrapped function
             """
-            from copy import copy, deepcopy
+            from copy import deepcopy
             import six
             from . import get_yaml, merge_dicts, multi_kw
             from .debug import db_s, db_kv
 
             db = max(in_kwargs.get("debug", 0), decorator.debug,
-                  self.debug if hasattr(self, "debug") else 0)
+                self.debug if hasattr(self, "debug") else 0)
 
             # Prepare sources and destinations
             if db >= 1:
                 db_s("Managing kwargs for function '{0}':".format(
-                  function.__name__))
+                    function.__name__))
             defaults = get_yaml(in_kwargs.pop("defaults", {}))
-            available_presets = get_yaml(in_kwargs.pop("available_presets",
-                                  {}))
+            available_presets = get_yaml(
+                in_kwargs.pop("available_presets", {}))
             selected_presets = multi_kw(["presets", "preset"], in_kwargs, [])
             if isinstance(selected_presets, six.string_types):
                 selected_presets = [selected_presets]
             elif selected_presets is None:
                 selected_presets = []
             yaml_spec = get_yaml(in_kwargs.get("yaml_spec", {}))
-            selected_yaml_keys = list(map(tuple, in_kwargs.get("yaml_keys",
-                                   [["__complete_file__"]])))
+            selected_yaml_keys = list(map(tuple,
+                in_kwargs.get("yaml_keys", [["__complete_file__"]])))
             out_args = in_args
             out_kwargs = {}
 
@@ -187,7 +190,8 @@ class manage_kwargs(object):
                 node = deepcopy(node)
                 selected_yaml[selected_yaml_key] = node
                 if "presets" in node or "preset" in node:
-                    additional_presets = multi_kw(["presets","preset"],node,[])
+                    additional_presets = multi_kw(["presets", "preset"], node,
+                        [])
                     if isinstance(additional_presets, six.string_types):
                         additional_presets = [additional_presets]
                     elif additional_presets is None:
@@ -198,7 +202,7 @@ class manage_kwargs(object):
                         selected_presets.append(additional_preset)
             if db >= 1:
                 db_s("Selected presets that are available: '{0}'".format(
-                  selected_presets))
+                    selected_presets))
 
             # Lowest priority: Defaults
             if db >= 1:
@@ -220,14 +224,14 @@ class manage_kwargs(object):
                     for key in sorted(available_presets[selected_preset]):
                         if key in out_kwargs:
                             db_kv(key, available_presets[selected_preset][key],
-                              3, "*")
+                                3, "*")
                         else:
                             db_kv(key, available_presets[selected_preset][key],
-                              3, "+")
+                                3, "+")
             for selected_preset in selected_presets:
                 if selected_preset in available_presets:
                     out_kwargs = merge_dicts(out_kwargs,
-                                   available_presets[selected_preset])
+                        available_presets[selected_preset])
 
             # High priorty: Yaml
             if db >= 1:
@@ -237,18 +241,20 @@ class manage_kwargs(object):
                     for key in sorted(selected_yaml[selected_yaml_key]):
                         if key in out_kwargs:
                             db_kv(key, selected_yaml[selected_yaml_key][key],
-                              3, "*")
+                                3, "*")
                         else:
                             db_kv(key, selected_yaml[selected_yaml_key][key],
-                              3, "+")
+                                3, "+")
             for selected_yaml_key in selected_yaml_keys:
                 out_kwargs = merge_dicts(out_kwargs,
-                               selected_yaml[selected_yaml_key])
+                    selected_yaml[selected_yaml_key])
 
             # Highest priorty: Function call
             if db >= 1:
-                db_s("Highest priority: Arguments provided at function or " +
-                     "method call", 1)
+                db_s(
+                    "Highest priority: Arguments provided at function or " +
+                    "method call",
+                    1)
                 for key in sorted(in_kwargs.keys()):
                     if key in out_kwargs:
                         db_kv(key, in_kwargs[key], 2, "*")

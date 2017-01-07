@@ -10,7 +10,10 @@
 Decorator to manage the output of matplotlib figures.
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
+
 ################################### CLASSES ###################################
 class manage_output(object):
     """

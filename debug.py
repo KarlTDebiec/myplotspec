@@ -15,7 +15,10 @@ Classes and functions for debugging.
     spaces?
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
+
 ################################## FUNCTIONS ##################################
 def db_s(string, indent=0):
     """
@@ -27,12 +30,13 @@ def db_s(string, indent=0):
     """
     try:
         output = "DEBUG: {0}{1}".format("    " * indent,
-                   str(string).replace("\n", "\\n"))
+            str(string).replace("\n", "\\n"))
     except UnicodeEncodeError:
         output = "DEBUG: {0}{1}".format("    " * indent, string)
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
+
 
 def db_kv(key, value, indent=0, flag=" "):
     """
@@ -46,14 +50,15 @@ def db_kv(key, value, indent=0, flag=" "):
     """
     try:
         output = "DEBUG: {0}  {1} {2}:{3}".format("    " * max(indent - 1, 0),
-                   flag, str(key).replace("\n", "\\n"),
-                   str(value).replace("\n", "\\n"))
+            flag, str(key).replace("\n", "\\n"),
+            str(value).replace("\n", "\\n"))
     except UnicodeEncodeError:
         output = "DEBUG: {0}  {1} {2}:{3}".format("    " * max(indent - 1, 0),
-                   flag, key, value)
+            flag, key, value)
     if len(output) >= 80:
         output = output[:77] + "..."
     print(output)
+
 
 def identify(subplots, **kwargs):
     """
@@ -65,5 +70,5 @@ def identify(subplots, **kwargs):
     from .text import set_inset
 
     for key, subplot in subplots.items():
-        set_inset(subplot, text = key, xpos = 0.5, ypos = 0.5, ha = "center",
-          va = "center", **kwargs)
+        set_inset(subplot, text=key, xpos=0.5, ypos=0.5, ha="center",
+            va="center", **kwargs)

@@ -24,7 +24,10 @@ Note:
     style
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
+
 ################################## FUNCTIONS ##################################
 def set_legend(subplot, handles=None, **kwargs):
     """
@@ -57,7 +60,7 @@ def set_legend(subplot, handles=None, **kwargs):
         legend_kw["prop"] = get_font(legend_fp)
 
     title_fp = multi_get_copy(["legend_title_fp"] + FP_KEYS, kwargs)
-    title_fp_2 = multi_pop(["legend_title_fp", "title_fp"],legend_kw)
+    title_fp_2 = multi_pop(["legend_title_fp", "title_fp"], legend_kw)
     if title_fp_2 is not None:
         title_fp = get_font(title_fp_2)
     elif title_fp is not None:
@@ -76,8 +79,9 @@ def set_legend(subplot, handles=None, **kwargs):
 
     return legend
 
+
 def set_shared_legend(figure, subplots, handles, mode="manual", spines=False,
-    **kwargs):
+        **kwargs):
     """
     Draws a legend on a figure, shared by multiple subplots.
 
@@ -93,14 +97,13 @@ def set_shared_legend(figure, subplots, handles, mode="manual", spines=False,
       (Legend): Legend
     """
     from collections import OrderedDict
-    from . import (get_colors, get_figure_subplots, get_font, multi_get_copy,
-                   multi_get)
+    from . import (get_colors, get_figure_subplots)
     from .axes import set_xaxis, set_yaxis
 
     # Add subplot to figure, draw and format legend
     if mode == "manual":
-        figure, subplots = get_figure_subplots(figure=figure, subplots=subplots,
-          verbose=0, **kwargs)
+        figure, subplots = get_figure_subplots(figure=figure,
+            subplots=subplots, verbose=0, **kwargs)
         subplot = subplots[len(subplots) - 1]
     elif mode == "partner":
         from .axes import add_partner_subplot
@@ -116,13 +119,13 @@ def set_shared_legend(figure, subplots, handles, mode="manual", spines=False,
             get_colors(handle)
             h_kw = handle_kw.copy()
             h_kw.update(handle)
-            handles[label] = subplot.plot((-1),(-1), **h_kw)[0]
+            handles[label] = subplot.plot((-1), (-1), **h_kw)[0]
 
     legend = set_legend(subplot, handles=handles, **kwargs)
 
     # Hide subplot borders
-    set_xaxis(subplot, xbound=[0,1], xticks=[])
-    set_yaxis(subplot, ybound=[0,1], yticks=[])
+    set_xaxis(subplot, xbound=[0, 1], xticks=[])
+    set_yaxis(subplot, ybound=[0, 1], yticks=[])
     if not spines:
         for spine in subplot.spines.values():
             spine.set_visible(False)

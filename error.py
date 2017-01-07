@@ -10,7 +10,10 @@
 Classes and functions for error handling.
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
+
 ################################## FUNCTIONS ##################################
 def is_argument_error(error):
     """
@@ -44,11 +47,13 @@ def is_argument_error(error):
     else:
         return False
 
+
 ################################### CLASSES ###################################
 class MPSError(Exception):
     """
     Base error class for MYPlotSpec
     """
+
     def __init__(self, error):
         """
         Initializes from an existing error and stores traceback
@@ -58,6 +63,7 @@ class MPSError(Exception):
         self.traceback = exc_info()
         super(MPSError, self).__init__(error)
 
+
 class MPSArgumentError(MPSError):
     """
     Error raised when a function is passed incorrect arguments
@@ -65,6 +71,7 @@ class MPSArgumentError(MPSError):
     Implements Python 3-style useful error messages listing missing
     arguments in Python 2.
     """
+
     def __init__(self, error, function, kwargs=None, cls=None, skip=None):
         """
         Initializes from an existing error and writes message
@@ -77,17 +84,17 @@ class MPSArgumentError(MPSError):
             from inspect import getargspec
 
             argspec = getargspec(function)
-            args    = [a for a in argspec.args]
+            args = [a for a in argspec.args]
             if skip is not None:
                 if isinstance(skip, six.string_types):
                     skip = [skip]
                 for s in skip:
                     if s in args:
                         args.remove(s)
-            args    = args[:-1*len(argspec.defaults)]
-            given   = [a for a in args if a     in kwargs]
+            args = args[:-1 * len(argspec.defaults)]
+            given = [a for a in args if a in kwargs]
             missing = [a for a in args if a not in kwargs]
-            message = "{0}() missing ".format( function.__name__)
+            message = "{0}() missing ".format(function.__name__)
             if cls is not None:
                 message = "{0}.{1}".format(cls.__name__, message)
 
@@ -104,11 +111,13 @@ class MPSArgumentError(MPSError):
                 message = "{0}.{1}".format(cls.__name__, message)
         self.args = (message,)
 
+
 class MPSDatasetError(MPSError):
     """
     Error raised when initializing dataset
     """
     pass
+
 
 class MPSDatasetCacheError(MPSError):
     """

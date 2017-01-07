@@ -16,7 +16,10 @@ Functions for formatting axes.
       and automatically ('1' often looks bad)
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
+
 ################################## FUNCTIONS ##################################
 def set_xaxis(subplot, **kwargs):
     """
@@ -60,17 +63,20 @@ def set_xaxis(subplot, **kwargs):
     subplot.set_xticks(xticks, **xtick_kw)
 
     # Tick labels
-    xticklabel_kw = multi_get_copy(["xticklabel_kw", "ticklabel_kw"],kwargs,{})
+    xticklabel_kw = multi_get_copy(["xticklabel_kw", "ticklabel_kw"], kwargs,
+        {})
     xticklabels = multi_get_copy(["xticklabels", "ticklabels"], kwargs)
     xticklabels_2 = multi_pop(["xticklabels", "ticklabels"], xticklabel_kw)
     if xticklabels_2 is not None:
         xticklabels = xticklabels_2
     elif xticklabels is None:
         xticklabels = xticks
-    xticklabel_fp = multi_get_copy(["xtick_fp", "tick_fp", "xticklabel_fp",
-      "ticklabel_fp"] + FP_KEYS, kwargs)
-    xticklabel_fp_2 = multi_pop(["xtick_fp", "tick_fp", "xticklabel_fp",
-      "ticklabel_fp"] + FP_KEYS, xticklabel_kw)
+    xticklabel_fp = multi_get_copy(
+        ["xtick_fp", "tick_fp", "xticklabel_fp", "ticklabel_fp"] + FP_KEYS,
+        kwargs)
+    xticklabel_fp_2 = multi_pop(
+        ["xtick_fp", "tick_fp", "xticklabel_fp", "ticklabel_fp"] + FP_KEYS,
+        xticklabel_kw)
     if xticklabel_fp_2 is not None:
         xticklabel_kw["fontproperties"] = get_font(xticklabel_fp_2)
     elif xticklabel_fp is not None:
@@ -106,6 +112,7 @@ def set_xaxis(subplot, **kwargs):
         subplot.spines["bottom"].set_lw(xlw)
     subplot.spines["top"].set_zorder(100)
     subplot.spines["bottom"].set_zorder(100)
+
 
 def set_yaxis(subplot, **kwargs):
     """
@@ -164,17 +171,20 @@ def set_yaxis(subplot, **kwargs):
     subplot.set_yticks(yticks, **ytick_kw)
 
     # Tick labels
-    yticklabel_kw = multi_get_copy(["yticklabel_kw", "ticklabel_kw"],kwargs,{})
+    yticklabel_kw = multi_get_copy(["yticklabel_kw", "ticklabel_kw"], kwargs,
+        {})
     yticklabels = multi_get_copy(["yticklabels", "ticklabels"], kwargs)
     yticklabels_2 = multi_pop(["yticklabels", "ticklabels"], yticklabel_kw)
     if yticklabels_2 is not None:
         yticklabels = yticklabels_2
     elif yticklabels is None:
         yticklabels = yticks
-    yticklabel_fp = multi_get_copy(["ytick_fp", "tick_fp", "yticklabel_fp",
-      "ticklabel_fp"] + FP_KEYS, kwargs)
-    yticklabel_fp_2 = multi_pop(["ytick_fp", "tick_fp", "yticklabel_fp",
-      "ticklabel_fp"] + FP_KEYS, yticklabel_kw)
+    yticklabel_fp = multi_get_copy(
+        ["ytick_fp", "tick_fp", "yticklabel_fp", "ticklabel_fp"] + FP_KEYS,
+        kwargs)
+    yticklabel_fp_2 = multi_pop(
+        ["ytick_fp", "tick_fp", "yticklabel_fp", "ticklabel_fp"] + FP_KEYS,
+        yticklabel_kw)
     if yticklabel_fp_2 is not None:
         yticklabel_kw["fontproperties"] = get_font(yticklabel_fp_2)
     elif yticklabel_fp is not None:
@@ -226,8 +236,8 @@ def set_yaxis(subplot, **kwargs):
     # Y2 tick labels
     y2ticklabel_kw = multi_get_copy("y2ticklabel_kw", kwargs, {})
     y2ticklabels = multi_get_copy("y2ticklabels", kwargs)
-    y2ticklabels_2 = multi_pop(["y2ticklabels", "yticklabels",
-      "ticklabels"], y2ticklabel_kw)
+    y2ticklabels_2 = multi_pop(["y2ticklabels", "yticklabels", "ticklabels"],
+        y2ticklabel_kw)
     if y2ticklabels_2 is not None:
         y2ticklabels = y2ticklabels_2
     if y2ticklabels is None and y2ticks is not None:
@@ -259,13 +269,15 @@ def set_yaxis(subplot, **kwargs):
         if y2ticks is not None:
             if y2ticks != []:
                 subplot._mps_y2.set_ybound(float(y2ticks[0]),
-                  float(y2ticks[-1]))
+                    float(y2ticks[-1]))
             subplot._mps_y2.set_yticks(y2ticks, **y2tick_kw)
         if y2ticklabels is not None:
-            y2ticklabel_fp = multi_get_copy(["y2tick_fp", "tick_fp",
-              "y2ticklabel_fp", "ticklabel_fp"] + FP_KEYS, kwargs)
-            y2ticklabel_fp_2 = multi_pop(["y2tick_fp", "tick_fp",
-              "y2ticklabel_fp", "ticklabel_fp"] + FP_KEYS, y2ticklabel_kw)
+            y2ticklabel_fp = multi_get_copy(
+                ["y2tick_fp", "tick_fp", "y2ticklabel_fp",
+                    "ticklabel_fp"] + FP_KEYS, kwargs)
+            y2ticklabel_fp_2 = multi_pop(
+                ["y2tick_fp", "tick_fp", "y2ticklabel_fp",
+                    "ticklabel_fp"] + FP_KEYS, y2ticklabel_kw)
             if y2ticklabel_fp_2 is not None:
                 y2ticklabel_kw["fontproperties"] = get_font(y2ticklabel_fp_2)
             elif y2ticklabel_fp is not None:
@@ -273,9 +285,9 @@ def set_yaxis(subplot, **kwargs):
             subplot._mps_y2.set_yticklabels(y2ticklabels, **y2ticklabel_kw)
         if y2label is not None:
             y2label_fp = multi_get_copy(["y2label_fp", "label_fp"] + FP_KEYS,
-              kwargs)
-            y2label_fp_2 = multi_pop(["y2label_fp", "ylabel_fp", "label_fp"] 
-              + FP_KEYS, ylabel_kw)
+                kwargs)
+            y2label_fp_2 = multi_pop(
+                ["y2label_fp", "ylabel_fp", "label_fp"] + FP_KEYS, ylabel_kw)
             if y2label_fp_2 is not None:
                 y2label_kw["fontproperties"] = get_font(y2label_fp_2)
             elif ylabel_fp is not None:
@@ -296,7 +308,7 @@ def set_yaxis(subplot, **kwargs):
 
 
 def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
-    **kwargs):
+        **kwargs):
     """
     Adds a subplot to the side 
 
@@ -331,14 +343,14 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     fig_width, fig_height = fig_size
     host_width, host_height = np.array(subplot.get_position().size) * fig_size
     host_left, host_bottom = np.array(subplot.get_position().min) * fig_size
-    host_right, host_top = (fig_size - np.array(subplot.get_position().max)
-      * fig_size)
+    host_right, host_top = (
+    fig_size - np.array(subplot.get_position().max) * fig_size)
 
     # Determine partner dimensions in inches
     partner_kw = copy(kwargs.get("partner_kw", {}))
     position = partner_kw.get("position", "right")
     for k in [k for k, v in partner_kw.items() if v is None]:
-        del(partner_kw[k])
+        del (partner_kw[k])
 
     if position == "top":
         partner_kw["left"] = partner_kw.get("left", host_left)
@@ -346,20 +358,20 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
         partner_kw["hspace"] = partner_kw.pop("hspace", 0.05)
         partner_kw["sub_height"] = partner_kw.get("sub_height", 0.1)
         partner_kw["bottom"] = partner_kw.get("bottom",
-          host_bottom + host_height + partner_kw["hspace"])
+            host_bottom + host_height + partner_kw["hspace"])
         partner_kw["top"] = partner_kw.get("top",
-          host_top - partner_kw["hspace"] - partner_kw["sub_height"])
+            host_top - partner_kw["hspace"] - partner_kw["sub_height"])
 
     elif position == "bottom":
         if "sub_width" in partner_kw:
             if "right" not in partner_kw and "left" not in partner_kw:
-                partner_kw["left"] = (host_left
-                  + (host_width - partner_kw["sub_width"]) / 2)
-                partner_kw["right"] = (host_right
-                  - (host_width - partner_kw["sub_width"]) / 2)
+                partner_kw["left"] = (
+                host_left + (host_width - partner_kw["sub_width"]) / 2)
+                partner_kw["right"] = (
+                host_right - (host_width - partner_kw["sub_width"]) / 2)
         else:
             if "left" not in partner_kw and "right" not in partner_kw:
-                partner_kw["left"]  = host_left
+                partner_kw["left"] = host_left
                 partner_kw["right"] = host_right
             elif "left" in partner_kw:
                 if partner_kw["left"] < host_right:
@@ -375,8 +387,8 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
             partner_kw["hspace"] = rcParams["figure.subplot.hspace"]
         if "sub_height" in partner_kw:
             if "bottom" not in partner_kw and "top" not in partner_kw:
-                partner_kw["bottom"] = \
-                  (host_bottom + host_height - partner_kw["hspace"])
+                partner_kw["bottom"] = (
+                host_bottom + host_height - partner_kw["hspace"])
         else:
             if "bottom" not in partner_kw and "top" not in partner_kw:
                 partner_kw["top"] = host_bottom - partner_kw["hspace"]
@@ -389,14 +401,14 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
     elif position == "right":
         if "sub_height" in partner_kw:
             if "bottom" not in partner_kw and "top" not in partner_kw:
-                partner_kw["bottom"] = (host_bottom
-                  + (host_height - partner_kw["sub_height"]) / 2)
-                partner_kw["top"] = (host_top
-                  - (host_height - partner_kw["sub_height"]) / 2)
+                partner_kw["bottom"] = (
+                host_bottom + (host_height - partner_kw["sub_height"]) / 2)
+                partner_kw["top"] = (
+                host_top - (host_height - partner_kw["sub_height"]) / 2)
         else:
             if "bottom" not in partner_kw and "top" not in partner_kw:
                 partner_kw["bottom"] = host_bottom
-                partner_kw["top"]    = host_top
+                partner_kw["top"] = host_top
             elif "bottom" in partner_kw:
                 if partner_kw["bottom"] < host_top:
                     partner_kw["top"] = host_top
@@ -411,8 +423,8 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
             partner_kw["wspace"] = rcParams["figure.subplot.wspace"]
         if "sub_width" in partner_kw:
             if "right" not in partner_kw and "left" not in partner_kw:
-                partner_kw["left"] = \
-                  (host_left + host_width + partner_kw["wspace"])
+                partner_kw["left"] = (
+                host_left + host_width + partner_kw["wspace"])
         else:
             if "left" not in partner_kw and "right" not in partner_kw:
                 partner_kw["left"] = host_right + partner_kw["wspace"]
@@ -423,7 +435,7 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
                 partner_kw["sub_width"] = host_width * 0.1
 
     else:
-        raise()
+        raise ()
 
     get_figure_subplots(figure=figure, subplots=subplots, **partner_kw)
     partner = subplots[list(subplots)[-1]]
@@ -437,6 +449,7 @@ def add_partner_subplot(subplot, figure, subplots, verbose=1, debug=0,
 
     subplot._mps_partner_subplot = partner
     return partner
+
 
 def set_colorbar(subplot, mappable, **kwargs):
     """
@@ -476,10 +489,10 @@ def set_colorbar(subplot, mappable, **kwargs):
     else:
         position = "right"
 
-    orientation = colorbar_kw.get("orientation", "vertical"
-      if position in ["left", "right"] else "horizontal")
+    orientation = colorbar_kw.get("orientation",
+        "vertical" if position in ["left", "right"] else "horizontal")
     subplot._mps_colorbar = colorbar(mappable,
-      cax=subplot._mps_partner_subplot, orientation=orientation)
+        cax=subplot._mps_partner_subplot, orientation=orientation)
     if position == "top":
         subplot._mps_partner_subplot.xaxis.set_label_position("top")
 
@@ -494,36 +507,37 @@ def set_colorbar(subplot, mappable, **kwargs):
         subplot._mps_colorbar.set_ticks(ticks)
         if position in ["left", "right"]:
             for tick in ticks:
-                tick_y = ((tick - subplot._mps_colorbar.vmin) /
-                  (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
+                tick_y = ((tick - subplot._mps_colorbar.vmin) / (
+                subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
                 subplot._mps_partner_subplot.axhline(y=tick_y, lw=lw,
-                  color="k")
+                    color="k")
         if position == "top":
             subplot._mps_partner_subplot.xaxis.tick_top()
         if position in ["top", "bottom"]:
             for tick in ticks:
-                tick_x = ((tick - subplot._mps_colorbar.vmin) /
-                  (subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
+                tick_x = ((tick - subplot._mps_colorbar.vmin) / (
+                subplot._mps_colorbar.vmax - subplot._mps_colorbar.vmin))
                 subplot._mps_partner_subplot.axvline(x=tick_x, lw=lw,
-                  color="k")
+                    color="k")
 
     # Tick labels
-    ticklabel_kw = multi_kw(
-      ["zticklabel_kw", "cticklabel_kw", "ticklabel_kw"], colorbar_kw, {})
+    ticklabel_kw = multi_kw(["zticklabel_kw", "cticklabel_kw", "ticklabel_kw"],
+        colorbar_kw, {})
     ticklabels = multi_kw(["zticklabels", "cticklabels", "ticklabels"],
-      colorbar_kw)
+        colorbar_kw)
     ticklabels_2 = multi_kw(["zticklabels", "cticklabels", "ticklabels"],
-      ticklabel_kw)
+        ticklabel_kw)
     if ticklabels_2 is not None:
         ticklabels = ticklabels_2
     elif ticklabels is None and ticks is not None:
         ticklabels = ticks
 
-    ticklabel_fp = multi_kw(["ztick_fp", "ctick_fp", "tick_fp",
-      "zticklabel_fp", "cticklabel_fp", "ticklabel_fp"] + FP_KEYS, colorbar_kw)
-    ticklabel_fp_2 = multi_kw(["ztick_fp", "ctick_fp", "tick_fp",
-      "zticklabel_fp", "cticklabel_fp", "ticklabel_fp"] + FP_KEYS,
-      ticklabel_kw)
+    ticklabel_fp = multi_kw(
+        ["ztick_fp", "ctick_fp", "tick_fp", "zticklabel_fp", "cticklabel_fp",
+            "ticklabel_fp"] + FP_KEYS, colorbar_kw)
+    ticklabel_fp_2 = multi_kw(
+        ["ztick_fp", "ctick_fp", "tick_fp", "zticklabel_fp", "cticklabel_fp",
+            "ticklabel_fp"] + FP_KEYS, ticklabel_kw)
     if ticklabel_fp_2 is not None:
         ticklabel_kw["fontproperties"] = get_font(ticklabel_fp_2)
     elif ticklabel_fp is not None:
@@ -531,23 +545,23 @@ def set_colorbar(subplot, mappable, **kwargs):
     if ticklabels is not None:
         if position in ["left", "right"]:
             subplot._mps_colorbar.ax.set_yticklabels(ticklabels,
-              **ticklabel_kw)
+                **ticklabel_kw)
         else:
             subplot._mps_colorbar.ax.set_xticklabels(ticklabels,
-              **ticklabel_kw)
+                **ticklabel_kw)
 
     # Label
     label_kw = multi_kw(["zlabel_kw", "clabel_kw", "label_kw", ], colorbar_kw,
-                 {})
+        {})
     label = multi_kw(["zlabel", "clabel", "label"], colorbar_kw)
     label_2 = multi_kw(["zlabel", "clabel", "label"], label_kw)
     if label_2 is not None:
         label = label_2
 
     label_fp = multi_kw(["zlabel_fp", "clabel_fp", "label_fp"] + FP_KEYS,
-      colorbar_kw)
+        colorbar_kw)
     label_fp_2 = multi_kw(["zlabel_fp", "clabel_fp", "label_fp"] + FP_KEYS,
-      label_kw)
+        label_kw)
     if label_fp_2 is not None:
         label_kw["fontproperties"] = get_font(label_fp_2)
     elif label_fp is not None:
@@ -557,7 +571,7 @@ def set_colorbar(subplot, mappable, **kwargs):
 
     # Tick parameters
     tick_params = multi_kw(["ztick_params", "ctick_params", "tick_params"],
-      colorbar_kw)
+        colorbar_kw)
     if tick_params is not None:
         subplot._mps_partner_subplot.tick_params(**tick_params)
 
@@ -566,6 +580,6 @@ def set_colorbar(subplot, mappable, **kwargs):
         subplot._mps_colorbar.outline.set_lw(lw)
         outline_path = subplot._mps_colorbar.outline.get_path()
         outline_path.vertices = np.append(outline_path.vertices,
-          [[0.0, 0.00390625]], axis=0)
-        outline_path.codes = np.array(np.append(outline_path.codes[:-1],
-          [2, 2]), dtype=np.uint8)
+            [[0.0, 0.00390625]], axis=0)
+        outline_path.codes = np.array(
+            np.append(outline_path.codes[:-1], [2, 2]), dtype=np.uint8)

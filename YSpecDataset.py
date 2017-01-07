@@ -15,14 +15,14 @@ Processes and represents data
       MultiIndex. _read_hdf5 and _write_hdf5 must behave accordingly
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
 if __name__ == "__main__":
     __package__ = str("myplotspec")
-    import myplotspec
-import h5py
-import numpy as np
-import pandas as pd
 from .yspec.YSpecConstructor import YSpecConstructor
+
+
 ################################### CLASSES ###################################
 class YSpecDataset(YSpecConstructor):
     """
@@ -35,33 +35,27 @@ class YSpecDataset(YSpecConstructor):
     from .yspec.plugins.ManualPlugin import ManualPlugin
     from .yspec.plugins.CLArgumentPlugin import CLArgumentPlugin
     from .yspec.plugins.SortPlugin import SortPlugin
-    available_plugins = OrderedDict([
-      ("initialize", InitializePlugin),
-      ("defaults", DefaultsPlugin),
-      ("presets", PresetsPlugin),
-      ("manual", ManualPlugin),
-      ("clargument", CLArgumentPlugin),
-      ("sort", SortPlugin)])
+    available_plugins = OrderedDict(
+        [("initialize", InitializePlugin), ("defaults", DefaultsPlugin),
+            ("presets", PresetsPlugin), ("manual", ManualPlugin),
+            ("clargument", CLArgumentPlugin), ("sort", SortPlugin)])
     default_plugins = ["initialize", "defaults", "presets", "manual",
-                       "clargument", "sort"]
+        "clargument", "sort"]
     indexed_levels = """"""
-    plugin_config = dict(
-      defaults = """
+    plugin_config = dict(defaults="""
         defaults:
           h5_address: /
           h5_kw:
             chunks: True
             compression: gzip
-      """,
-      clargument = """
+      """, clargument="""
         exclude:
           - constructor
           - source_spec
           - verbose
           - debug
           - interactive
-      """,
-      sort = """
+      """, sort="""
         header:
           - presets
       """)
@@ -88,78 +82,57 @@ class YSpecDataset(YSpecConstructor):
         help_groups = kwargs.get("help_groups")
         arg_groups = {ag.title: ag for ag in parser._action_groups}
         input_group = arg_groups.get("input",
-          parser.add_argument_group("input"))
+            parser.add_argument_group("input"))
         action_group = arg_groups.get("action",
-          parser.add_argument_group("action"))
+            parser.add_argument_group("action"))
         output_group = arg_groups.get("output",
-          parser.add_argument_group("output"))
+            parser.add_argument_group("output"))
 
         # Standard arguments
         verbosity = class_.add_mutually_exclusive_argument_group(parser,
-          "verbosity")
-        class_.add_argument(verbosity,
-          "-v", "--verbose",
-          action   = "count",
-          default  = 1,
-          help     = "enable verbose output, may be specified more than once")
-        class_.add_argument(verbosity,
-          "-q", "--quiet",
-          action   = "store_const",
-          const    = 0,
-          default  = 1,
-          dest     = "verbose",
-          help     = "disable verbose output")
-        class_.add_argument(parser,
-          "-d", "--debug",
-          action   = "count",
-          default  = 1,
-          help     = "enable debug output, may be specified more than once")
-        class_.add_argument(parser,
-          "-I", "--interactive",
-          action   = "store_true",
-          help     = """enable interactive ipython terminal after loading and
+            "verbosity")
+        class_.add_argument(verbosity, "-v", "--verbose", action="count",
+            default=1,
+            help="enable verbose output, may be specified more than once")
+        class_.add_argument(verbosity, "-q", "--quiet", action="store_const",
+            const=0, default=1, dest="verbose", help="disable verbose output")
+        class_.add_argument(parser, "-d", "--debug", action="count", default=1,
+            help="enable debug output, may be specified more than once")
+        class_.add_argument(parser, "-I", "--interactive", action="store_true",
+            help="""enable interactive ipython terminal after loading and
                      processing data""")
 
         # Input arguments
-        class_.add_argument(input_group,
-          "-infiles",
-          dest     = "infiles",
-          metavar  = "INFILE",
-          nargs    = "+",
-          type     = str,
-          help     = """file(s) from which to load data; may be text or hdf5;
+        class_.add_argument(input_group, "-infiles", dest="infiles",
+            metavar="INFILE", nargs="+", type=str, help="""file(s) from
+            which to load data; may be text or hdf5;
                      may contain environment variables and wildcards""")
-        class_.add_argument(input_group,
-          "-spec",
-          dest     = "source_spec",
-          metavar  = "SPEC",
-          type     = str,
-          help     = "file from which to load source specification")
+        class_.add_argument(input_group, "-spec", dest="source_spec",
+            metavar="SPEC", type=str,
+            help="file from which to load source specification")
 
         # Output arguments
-        class_.add_argument(output_group,
-          "-outfile",
-          required = False,
-          type     = str,
-          help     = """text or hdf5 file to which processed DataFrame will be
+        class_.add_argument(output_group, "-outfile", required=False, type=str,
+            help="""text or hdf5 file to which processed DataFrame will be
                      output; may contain environment variables""")
 
         # Plugins
         if "spec" in help_groups or "*" in help_groups:
             if len(class_.available_plugins) > 0:
                 spec = arg_groups.get(
-                  "arguments related to yaml specification",
-                  parser.add_argument_group(
-                  "arguments related to yaml specification", description=""))
-                if (hasattr(class_, "default_plugins")
-                and len(class_.default_plugins) > 0):
-                    spec.description += \
-                      "default plugin order:\n  {0}\n\n".format(
-                      " → ".join( class_.default_plugins))
+                    "arguments related to yaml specification",
+                    parser.add_argument_group(
+                        "arguments related to yaml specification",
+                        description=""))
+                if (hasattr(class_, "default_plugins") and len(
+                    class_.default_plugins) > 0):
+                    spec.description += "default plugin order:\n  {" \
+                                        "0}\n\n".format(
+                        " → ".join(class_.default_plugins))
                 spec.description += "available plugins:\n"
                 for name, plugin in class_.available_plugins.items():
                     plugin.add_arguments(parser, help_dest=spec,
-                      constructor=class_)
+                        constructor=class_)
 
         return parser
 
@@ -191,8 +164,8 @@ class YSpecDataset(YSpecConstructor):
         # Prepare spec
         spec = CommentedMap()
         for plugin_name in plugins:
-            plugin = class_.available_plugins[plugin_name](
-                       constructor=class_, **kwargs)
+            plugin = class_.available_plugins[plugin_name](constructor=class_,
+                **kwargs)
             spec = plugin(spec, source_spec, **kwargs)
             # Output intermediate spec
             if verbose >= 3:
@@ -211,9 +184,11 @@ class YSpecDataset(YSpecConstructor):
         """
         """
         parser = class_.construct_argparser(
-          help_groups=class_.get_help_arg_groups())
+            help_groups=class_.get_help_arg_groups())
         kwargs = vars(parser.parse_args())
-#        kwargs.pop("class_")
+
+
+# kwargs.pop("class_")
 #        spec = class_.construct_spec(**kwargs)
 #        return class_(**spec)
 
@@ -362,7 +337,8 @@ class YSpecDataset(YSpecConstructor):
 #                            dataframe_kw["columns"] = list(attrs["fields"])
 #                        elif "columns" in attrs:
 #                            dataframe_kw["columns"] = list(attrs["columns"])
-#                        self.dataframe = pd.DataFrame(data=data, **dataframe_kw)
+#                        self.dataframe = pd.DataFrame(data=data,
+# **dataframe_kw)
 #                else:
 #                    raise()
 #            else:
@@ -371,7 +347,8 @@ class YSpecDataset(YSpecConstructor):
 #                if ("delimiter"        in read_csv_kw
 #                and "delim_whitespace" in read_csv_kw):
 #                    del(read_csv_kw["delimiter"])
-#                self.dataframe = pd.read_csv(expandvars(infile), **read_csv_kw)
+#                self.dataframe = pd.read_csv(expandvars(infile),
+# **read_csv_kw)
 #                if (self.dataframe.index.name is not None
 #                and self.dataframe.index.name.startswith("#")):
 #                    self.dataframe.index.name = \
@@ -441,7 +418,8 @@ class YSpecDataset(YSpecConstructor):
 #                dataframe_kw["columns"] = list(attrs["columns"])
 #            if "columns" in dataframe_kw:
 #                columns = dataframe_kw.pop("columns")
-#                if np.array([isinstance(c, np.ndarray) for c in columns]).all():
+#                if np.array([isinstance(c, np.ndarray) for c in
+# columns]).all():
 #                    columns = pd.MultiIndex.from_tuples(map(tuple, columns))
 #                if np.array([isinstance(c, tuple) for c in columns]).all():
 #                    columns = pd.MultiIndex.from_tuples(columns)
@@ -682,7 +660,8 @@ class YSpecDataset(YSpecConstructor):
 #            dfs.append(df)
 #        df = dfs.pop(0)
 #        for df_i in dfs:
-#            df = df.merge(df_i, how="outer", left_index=True, right_index=True)
+#            df = df.merge(df_i, how="outer", left_index=True,
+# right_index=True)
 #
 #        # Apply dtype
 #        if kwargs.get("dtype") is not None:

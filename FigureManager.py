@@ -11,11 +11,13 @@
 Generates one or more figures to specifications provided in a YAML file.
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
-import matplotlib
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
 if __name__ == "__main__":
     __package__ = str("myplotspec")
-    import myplotspec
+
+
 ################################### CLASSES ###################################
 class FigureManager(object):
     """
@@ -279,7 +281,7 @@ class FigureManager(object):
         from . import get_yaml
 
         defaults = get_yaml(kwargs.get("defaults",
-          self.defaults if hasattr(self, "defaults") else {}))
+            self.defaults if hasattr(self, "defaults") else {}))
         self.defaults = defaults
 
         available_presets = self.initialize_presets(*args, **kwargs)
@@ -307,22 +309,23 @@ class FigureManager(object):
         from . import get_yaml, merge_dicts
 
         available_presets = get_yaml(kwargs.get("available_presets",
-          self.available_presets if hasattr(self, "available_presets")
-          else {}))
-        super_presets = get_yaml(super(self.__class__, self).available_presets
-          if hasattr(super(self.__class__, self), "available_presets") else {})
+            self.available_presets if hasattr(self, "available_presets")
+            else {}))
+        super_presets = get_yaml(
+            super(self.__class__, self).available_presets if hasattr(
+                super(self.__class__, self), "available_presets") else {})
         for preset_name, preset in available_presets.items():
             if "inherits" in preset:
                 parent_name = preset["inherits"]
                 if parent_name in super_presets:
                     available_presets[preset_name] = merge_dicts(
-                      super_presets[parent_name], preset)
+                        super_presets[parent_name], preset)
         for preset_name, preset in available_presets.items():
             if "extends" in preset:
                 parent_name = preset["extends"]
                 if parent_name in available_presets:
                     available_presets[preset_name] = merge_dicts(
-                      available_presets[parent_name], preset)
+                        available_presets[parent_name], preset)
         return available_presets
 
     def __call__(self, *args, **kwargs):
@@ -410,12 +413,12 @@ class FigureManager(object):
         """
         from copy import deepcopy
         import six
-        from . import multi_get, multi_get_copy, multi_pop
+        from . import multi_get_copy, multi_pop
 
         # Load spec and prepare outfiles
         figure_specs = multi_pop(["figures", "figure"], kwargs, {})
-        figure_indexes = sorted([int(i) for i in figure_specs.keys()
-                           if str(i).isdigit()])
+        figure_indexes = sorted(
+            [int(i) for i in figure_specs.keys() if str(i).isdigit()])
         outfiles = {}
 
         # Configure and plot figures
@@ -427,9 +430,10 @@ class FigureManager(object):
             elif figure_specs[i] is None:
                 figure_spec = {}
             else:
-                raise TypeError("Figure {0} specification".format(i) +
-                  "loaded as {0} ".format(figure_spec.__class__.__name__) +
-                  "rather than expected dict.")
+                raise TypeError("Figure {0} specification".format(
+                    i) + "loaded as {0} ".format(
+                    figure_spec.__class__.__name__) + "rather than expected "
+                                                      "dict.")
 
             # Output settings from spec override inherited settings
             if "verbose" not in figure_spec:
@@ -466,8 +470,8 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     @manage_output()
-    def draw_figure(self, shared_legend=False, multiplot=False,
-        verbose=1, debug=0, **kwargs):
+    def draw_figure(self, shared_legend=False, multiplot=False, verbose=1,
+            debug=0, **kwargs):
         """
         Draws a figure.
 
@@ -554,20 +558,18 @@ class FigureManager(object):
         from copy import deepcopy
         from warnings import warn
         import six
-        from . import (get_figure_subplots, multi_get, multi_get_copy,
-                       multi_pop)
+        from . import (get_figure_subplots, multi_get_copy, multi_pop)
         from .legend import set_shared_legend
-        from .text import (set_title, set_shared_xlabel,
-                           set_shared_ylabel)
+        from .text import (set_title, set_shared_xlabel, set_shared_ylabel)
 
         # Load spec and prepare figure and subplots
         subplot_specs = multi_pop(["subplots", "subplot"], kwargs, {})
         if subplot_specs is None:
             subplot_specs = {}
-        subplot_indexes = sorted([int(i) for i in subplot_specs.keys()
-                            if str(i).isdigit()])
+        subplot_indexes = sorted(
+            [int(i) for i in subplot_specs.keys() if str(i).isdigit()])
         figure, subplots = get_figure_subplots(verbose=verbose, debug=debug,
-                             **kwargs)
+            **kwargs)
 
         # Format Figure
         set_title(figure, verbose=verbose, debug=debug, **kwargs)
@@ -577,9 +579,9 @@ class FigureManager(object):
             shared_legend_kw = multi_get_copy("shared_legend_kw", kwargs, {})
             if isinstance(shared_legend_kw, dict):
                 handles = shared_legend_kw.pop("handles", OrderedDict())
-            elif (isinstance(shared_legend_kw, list)
-            and len(shared_legend_kw) >= 1
-            and isinstance(shared_legend_kw[0], dict)):
+            elif (isinstance(shared_legend_kw, list) and len(
+                shared_legend_kw) >= 1 and isinstance(shared_legend_kw[0],
+                dict)):
                 handles = shared_legend_kw[0].pop("handles", OrderedDict())
             else:
                 raise Exception()
@@ -598,26 +600,30 @@ class FigureManager(object):
             # Load the subplot and spec
             if i in subplots:
                 subplot = subplots[i]
-            elif (isinstance(subplot_specs[i], dict)
-            and "subplot_dim" in subplot_specs[i]):
+            elif (isinstance(subplot_specs[i], dict) and "subplot_dim" in
+                subplot_specs[i]):
                 get_figure_subplots(figure=figure, subplots=subplots,
-                verbose=verbose, debug=debug,
-                **subplot_specs[i]["subplot_dim"])
+                    verbose=verbose, debug=debug,
+                    **subplot_specs[i]["subplot_dim"])
                 subplot = subplots[i]
             else:
-                warn("Specs provided for subplot {0}, ".format(i) +
-                  "but only subplot indexes {0} ".format(subplots.keys()) +
-                  "were created; check that nrows, ncols, and nsubplots "
-                  "are appropriate; skipping subplots {0}.".format(i))
+                warn("Specs provided for subplot {0}, ".format(
+                    i) + "but only subplot indexes {0} ".format(
+                    subplots.keys()) + "were created; check that nrows, "
+                                       "ncols, and nsubplots "
+                                       "are appropriate; skipping subplots {"
+                                       "0}.".format(
+                    i))
                 continue
             if isinstance(subplot_specs[i], dict):
                 subplot_spec = deepcopy(subplot_specs[i])
             elif subplot_specs[i] is None:
                 subplot_spec = {}
             else:
-                raise TypeError("Subplot {0} specification".format(i) +
-                  "loaded as {0} ".format(subplot_spec.__class__.__name__) +
-                  "rather than expected dict.")
+                raise TypeError("Subplot {0} specification".format(
+                    i) + "loaded as {0} ".format(
+                    subplot_spec.__class__.__name__) + "rather than expected "
+                                                       "dict.")
 
             # Include reference to figure and subplots
             subplot_spec["figure"] = figure
@@ -647,11 +653,9 @@ class FigureManager(object):
 
             # Build list of keys from which to load from spec dict
             subplot_spec["yaml_spec"] = kwargs.get("yaml_spec", {})
-            subplot_spec["yaml_keys"] = [key
-              for key2 in [[key3 + ["subplots", "all"],
-                            key3 + ["subplots", i]]
-              for key3 in kwargs.get("yaml_keys")]
-              for key  in key2]
+            subplot_spec["yaml_keys"] = [key for key2 in
+                [[key3 + ["subplots", "all"], key3 + ["subplots", i]] for key3
+                    in kwargs.get("yaml_keys")] for key in key2]
 
             # Pass dict of handles for shared legend
             if shared_legend:
@@ -662,7 +666,8 @@ class FigureManager(object):
                 if multi_xticklabels is not None:
                     if (nrows - 1) * ncols - 1 < i < nsubplots - 1:
                         if not "xticklabels" in subplot_spec:
-                            subplot_spec["xticklabels"] = multi_xticklabels[:-1]
+                            subplot_spec["xticklabels"] = multi_xticklabels[
+                            :-1]
                     elif i != nsubplots - 1:
                         if not "xticklabels" in subplot_spec:
                             subplot_spec["xticklabels"] = []
@@ -674,7 +679,8 @@ class FigureManager(object):
                 if multi_yticklabels is not None:
                     if i % ncols == 0 and i != 0:
                         if not "yticklabels" in subplot_spec:
-                            subplot_spec["yticklabels"] = multi_yticklabels[:-1]
+                            subplot_spec["yticklabels"] = multi_yticklabels[
+                            :-1]
                     elif i != 0:
                         if not "yticklabels" in subplot_spec:
                             subplot_spec["yticklabels"] = []
@@ -707,7 +713,7 @@ class FigureManager(object):
                         else:
                             xtick_params["left"] = inner
                     if not "right" in xtick_params:
-                        if i == (ncols -1):
+                        if i == (ncols - 1):
                             xtick_params["right"] = right
                         else:
                             xtick_params["right"] = inner
@@ -737,10 +743,9 @@ class FigureManager(object):
 
     @manage_defaults_presets()
     @manage_kwargs()
-    def draw_subplot(self, subplot, title=None,
-        partner_subplot=False, handles=None, visible=True,
-        legend=None, draw_label=False,
-        verbose=1, debug=0, **kwargs):
+    def draw_subplot(self, subplot, title=None, partner_subplot=False,
+            handles=None, visible=True, legend=None, draw_label=False,
+            verbose=1, debug=0, **kwargs):
         """
         Draws a subplot.
 
@@ -816,8 +821,8 @@ class FigureManager(object):
         dataset_specs = multi_get(["datasets", "dataset"], kwargs, {})
         if dataset_specs is None:
             dataset_specs = {}
-        dataset_indexes = sorted([int(i) for i in dataset_specs.keys()
-                           if str(i).isdigit()])
+        dataset_indexes = sorted(
+            [int(i) for i in dataset_specs.keys() if str(i).isdigit()])
         if handles is None:
             handles = OrderedDict()
 
@@ -830,9 +835,9 @@ class FigureManager(object):
             elif dataset_specs[i] is None:
                 continue
             else:
-                raise TypeError("Dataset {0} specification".format(i) +
-                  "loaded as {0} ".format(dataset_specs[i].__class__.__name__) +
-                  "rather than expected dict.")
+                raise TypeError("Dataset {0} specification".format(
+                    i) + "loaded as {0} ".format(dataset_specs[
+                    i].__class__.__name__) + "rather than expected dict.")
 
             # Include reference to figure and subplots
             dataset_spec["figure"] = kwargs["figure"]
@@ -862,14 +867,11 @@ class FigureManager(object):
 
             # Build list of keys from which to load from spec dict
             dataset_spec["yaml_spec"] = kwargs.get("yaml_spec", {})
-            dataset_spec["yaml_keys"] = [key
-              for key2 in [[key3 + ["datasets", "all"],
-                            key3 + ["datasets", i]]
-              for key3 in kwargs.get("yaml_keys")]
-              for key  in key2]
+            dataset_spec["yaml_keys"] = [key for key2 in
+                [[key3 + ["datasets", "all"], key3 + ["datasets", i]] for key3
+                    in kwargs.get("yaml_keys")] for key in key2]
 
-            self.draw_dataset(subplot=subplot, handles=handles,
-              **dataset_spec)
+            self.draw_dataset(subplot=subplot, handles=handles, **dataset_spec)
 
         # Format subplot
         set_xaxis(subplot, **kwargs)
@@ -880,7 +882,7 @@ class FigureManager(object):
         if kwargs.get("draw_hline", False):
             from collections import Iterable
             hline_kw = multi_get_copy("hline_kw", kwargs, {})
-            hline_y  = multi_pop(["hline_y", "y"], hline_kw)
+            hline_y = multi_pop(["hline_y", "y"], hline_kw)
             if not isinstance(hline_y, Iterable):
                 hline_y = [hline_y]
             for y in hline_y:
@@ -888,7 +890,7 @@ class FigureManager(object):
         if kwargs.get("draw_vline", False):
             from collections import Iterable
             vline_kw = multi_get_copy("vline_kw", kwargs, {})
-            vline_y  = multi_pop(["vline_y", "y"], vline_kw)
+            vline_y = multi_pop(["vline_y", "y"], vline_kw)
             if not isinstance(vline_y, Iterable):
                 vline_y = [vline_y]
             for y in vline_y:
@@ -911,7 +913,7 @@ class FigureManager(object):
     @manage_defaults_presets()
     @manage_kwargs()
     def draw_dataset(self, subplot, infile, label=None, handles=None,
-        verbose=1, debug=0, **kwargs):
+            verbose=1, debug=0, **kwargs):
         """
         Draws a dataset on a subplot.
 
@@ -943,8 +945,8 @@ class FigureManager(object):
 
         # Load data
         dataset = np.loadtxt(infile)
-        x = dataset[:,0]
-        y = dataset[:,1]
+        x = dataset[:, 0]
+        y = dataset[:, 1]
 
         # Plot
         handle = subplot.plot(x, y, **plot_kw)[0]
@@ -974,10 +976,12 @@ class FigureManager(object):
         from . import OrderedSet
 
         # Determine names of full presets and their classes
-        full_presets = OrderedDict(sorted([(k, v)
-          for k, v in self.available_presets.items() if "extends" not in v]))
-        preset_classes = OrderedSet(sorted([full_preset.get("class", "other")
-           for full_preset in full_presets.values()]))
+        full_presets = OrderedDict(sorted(
+            [(k, v) for k, v in self.available_presets.items() if
+                "extends" not in v]))
+        preset_classes = OrderedSet(sorted(
+            [full_preset.get("class", "other") for full_preset in
+                full_presets.values()]))
         for preset_class in reversed(["content", "appearance", "target"]):
             if preset_class in preset_classes:
                 preset_classes.insert(0, preset_class)
@@ -992,12 +996,12 @@ class FigureManager(object):
             epilog = "available presets:\n"
             for preset_class in preset_classes:
                 epilog += "  {0}:\n".format(preset_class)
-                presets = sorted([(k, v) for k, v in full_presets.items()
-                            if v.get("class", "other") == preset_class])
+                presets = sorted([(k, v) for k, v in full_presets.items() if
+                    v.get("class", "other") == preset_class])
                 for preset_name, preset in presets:
-                    extensions = sorted([(k, v)
-                                   for k, v in self.available_presets.items()
-                                   if v.get("extends") == preset_name])
+                    extensions = sorted(
+                        [(k, v) for k, v in self.available_presets.items() if
+                            v.get("extends") == preset_name])
                     symbol = "│" if len(extensions) > 0 else " "
                     if "help" in preset:
                         wrapped = wrap(preset["help"], 54)
@@ -1009,100 +1013,65 @@ class FigureManager(object):
                         epilog += "  {0}\n".format(wrapped.pop(0))
                         for line in wrapped:
                             epilog += "     {0} {1:19}{2}\n".format(symbol,
-                                      " ", line)
+                                " ", line)
                     else:
                         epilog += "    {0}\n".format(preset_name)
                     for i, (extension_name, extension) in enumerate(extensions,
-                                                            1):
+                            1):
                         symbol = "└" if i == len(extensions) else "├"
                         if "help" in extension:
                             wrapped = wrap(extension["help"], 51)
                             if len(extension_name) > 16:
                                 epilog += "     {0} {1}\n".format(symbol,
-                                            extension_name)
+                                    extension_name)
                                 symbol = "│" if i != len(extensions) else " "
                                 epilog += "     {0} {1:17}".format(symbol, " ")
                             else:
                                 epilog += "     {0} {1:17}".format(symbol,
-                                            extension_name)
+                                    extension_name)
                             epilog += "{0}\n".format(wrapped.pop(0))
                             symbol = "│" if i != len(extensions) else " "
                             for line in wrapped:
                                 epilog += "     {0} {1:19}{2}\n".format(symbol,
-                                          " ", line)
+                                    " ", line)
                         else:
                             epilog += "   {0} {1}\n".format(symbol,
-                                        extension_name)
+                                extension_name)
         if parser is None:
             parser = argparse.ArgumentParser(
-              description     = getmodule(self.__class__).__doc__,
-              formatter_class = argparse.RawTextHelpFormatter,
-              epilog          = epilog)
+                description=getmodule(self.__class__).__doc__,
+                formatter_class=argparse.RawTextHelpFormatter, epilog=epilog)
         else:
             parser.epilog = epilog
 
-        parser.add_argument(
-          "-yaml",
-          type     = str,
-          required = True,
-          dest     = "yaml_spec",
-          metavar  = "/PATH/TO/YAML.yml",
-          help     = "YAML configuration file")
+        parser.add_argument("-yaml", type=str, required=True, dest="yaml_spec",
+            metavar="/PATH/TO/YAML.yml", help="YAML configuration file")
 
-        parser.add_argument(
-          "-preset", "-presets",
-          type     = str,
-          action   = "append",
-          metavar  = "PRESET",
-          default  = [],
-          help     = "Selected preset(s)")
+        parser.add_argument("-preset", "-presets", type=str, action="append",
+            metavar="PRESET", default=[], help="Selected preset(s)")
 
         seaborn = parser.add_mutually_exclusive_group()
-        seaborn.add_argument(
-          "-S",
-          "--seaborn",
-          action   = "store_const",
-          const    = 2,
-          default  = 0,
-          help     = "Enable seaborn, overriding matplotlib defaults")
-        seaborn.add_argument(
-          "-s",
-          "--seaborn-apionly",
-          action   = "store_const",
-          const    = 1,
-          default  = 0,
-          dest     = "seaborn",
-          help     = "Enable seaborn without overriding matplotlib defaults")
+        seaborn.add_argument("-S", "--seaborn", action="store_const", const=2,
+            default=0, help="Enable seaborn, overriding matplotlib defaults")
+        seaborn.add_argument("-s", "--seaborn-apionly", action="store_const",
+            const=1, default=0, dest="seaborn",
+            help="Enable seaborn without overriding matplotlib defaults")
 
         verbosity = parser.add_mutually_exclusive_group()
-        verbosity.add_argument(
-          "-v",
-          "--verbose",
-          action   = "count",
-          default  = 1,
-          help     = "Enable verbose output, may be specified more than once")
-        verbosity.add_argument(
-          "-q",
-          "--quiet",
-          action   = "store_const",
-          const    = 0,
-          default  = 1,
-          dest     = "verbose",
-          help     = "Disable verbose output")
+        verbosity.add_argument("-v", "--verbose", action="count", default=1,
+            help="Enable verbose output, may be specified more than once")
+        verbosity.add_argument("-q", "--quiet", action="store_const", const=0,
+            default=1, dest="verbose", help="Disable verbose output")
 
-        parser.add_argument(
-          "-d",
-          "--debug",
-          action   = "count",
-          default  = 0,
-          help     = "Enable debug output, may be specified more than once")
+        parser.add_argument("-d", "--debug", action="count", default=0,
+            help="Enable debug output, may be specified more than once")
 
         arguments = vars(parser.parse_args())
 
         if arguments["seaborn"] == 2:
-            import seaborn
+            pass
         elif arguments["seaborn"] == 1:
-            import seaborn.apionly
+            pass
 
         if arguments["debug"] >= 1:
             from os import environ
@@ -1117,6 +1086,7 @@ class FigureManager(object):
                 db_kv(key, arguments[key], 1)
 
         self(**arguments)
+
 
 #################################### MAIN #####################################
 if __name__ == "__main__":

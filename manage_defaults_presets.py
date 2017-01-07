@@ -11,7 +11,10 @@ Decorator to manage the passage of defaults and available presets to a
 method.
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
+
 ################################### CLASSES ###################################
 class manage_defaults_presets(object):
     """
@@ -142,13 +145,15 @@ class manage_defaults_presets(object):
             from .debug import db_s
 
             db = max(in_kwargs.get("debug", 0), decorator.debug,
-                  self.debug if hasattr(self, "debug") else 0)
+                self.debug if hasattr(self, "debug") else 0)
             if db >= 1:
-                db_s("Managing defaults and presets for method " +
-                  "'{0}' ".format(method.__name__,
-                  "of class '{0}':".format(type(self).__name__)))
+                db_s(
+                    "Managing defaults and presets for method " + "'{0}' "
+                                                                  "".format(
+                        method.__name__,
+                        "of class '{0}':".format(type(self).__name__)))
 
-            out_args   = copy(in_args)
+            out_args = copy(in_args)
             out_kwargs = copy(in_kwargs)
 
             # Manage defaults
@@ -173,13 +178,14 @@ class manage_defaults_presets(object):
                     preset = available_presets[preset_name]
                     if method.__name__ in preset:
                         if db >= 1:
-                            db_s("preset '{0}'".format(preset_name) +
-                                 " available", 1)
+                            db_s("preset '{0}'".format(
+                                preset_name) + " available", 1)
                         out_presets[preset_name] = preset[method.__name__]
                     else:
                         if db >= 1:
-                            db_s("preset '{0}'".format(preset_name) +
-                                 " unavailable for this method", 1)
+                            db_s("preset '{0}'".format(
+                                preset_name) + " unavailable for this method",
+                                1)
             else:
                 if db >= 1:
                     db_s("presets unavailable for this class", 1)

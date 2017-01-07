@@ -11,11 +11,14 @@
 Initializes a nascent spec.
 """
 ################################### MODULES ###################################
-from __future__ import absolute_import,division,print_function,unicode_literals
+from __future__ import (absolute_import, division, print_function,
+    unicode_literals)
+
 if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
-    import myplotspec.plugins
 from ..yspec.plugins.InitializePlugin import InitializePlugin
+
+
 ################################### CLASSES ###################################
 class MPSInitializePlugin(InitializePlugin):
     """
@@ -56,13 +59,13 @@ class MPSInitializePlugin(InitializePlugin):
             path = []
 
         # Handle grid of subplots
-        if (len(path) == 2 and path[0] == "figures"
-        and "gridspec" in source_spec):
-            gridspec  = source_spec["gridspec"]
-            nrows     = gridspec.get("nrows", 1)
-            ncols     = gridspec.get("ncols", 1)
-            nsubplots = min(gridspec.get("nsubplots", nrows*ncols),
-                         nrows*ncols)
+        if (len(path) == 2 and path[
+            0] == "figures" and "gridspec" in source_spec):
+            gridspec = source_spec["gridspec"]
+            nrows = gridspec.get("nrows", 1)
+            ncols = gridspec.get("ncols", 1)
+            nsubplots = min(gridspec.get("nsubplots", nrows * ncols),
+                nrows * ncols)
             indexes = range(nsubplots)
             if "subplots" not in spec:
                 self.initialize(spec, "subplots")
@@ -76,27 +79,24 @@ class MPSInitializePlugin(InitializePlugin):
                 continue
             if level not in spec:
                 self.initialize(spec, level)
-            indexes = sorted([k for k in source_spec[level]
-                        if str(k).isdigit()])
+            indexes = sorted(
+                [k for k in source_spec[level] if str(k).isdigit()])
             # Apply "all" to all indexes
             if "all" in source_spec.get(level, {}):
-                all_indexes = sorted(list(set(indexes +
-                  [k for k in spec[level] if str(k).isdigit()])))
+                all_indexes = sorted(list(set(
+                    indexes + [k for k in spec[level] if str(k).isdigit()])))
                 for index in all_indexes:
                     if index not in spec[level]:
                         self.initialize(spec[level], index)
-                    self.process_level(
-                      spec[level][index],
-                      source_spec[level]["all"],
-                      indexed_levels.get(level, {}),
-                      path=path+[level, index])
+                    self.process_level(spec[level][index],
+                        source_spec[level]["all"],
+                        indexed_levels.get(level, {}),
+                        path=path + [level, index])
             # Loop over specific indexes
             for index in indexes:
                 # Add dict in which to store lower levels
                 if index not in spec[level]:
                     self.initialize(spec[level], index)
-                self.process_level(
-                  spec[level][index],
-                  source_spec[level].get(index, {}),
-                  indexed_levels.get(level, {}),
-                  path=path+[level, index])
+                self.process_level(spec[level][index],
+                    source_spec[level].get(index, {}),
+                    indexed_levels.get(level, {}), path=path + [level, index])
