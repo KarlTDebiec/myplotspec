@@ -13,6 +13,10 @@ Represents data.
 from __future__ import (absolute_import, division, print_function,
     unicode_literals)
 
+if __name__ == "__main__":
+    __package__ = str("myplotspec")
+    import myplotspec
+
 import h5py
 import numpy as np
 import pandas as pd
@@ -220,7 +224,7 @@ class Dataset(object):
         elif isinstance(parser_or_subparsers, argparse._SubParsersAction):
             parser = parser_or_subparsers.add_parser(name="data",
               description=help_message, help=help_message)
-        elif parser is None:
+        elif parser_or_subparsers is None:
             parser = argparse.ArgumentParser(description=help_message)
 
         # Defaults
@@ -840,3 +844,8 @@ class Dataset(object):
             self._write_hdf5(outfile=outfile, **kwargs)
         else:
             self._write_text(outfile=outfile, **kwargs)
+
+
+#################################### MAIN #####################################
+if __name__ == "__main__":
+    Dataset.main()
