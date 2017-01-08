@@ -35,7 +35,7 @@ class Dataset(object):
     default_h5_kw = dict(chunks=True, compression="gzip")
 
     @classmethod
-    def get_cache_key(cls, infile=None, **kwargs):
+    def get_cache_key(class_, infile=None, **kwargs):
         """
         Generates tuple of arguments to be used as key for dataset cache.
 
@@ -61,7 +61,138 @@ class Dataset(object):
             if isinstance(value, list):
                 value = tuple(value)
             read_csv_kw.append((key, value))
-        return (cls, expandvars(infile), tuple(read_csv_kw))
+        return (class_, expandvars(infile), tuple(read_csv_kw))
+
+    @classmethod
+    def main(class_):
+        """
+        Provides command-line interface
+        """
+        parser = class_.construct_argparser()
+        kwargs = vars(parser.parse_args())
+        kwargs.pop("class_")(**kwargs)
+
+    @staticmethod
+    def calc_pdist(df, columns=None, mode="kde", bandwidth=None, grid=None,
+      **kwargs):
+        """
+        Calcualtes probability distribution over DataFrame.
+
+        Arguments:
+          df (DataFrame): DataFrame over which to calculate probability
+            distribution of each column over rows
+          columns (list): Columns for which to calculate probability
+            distribution
+          mode (ndarray, str, optional): Method of calculating
+            probability distribution; eventually will support 'hist' for
+            histogram and 'kde' for kernel density estimate, though
+            presently only 'kde' is implemented
+          bandwidth (float, dict, str, optional): Bandwidth to use for
+            kernel density estimates; may be a single float that will be
+            applied to all columns or a dictionary whose keys are column
+            names and values are floats corresponding to the bandwidth
+            for each column; for any column for which *bandwidth* is not
+            specified, the standard deviation will be used
+          grid (list, ndarray, dict, optional): Grid on which to
+            calculate kernel density estimate; may be a single ndarray
+            that will be applied to all columns or a dictionary whose
+            keys are column names and values are ndarrays corresponding
+            to the grid for each column; for any column for which *grid*
+            is not specified, a grid of 1000 points between the minimum
+            value minus three times the standard deviation and the
+            maximum value plots three times the standard deviation will
+            be used
+          kde_kw (dict, optional): Keyword arguments passed to
+            :function:`sklearn.neighbors.KernelDensity`
+          verbose (int): Level of verbose output
+          kwargs (dict): Additional keyword arguments
+
+        Returns:
+          OrderedDict: Dictionary whose keys are columns in *df* and
+          values are DataFrames whose indexes are the *grid* for that
+          column and contain a single column 'probability' containing
+          the normalized probability at each grid point
+
+        .. todo:
+            - Implement flag to return single dataframe with single grid
+        """
+        from collections import OrderedDict
+        import six
+        from sklearn.neighbors import KernelDensity
+
+        # Process arguments
+        verbose = kwargs.get("verbose", 1)
+        if verbose >= 1:
+            wiprint("""Calculating probability distribution over DataFrame""")
+        if columns is None:
+            columns = [a for a in df.columns.values if
+                str(df[a].dtype).startswith("float")]
+        elif isinstance(columns, six.string_types):
+            columns = [columns]
+
+        if mode == "kde":
+
+            # Prepare bandwidths
+            if bandwidth is None:
+                all_bandwidth = None
+                bandwidth = {}
+            elif isinstance(bandwidth, float):
+                all_bandwidth = bandwidth
+                bandwidth = {}
+            elif isinstance(bandwidth, dict):
+                all_bandwidth = None
+            else:
+                raise Exception()
+            for column in df.columns.values:
+                series = df[column]
+                if column in bandwidth:
+                    bandwidth[column] = float(bandwidth[column])
+                elif all_bandwidth is not None:
+                    bandwidth[column] = all_bandwidth
+                else:
+                    bandwidth[column] = series.std()
+
+            # Prepare grids
+            if grid is None:
+                all_grid = None
+                grid = {}
+            elif isinstance(grid, list) or isinstance(grid, np.ndarray):
+                all_grid = np.array(grid)
+                grid = {}
+            elif isinstance(grid, dict):
+                all_grid = None
+            for column in df.columns.values:
+                series = df[column]
+                if column in grid:
+                    grid[column] = np.array(grid[column])
+                elif all_grid is not None:
+                    grid[column] = all_grid
+                else:
+                    grid[column] = np.linspace(series.min() - 3 * series.std(),
+                      series.max() + 3 * series.std(), 1000)
+
+            # Calculate probability distributions
+            kde_kw = kwargs.get("kde_kw", {})
+            pdist = OrderedDict()
+            for column in df.columns.values:
+                series = df[column]
+                if verbose >= 1:
+                    wiprint("calculating probability distribution of "
+                            "{0} using a kernel density estimate".format(
+                      column))
+                kde = KernelDensity(bandwidth=bandwidth[column], **kde_kw)
+                kde.fit(series.dropna()[:, np.newaxis])
+                pdf = np.exp(kde.score_samples(grid[column][:, np.newaxis]))
+                pdf /= pdf.sum()
+                series_pdist = pd.DataFrame(pdf, index=grid[column],
+                  columns=["probability"])
+                series_pdist.index.name = column
+                pdist[column] = series_pdist
+        else:
+            raise Exception(sformat("""only kernel density estimation is
+                                    currently supported"""))
+
+        return pdist
 
     @staticmethod
     def construct_argparser(parser_or_subparsers=None, **kwargs):
@@ -93,8 +224,8 @@ class Dataset(object):
             parser = argparse.ArgumentParser(description=help_message)
 
         # Defaults
-        if parser.get_default("cls") is None:
-            parser.set_defaults(cls=Dataset)
+        if parser.get_default("class_") is None:
+            parser.set_defaults(class_=Dataset)
 
         # Arguments unique to this class
         arg_groups = {ag.title: ag for ag in parser._action_groups}
@@ -164,6 +295,18 @@ class Dataset(object):
         return parser
 
     @staticmethod
+    def add_shared_args(parser, **kwargs):
+        """
+        Adds command line arguments shared by all subclasses.
+
+        Arguments:
+          parser (ArgumentParser): Nascent argument parser to which to add
+            arguments
+          kwargs (dict): Additional keyword arguments
+        """
+        pass
+
+    @staticmethod
     def get_cache_message(cache_key):
         """
         Generates message to be used when reloading previously-loaded
@@ -179,18 +322,6 @@ class Dataset(object):
         """
         return sformat("""Dataset previously loaded from
           '{0}'""".format(cache_key[1]))
-
-    @staticmethod
-    def add_shared_args(parser, **kwargs):
-        """
-        Adds command line arguments shared by all subclasses.
-
-        Arguments:
-          parser (ArgumentParser): Nascent argument parser to which to add
-            arguments
-          kwargs (dict): Additional keyword arguments
-        """
-        pass
 
     @staticmethod
     def process_infiles(**kwargs):
@@ -569,6 +700,27 @@ class Dataset(object):
         with open(outfile, "w") as text_file:
             text_file.write(df.to_string(**to_string_kw))
 
+    def load_dataset(self, class_=None, **kwargs):
+        """
+        Loads a dataset, or reloads a previously-loaded dataset from a
+        cache.
+
+        Arguments:
+          class_ (class, str): Dataset class; may be either class object itself
+            or name of class in form of 'package.module.class'; if None,
+            will be set to self.__class__; if '__noclass__',
+            function will return None
+
+        Returns:
+          object: Dataset, either newly initialized or copied from cache
+        """
+        from . import load_dataset
+
+        if class_ is None:
+            class_ = type(self)
+        return load_dataset(class_=class_, dataset_cache=self.dataset_cache,
+          **kwargs)
+
     def read(self, **kwargs):
         """
         Reads data from one or more *infiles* into a DataFrame.
@@ -688,146 +840,3 @@ class Dataset(object):
             self._write_hdf5(outfile=outfile, **kwargs)
         else:
             self._write_text(outfile=outfile, **kwargs)
-
-    @staticmethod
-    def calc_pdist(df, columns=None, mode="kde", bandwidth=None, grid=None,
-      **kwargs):
-        """
-        Calcualtes probability distribution over DataFrame.
-
-        Arguments:
-          df (DataFrame): DataFrame over which to calculate probability
-            distribution of each column over rows
-          columns (list): Columns for which to calculate probability
-            distribution
-          mode (ndarray, str, optional): Method of calculating
-            probability distribution; eventually will support 'hist' for
-            histogram and 'kde' for kernel density estimate, though
-            presently only 'kde' is implemented
-          bandwidth (float, dict, str, optional): Bandwidth to use for
-            kernel density estimates; may be a single float that will be
-            applied to all columns or a dictionary whose keys are column
-            names and values are floats corresponding to the bandwidth
-            for each column; for any column for which *bandwidth* is not
-            specified, the standard deviation will be used
-          grid (list, ndarray, dict, optional): Grid on which to
-            calculate kernel density estimate; may be a single ndarray
-            that will be applied to all columns or a dictionary whose
-            keys are column names and values are ndarrays corresponding
-            to the grid for each column; for any column for which *grid*
-            is not specified, a grid of 1000 points between the minimum
-            value minus three times the standard deviation and the
-            maximum value plots three times the standard deviation will
-            be used
-          kde_kw (dict, optional): Keyword arguments passed to
-            :function:`sklearn.neighbors.KernelDensity`
-          verbose (int): Level of verbose output
-          kwargs (dict): Additional keyword arguments
-
-        Returns:
-          OrderedDict: Dictionary whose keys are columns in *df* and
-          values are DataFrames whose indexes are the *grid* for that
-          column and contain a single column 'probability' containing
-          the normalized probability at each grid point
-
-        .. todo:
-            - Implement flag to return single dataframe with single grid
-        """
-        from collections import OrderedDict
-        import six
-        from sklearn.neighbors import KernelDensity
-
-        # Process arguments
-        verbose = kwargs.get("verbose", 1)
-        if verbose >= 1:
-            wiprint("""Calculating probability distribution over DataFrame""")
-        if columns is None:
-            columns = [a for a in df.columns.values if
-                str(df[a].dtype).startswith("float")]
-        elif isinstance(columns, six.string_types):
-            columns = [columns]
-
-        if mode == "kde":
-
-            # Prepare bandwidths
-            if bandwidth is None:
-                all_bandwidth = None
-                bandwidth = {}
-            elif isinstance(bandwidth, float):
-                all_bandwidth = bandwidth
-                bandwidth = {}
-            elif isinstance(bandwidth, dict):
-                all_bandwidth = None
-            else:
-                raise Exception()
-            for column in df.columns.values:
-                series = df[column]
-                if column in bandwidth:
-                    bandwidth[column] = float(bandwidth[column])
-                elif all_bandwidth is not None:
-                    bandwidth[column] = all_bandwidth
-                else:
-                    bandwidth[column] = series.std()
-
-            # Prepare grids
-            if grid is None:
-                all_grid = None
-                grid = {}
-            elif isinstance(grid, list) or isinstance(grid, np.ndarray):
-                all_grid = np.array(grid)
-                grid = {}
-            elif isinstance(grid, dict):
-                all_grid = None
-            for column in df.columns.values:
-                series = df[column]
-                if column in grid:
-                    grid[column] = np.array(grid[column])
-                elif all_grid is not None:
-                    grid[column] = all_grid
-                else:
-                    grid[column] = np.linspace(series.min() - 3 * series.std(),
-                      series.max() + 3 * series.std(), 1000)
-
-            # Calculate probability distributions
-            kde_kw = kwargs.get("kde_kw", {})
-            pdist = OrderedDict()
-            for column in df.columns.values:
-                series = df[column]
-                if verbose >= 1:
-                    wiprint("calculating probability distribution of "
-                            "{0} using a kernel density estimate".format(
-                      column))
-                kde = KernelDensity(bandwidth=bandwidth[column], **kde_kw)
-                kde.fit(series.dropna()[:, np.newaxis])
-                pdf = np.exp(kde.score_samples(grid[column][:, np.newaxis]))
-                pdf /= pdf.sum()
-                series_pdist = pd.DataFrame(pdf, index=grid[column],
-                  columns=["probability"])
-                series_pdist.index.name = column
-                pdist[column] = series_pdist
-        else:
-            raise Exception(sformat("""only kernel density estimation is
-                                    currently supported"""))
-
-        return pdist
-
-    def load_dataset(self, cls=None, **kwargs):
-        """
-        Loads a dataset, or reloads a previously-loaded dataset from a
-        cache.
-
-        Arguments:
-          cls (class, str): Dataset class; may be either class object itself
-            or name of class in form of 'package.module.class'; if None,
-            will be set to self.__class__; if '__noclass__',
-            function will return None
-
-        Returns:
-          object: Dataset, either newly initialized or copied from cache
-        """
-        from . import load_dataset
-
-        if cls is None:
-            cls = type(self)
-        return load_dataset(cls=cls, dataset_cache=self.dataset_cache,
-          **kwargs)
