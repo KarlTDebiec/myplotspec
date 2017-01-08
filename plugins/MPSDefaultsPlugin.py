@@ -16,6 +16,7 @@ from __future__ import (absolute_import, division, print_function,
 
 if __name__ == "__main__":
     __package__ = str("myplotspec.plugins")
+    import myplotspec.plugins
 from ..yspec.plugins.DefaultsPlugin import DefaultsPlugin
 
 

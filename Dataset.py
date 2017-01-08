@@ -341,13 +341,13 @@ class Dataset(object):
             r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$", infile,
             flags=re.UNICODE)
         path = expandvars(re_h5.groupdict()["path"])
-        if re_h5.groupdict()["address"] == "None":
+        address = re_h5.groupdict()["address"]
+        if address == "None":
             address = None
         dataframe_kw = kwargs.get("dataframe_kw", {})
 
         # Read DataFrame
         with h5py.File(path) as h5_file:
-            print(address is None)
             if address is None or address == "":
                 if hasattr(self, "default_hdf5_address"):
                     address = self.default_hdf5_address
