@@ -38,7 +38,7 @@ def wiprint(text, width=80, subsequent_indent="  ", **kwargs):
     from textwrap import TextWrapper
 
     tw = TextWrapper(width=width, subsequent_indent=subsequent_indent,
-        **kwargs)
+      **kwargs)
     print(tw.fill(re.sub(r"\s+", " ", text)))
 
 
@@ -79,7 +79,7 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
     display when the dataset is loaded from the cache.
 
     Arguments:
-      cls (class, str): Dataset class; may be either class object itself
+      cls (class, str): Dataset class; may be either class object itself:
         or name of class in form of 'package.module.class'; if None,
         will be set to :class:`Dataset.Dataset`; if '__nocls_',
         function will return None
@@ -128,12 +128,13 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
                             wiprint("Previously loaded")
                         return dataset
 
-    if cls == "__nocls_":
+    if cls == "__noclass__":
         return None
     if cls is None:
         from .Dataset import Dataset
         cls = Dataset
     elif isinstance(cls, six.string_types):
+        print(cls)
         mod_name = ".".join(cls.split(".")[:-1])
         clsname = cls.split(".")[-1]
         mod = __import__(mod_name, fromlist=[clsname])
@@ -152,7 +153,7 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
             return dataset_cache[cache_key]
         else:
             dataset_cache[cache_key] = cls(dataset_cache=dataset_cache,
-                **kwargs)
+              **kwargs)
             return dataset_cache[cache_key]
     else:
         return cls(**kwargs)
@@ -224,9 +225,9 @@ def get_yaml(input):
             if isinstance(output, str):
                 warn("myplotspec.get_yaml() has loaded input "
                      "'{0}' as a string rather than a dictionary ".format(
-                    input) + "or other data structure; if input was intended "
-                             "as an "
-                             "infile it was not found.")
+                  input) + "or other data structure; if input was intended "
+                           "as an "
+                           "infile it was not found.")
             return output
     elif input is None:
         warn("myplotspec.get_yaml() has been asked to load input 'None', and "
@@ -235,9 +236,9 @@ def get_yaml(input):
     else:
         raise TypeError("myplotspec.get_yaml() does not support input of type "
                         "{0}; ".format(
-            input.__class__.__name__) + "input may be a string path to a "
-                                        "yaml file, a yaml-format string, "
-                                        "or a dictionary.")
+          input.__class__.__name__) + "input may be a string path to a "
+                                      "yaml file, a yaml-format string, "
+                                      "or a dictionary.")
 
 
 def merge_dicts(dict_1, dict_2):
@@ -275,7 +276,7 @@ def merge_dicts(dict_1, dict_2):
         for key in set(dict_1.keys()).union(dict_2.keys()):
             if key in dict_1 and key in dict_2:
                 if (isinstance(dict_1[key], dict) and isinstance(dict_2[key],
-                    dict)):
+                  dict)):
                     yield (key, dict(merge(dict_1[key], dict_2[key])))
                 else:
                     yield (key, dict_2[key])
@@ -286,12 +287,12 @@ def merge_dicts(dict_1, dict_2):
 
     if not isinstance(dict_1, dict) or not isinstance(dict_2, dict):
         raise AttributeError(
-            "Function myplotspec.merge_dict() requires " + "arguments "
-                                                           "'dict_1' and "
-                                                           "'dict_2' to be "
-                                                           "dictionaries; "
-            + "arguments of types " + "'{0}' and '{1}' provided".format(
-                dict_1.__class__.__name__, dict_2.__class__.__name__))
+          "Function myplotspec.merge_dict() requires " + "arguments "
+                                                         "'dict_1' and "
+                                                         "'dict_2' to be "
+                                                         "dictionaries; " +
+          "arguments of types " + "'{0}' and '{1}' provided".format(
+            dict_1.__class__.__name__, dict_2.__class__.__name__))
 
     return dict(merge(dict_1, dict_2))
 
@@ -323,22 +324,22 @@ def get_color(color):
     import numpy as np
 
     colors = dict(
-        default=dict(black=[0.000, 0.000, 0.000], blue=[0.298, 0.447, 0.690],
-            green=[0.333, 0.659, 0.408], red=[0.769, 0.306, 0.321],
-            purple=[0.506, 0.447, 0.698], yellow=[0.800, 0.725, 0.455],
-            cyan=[0.392, 0.710, 0.804]),
-        pastel=dict(blue=[0.573, 0.776, 1.000], green=[0.592, 0.941, 0.667],
-            red=[1.000, 0.624, 0.604], purple=[0.816, 0.733, 1.000],
-            yellow=[1.000, 0.996, 0.639], cyan=[0.690, 0.878, 0.902]),
-        muted=dict(blue=[0.282, 0.471, 0.812], green=[0.416, 0.800, 0.396],
-            red=[0.839, 0.373, 0.373], purple=[0.706, 0.486, 0.780],
-            yellow=[0.769, 0.678, 0.400], cyan=[0.467, 0.745, 0.859]),
-        deep=dict(blue=[0.298, 0.447, 0.690], green=[0.333, 0.659, 0.408],
-            red=[0.769, 0.306, 0.322], purple=[0.506, 0.447, 0.698],
-            yellow=[0.800, 0.725, 0.455], cyan=[0.392, 0.710, 0.804]),
-        dark=dict(blue=[0.000, 0.110, 0.498], green=[0.004, 0.459, 0.090],
-            red=[0.549, 0.035, 0.000], purple=[0.463, 0.000, 0.631],
-            yellow=[0.722, 0.525, 0.043], cyan=[0.000, 0.388, 0.455]))
+      default=dict(black=[0.000, 0.000, 0.000], blue=[0.298, 0.447, 0.690],
+        green=[0.333, 0.659, 0.408], red=[0.769, 0.306, 0.321],
+        purple=[0.506, 0.447, 0.698], yellow=[0.800, 0.725, 0.455],
+        cyan=[0.392, 0.710, 0.804]),
+      pastel=dict(blue=[0.573, 0.776, 1.000], green=[0.592, 0.941, 0.667],
+        red=[1.000, 0.624, 0.604], purple=[0.816, 0.733, 1.000],
+        yellow=[1.000, 0.996, 0.639], cyan=[0.690, 0.878, 0.902]),
+      muted=dict(blue=[0.282, 0.471, 0.812], green=[0.416, 0.800, 0.396],
+        red=[0.839, 0.373, 0.373], purple=[0.706, 0.486, 0.780],
+        yellow=[0.769, 0.678, 0.400], cyan=[0.467, 0.745, 0.859]),
+      deep=dict(blue=[0.298, 0.447, 0.690], green=[0.333, 0.659, 0.408],
+        red=[0.769, 0.306, 0.322], purple=[0.506, 0.447, 0.698],
+        yellow=[0.800, 0.725, 0.455], cyan=[0.392, 0.710, 0.804]),
+      dark=dict(blue=[0.000, 0.110, 0.498], green=[0.004, 0.459, 0.090],
+        red=[0.549, 0.035, 0.000], purple=[0.463, 0.000, 0.631],
+        yellow=[0.722, 0.525, 0.043], cyan=[0.000, 0.388, 0.455]))
 
     if isinstance(color, str):
         if color.startswith("#"):
@@ -357,7 +358,7 @@ def get_color(color):
         else:
             return color
     elif (isinstance(color, list) or isinstance(color,
-        np.ndarray) or isinstance(color, tuple)):
+      np.ndarray) or isinstance(color, tuple)):
         color = np.array(color, dtype=np.float)
         if np.any(color[0] > 1):
             color /= 255
@@ -391,7 +392,7 @@ def get_colors(dict_1, *args, **kwargs):
     from . import get_color
 
     color_keys = kwargs.get("color_keys",
-        ["c", "color", "mec", "markeredgecolor", "mfc", "markerfacecolor"])
+      ["c", "color", "mec", "markeredgecolor", "mfc", "markerfacecolor"])
     for color_key in color_keys:
         if color_key in dict_1:
             dict_1[color_key] = get_color(dict_1[color_key])
@@ -616,9 +617,9 @@ def get_edges(figure_or_subplots, absolute=False, **kwargs):
             edges = dict(left=0.5, right=0.5, top=0.5, bottom=0.5)
         else:
             edges = dict(left=min([s.get_position().xmin for s in subplots]),
-                right=max([s.get_position().xmax for s in subplots]),
-                top=max([s.get_position().ymax for s in subplots]),
-                bottom=min([s.get_position().ymin for s in subplots]))
+              right=max([s.get_position().xmax for s in subplots]),
+              top=max([s.get_position().ymax for s in subplots]),
+              bottom=min([s.get_position().ymin for s in subplots]))
     elif isinstance(figure_or_subplots, dict):
         subplots = figure_or_subplots.values()
         figure = subplots[0].get_figure()
@@ -626,15 +627,15 @@ def get_edges(figure_or_subplots, absolute=False, **kwargs):
             edges = dict(left=0.5, right=0.5, top=0.5, bottom=0.5)
         else:
             edges = dict(left=min([s.get_position().xmin for s in subplots]),
-                right=max([s.get_position().xmax for s in subplots]),
-                top=max([s.get_position().ymax for s in subplots]),
-                bottom=min([s.get_position().ymin for s in subplots]))
+              right=max([s.get_position().xmax for s in subplots]),
+              top=max([s.get_position().ymax for s in subplots]),
+              bottom=min([s.get_position().ymin for s in subplots]))
     elif isinstance(figure_or_subplots, matplotlib.axes.Axes):
         subplot = figure_or_subplots
         figure = subplot.get_figure()
         edges = dict(left=subplot.get_position().xmin,
-            right=subplot.get_position().xmax, top=subplot.get_position().ymax,
-            bottom=subplot.get_position().ymin)
+          right=subplot.get_position().xmax, top=subplot.get_position().ymax,
+          bottom=subplot.get_position().ymin)
     edges["width"] = edges["right"] - edges["left"]
     edges["height"] = edges["top"] - edges["bottom"]
 
@@ -674,23 +675,22 @@ def get_font(fp=None, **kwargs):
     elif isinstance(fp, six.string_types):
         kwargs["size"] = kwargs.get("size", int(fp[:-1]))
         kwargs["weight"] = kwargs.get("weight",
-            {"r": "regular", "b": "bold"}[fp[-1]])
+          {"r": "regular", "b": "bold"}[fp[-1]])
     elif isinstance(fp, dict):
         kwargs.update(fp)
     else:
         raise TypeError(
-            "Function myplotspec.get_font() does not support" + "input of "
-                                                                "type {"
-                                                                "0}".format(
-                fp.__class__.__name__))
+          "Function myplotspec.get_font() does not support" + "input of "
+                                                              "type {"
+                                                              "0}".format(
+            fp.__class__.__name__))
     return FontProperties(**kwargs)
 
 
 def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
-        ncols=None, nsubplots=None, left=None, sub_width=None, wspace=None,
-        right=None, bottom=None, sub_height=None, hspace=None, top=None,
-        fig_width=None, fig_height=None, figsize=None, verbose=1, debug=0,
-        **kwargs):
+  ncols=None, nsubplots=None, left=None, sub_width=None, wspace=None,
+  right=None, bottom=None, sub_height=None, hspace=None, top=None,
+  fig_width=None, fig_height=None, figsize=None, verbose=1, debug=0, **kwargs):
     """
     Generates a figure and subplots to provided specifications.
 
@@ -768,7 +768,7 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
         fig_width = figure.get_figwidth()
         figsize = [fig_width, fig_height]
     if ((sub_width is None or sub_height is None) and (
-        (fig_width is None or fig_height is None) and figsize is None)):
+          (fig_width is None or fig_height is None) and figsize is None)):
         # Lack subplot and figure dimensions
         figsize = matplotlib.rcParams["figure.figsize"]
         if fig_width is None:
@@ -781,7 +781,7 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
         if sub_height is None:
             sub_height = fig_height - top - (hspace * (nrows - 1)) - bottom
     elif ((sub_width is None or sub_height is None) and not (
-        (fig_width is None or fig_height is None) and figsize is None)):
+          (fig_width is None or fig_height is None) and figsize is None)):
         # Lack sublot dimensions, but have figure dimensions
         if figsize is not None:
             fig_width, fig_height = figsize
@@ -791,17 +791,17 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
         if sub_height is None:
             sub_height = fig_height - top - (hspace * (nrows - 1)) - bottom
     elif (not (sub_width is None or sub_height is None) and (
-        (fig_width is None or fig_height is None) and figsize is None)):
+          (fig_width is None or fig_height is None) and figsize is None)):
         # Have subplot dimensions, but lack figure dimensions
         if fig_width is None:
             fig_width = left + (sub_width * ncols) + (
-            wspace * (ncols - 1)) + right
+                wspace * (ncols - 1)) + right
         if fig_height is None:
             fig_height = top + (sub_height * nrows) + (
-            hspace * (nrows - 1)) + bottom
+                hspace * (nrows - 1)) + bottom
         figsize = [fig_width, fig_height]
     elif (not (sub_width is None or sub_height is None) and not (
-        (fig_width is None or fig_height is None) and figsize is None)):
+          (fig_width is None or fig_height is None) and figsize is None)):
         # Have subplot and figure dimensions
         figsize = [fig_width, fig_height]
 
@@ -834,12 +834,11 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
             break
         for k in range(0, ncols, 1):
             subplots[i] = matplotlib.axes.Axes(figure,
-                rect=[(left + k * sub_width + k * wspace) / fig_width,  # Left
-                    (bottom + j * sub_height + j * hspace) / fig_height,
-                    # Bottom
-                    sub_width / fig_width,  # Width
-                    sub_height / fig_height],  # Height
-                **subplot_kw)
+              rect=[(left + k * sub_width + k * wspace) / fig_width,  # Left
+                  (bottom + j * sub_height + j * hspace) / fig_height, # Bottom
+                  sub_width / fig_width,  # Width
+                  sub_height / fig_height],  # Height
+              **subplot_kw)
             figure.add_axes(subplots[i])
             i += 1
             if i >= i_max:
@@ -848,7 +847,7 @@ def get_figure_subplots(figure=None, subplots=None, index=None, nrows=None,
 
     if verbose >= 1:
         print("Figure is {0:6.3f} inches wide and {1:6.3f} tall".format(
-            figure.get_figwidth(), figure.get_figheight()))
+          figure.get_figwidth(), figure.get_figheight()))
     return figure, subplots
 
 
