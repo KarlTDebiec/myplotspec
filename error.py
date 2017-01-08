@@ -72,7 +72,7 @@ class MPSArgumentError(MPSError):
     arguments in Python 2.
     """
 
-    def __init__(self, error, function, kwargs=None, class_=None, skip=None):
+    def __init__(self, error, function, kwargs=None, cls=None, skip=None):
         """
         Initializes from an existing error and writes message
         """
@@ -92,11 +92,10 @@ class MPSArgumentError(MPSError):
                     if s in args:
                         args.remove(s)
             args = args[:-1 * len(argspec.defaults)]
-            given = [a for a in args if a in kwargs]
             missing = [a for a in args if a not in kwargs]
             message = "{0}() missing ".format(function.__name__)
-            if class_ is not None:
-                message = "{0}.{1}".format(class_.__name__, message)
+            if cls is not None:
+                message = "{0}.{1}".format(cls.__name__, message)
 
             message += "{0} ".format(len(missing))
             if len(missing) > 1:
@@ -107,8 +106,8 @@ class MPSArgumentError(MPSError):
 
         else:
             message = self.args[0]
-            if class_ is not None:
-                message = "{0}.{1}".format(class_.__name__, message)
+            if cls is not None:
+                message = "{0}.{1}".format(cls.__name__, message)
         self.args = (message,)
 
 

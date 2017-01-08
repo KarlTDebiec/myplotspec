@@ -39,7 +39,7 @@ class Dataset(object):
     default_h5_kw = dict(chunks=True, compression="gzip")
 
     @classmethod
-    def get_cache_key(class_, infile=None, **kwargs):
+    def get_cache_key(cls, infile=None, **kwargs):
         """
         Generates tuple of arguments to be used as key for dataset cache.
 
@@ -65,16 +65,16 @@ class Dataset(object):
             if isinstance(value, list):
                 value = tuple(value)
             read_csv_kw.append((key, value))
-        return (class_, expandvars(infile), tuple(read_csv_kw))
+        return (cls, expandvars(infile), tuple(read_csv_kw))
 
     @classmethod
-    def main(class_):
+    def main(cls):
         """
         Provides command-line interface
         """
-        parser = class_.construct_argparser()
+        parser = cls.construct_argparser()
         kwargs = vars(parser.parse_args())
-        kwargs.pop("class_")(**kwargs)
+        kwargs.pop("cls")(**kwargs)
 
     @staticmethod
     def calc_pdist(df, columns=None, mode="kde", bandwidth=None, grid=None,
@@ -228,8 +228,8 @@ class Dataset(object):
             parser = argparse.ArgumentParser(description=help_message)
 
         # Defaults
-        if parser.get_default("class_") is None:
-            parser.set_defaults(class_=Dataset)
+        if parser.get_default("cls") is None:
+            parser.set_defaults(cls=Dataset)
 
         # Arguments unique to this class
         arg_groups = {ag.title: ag for ag in parser._action_groups}
@@ -704,15 +704,15 @@ class Dataset(object):
         with open(outfile, "w") as text_file:
             text_file.write(df.to_string(**to_string_kw))
 
-    def load_dataset(self, class_=None, **kwargs):
+    def load_dataset(self, cls=None, **kwargs):
         """
         Loads a dataset, or reloads a previously-loaded dataset from a
         cache.
 
         Arguments:
-          class_ (class, str): Dataset class; may be either class object itself
+          cls (class, str): Dataset class; may be either class object itself
             or name of class in form of 'package.module.class'; if None,
-            will be set to self.__class__; if '__noclass__',
+            will be set to self.__class__; if '__nocls_',
             function will return None
 
         Returns:
@@ -720,9 +720,9 @@ class Dataset(object):
         """
         from . import load_dataset
 
-        if class_ is None:
-            class_ = type(self)
-        return load_dataset(class_=class_, dataset_cache=self.dataset_cache,
+        if cls is None:
+            cls = type(self)
+        return load_dataset(cls=cls, dataset_cache=self.dataset_cache,
           **kwargs)
 
     def read(self, **kwargs):

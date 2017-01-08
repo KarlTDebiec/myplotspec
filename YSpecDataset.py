@@ -62,7 +62,7 @@ class YSpecDataset(YSpecConstructor):
       """)
 
     @classmethod
-    def construct_argparser(class_, **kwargs):
+    def construct_argparser(cls, **kwargs):
         """
         Adds arguments to a nascent argument parser
 
@@ -77,9 +77,9 @@ class YSpecDataset(YSpecConstructor):
         """
 
         # Process arguments
-        parser = class_.get_argparser(**kwargs)
-        if parser.get_default("class_") is None:
-            parser.set_defaults(class_=class_)
+        parser = cls.get_argparser(**kwargs)
+        if parser.get_default("cls") is None:
+            parser.set_defaults(cls=cls)
         help_groups = kwargs.get("help_groups")
         arg_groups = {ag.title: ag for ag in parser._action_groups}
         input_group = arg_groups.get("input",
@@ -90,55 +90,55 @@ class YSpecDataset(YSpecConstructor):
             parser.add_argument_group("output"))
 
         # Standard arguments
-        verbosity = class_.add_mutually_exclusive_argument_group(parser,
+        verbosity = cls.add_mutually_exclusive_argument_group(parser,
             "verbosity")
-        class_.add_argument(verbosity, "-v", "--verbose", action="count",
+        cls.add_argument(verbosity, "-v", "--verbose", action="count",
             default=1,
             help="enable verbose output, may be specified more than once")
-        class_.add_argument(verbosity, "-q", "--quiet", action="store_const",
+        cls.add_argument(verbosity, "-q", "--quiet", action="store_const",
             const=0, default=1, dest="verbose", help="disable verbose output")
-        class_.add_argument(parser, "-d", "--debug", action="count", default=1,
+        cls.add_argument(parser, "-d", "--debug", action="count", default=1,
             help="enable debug output, may be specified more than once")
-        class_.add_argument(parser, "-I", "--interactive", action="store_true",
+        cls.add_argument(parser, "-I", "--interactive", action="store_true",
             help="""enable interactive ipython terminal after loading and
                      processing data""")
 
         # Input arguments
-        class_.add_argument(input_group, "-infiles", dest="infiles",
+        cls.add_argument(input_group, "-infiles", dest="infiles",
             metavar="INFILE", nargs="+", type=str, help="""file(s) from
             which to load data; may be text or hdf5;
                      may contain environment variables and wildcards""")
-        class_.add_argument(input_group, "-spec", dest="source_spec",
+        cls.add_argument(input_group, "-spec", dest="source_spec",
             metavar="SPEC", type=str,
             help="file from which to load source specification")
 
         # Output arguments
-        class_.add_argument(output_group, "-outfile", required=False, type=str,
+        cls.add_argument(output_group, "-outfile", required=False, type=str,
             help="""text or hdf5 file to which processed DataFrame will be
                      output; may contain environment variables""")
 
         # Plugins
         if "spec" in help_groups or "*" in help_groups:
-            if len(class_.available_plugins) > 0:
+            if len(cls.available_plugins) > 0:
                 spec = arg_groups.get(
                     "arguments related to yaml specification",
                     parser.add_argument_group(
                         "arguments related to yaml specification",
                         description=""))
-                if (hasattr(class_, "default_plugins") and len(
-                    class_.default_plugins) > 0):
+                if (hasattr(cls, "default_plugins") and len(
+                    cls.default_plugins) > 0):
                     spec.description += "default plugin order:\n  {" \
                                         "0}\n\n".format(
-                        " → ".join(class_.default_plugins))
+                        " → ".join(cls.default_plugins))
                 spec.description += "available plugins:\n"
-                for name, plugin in class_.available_plugins.items():
+                for name, plugin in cls.available_plugins.items():
                     plugin.add_arguments(parser, help_dest=spec,
-                        constructor=class_)
+                        constructor=cls)
 
         return parser
 
     @classmethod
-    def construct_spec(class_, source_spec=None, plugins=None, **kwargs):
+    def construct_spec(cls, source_spec=None, plugins=None, **kwargs):
         """
         Arguments:
           source_spec (str): Path to source spec infile
@@ -160,12 +160,12 @@ class YSpecDataset(YSpecConstructor):
         else:
             source_spec = yaml_load(source_spec)
         if plugins is None:
-            plugins = class_.default_plugins
+            plugins = cls.default_plugins
 
         # Prepare spec
         spec = CommentedMap()
         for plugin_name in plugins:
-            plugin = class_.available_plugins[plugin_name](constructor=class_,
+            plugin = cls.available_plugins[plugin_name](constructor=cls,
                 **kwargs)
             spec = plugin(spec, source_spec, **kwargs)
             # Output intermediate spec
@@ -181,20 +181,20 @@ class YSpecDataset(YSpecConstructor):
         return spec
 
     @classmethod
-    def main(class_):
+    def main(cls):
         """
         """
-        parser = class_.construct_argparser(
-            help_groups=class_.get_help_arg_groups())
+        parser = cls.construct_argparser(
+            help_groups=cls.get_help_arg_groups())
         kwargs = vars(parser.parse_args())
 
 
-# kwargs.pop("class_")
-#        spec = class_.construct_spec(**kwargs)
-#        return class_(**spec)
+# kwargs.pop("cls")
+#        spec = cls.construct_spec(**kwargs)
+#        return cls(**spec)
 
 #    @classmethod
-#    def get_cache_key(class_, infile=None, **kwargs):
+#    def get_cache_key(cls, infile=None, **kwargs):
 #        """
 #        Generates tuple of arguments to be used as key for dataset
 #        cache.
@@ -213,7 +213,7 @@ class YSpecDataset(YSpecConstructor):
 #            if isinstance(value, list):
 #                value = tuple(value)
 #            read_csv_kw.append((key, value))
-#        return (class_, expandvars(infile), tuple(read_csv_kw))
+#        return (cls, expandvars(infile), tuple(read_csv_kw))
 
 
 #    @staticmethod
@@ -834,15 +834,15 @@ class YSpecDataset(YSpecConstructor):
 #
 #        return pdist
 #
-#    def load_dataset(self, class_=None, **kwargs):
+#    def load_dataset(self, cls=None, **kwargs):
 #        """
 #        Loads a dataset, or reloads a previously-loaded dataset from a
 #        cache
 #
 #        Arguments:
-#          class_ (class, str): Dataset class; may be either class object
+#          cls (class, str): Dataset class; may be either class object
 #            itself or name of class in form of 'package.module.class';
-#            if None, will be set to self.__class__; if '__noclass__',
+#            if None, will be set to self.__class__; if '__nocls_',
 #            function will return None
 #
 #        Returns:
@@ -850,9 +850,9 @@ class YSpecDataset(YSpecConstructor):
 #        """
 #        from . import load_dataset
 #
-#        if class_ is None:
-#            class_ = type(self)
-#        return load_dataset(class_=class_,
+#        if cls is None:
+#            cls = type(self)
+#        return load_dataset(cls=cls,
 #                 dataset_cache=self.dataset_cache, **kwargs)
 
 #################################### MAIN #####################################

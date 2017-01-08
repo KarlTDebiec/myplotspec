@@ -56,7 +56,7 @@ def sformat(text, **kwargs):
     return (re.sub(r"\s+", " ", text))
 
 
-def load_dataset(class_=None, dataset_cache=None, loose=False, **kwargs):
+def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
     """
     Loads a dataset, or reloads a previously-loaded dataset from a
     cache.
@@ -79,9 +79,9 @@ def load_dataset(class_=None, dataset_cache=None, loose=False, **kwargs):
     display when the dataset is loaded from the cache.
 
     Arguments:
-      class_ (class, str): Dataset class; may be either class object itself
+      cls (class, str): Dataset class; may be either class object itself
         or name of class in form of 'package.module.class'; if None,
-        will be set to :class:`Dataset.Dataset`; if '__noclass__',
+        will be set to :class:`Dataset.Dataset`; if '__nocls_',
         function will return None
       dataset_cache (dict, optional): Cache of previously-loaded
         datasets
@@ -91,7 +91,7 @@ def load_dataset(class_=None, dataset_cache=None, loose=False, **kwargs):
       verbose (int): Level of verbose output
       kwargs (dict): Keyword arguments passed to
         :meth:`Dataset.Dataset.get_cache_key` and
-        :meth:`Dataset.Dataset.class_`
+        :meth:`Dataset.Dataset.cls`
 
     Returns:
       object: Dataset, either newly initialized or copied from cache
@@ -120,42 +120,42 @@ def load_dataset(class_=None, dataset_cache=None, loose=False, **kwargs):
                     infile = expandvars(infile)
                     if infile in loose_keys:
                         dataset = dataset_cache[loose_keys[infile]]
-                        class_ = type(dataset)
-                        cache_key = class_.get_cache_key(**kwargs)
-                        if hasattr(class_, "get_cache_message"):
-                            wiprint(class_.get_cache_message(cache_key))
+                        cls = type(dataset)
+                        cache_key = cls.get_cache_key(**kwargs)
+                        if hasattr(cls, "get_cache_message"):
+                            wiprint(cls.get_cache_message(cache_key))
                         else:
                             wiprint("Previously loaded")
                         return dataset
 
-    if class_ == "__noclass__":
+    if cls == "__nocls_":
         return None
-    if class_ is None:
+    if cls is None:
         from .Dataset import Dataset
-        class_ = Dataset
-    elif isinstance(class_, six.string_types):
-        mod_name = ".".join(class_.split(".")[:-1])
-        class_name = class_.split(".")[-1]
-        mod = __import__(mod_name, fromlist=[class_name])
-        class_ = getattr(mod, class_name)
+        cls = Dataset
+    elif isinstance(cls, six.string_types):
+        mod_name = ".".join(cls.split(".")[:-1])
+        clsname = cls.split(".")[-1]
+        mod = __import__(mod_name, fromlist=[clsname])
+        cls = getattr(mod, clsname)
 
-    if dataset_cache is not None and hasattr(class_, "get_cache_key"):
-        cache_key = class_.get_cache_key(**kwargs)
+    if dataset_cache is not None and hasattr(cls, "get_cache_key"):
+        cache_key = cls.get_cache_key(**kwargs)
         if cache_key is None:
-            return class_(dataset_cache=dataset_cache, **kwargs)
+            return cls(dataset_cache=dataset_cache, **kwargs)
         if cache_key in dataset_cache:
             if verbose >= 1:
-                if hasattr(class_, "get_cache_message"):
-                    wiprint(class_.get_cache_message(cache_key))
+                if hasattr(cls, "get_cache_message"):
+                    wiprint(cls.get_cache_message(cache_key))
                 else:
                     wiprint("Previously loaded")
             return dataset_cache[cache_key]
         else:
-            dataset_cache[cache_key] = class_(dataset_cache=dataset_cache,
+            dataset_cache[cache_key] = cls(dataset_cache=dataset_cache,
                 **kwargs)
             return dataset_cache[cache_key]
     else:
-        return class_(**kwargs)
+        return cls(**kwargs)
 
 
 def get_cmap(color, **kwargs):
