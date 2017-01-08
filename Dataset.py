@@ -88,7 +88,7 @@ class Dataset(object):
             parser = parser_or_subparsers
         elif isinstance(parser_or_subparsers, argparse._SubParsersAction):
             parser = parser_or_subparsers.add_parser(name="data",
-                description=help_message, help=help_message)
+              description=help_message, help=help_message)
         elif parser is None:
             parser = argparse.ArgumentParser(description=help_message)
 
@@ -115,36 +115,36 @@ class Dataset(object):
                 parser.add_mutually_exclusive_group()
         try:
             verbosity.add_argument("-v", "--verbose", action="count",
-                default=1, help="""enable verbose output, may be specified
+              default=1, help="""enable verbose output, may be specified
                 more than
                           once""")
         except argparse.ArgumentError:
             pass
         try:
             verbosity.add_argument("-q", "--quiet", action="store_const",
-                const=0, default=1, dest="verbose",
-                help="disable verbose output")
+              const=0, default=1, dest="verbose",
+              help="disable verbose output")
         except argparse.ArgumentError:
             pass
         try:
             parser.add_argument("-d", "--debug", action="count", default=1,
-                help="""enable debug output, may be specified more than
+              help="""enable debug output, may be specified more than
                           once""")
         except argparse.ArgumentError:
             pass
         try:
             parser.add_argument("-I", "--interactive", action="store_true",
-                help="""enable interactive ipython terminal after loading
+              help="""enable interactive ipython terminal after loading
                           and processing data""")
         except argparse.ArgumentError:
             pass
 
         # Input arguments
         input_group = arg_groups.get("input",
-            parser.add_argument_group("input"))
+          parser.add_argument_group("input"))
         try:
             input_group.add_argument("-infiles", required=True, dest="infiles",
-                metavar="INFILE", nargs="+", type=str, help="""file(s) from
+              metavar="INFILE", nargs="+", type=str, help="""file(s) from
                 which to load data; may be text or
                           hdf5; may contain environment variables and
                           wildcards""")
@@ -153,10 +153,10 @@ class Dataset(object):
 
         # Output arguments
         output_group = arg_groups.get("output",
-            parser.add_argument_group("output"))
+          parser.add_argument_group("output"))
         try:
             output_group.add_argument("-outfile", required=False, type=str,
-                help="""text or hdf5 file to which processed DataFrame will
+              help="""text or hdf5 file to which processed DataFrame will
                           be output; may contain environment variables""")
         except argparse.ArgumentError:
             pass
@@ -217,8 +217,8 @@ class Dataset(object):
         # Process arguments
         infiles = multi_get_merged(["infile", "infiles"], kwargs)
         re_h5 = re.compile(
-            r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$",
-            flags=re.UNICODE)
+          r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$",
+          flags=re.UNICODE)
 
         processed_infiles = []
         for infile in infiles:
@@ -288,7 +288,7 @@ class Dataset(object):
                         attrs = dict(h5_file[address].attrs)
                         if "fields" in dataframe_kw:
                             dataframe_kw["columns"] = dataframe_kw.pop(
-                                "fields")
+                              "fields")
                         elif "columns" in dataframe_kw:
                             pass
                         elif "fields" in attrs:
@@ -296,24 +296,24 @@ class Dataset(object):
                         elif "columns" in attrs:
                             dataframe_kw["columns"] = list(attrs["columns"])
                         self.dataframe = pd.DataFrame(data=data,
-                            **dataframe_kw)
+                          **dataframe_kw)
                 else:
                     raise ()
             else:
                 read_csv_kw = dict(index_col=0, delimiter="\s\s+")
                 read_csv_kw.update(kwargs.get("read_csv_kw", {}))
                 if (
-                                "delimiter" in read_csv_kw and
-                                "delim_whitespace" in read_csv_kw):
+                          "delimiter" in read_csv_kw and "delim_whitespace"
+                  in read_csv_kw):
                     del (read_csv_kw["delimiter"])
                 self.dataframe = pd.read_csv(expandvars(infile), **read_csv_kw)
                 if (
-                                self.dataframe.index.name is not None and
-                            self.dataframe.index.name.startswith(
-                            "#")):
+                          self.dataframe.index.name is not None and
+                      self.dataframe.index.name.startswith(
+                    "#")):
                     self.dataframe.index.name = \
                         self.dataframe.index.name.lstrip(
-                        "#")
+                      "#")
 
     def _read_hdf5(self, infile, **kwargs):
         """
@@ -338,8 +338,8 @@ class Dataset(object):
         # Process arguments
         verbose = kwargs.get("verbose", 1)
         re_h5 = re.match(
-            r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$", infile,
-            flags=re.UNICODE)
+          r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$", infile,
+          flags=re.UNICODE)
         path = expandvars(re_h5.groupdict()["path"])
         address = re_h5.groupdict()["address"]
         if address == "None":
@@ -348,25 +348,35 @@ class Dataset(object):
 
         # Read DataFrame
         with h5py.File(path) as h5_file:
-            if address is None or address == "":
-                if hasattr(self, "default_hdf5_address"):
+
+            # Determine address
+            if address is None:
+                if len(h5_file.keys()) == 1:
+                    address = h5_file.keys()[0]
+                elif (hasattr(self,
+                  "default_hdf5_address") and self.default_h5_address in
+                    h5_file):
                     address = self.default_hdf5_address
                 else:
                     address = "/"
             if verbose >= 1:
-                wiprint("""Reading DataFrame from '{0}:{1}'""".format(path,
-                    address))
-            if ("{0}/values".format(address) in h5_file and "{0}/index".format(
-                    address) in h5_file):
-                values = np.array(h5_file["{0}/values".format(address)])
-                index = np.array(h5_file["{0}/index".format(address)])
-            else:
-                # This line appears to be wrong; keeping it here for now in
-                # case it turns out to have had some importance
-                if len(h5_file.keys()) >= 1:
-                    address = sorted(list(h5_file.keys()))[0]
+                wiprint(
+                  """Reading DataFrame from '{0}:{1}'""".format(path, address))
+
+            # Determine address of values and index
+            if isinstance(h5_file[address], h5py._hl.dataset.Dataset):
                 values = np.array(h5_file[address])
                 index = np.arange(values.shape[0])
+            elif isinstance(h5_file[address], h5py._hl.group.Group):
+                if address + "/values" in h5_file:
+                    values = np.array(h5_file[address + "/values"])
+                elif len(h5_file[address].keys() == 1):
+                    values = np.array(
+                      h5_file[address + "/" + h5_file[address].keys()[0]])
+                if address + "/index" in h5_file:
+                    index = np.array(h5_file[address + "/index"])
+                else:
+                    index = np.arange(values.shape[0])
 
             attrs = dict(h5_file[address].attrs)
 
@@ -381,14 +391,16 @@ class Dataset(object):
                 dataframe_kw["columns"] = list(attrs["fields"])
             elif "columns" in attrs:
                 dataframe_kw["columns"] = list(attrs["columns"])
+
             if "columns" in dataframe_kw:
                 columns = dataframe_kw.pop("columns")
                 if np.array(
-                        [isinstance(c, np.ndarray) for c in columns]).all():
+                  [isinstance(c, np.ndarray) for c in columns]).all():
                     columns = pd.MultiIndex.from_tuples(map(tuple, columns))
                 if np.array([isinstance(c, tuple) for c in columns]).all():
                     columns = pd.MultiIndex.from_tuples(columns)
                 dataframe_kw["columns"] = columns
+
             if len(index.shape) == 1:
                 df = pd.DataFrame(data=values, index=index, **dataframe_kw)
                 if "index_name" in attrs:
@@ -464,12 +476,12 @@ class Dataset(object):
             else:
                 raise Exception("Cannot find DataFrame to write")
         re_h5 = re.match(
-            r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$", outfile,
-            flags=re.UNICODE)
+          r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$", outfile,
+          flags=re.UNICODE)
         path = expandvars(re_h5.groupdict()["path"])
         address = re_h5.groupdict()["address"]
         if (address is None or address == "" and hasattr(self,
-                "default_h5_address")):
+          "default_h5_address")):
             address = self.default_h5_address
         if hasattr(self, "default_h5_kw"):
             h5_kw = self.default_h5_kw
@@ -482,7 +494,7 @@ class Dataset(object):
             wiprint("Writing DataFrame to '{0}'".format(outfile))
         with h5py.File(path) as hdf5_file:
             hdf5_file.create_dataset("{0}/values".format(address),
-                data=df.values, dtype=df.values.dtype, **h5_kw)
+              data=df.values, dtype=df.values.dtype, **h5_kw)
             if df.index.values.dtype == object:
                 if type(df.index.values[0]) == tuple:
                     index = np.array(map(list, df.index.values))
@@ -492,12 +504,12 @@ class Dataset(object):
                 index = df.index.values
 
             hdf5_file.create_dataset("{0}/index".format(address), data=index,
-                dtype=index.dtype, **h5_kw)
+              dtype=index.dtype, **h5_kw)
 
             # Process and store columns as an attribute
             columns = df.columns.tolist()
             if (np.array(
-                    [isinstance(c, six.string_types) for c in columns]).all()):
+              [isinstance(c, six.string_types) for c in columns]).all()):
                 # String columns; must make sure all strings are strings
                 #   and not unicode
                 columns = map(str, columns)
@@ -521,7 +533,7 @@ class Dataset(object):
                 hdf5_file[address].attrs["index_name"] = str(df.index.name)
             else:
                 hdf5_file[address].attrs["index_name"] = map(str,
-                    df.index.names)
+                  df.index.names)
 
     def _write_text(self, outfile, **kwargs):
         """
@@ -611,8 +623,8 @@ class Dataset(object):
             raise Exception(sformat("""No infiles found matching
             '{0}'""".format(infile_args)))
         re_h5 = re.compile(
-            r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$",
-            flags=re.UNICODE)
+          r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$",
+          flags=re.UNICODE)
 
         # Load Data
         dfs = []
@@ -668,8 +680,8 @@ class Dataset(object):
         # Process arguments
         outfile = expandvars(outfile)
         re_h5 = re.match(
-            r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$", outfile,
-            flags=re.UNICODE)
+          r"^(?P<path>(.+)\.(h5|hdf5))((:)?(/)?(?P<address>.+))?$", outfile,
+          flags=re.UNICODE)
 
         # Write DataFrame
         if re_h5:
@@ -679,7 +691,7 @@ class Dataset(object):
 
     @staticmethod
     def calc_pdist(df, columns=None, mode="kde", bandwidth=None, grid=None,
-            **kwargs):
+      **kwargs):
         """
         Calcualtes probability distribution over DataFrame.
 
@@ -774,7 +786,7 @@ class Dataset(object):
                     grid[column] = all_grid
                 else:
                     grid[column] = np.linspace(series.min() - 3 * series.std(),
-                        series.max() + 3 * series.std(), 1000)
+                      series.max() + 3 * series.std(), 1000)
 
             # Calculate probability distributions
             kde_kw = kwargs.get("kde_kw", {})
@@ -784,13 +796,13 @@ class Dataset(object):
                 if verbose >= 1:
                     wiprint("calculating probability distribution of "
                             "{0} using a kernel density estimate".format(
-                        column))
+                      column))
                 kde = KernelDensity(bandwidth=bandwidth[column], **kde_kw)
                 kde.fit(series.dropna()[:, np.newaxis])
                 pdf = np.exp(kde.score_samples(grid[column][:, np.newaxis]))
                 pdf /= pdf.sum()
                 series_pdist = pd.DataFrame(pdf, index=grid[column],
-                    columns=["probability"])
+                  columns=["probability"])
                 series_pdist.index.name = column
                 pdist[column] = series_pdist
         else:
@@ -818,4 +830,4 @@ class Dataset(object):
         if cls is None:
             cls = type(self)
         return load_dataset(cls=cls, dataset_cache=self.dataset_cache,
-            **kwargs)
+          **kwargs)
