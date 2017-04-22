@@ -12,18 +12,14 @@ Represents data.
 ################################### MODULES ###################################
 from __future__ import (absolute_import, division, print_function,
     unicode_literals)
-
 if __name__ == "__main__":
     __package__ = str("myplotspec")
     import myplotspec
-
 import h5py
 import numpy as np
 import pandas as pd
-
+from IPython import embed
 from . import sformat, wiprint
-
-
 ################################### CLASSES ###################################
 class Dataset(object):
     """
@@ -309,6 +305,17 @@ class Dataset(object):
           kwargs (dict): Additional keyword arguments
         """
         pass
+
+    @staticmethod
+    def add_argument(parser, *args, **kwargs):
+        """
+        """
+        import argparse
+
+        try:
+            parser.add_argument(*args, **kwargs)
+        except argparse.ArgumentError:
+            pass
 
     @staticmethod
     def get_cache_message(cache_key):
