@@ -54,6 +54,7 @@ def set_legend(subplot, handles=None, **kwargs):
     legend_kw = multi_get_copy("legend_kw", kwargs, {})
     legend_fp = multi_get_copy(["legend_fp"] + FP_KEYS, kwargs)
     legend_fp_2 = multi_pop(["legend_fp"] + FP_KEYS, legend_kw)
+    print(legend_fp_2)
     if legend_fp_2 is not None:
         legend_kw["prop"] = get_font(legend_fp_2)
     elif legend_fp is not None:

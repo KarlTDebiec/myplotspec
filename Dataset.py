@@ -571,6 +571,7 @@ class Dataset(object):
           DataFrame: DataFrame
         """
         from os.path import expandvars
+        import warnings
 
         # Process arguments
         verbose = kwargs.get("verbose", 1)
@@ -583,7 +584,9 @@ class Dataset(object):
         # Read DataFrame
         if verbose >= 1:
             wiprint("""Reading DataFrame from '{0}' """.format(infile))
-        df = pd.read_csv(infile, **read_csv_kw)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            df = pd.read_csv(infile, **read_csv_kw)
         if (df.index.name is not None and df.index.name.startswith("#")):
             df.index.name = df.index.name.lstrip("#")
 

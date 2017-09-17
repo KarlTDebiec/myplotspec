@@ -150,28 +150,41 @@ class FigureManager(object):
         class: target
         help: Manuscript (width ≤ 7.0", height ≤ 9.167")
         draw_figure:
-          title_fp: 8b
           label_fp: 8b
           shared_legend_kw:
+            handle_kw:
+              ms: 5
             legend_kw:
-              title_fp:  8b
               legend_fp: 6r
-        draw_subplot:
+              title_fp:  8b
           title_fp: 8b
+        draw_subplot:
+          grid_kw:
+            linewidth: 0.5
+          hline_kw:
+            linewidth: 1.0
           label_fp: 8b
+          legend_kw:
+            legend_fp: 6r
+          lw: 1
           tick_fp: 6r
           tick_params:
             length: 2
             pad: 3
             width: 1
-          legend_kw:
-            legend_fp: 6r
+          title_fp: 8b
+          vline_kw:
+            linewidth: 1.0
           y2tick_params:
             length: 2
             pad: 3
             width: 1
-          lw: 1
         draw_dataset:
+          colorbar_kw:
+            zlabel_fp: 8b
+            zlabel_kw:
+              labelpad: 2
+            ztick_fp:  6r
           plot_kw:
             lw: 1
       notebook:
@@ -251,21 +264,45 @@ class FigureManager(object):
         class: target
         help: 16:9 presentation (width = 19.20", height = 10.80")
         draw_figure:
-          fig_width:  19.20
-          fig_height: 10.80
-          title_fp:  24b
-          label_fp:  24b
-          legend_fp: 24r
+          label_fp:  28r
+          legend_fp: 28r
+          shared_legend_kw:
+            handle_kw:
+              ms: 5
+            legend_kw:
+              columnspacing: 1.0
+              legend_fp: 28r
+              title_fp:  28r
+          title_fp:  28r
         draw_subplot:
-          title_fp: 24b
-          label_fp: 24b
-          tick_fp:  20r
+          grid_kw:
+            linewidth: 1.0
+          hline_kw:
+            linewidth: 3.0
+          label_fp: 28r
+          legend_kw:
+            legend_fp: 28r
+          lw: 3
+          tick_fp:  24r
           tick_params:
             length: 6
-            width: 2
             pad: 10
-          lw: 3
+            width: 3
+          title_fp: 28r
+          vline_kw:
+            linewidth: 3.0
+          xlabel_kw:
+            horizontalalignment: center
+          y2tick_params:
+            length: 6
+            pad: 10
+            width: 3
         draw_dataset:
+          colorbar_kw:
+            zlabel_fp: 28r
+            zlabel_kw:
+              labelpad: 2
+            ztick_fp:  24r
           plot_kw:
             lw: 3
     """

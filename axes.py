@@ -288,7 +288,11 @@ def set_yaxis(subplot, **kwargs):
                 kwargs)
             y2label_fp_2 = multi_pop(
                 ["y2label_fp", "ylabel_fp", "label_fp"] + FP_KEYS, ylabel_kw)
-            if y2label_fp_2 is not None:
+            y2label_fp_3 = multi_pop(
+                ["y2label_fp", "ylabel_fp", "label_fp"] + FP_KEYS, y2label_kw)
+            if y2label_fp_3 is not None:
+                y2label_kw["fontproperties"] = get_font(y2label_fp_3)
+            elif y2label_fp_2 is not None:
                 y2label_kw["fontproperties"] = get_font(y2label_fp_2)
             elif ylabel_fp is not None:
                 y2label_kw["fontproperties"] = get_font(y2label_fp)

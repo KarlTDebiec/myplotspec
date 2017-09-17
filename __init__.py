@@ -134,10 +134,9 @@ def load_dataset(cls=None, dataset_cache=None, loose=False, **kwargs):
         from .Dataset import Dataset
         cls = Dataset
     elif isinstance(cls, six.string_types):
-        print(cls)
         mod_name = ".".join(cls.split(".")[:-1])
         clsname = cls.split(".")[-1]
-        mod = __import__(mod_name, fromlist=[clsname])
+        mod = __import__(mod_name, fromlist=[str(clsname)])
         cls = getattr(mod, clsname)
 
     if dataset_cache is not None and hasattr(cls, "get_cache_key"):
